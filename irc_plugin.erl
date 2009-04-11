@@ -1,7 +1,7 @@
 -module(irc_plugin).
 
 -export([manager_start/2, client_stop/3,
-	 managerStartState/0, handlerStartState/0, 
+	 managerStart/0, handlerStartState/0, 
 	 manager_rpc/2, handle_rpc/4]).
 
 -import(server, [sendEvent/2, ask_manager/2]).
@@ -15,7 +15,7 @@
 -define(S(X), {'#S',X}).
 s(X) -> {'#S', X}.
 
-managerStartState() -> new_seed(), ets:new(irc, []).
+managerStart() -> new_seed(), ets:new(irc, []).
 
 handlerStartState() -> myHandlerState.
     

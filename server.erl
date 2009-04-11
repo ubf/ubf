@@ -1,7 +1,6 @@
 -module(server).
 
--export([start_plugins/0, start/1, register_plugin/2, ask_manager/2, 
-	 sendEvent/2]).
+-export([start/1, ask_manager/2, sendEvent/2]).
 
 -import(contracts, [checkIn/3, checkOut/4, checkCallback/4]).
 
@@ -17,17 +16,7 @@
 s(X) -> {'#S', X}.
     
 start(Port) ->
-    start_registered(server, fun() -> start_server(Port) end),
-    start_plugins().
-
-start_plugins() ->
-    Fs = find:files(".", "*plugin.beam", false),
-    foreach(fun(F) -> 
-		    Stem = filename:basename(filename:rootname(F)),
-		    Mod = list_to_atom(Stem),
-		    io:format("Trying to start plugin:~p~n",[Mod]),
-		    plugin_handler:start_manager(Mod)
-	    end, Fs).
+    start_registered(server, fun() -> start_server(Port) end).
 
 start_server(Port) ->
     %% set up a UBF listener on Port
@@ -58,8 +47,7 @@ start_ubf_listener(Port, Server) ->
 			     %% send hello back to the opening program
 			     io:format("server sending hello~n"),
 			     Name = s(server_plugin:contract_name()),
-			     Info = s(server_plugin:contract_info()),
-			     self() ! {self(), {'ubf1.0', Name, Info}},
+			     self() ! {self(), {'ubf1.0', Name, help()}},
 			     %% swop the driver
 			     ubf_driver:relay(self(), ContractManager),
 			     ContractManager ! {start, Driver, Handler, 
@@ -74,6 +62,9 @@ start_ubf_listener(Port, Server) ->
 		     50, 
 		     0).
 
+help() ->
+    s("\n\n type 'help'$ for help\n\n").
+
 sendEvent(Pid, Msg) ->
     %% io:format("sendEvent (server) ~p to ~p~n",[Msg,Pid]),
     Pid ! {event, Msg}.
@@ -85,21 +76,6 @@ ask_manager(Manager, Q) ->
 	    R
     end.
 
-register_plugin(Pid, Mod) ->
-    ask_manager(server, {register, Pid, Mod}).
-
-get_handler_id(Pid, Name) ->
-    Pid ! {self(), {get_handler_id, Name}},
-    receive
-	{Pid, Reply} -> Reply
-    end.
-
-services(Pid) ->
-    Pid ! {self(), services},
-    receive
-	{Pid, Reply} -> Reply
-    end.
-    
 %%----------------------------------------------------------------------
 %% Misc junk
 
@@ -126,14 +102,6 @@ start_proc(Parent, Name, F) ->
 	    Parent ! {self(), ack},
 	    %% io:format("starting ~p~n",[Name]),
 	    F()
-    end.
-
-start_service(Server, Session, Args) ->
-    case get_handler_id(Server, Session) of
-	{ok, Pid}->
-	    service_manager:start_service(Pid, Args);
-	error ->
-	    {reject, no_such_service}
     end.
 
     

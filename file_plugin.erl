@@ -1,7 +1,7 @@
 -module(file_plugin).
 
 -export([manager_start/2, client_stop/3,
-	 managerStartState/0, handlerStartState/0, 
+	 managerStart/0, handlerStartState/0, 
 	 manager_rpc/2, handle_rpc/4]).
 
 -import(lists, [map/2, member/2]).
@@ -16,7 +16,7 @@ s(X) -> {'#S', X}.
 
 %% The initial state of the manager
 
-managerStartState() -> myManagerState.
+managerStart() -> myManagerState.
 
 handlerStartState() -> myHandlerState.
     
@@ -41,18 +41,16 @@ manager_rpc(secret, State) ->
 manager_rpc(_, State) ->
     {reject, badPassword, State}.
 
-handle_rpc(start, {logon, ?S("jimmy")}, State, Env) ->
-    {ok, active, State};
-handle_rpc(active, ls, State, Env) ->
+handle_rpc(start, ls, State, Env) ->
     {ok, Files} = file:list_dir("."),
     Ret = map(fun(I) -> s(I) end, Files),
-    {{files, Ret}, active, State};
-handle_rpc(active, {get, ?S(File)}, State, Env) ->
+    {{files, Ret}, start, State};
+handle_rpc(start, {get, ?S(File)}, State, Env) ->
     {ok, Files} = file:list_dir("."),
     case member(File, Files) of
 	true ->
 	    {ok, Bin} = file:read_file(File),
-	    {Bin, active, State};
+	    {Bin, start, State};
 	false ->
 	    {noSuchFile, stop, State}
     end.

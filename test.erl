@@ -23,17 +23,16 @@ ss() ->
     server:start(defaultPort()).
 
 test() ->
-    {ok, Pid, Name} = client:start(host(), defaultPort()),
-    {ok, Info} = client:info(Pid),
-    {reply, Services, _} = rpc(Pid, services),
+    {ok, Pid, Name} = client:connect(host(), defaultPort()),
+    Info = client:info(Pid),
+    Services = client:services(Pid),
+    io:format("Services=~p~n",[Services]),
     %% Try to start a missing  service
-    rpc(Pid, {startService, s("missing"), foo}),
-    %% Try to start a service with the wrong args
-    rpc(Pid, {startService, {'#S', "test"}, ho}),
-    %% A good start this time
-    {reply, {ok, yesOffWeGo}, start} = 
-	rpc(Pid, {startService, s("test"), secret}),
-    {reply, ok, active} = rpc(Pid, {logon, s("hi")}),
+    R1 = client:start(Pid, "missing"),
+    io:format("R1=~p~n",[R1]),
+    R2 = client:start(Pid, "test_server"),
+    io:format("R2=~p~n",[R2]),
+    rpc(Pid, {logon,s("joe")}),
     {reply, {files, _}, active} = rpc(Pid, ls),
     install_single_callback_handler(Pid),
     Term = {1,2,cat,rain,dogs},
@@ -78,3 +77,6 @@ sleep(T) ->
 		
 
 			  
+
+
+

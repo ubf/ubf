@@ -15,7 +15,7 @@ Pre-release. Be warned. Things change frequently
 	 linktitle="">
 
 
-<p>UBF is a language for transporting and describing complex data structures across a network. It has two components:
+<p>UBF is a language for transporting and describing complex data structures across a network. It has three components:
 <ul>
 <li>
 
@@ -27,6 +27,9 @@ for describing types in UBF(A) and protocols between clients
 and servers.
 UBF(B) is roughly equivalent to to Verified XML,
 XML-schemas, SOAP and WDSL.
+
+<li><a href="ubfc.html">UBF(C)</a> is a meta-level protocol
+between used between UBF servers.
 
 </ul>
 

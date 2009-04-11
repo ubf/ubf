@@ -9,6 +9,8 @@
 	bla
 	bla").
 
++SERVICES().
+
 +TYPE password() = string().
 +TYPE file() = string().
 +TYPE callback() = {callback, void()}.

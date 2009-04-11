@@ -2,8 +2,12 @@
 
 -export([start/0]).
 -import(contracts, [checkIn/3, checkOut/4, checkCallback/3]).
-
+-import(lists, [map/2, member/2]).
 -include("contract.hrl").
+
+-define(S(X), {'#S',X}).
+s(X) -> {'#S', X}.
+
 
 
 %  Client                     Contract                     Server
@@ -40,9 +44,6 @@
 %%      Mod is our callback module
 %%      Data is the local state of the handler
 
-s(X) ->
-    {'#S', X}.
-
 start() ->
     spawn_link(fun() -> wait() end).
 
@@ -72,14 +73,45 @@ loop(Client, Server, State1, Mod) ->
     %% io:format("contract_manager ~p waiting for Driver=~p in state:~p ~n",
     %% [Client, self(), State1]),
     receive
+	{Client, help} ->
+	    Client ! {self(),s(help())},
+	    loop(Client, Server, State1, Mod);
 	{Client, info} ->
-	    Client ! {self(), {infoReply, s(Mod:contract_info())}},
+	    Client ! {self(),s(Mod:contract_info())},
 	    loop(Client, Server, State1, Mod);
 	{Client, description} ->
-	    Client ! {self(),{descriptionReply,s(Mod:contract_description())}},
+	    Client ! {self(),s(Mod:contract_description())},
+	    loop(Client, Server, State1, Mod);
+	{Client, services} ->
+	    S = Mod:contract_services(),
+	    S1 = map(fun(I) -> s(I) end, S),
+	    Client ! {self(), {services, S1}},
+	    loop(Client, Server, State1, Mod);
+	{Client, contract} ->
+	    S = contract(Mod),
+	    Client ! {self(), {contract, S}},
+	    loop(Client, Server, State1, Mod);
+	{Client, {start, ?S(Service)}} ->
+	    S = Mod:contract_services(),
+	    case member(Service, S) of
+		true ->
+		    Server ! {self(), {startService, Service}},
+		    receive
+			{Server, {accept, HandlerMod, ManagerPid}} ->
+			    Info = HandlerMod:contract_info(),
+			    Client ! {self(), {ok, s(Info)}},
+			    loop(Client, Server, start, HandlerMod);
+			{Server, {reject, Why}} ->
+			    Client ! {self(), {error,Why}},
+			    loop(Client, Server, State1, Mod)
+		    end;
+		false ->
+		    Client ! {self(), noSuchService},
+		    loop(Client, Server, State1, Mod)
+	    end,
 	    loop(Client, Server, State1, Mod);
 	{Client, expect} ->
-	    Client ! {self(), {expectReply, get_expect(State1, Mod)}},
+	    Client ! {self(),{expectReply, get_expect(State1, Mod)}},
 	    loop(Client, Server, State1, Mod);
 	{Client, state} ->
 	    Client ! {self(), {stateReply, State1}},
@@ -117,6 +149,10 @@ do_rpc(Client, Server, State1, Mod, Q) ->
 	[] ->
 	    io:format("** Client broke contract ~p in State:~p send:~p~n",
 		      [Mod, State1, Q]),
+	    Expect = Mod:contract_state(State1),
+	    Client ! {self(),
+		      {clientBrokeContract, {state, State1}, Expect}},
+	    io:format("Expecting:~p~n",[Expect]),
 	    exit(fatal);
 	FSM2 ->
 	    %% io:format("contract yes FSM2=~p~n", [FSM2]),
@@ -154,7 +190,49 @@ get_expect(State,Mod) ->
     T = Mod:contract_state(State),
     [Type||{input, Type, _} <- T].
 
-    
+contract(Mod) ->    
+    {{name,s(Mod:contract_name())},
+     {info, s(Mod:contract_info())},
+     {description, s(Mod:contract_description())},
+     {services, map(fun(I) -> s(I) end, Mod:contract_services())},
+     {states,
+      map(fun(S) ->
+		  {S, Mod:contract_state(S)}
+	  end, Mod:contract_states())},
+     {types,
+      map(fun(S) ->
+		  {S, Mod:contract_type(S)}
+	  end, Mod:contract_types())}}.
+
+help() ->
+    "\n\n
+This server speaks Universal Binary Format 1.0
+
+See http://www.sics.se/~joe/ubf.html
+
+UBF servers are introspective - which means the
+servers can describe themselves. The following commands are
+always available:
+
+'help'$          This information
+'info'$          Short information about the current service
+'description'$   Long information  about the current service
+'services'$      A list of available services
+'contract'$      Return the service contract
+                 (Note this is encoded in UBF)
+
+To start a service:
+
+{'start', \"Name\"} Name should be one of the names in the
+                  services list
+
+Warning without reading the documentation you might find the output from
+some of these commands difficult to understand :-)
+
+".
+
+     
+			    
 
 
 

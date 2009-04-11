@@ -30,17 +30,34 @@ loop(Client, State1, Data, Manager, Mod) ->
 		{Reply, State2, Data2} ->
 		    Client ! {self(), {rpcReply, Reply, State2}},
 		    loop(Client, State2, Data2, Manager, Mod);
-		{become, Reply, State2, Data2, Mod2, Manager2} ->
-		    Client ! {self(), {rpcReplyNew, Reply, State2, Mod2}},
-		    loop(Client, State2, Data2, Manager2, Mod2);
 		{'EXIT', Why} ->
-		    io:format("**** Yikes ...~p~n",[Why])
+		    Err = {error, {internalError,handler}},
+		    Client ! {self(), {rpcReply, Err, stop}},
+		    io:format("**** Yikes ...~p~n",[Why]),
+		    exit(fatal)
 	    end;
 	{event, X} ->
 	    Client ! {event, X},
 	    loop(Client, State1, Data, Manager, Mod);
 	{client_has_died, Client, Why} ->
 	    Manager ! {client_has_died, self(), Why};
+	{Pid, Req={startService, Service}} ->
+	    io:format("Plugin handler (~p) got ~p sending to~p~n",
+		      [self(), Req,Manager]),
+	    Manager ! {self(), Req},
+	    receive
+		{Manager, Accept = {accept, HandlerMod, ManagerPid}} ->
+		    Pid ! {self(), Accept},
+		    State1 = start,
+		    Data1 = HandlerMod:handlerStartState(),
+		    loop(Client, State1, Data1, ManagerPid, HandlerMod);
+		{Manager, Reject = {reject, Why}} ->
+		    Pid ! {self(), Reject},
+		    loop(Client, State1, Data, Manager, Mod);
+		OO ->
+		    io:format("Bummer ~p~n",[OO]),
+		    loop(Client, State1, Data, Manager, Mod)
+	    end;
 	Other ->
 	    io:format("**** OOOPYikes ...~p (Client=~p)~n",[Other,Client]),
 	    loop(Client, State1, Data, Manager, Mod)
@@ -59,22 +76,23 @@ start_service(Pid, Args) ->
 start_manager(Mod) ->
     spawn_link_debug({manager,Mod},
 		     fun() ->
-			     server:register_plugin(self(), Mod),
 			     manager(Mod)
 		     end).
 
 manager(Mod) ->
-    State = Mod:managerStartState(),
+    process_flag(trap_exit, true),
+    State = Mod:managerStart(),
+    io:format("process ~p is manager for ~p~n",[self(), Mod]),
     manager_loop(Mod, State).
 
 manager_loop(Mod, State) ->
     io:format("~p manager waiting for something to do~n", [Mod]),
     receive
-	{From, {startService1, Args}} ->
-	    case (catch Mod:manager_start(Args, State)) of
-		{accept, Ret, State1, Data, State2} ->
+	{From, {startService, Service}} ->
+	    case (catch Mod:startService(Service, State)) of
+		{accept, HandlerMod, ModManagerPid, State2} ->
 		    io:format("returniung accept ~p~n",[Mod]),
-		    From ! {self(), {accept,Ret,State1,Data,Mod}},
+		    From ! {self(), {accept,HandlerMod, ModManagerPid}},
 		    manager_loop(Mod, State2);
 		{reject, Why, State1} ->
 		    %% io:format("rejected~n"),

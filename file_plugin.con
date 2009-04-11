@@ -4,20 +4,24 @@
 
 +INFO("I am a mini file server").
 
-+DESCRIPTION("The mini file server 
-allows only list, and get operations
++DESCRIPTION("
+
+Commands:
+
+    'ls'$  List files
+    {'get' File} => Length ~ ... ~ | noSuchFile
+    
 ").
 
-+TYPE password() = string().
++SERVICES().
+
 +TYPE file()     = string().
 
-+STATE start 
-	{logon, password()}  => ok    & active 
-			      | error & stop.
 
-+STATE active 
-       ls                      => {files, [string()]} & active;
-       {get, file()}           => binary()            & active
++STATE start 
+       ls                      => {files, [string()]} & start;
+       {get, file()}           => binary()            & start
 			        | noSuchFile          & stop.
+
 
 

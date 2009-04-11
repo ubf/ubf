@@ -14,9 +14,9 @@ start(Nick) ->
     spawn(fun() -> init1(Nick) end).
 	
 init1(Nick) ->
-    case client:start("enfield.sics.se", 2000) of
+    case client:connect("enfield.sics.se", 2000) of
 	{ok, Pid, Name} ->
-	    {reply, {ok,yes}, start} = rpc(Pid, {startService, s("irc"), []}),
+	    {ok,_} = client:start(Pid, "irc_server"),
 	    client:install_handler(Pid, fun print_msg/1),
 	    {reply, _, _} = rpc(Pid, logon),
 	    Self = self(),

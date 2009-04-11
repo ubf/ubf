@@ -14,8 +14,8 @@
 
 <pre>
 
-    '...'       Push an atom onto the stack
-                  (within an atom ' must be escaped (\')
+    '...'       Push an constant onto the stack
+                  (within an constant ' must be escaped (\')
 
      "..."      Push a string on the stack
                  (within a  string " must be escaped (\")

@@ -34,6 +34,7 @@ SIZE=-1>Documents</FONT></FONT></FONT></B></TD>
 <br><a href="white.html">White paper</a>
 <br><a href="ubfa.html">UBF(A) spec</a>
 <br><a href="ubfb.html">UBF(B) spec</a>
+<br><a href="ubfc.html">UBF(C) spec</a>
 </TD></TR>
 </TABLE>
 </TD>
@@ -187,12 +188,12 @@ encoded, this is followed by a tilde, the data itself which must be exactly the
 length given in the integer and than a closing tilde. The closing tilde
 has no significance and is retained for readability. White space can be
 added Between the integer length and the data for readability.
-<dt><b>Atoms</b>
-<dd>Atoms are encoded as strings, only using a single quote
+<dt><b>Constants</b>
+<dd>Constants are encoded as strings, only using a single quote
 instead of a double quote.
-<p>Atoms are commonly form in symbolic languages like lisp, Prolog or
+<p>Constants are commonly form in symbolic languages like lisp, Prolog or
 Erlang. In C they would be represented by hashed strings. The
-essential property of an atom is that two atoms can be compared for
+essential property of an constant is that two constants can be compared for
 equality in constant time. These are used for representing
 symbolic constants.
 </dl>

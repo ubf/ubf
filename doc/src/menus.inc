@@ -4,6 +4,7 @@
   <br><a href="white.html">White paper</a>
   <br><a href="ubfa.html">UBF(A) spec</a>
   <br><a href="ubfb.html">UBF(B) spec</a>
+  <br><a href="ubfc.html">UBF(C) spec</a>
 </menu>
 <p>
 

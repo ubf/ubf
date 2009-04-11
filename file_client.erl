@@ -13,13 +13,13 @@ s(X) -> {'#S', X}.
 
     
 test() ->
-    {ok, Pid, Name} = client:start(host(), defaultPort()),
-    {reply, _, start} = rpc(Pid, {startService, s("file_server"), []}),
-    {reply, ok, active} = rpc(Pid, {logon, s("jimmy")}),
-    {reply,  {files, Fs}, active} = rpc(Pid, ls),
+    {ok, Pid, Name} = client:connect(host(), defaultPort()),
+    {ok, ?S(Info)} = client:start(Pid, "file_server"),
+    io:format("Info=~s~n",[Info]),
+    {reply,  {files, Fs}, start} = rpc(Pid, ls),
     Files = map(fun(?S(I)) -> I end, Fs),
     io:format("Files=~p~n",[Files]),
-    {reply, X, active} = rpc(Pid, {get, s("ubf.erl")}),
+    {reply, X, start} = rpc(Pid, {get, s("ubf.erl")}),
     io:format("got ~p bytes~n",[size(X)]),
     client:stop(Pid),
     io:format("test worked~n"),

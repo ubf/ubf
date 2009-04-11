@@ -2,7 +2,7 @@
 ## Add your modules here
 
 EHTML = downloads eserve messagebox \
-	javac home white irc file ubfb ubfb_quick ubfa ubfa_quick quick
+	javac home white irc file ubfc ubfb ubfb_quick ubfa ubfa_quick quick
 
 ## Do not change below this line
 

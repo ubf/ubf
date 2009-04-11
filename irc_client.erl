@@ -12,8 +12,8 @@ batch([Name]) ->
     erlang:halt().
 
 start(Nick) ->
-    {ok, Pid, Name} = client:start("localhost", 2000),
-    {reply, {ok,yes}, start} = rpc(Pid, {startService, s("irc"), []}),
+    {ok, Pid, Name} = client:connect("localhost", 2000),
+    {ok,_} = client:start(Pid, "irc_server"),
     client:install_handler(Pid, fun print_msg/1),
     {reply, _, _} = rpc(Pid, logon),
     case rpc(Pid, {nick, s(Nick)}) of

@@ -65,6 +65,7 @@ cold_start(Port, Fun, Max, PacketLength) ->
     process_flag(trap_exit, true),
     %% io:format("Starting a port server on ~p...~n",[Port]),
     {ok, Listen} = gen_tcp:listen(Port, [binary,
+					 {nodelay, true},
 					 {reuseaddr, true}, 
 					 {active, true}]),
     %% io:format("Listener here~p~n", [Port]),

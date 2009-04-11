@@ -36,7 +36,7 @@ loop(Socket, Pid, Cont) ->
 	    %% io:format("ubf_driver sending:~p~n",[Term]),
 	    Data = ubf:encode(Term),
 	    %% io:format("ubf_driver sending:~s~n",[Data]),
-	    gen_tcp:send(Socket, Data),
+	    gen_tcp:send(Socket, [Data,"\n"]),
 	    loop(Socket, Pid, Cont);
     	stop ->
 	    %% io:format("ubf driver stop~n"),

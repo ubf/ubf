@@ -1,207 +1,70 @@
 <include>layout.mac</include>
 <top/>
 
-<article title="White paper"
+<article title="Quick start"
 	 date="2002-03-05"
 	 link=""
 	 linktitle="">
 
-<banner>What is the relationship between UBF and XML?</banner>
+<banner>Quick start with UBF</banner>
 
-<p>Both UBF and XML have similar goals and similar structure.  XML has
-a supposedly human friendly syntax and is supposed to be self
-describing.  UBF is programmer friendly and is designed to be
-efficient and easy to implement.
+<p>This will jump start you with UBF.
 
-<banner>Why is UBF parsing efficient</banner>
+<p>All you need is an internet connection and Telnet to get started.
+<p>First read the contract - in the next section. Then
+fire up Telnet and investigate the server (by hand) - then you can see
+what's really going on
+<banner>The Contract</banner>
+<p>
+<quotefile>../../file_plugin.con</quotefile> 
+<p>
+<banner>A telnet session</banner>
 
-<p>UBF(A) terms are actually little programs which the decoder
-executes.  When reconstructing a UBF(A) term the decoder just executes
-the program. No grammar checking or parsing is actually involved.
-<p>UBF(A) encoded terms are also much more compact than the equivalent
-XML terms. Since parsing an import stream involves looking at every
-character on the input UBF parsing is intrinsically much more
-efficient than XML parsing.  A UBF(A) encoder can also make
-intelligent use of the caching optimization to further improve
-efficiency.
+<p>
+The following is a telnet session.
 
-<banner>What is the relation between a UBF type and and XML DTD?</banner>
+<p>User input is in red. Server output is in black, some lines have
+been omitted:
 
-<p>A UBF type is very similar to an XML DTD. For example:
+<p>
 <box>
-+TYPE p() = {person, name(), age()}.
-+TYPE name() = string().
-+TYPE age() = int().
-</box>
+<font color="red">telnet enfield.sics.se 2000</font>
+Trying 127.0.0.1...
+Connected to localhost.localdomain.
+Escape character is '^]'.
+{'ubf1.0',"meta_server","I am a meta server
+See http://www.sics.se/~joe/ubf.html
+This server speaks Universal Binary Format 1.0
+For more information type 'description'$ at the dollar prompt
+Remember the $ and quote marks :-)
+"}$
+<font color="red">{'rpc',{'startService',"file_server",#}}$</font>
 
-Is <i>almost</i> equivalent to the following:
-<box>
-&lt;!ELEMENT p (person, name, age) >
-&lt;!ELEMENT person EMPTY>
-&lt;!ELEMENT name (#PCDATA)>
-&lt;!ELEMENT age (<font color="red">#INT</font>)>
-</box>
+{'rpcReply',{'ok','yesOffWeGo'},'start'}$
 
-<p>Note XML DTD's can't have types so <b>#INT</b> is illegal here.
-Instead we have to use XML schemas:
-<box>
-... lots
-</box>
+<font color="red">{'rpc',{'logon',"jimmy"}}$</font>
 
-<banner>What's the difference between an XML encoding
-and a UBF encoding?</banner>
+{'rpcReply','ok','active'}$
 
-<p> ...
+<font color="red">{'rpc','ls'}$</font>
 
-<banner>Is UBF(A) a high or low level transport format?</banner>
+{'rpcReply',{'files',#"ubf.erl"&"client.erl"&
+             ... 
 
-<p>Surprisingly UBF(A) is both a high level and a low level transport format.
+<font color="red">{'rpc',{'get',"ubf.erl"}}$</font>
 
-<p>It is low-level in so much that it is very simple - there are <i>only</i>
-four primitive data types (strings, integers, constants and memory
-buffers) <i>Some might argue that two would suffice - integers and memory
-buffers</i> - and there are two types of "glue" one from building
-"structs" the other for "lists".
+{'rpcReply',7852~-module(ubf).
 
-<p>It is high-level in so much that we purposely do not let <i>any<(i>
-implementation details pollute the interface. Thus we talk about
-"Integers" and not "32 bit integers" - We leave the interpretation
-(i.e. we answer the question "What is an integer") to the application.
+-compile(export_all).
 
-<p>At some point in the future I assume that all computers will
-"understand" multi-precision integers and that weird things like 32
-integers will be viewed as atavistic aberrations - if we want our
-protocols to be "future proof" we'd better free ourselves from
-"bit-ism" when transmitting integers.
+-export([decode_init/0, decode/1, decode/2, encode/1, encode/2]).
+-export([encode_print/1, ubf2term/1, deabstract/1]).
 
-<box>
-God made the integers; all the rest is the work of man.
-<p>- Leopold Kronecker
-</box>
-
-
-
-<p>We also <i>deliberately</i> omit an talk of complex data types
-(like floats) in UBF(A). On the other hand if we want to
-transmit IEEE floats we should use the semantic tagging facilities
-of UBF(A) and encode them thus:
-
-<pre>
-<b>
-    4~ssss~ `ieee754.single`
-    8~dddddddd~ `ieee754.double`
-</b>
-</pre>
-
-The semantic tags <b>`ieee754.single`</b> etc would be cached by any
-sensibly UBF(A) encoder - it would also be expected that the
-application "understood" what the meaning of the semantic tags.
-
-<banner>What gets sent out on the wire</banner>
-<p>Recall out previous definition:
-<box>
-+TYPE p() = {person, name(), age()}.
-+TYPE name() = string().
-+TYPE age() = int().
-</box>
-
-To transmit a "person" we might send:
-<box>
-{'person'"Jane"18}$
-</box>
-
-<p>The equivalent XML might be:
-<box>
-&lt;p>&lt;person/>&lt;name>Jane&lt;/name>&lt;age>18&lt;/age>&lt;/p>
-
-</box>
-<p>Which would take roughly twice as long to parse - since we must
-at a very minimum inspect each individual character on the input stream.
-<banner>Why don't we have a richer set of types?</banner>
-
-<p>because:
-<ul>
-<li>Applications would disagree as to how these types should be represented.
-<li>They are largely unnecessary.
-<li>They would lead to overly complex interfaces.
-</ul>
-
-<p>As an example of the first point consider a UBF(B) contract for some
-web service - we might write:
-<box>
-+STATE active
-   {do, operation()} => bool() & active;
-   ...
-</box>
-
-<p>At this level of abstraction we have defined that the result of
-an operation is a boolean - <i>but we have not said how a boolean is
-represented</i>.
-
-<p>The concrete representation of a boolean can be left to the type declaration,
-it might be any one of the following:
-<box>
-+TYPE bool() = true | false.
-+TYPE bool() = 1 | 0.
-+TYPE bool() = "yes" | "no".
 ...
+
+Connection closed by foreign host.
+[joe@enfield joe]$ exit     
 </box>
-
-<p>The <i>type declaration says HOW a value of a boolean will be encoded 
-in UBF(A) - for the above definitions the UBF(A) encodings of 
-"true" would be:
-
-<box>
-'true'$
-1$
-"yes"$
-</box>
-
-<p>To keep things nicely abstract, we should not mix
-representation with type abstraction.
-
-<p>The second point is that in my experience we do not need many
-different types to make an interface. Most interfaces
-involve only the interchange of simple constants or
-structs of strings and constants.
-
-<p> Kronecker would have been satisfied with just the integers - but I
-think we need to impose a little more structure on the interface.
-Four basic types and two types of glues seems perfectly adequate.
-
-<p>XML schemas offers a large number of built-in types. But using such an interface would lead to complex interfaces and would be difficult to implement.
-
-<p>Rich sets of primitive types and glue in the interface
-leads to complex and unimplementable systems. The goal in UBF
-is to keep things as simple as possible. Semantic tagging is used
-to pass the problem of interpretation of data to the application (where it belongs!).
-
-<banner>History</banner>
-
-<p>UBF was inspired from a number of different sources:
-
-<ul>
-<li>The idea of a "universal format" for high level languages is
-as old as the hills - Lisp S expressions could have been used
-for all RFCs (sadly they were not).
-<li>The type notation in UBF(B) is similar to that suggested
-by Phil Wadler and Simon Marlow for work on an Erlang type checker.
-<li>The caching mechanism in UBF(A) comes from the Erlang 
-Marshalling/unmarshalling technique.
-<li>The protocol definition language in UBF(B) is similar to a
-suggestion of Wadler for typing Erlang processes.
-<li>The encoding scheme in UBF(A) is inspired from an early implementation of
-Prolog.
-<li>Semantic tagging is due to a discussion with Thomas Arts and
-?.
-<li>This scheme has been improved beyond measure by discussion with
-Thomas Arts, Luke Gorrie, Seif Haridi, Per Brand ...
-</ul>
-
-
-
-
-
 </article>
 <bot/>
 

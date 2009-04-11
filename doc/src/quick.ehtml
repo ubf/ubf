@@ -23,53 +23,79 @@ what's really going on
 <p>
 The following is a telnet session.
 
-<p>User input is in red. Server output is in black, some lines have
+<p>User input is in red. 
+<p>Comments are in blue.
+Server output is in black, some lines have
 been omitted:
 
 <p>
 <box>
+<font color="blue">Set up a connection</font>
 <font color="red">telnet enfield.sics.se 2000</font>
+telnet localhost 2000
 Trying 127.0.0.1...
 Connected to localhost.localdomain.
 Escape character is '^]'.
-{'ubf1.0',"meta_server","I am a meta server
-See http://www.sics.se/~joe/ubf.html
-This server speaks Universal Binary Format 1.0
-For more information type 'description'$ at the dollar prompt
-Remember the $ and quote marks :-)
+{'ubf1.0',"meta_server","
+
+ type 'help'$ for help
+
 "}$
-<font color="red">{'rpc',{'startService',"file_server",#}}$</font>
+<font color="blue">Ask for information</font>
+<font color="red">'info'$</font>
+"I am a meta server - I start other servers"$
 
-{'rpcReply',{'ok','yesOffWeGo'},'start'}$
+<font color="blue">Ask for a list of servers</font>
+<font color="red">'services'$</font>
+{'services',#"test_server"&"irc_server"&"file_server"&}$
 
-<font color="red">{'rpc',{'logon',"jimmy"}}$</font>
+<font color="blue">Activate a service</font>
+<font color="red">{'start',"file_server"}$</font>
+{'ok',"I am a mini file server"}$
 
-{'rpcReply','ok','active'}$
+<font color="blue">Ask for information - note this
+has now changed since we are now talking to a different service</font>
+<font color="red">'info'$</font>
+"I am a mini file server"$
 
+<font color="blue">Do a list command</font>
 <font color="red">{'rpc','ls'}$</font>
+{'rpcReply',{'files',#"ubf.erl"&"client.erl"&"Makefile"& ...
 
-{'rpcReply',{'files',#"ubf.erl"&"client.erl"&
-             ... 
+<font color="blue">Fetch a file</font>
+<font color="red">{'rpc',{'get',"Makefile"}}$</font>
+{'rpcReply',1274~ ... ~}$
 
-<font color="red">{'rpc',{'get',"ubf.erl"}}$</font>
+<font color="blue">Fetch the contract - this is the UBF(A) parse tree
+of the UBF(B) contract given above :-)</font>
+<font color="red">{'contract'$</font>
+{'contract',
+ {{'name',"file_server"},
+  {'info',"I am a mini file server"},
+  {'description',"
 
-{'rpcReply',7852~-module(ubf).
+Commands:
 
--compile(export_all).
+    'ls'$  List files
+    {'get' File} => Length ~ ... ~ | noSuchFile
 
--export([decode_init/0, decode/1, decode/2, encode/1, encode/2]).
--export([encode_print/1, ubf2term/1, deabstract/1]).
+"},
+  {'services',#},
+  {'states',
+   #{'start',
+     #{'input',{'tuple',#{'prim','file'}&{'constant','get'}&},
+     #{'output',{'constant','noSuchFile'},'stop'}&
+      {'output',{'prim','binary'},'start'}&}&
+     {'input',{'constant','ls'},
+     #{'output',
+	{'tuple',
+	  #{'list',{'prim','string'}}&
+	{'constant','files'}&},'start'}&}&}&},
+  {'types',	
+	#{'file',{'prim','string'}}&}}}$
 
-...
-
-Connection closed by foreign host.
-[joe@enfield joe]$ exit     
 </box>
 </article>
-<bot/>
 
 
-
-
-
-
+</bot>

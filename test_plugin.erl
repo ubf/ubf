@@ -1,7 +1,7 @@
 -module(test_plugin).
 
 -export([manager_start/2, client_stop/3,
-	 managerStartState/0, handlerStartState/0, 
+	 managerStart/0, handlerStartState/0, 
 	 manager_rpc/2, handle_rpc/4]).
 
 -import(server, [sendEvent/2]).
@@ -15,7 +15,7 @@
 s(Str) -> {'#S', Str}.
 -define(S(Str), {'#S',Str}).
 
-managerStartState() -> myManagerState.
+managerStart() -> myManagerState.
 
 handlerStartState() -> myHandlerState.
     

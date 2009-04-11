@@ -146,155 +146,34 @@ SIZE=-1>Downloads</FONT></FONT></FONT></B></TD>
 </td>
 <td valign='top'>
 <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=0 WIDTH='100%'> <TR VALIGN=TOP><TD BGCOLOR='#cc0000'><IMG SRC='../images/cl.png' ALT='' HEIGHT=10 WIDTH=7><IMG SRC='../images/pix.gif' ALT='' HEIGHT=4 WIDTH=4></TD>
-<TD WIDTH='100%' BGCOLOR='#cc0000'> <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=2 WIDTH='100%' > <TR> <TD BGCOLOR='#cc0000'><B><FONT FACE='verdana,helvetica,arial'><FONT COLOR='#FFFFFF'><FONT SIZE='+0'>UBF(B)</FONT></FONT></FONT></B></TD></TR></TABLE></TD>
+<TD WIDTH='100%' BGCOLOR='#cc0000'> <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=2 WIDTH='100%' > <TR> <TD BGCOLOR='#cc0000'><B><FONT FACE='verdana,helvetica,arial'><FONT COLOR='#FFFFFF'><FONT SIZE='+0'>UBF(C)</FONT></FONT></FONT></B></TD></TR></TABLE></TD>
 <TD ALIGN=RIGHT BGCOLOR='#cc0000'><IMG SRC='../images/cr.png' ALT='' HEIGHT=10 WIDTH=7></TD></TR></TABLE>
 <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=0 WIDTH='100%' ><TR><TD BACKGROUND='../images/gl.png'><IMG SRC='../images/pix.gif' ALT='' HEIGHT=11 WIDTH=11></TD>
 <TD WIDTH='100%' BGCOLOR='#cc0000'><TABLE BORDER=0 CELLSPACING=0 CELLPADDING=5 WIDTH='100%' ><TR><TD BGCOLOR='#E6E6E6'><FONT FACE='verdana,helvetica,arial'><FONT SIZE=-2>2002-03-05</FONT></FONT></TD></TR></TABLE></TD>
 <TD BACKGROUND='../images/gr.png'><IMG SRC='../images/pix.gif' ALT='' HEIGHT=11 WIDTH=11></TD></TR><TR><TD COLSPAN='3' BGCOLOR='#006666'><IMG SRC='../images/pix.gif' HEIGHT=1 WIDTH=1 ALT=''></TD></TR>
 <TR><TD BACKGROUND='../images/wl.png'><IMG SRC='../images/pix.gif' ALT='' HEIGHT=11 WIDTH=11></TD><TD WIDTH='100%' BGCOLOR='#FFFFFF'><TABLE BORDER=0 CELLSPACING=0 CELLPADDING=5 WIDTH='100%' ><TR><TD BGCOLOR='#FFFFFF'>
-<h3>UBF(B)</h3>
-<p><a href="ubfb_quick.html">UBF(B) - quick summary</a>
-<p>UBF(B) has:
-<dl>
-<dt><b>A type system</b>
-<dd>Strings are written enclosed in double quotes, thus:
-<dt><b>A protocol description language</b>
-<dd>The protocol description language
-allows allows us to specific client server interaction in terms of a non-deterministic finite state machine.
-</dl>
-<h3>The type system</h3>
-The notation:
-<ul>
-<li><tt>int()</tt> Means a UBF(A) integer.
-<li><tt>string()</tt> Means a UBF(A) string.
-<li><tt>constant()</tt> Means a UBF(A) constant.
-<li><tt>bin()</tt> Means a UBF(A) binary data item.
-<li><tt>X()</tt> Means an Object of type <tt>X</tt>
-</ul>
-<p>UBF(A) literals are written as follows:
-<ul>
-<li><tt>"..."</tt> - denotes a UBF(A) string.
-<li><tt>[a-z][a-zA-Z0-9_]*</tt> - denotes a UBF(A) constant.
-<li><tt>[-][0-9]+</tt> - denotes a UBF(A) integer.
-</ul>
-<p>Complex types are defined recursively:
-<dl>
-<dt><tt>{T1, T2, ..., Tn}</tt>
-<dd>Is the <i>tuple type</i> if <tt>T1</tt> .. <tt>Tn</tt> are types.
-<p>We say that <tt>{X1, X2, ..., Xn}</tt> is of type
-<tt>{T1, T2, ..., Tn}</tt> if <tt>X1</tt> is of type <tt>T1</tt>, <tt>X2</tt> is of type <tt>T2</tt>, ... and
-<tt>Xn</tt> is of type <tt>Tn</tt>.
-<dt><tt>[T]</tt>
-<dd>Is the <i>list type</i> if <tt>T</tt> is a type.
-<p>We say that <tt># Xn & Xn-1 & ... X2 & x1</tt> is of type
-<tt>[T]</tt> if all <tt>Xi</tt> are of type <tt>T</tt>.
-<dt><tt>T1 | T2 </tt>
-<dd>Is the <i>alternation type</i> if <tt>T1</tt> and <tt>T2</tt> are types.
-<p>We say that <tt>X</tt> is of type
-<tt>T1 | T2 </tt> if <tt>X</tt> is of type <tt>T1</tt> or if
-<tt>X</tt> is of type <tt>T2</tt>.
-</dl>
-<h3>New types</h3>
-<p>New types are introduced in UBF(B) with the notation:
+<h3>UBF(C)</h3>
+<p>The following UBF(A) messages are understood:
 <pre>
-   +TYPE X() = Type
-</pre>
-<p>Examples:
-<pre>
-   +TYPE person() = {person, firstname(), lastname(), sex(), age()}.
-   +TYPE firstname() = string(). 
-   +TYPE lastname() = string().
-   +TYPE age() = int().
-   +TYPE sex() = male | female.
-   +Type people() = [person()].
-</pre>
-<p>This type schema defines a number of different types.
-For example, it is easily seen that:
-<pre>
-   'person' >p 
-    # {p "jim" "smith" male 10} & 
-    # {p "susan" "jones" female 14} & $
-</pre>
-Is of type <tt>people()</tt>.
-<p>Note that UBF(B) type is a <i>language independent type schema</i>.
-<p>language independent type schema are the basis of <i>Contracts</i>
-between clients are servers.
-<p><TABLE BORDER=2><tr><td><pre>+NAME("irc").
+ 'help'$  => string()
+           Help info
+ 'info'$ => string()
+           Short string describing the application
+ 'description'$ => string()
+	   Long string describing the application
+ 'services'$ => [string()]
+           Return a list of services that this server can handle
+ {'start',"XXX"}$ => {ok, string()} | {error, Why}
+	  Start the service XXX - XX must be one of the services 
+	  in the list of services returned by the previos command
+ 'contract'$  => contract()
+           Return the service contract
 
-+VSN("ubf1.0").
+ Once a service has been started remote proceedure calls can be made
 
-+INFO("I am an IRC server").
-
-+DESCRIPTION("
-
-  This is an experimental IRC server programmed 
-to communicate via UBF
-
-").
-
-+SERVICES().
-
-+TYPE nick() = string().
-+TYPE oldnick() = string().
-+TYPE newnick() = string().
-+TYPE group() = string().
-+TYPE msg() = string().
-
-+TYPE time() = {int(), int(), int(), int(), int(), int()}.
-
-+STATE start
-	logon => {ok, nick()} & active.
-	%% I am assigned an initial (random) nick
-
-+STATE active
-       
-   groups  => [string()]  & active;   	% Tell me which groups 
-					% are available
-
-
-   {join, group()} => ok & active;  	% I try to join a group 
-					% This always works	
-
-   {leave, group()} => ok & active;	% I leave a group
-
-   {nick, newnick()} => 
-	nickChanged  & active 		% I try to change my nick
-     |  nickInUse & active;   		% This does not work
-					% If the nick is in use	
-
-
-   {msg, group(), msg()} => ok & active	% send a msg to a group
-                         |  notJoined 
-			    & active; 	% no message is sent if
-					% I have not joined the
-					% the group
-	  
-
-   EVENT => {msg, nick(), group(), msg()};      % A group sends me a message
-
-   EVENT => {joins, nick(), group()};		% Nick joins group
-	
-   EVENT => {leaves, nick(), group()};		% Nick leaves group
-
-	
-   EVENT => {changesName, oldnick(), 		% Nick changes name
-	     newnick(), group()}.
-
- 
-
-
-
-
-
-
-
-
-
-
-
-  
-
-</pre></td></tr></table> </TD>
+ {'rpc', Q} => {'rpcReply, X, State}
+ </pre>
+</TD>
 </TR></TABLE></TD><TD BACKGROUND='../images/wr.png'><IMG SRC='../images/pix.gif' ALT='' HEIGHT=11 WIDTH=11></TD></TR>
 <TR BGCOLOR='#cc0000'><TD COLSPAN='3'><IMG SRC='../images/pix.gif' HEIGHT=1 WIDTH=1 ALT=''></TD></TR></TABLE><TABLE BORDER=0 CELLSPACING=0 CELLPADDING=0 WIDTH='100%'>
 <TR><TD BACKGROUND='../images/wl_cccccc.png'><IMG SRC='../images/pix.gif' ALT='' HEIGHT=11 WIDTH=11></TD><TD WIDTH='100%' BGCOLOR='#FFFFFF'>

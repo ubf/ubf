@@ -23,6 +23,7 @@ EVENT           :       {token,{event,YYline}}.
 NAME            :       {token,{name,YYline}}.
 INFO            :       {token,{info,YYline}}.
 DESCRIPTION     :       {token,{description,YYline}}.
+SERVICES        :       {token,{services,YYline}}.
 "[^"]*"         :	S = lists:sublist(YYtext, 2, length(YYtext) - 2),
 			{token,{string,YYline,S}}.
 =>		:	{token,{'=>',YYline}}.

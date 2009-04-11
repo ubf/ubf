@@ -68,13 +68,15 @@ find_files([], _, _, _, _, A) ->
 
 %% compatibility with earlier stuff
 files(Dir, Re, Flag) -> 
-    Re1 = string:re_sh_to_awk(Re),
+    Re1 = regexp:sh_to_awk(Re),
     reverse(files(Dir, Re1, Flag, fun(File, Acc) ->[File|Acc] end, [])).
 
+-include_lib("kernel/include/file.hrl").
+
 file_type(File) ->
-    case file:file_info(File) of
+    case file:read_file_info(File) of
 	{ok, Facts} ->
-	    case element(2, Facts) of
+	    case Facts#file_info.type of
 		regular   -> regular;
 		directory -> directory;
 		_         -> error

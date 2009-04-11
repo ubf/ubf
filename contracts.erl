@@ -64,7 +64,7 @@ check_term(Type, Term, Level, DefTypes) ->
     check_term1(Type, Term, Level, DefTypes).
 
 check_term1({integer,I}, I, _, _) -> ok;
-check_term1({atom,A}, A, _, _) -> ok;
+check_term1({constant,A}, A, _, _) -> ok;
 check_term1({string,S}, S, _, _) -> ok;
 %% check_term1({list, X}, {'#L', Y}, Level, DefTypes) ->
 %%    check_term({list,X}, Y, Level, DefTypes);

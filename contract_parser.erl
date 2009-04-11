@@ -56,10 +56,13 @@ make_code(C) ->
     StateNames = map(fun({State,_}) -> State end, C#contract.transitions),
     F7 = {function,0,contract_states,0,
 	  [{clause,0,[],[],[erl_parse:abstract(StateNames, 0)]}]},
-    Funcs =  [F1,F2,F3,F4,F5,F6,F7],
+    F8 = {function,0,contract_services,0,
+	  [{clause,0,[],[],[erl_parse:abstract(C#contract.services)]}]},
+    Funcs =  [F1,F2,F3,F4,F5,F6,F7,F8],
     Exports = {attribute,0,export,
 	       [{contract_name,0},{contract_info,0},
 		{contract_description,0},
+		{contract_services,0},
 		{contract_types,0},
 		{contract_states,0},
 		{contract_type,1},
@@ -131,7 +134,7 @@ file1(F) ->
 	E -> E
     end.
 
-preDefinedTypes() -> [int, string, atom, binary, term, void].
+preDefinedTypes() -> [int, string, constant, binary, term, void].
 
 pass2(F, P) ->
     Name = require(one, name, P),
@@ -140,8 +143,10 @@ pass2(F, P) ->
     Description = require(one, description, P),
     Types = require(many, type, P),
     Trans = require(many, transition, P),
+    Services = require(one, services, P),
     C = #contract{name=Name, vsn=Vsn, info=Info, description=
-		  Description, types=Types, transitions=Trans},
+		  Description, services=Services,
+		  types=Types, transitions=Trans},
     pass3(C).
 
 require(Multiplicity, Tag, P) ->    

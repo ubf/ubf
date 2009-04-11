@@ -26,7 +26,7 @@ The notation:
 <ul>
 <li><tt>int()</tt> Means a UBF(A) integer.
 <li><tt>string()</tt> Means a UBF(A) string.
-<li><tt>atom()</tt> Means a UBF(A) atom.
+<li><tt>constant()</tt> Means a UBF(A) constant.
 <li><tt>bin()</tt> Means a UBF(A) binary data item.
 <li><tt>X()</tt> Means an Object of type <tt>X</tt>
 </ul>
@@ -34,7 +34,7 @@ The notation:
 <p>UBF(A) literals are written as follows:
 <ul>
 <li><tt>"..."</tt> - denotes a UBF(A) string.
-<li><tt>[a-z][a-zA-Z0-9_]*</tt> - denotes a UBF(A) atom.
+<li><tt>[a-z][a-zA-Z0-9_]*</tt> - denotes a UBF(A) constant.
 <li><tt>[-][0-9]+</tt> - denotes a UBF(A) integer.
 </ul>
 

@@ -16,7 +16,7 @@ ERL =   ubf proc_socket_server find server\
 
 PLUGINS = test_plugin file_plugin irc_plugin server_plugin
 
-CONTRACTS = test_plugin file_plugin irc_plugin server server_plugin
+CONTRACTS = test_plugin file_plugin irc_plugin server_plugin
 
 BEAM = ${ERL:%=%.beam}
 BUC = ${CONTRACTS:%=%.buc}
