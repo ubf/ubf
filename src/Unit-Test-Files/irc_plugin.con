@@ -1,0 +1,64 @@
++NAME("irc").
+
++VSN("ubf1.0").
+
+
++TYPES
+
+info()         = info;
+description()  = description;
+contract()     = contract;
+
+bool()         = true | false;
+nick()         = string();
+oldnick()      = string();
+newnick()      = string();
+group()        = string();
+logon()        = logon;
+proceed()      = {ok, nick()} "A random nick is assigned";
+listGroups()   = groups;
+groups()       = [group()];
+joinGroup()    = {join, group()} 
+	         "You must join a group before you can send a message to it";
+leaveGroup()   = {leave, group()};
+ok()           = ok;
+changeNick()   = {nick, nick()} "Change your nick in all groups";
+msg()          = {msg, group(), string()} "send a message to a group";
+msgEvent()     = {msg, nick(), group(), string()};
+joinEvent()    = {joins, nick(), group()};
+leaveEvent()   =  {leaves, nick(), group()};
+changeNameEvent() = {changesName, oldnick(),newnick(), group()}.
+
+%% I am assigned an initial (random) nick
+
++STATE start logon() => proceed() & active. 
+
++STATE active
+       
+   listGroups() => groups() & active;  
+   joinGroup()  => ok() & active;
+   leaveGroup() => ok() & active;
+   changeNick() => bool() & active; 
+   msg()        => bool() & active;   % false if you have not joined the group
+
+   EVENT => msgEvent();        % A group sends me a message
+   EVENT => joinEvent();       % Nick joins group
+   EVENT => leaveEvent();     % Nick leaves group
+   EVENT => changeNameEvent(). % Nick changes name
+
++ANYSTATE
+	info()        => string();
+	description() => string();
+	contract()    => term().
+
+
+
+
+
+
+
+
+
+
+  
+

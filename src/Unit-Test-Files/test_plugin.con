@@ -1,0 +1,82 @@
++NAME("test").
+
++VSN("ubf1.0").
+
++TYPES
+
+info()         = info;
+description()  = description;
+services()     = services;
+contract()     = contract;
+serviceList()  = [string()];
+
+dummy()        = {dummy, dummyrecord()};
+dummyrecord()  = #dummyrecord{foo=integer(), bar=binary()};
+dummy1a()      = atom(ascii,nonempty,nonundefined);
+dummy1b()      = atom(asciiprintable,nonempty,nonundefined);
+dummy2a()      = string(ascii,nonempty);
+dummy2b()      = string(asciiprintable,nonempty);
+dummy3a()      = binary(ascii,nonempty);
+dummy3b()      = binary(asciiprintable,nonempty);
+dummy4()       = term(nonempty,nonundefined);
+
+password()     = string();
+file()         = string();
+noSuchFile()   = {error, noSuchFile};
+doubleInt()    = [integer()];
+upCase()       = string();
+logon()        = {logon, password()};
+ls()           = ls;
+files()        = {files, [string()]} "request a list of file";
+callback()     = {callback, void()};
+getFile()      = {get, file()};
+okFile()       = {ok, binary()};
+stop()         = stop;
+yes()          = yes;
+ack()          = ack;
+error()        = error;
+ok()           = ok;
+intList()      = [integer()];
+testAmbiguities()  = testAmbiguities;
+callbackOnItsWay() = callbackOnItsWay.
+
++STATE start 
+	logon()          => ok()    & active 
+	                 |  error() & stop.
+
++STATE active 
+       ls()              => files() & active;
+       callback()        => callbackOnItsWay() & active;
+       getFile()         => okFile() & active
+		         |  noSuchFile() & stop;
+       stop()            => void() & stop;
+      testAmbiguities()  => yes() & funny;
+      EVENT 		 => callback(). 
+
++STATE funny
+	string()         => upCase() & funny;
+	intList()        => doubleInt() & funny;
+	stop()           => ack() & start.
+
++ANYSTATE
+	dummy()          => dummy();
+	dummy1a()        => dummy1a();
+	dummy1b()        => dummy1b();
+	dummy2a()        => dummy2a();
+	dummy2b()        => dummy2b();
+	dummy3a()        => dummy3a();
+	dummy3b()        => dummy3b();
+	dummy4()         => dummy4();
+	info()           => string();
+	description()    => string();
+	services()       => serviceList();
+	contract()       => term().
+
+
+
+
+
+
+
+  
+

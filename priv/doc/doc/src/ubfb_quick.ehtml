@@ -1,0 +1,102 @@
+<include>layout.mac</include>
+<top/>
+
+<article title="UBF(A) - quick summary"
+         date="2002-03-05"
+         link=""
+         linktitle="">
+
+<h3>UBF(A) - quick summary</h3>
+
+<p><a href="ubfa.html">UBF(A) - specification</a>
+
+<h3> USF Encoding rules</h3>
+
+<pre>
+
+    '...'       Push an constant onto the stack
+                  (within an constant ' must be escaped (\')
+
+     "..."      Push a string on the stack
+                 (within a  string " must be escaped (\")
+
+     Int ~...~  Push a binary on the stack (length int)
+
+     `xxx`      Tag the top object on the stack as being type xxx
+                 (within a  type ` must be escaped (\")
+
+     %....%     Comment (skip)
+
+     [-][0-9]*  Integer
+
+     \s\n\r\t,  Ignore
+
+     #          Push nil onto the stack
+
+     &          Replace the two topmost entries on the stack
+                with (cons X Y)
+
+     {          Start of struct
+
+     }          End of struct
+
+     $          Return the top stack entry (the stack must only have
+                ONE entry now)
+
+     Control =  '"~%-0123456789{}#&$> (21 characters)
+
+     >C         Pop the stack and store in register[C]
+
+                C is any character except Control
+
+     C          Push register[C] on the stack
+</pre>
+
+<p>
+   Thus:
+<pre>
+    'person'>p # {p,"Joe",123} & {p, 'fred', ~abc~} & $
+</pre>
+
+<p>Represents the UBF(B) term:
+
+<pre>
+    [{person, "Joe", 123}, {person, fred, <<abc>>}].
+</pre>
+<p>Objects can be "semantically tagged" thus
+
+<pre>
+    12345~....~ `jpeg`
+</pre>
+
+<p>Represents a 12345 byte object (contained between ~'s) that is of
+type <tt>jpeg</tt>. <i>It is assumed that the application knows what
+this means</i>.
+
+<pre>
+    16~ahsjgdjagdjadjadg~ `md5`
+</pre>
+<p>Might be an MD5 checksum etc.
+
+<h3>Servers and Introspection</h3>
+
+<ol>
+<li>Servers only understand USF(A) formatted messages:
+   
+<li> Servers always respond to
+      The message 'interface'$
+
+<li> Client Server RCP is as follows
+ 
+      {rpc, Term} -> {reply, Reply, NextServerState}
+</ul>
+      All terms are UBF(A) encoded.
+
+</article>
+<bot/>
+
+
+
+
+
+

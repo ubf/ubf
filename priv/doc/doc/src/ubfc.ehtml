@@ -1,0 +1,28 @@
+<include>layout.mac</include>
+<top/>
+
+<article title="UBF(C)"
+	 date="2002-03-05"
+	 link=""
+	 linktitle="">
+
+<h3>UBF(C)</h3>
+
+<p>All client/server remote-proceedure calls have the following
+form:
+
+<pre>
+ Msg$  => {Reply, NextState}$
+</pre>
+
+<p>Here <b>Msg</b> and <b>Type</b> are UBF(A) types and <b>NextState</b>
+is the next state of the server.
+
+</article>
+<bot/>
+
+
+
+
+
+
