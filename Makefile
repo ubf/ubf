@@ -12,7 +12,7 @@
 ERL =   ubf proc_socket_server find server\
 	test ubf_driver ubf_test file_client\
 	contracts contract_manager client plugin_handler\
-	leex contract_lex contract_yecc irc_client ubf_utils
+	leex contract_lex contract_yecc irc_client irc_client_gs ubf_utils
 
 PLUGINS = test_plugin file_plugin irc_plugin server_plugin
 

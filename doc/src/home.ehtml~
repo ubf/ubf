@@ -1,53 +1,54 @@
 <include>layout.mac</include>
 <top/>
 
-<article title="Manifesto"
-	 date="2001-06-10"
+<article title="White paper"
+	 date="2002-03-05"
 	 link=""
 	 linktitle="">
 
-<p>Magna virtus tua et vivebam etiam Et quoniam cum me, formasti mihi quasi
-necesse esset nisi vero; illa prior.  Item si cum in quam me urgeret
-quod non est, innocentia est, fit, ut eam ut vides, haec ipsa tamen
-loqui quoniam itaque.
 
-<p>Iactabam domine, et confiteri me delicta mea,
-deus, es domine, non servientibus (et magistris a paedagogis et mineris
-ingentes miserias)?  Salus tua, relicto te vult homo circumferens
-mortalitem suam, circumferens mortalitem inrisormeus, cui loquor. <P>
-
-<p>Hocadum i et confiteri me delicta mea,
-deus, es domine, non servientibus (et magistris a paedagogis et mineris
-ingentes miserias)?  Salus tua, relicto te vult homo circumferens
-<a href="http://www.dedicated-servers.co.uk/">www.dedicated-servers.co.uk</a>
-ingentes miserias)?  Salus tua, relicto te vult homo circumferens.
-
-</article>
-
-<p>
-
-<article title="Design"
-	 date="2001-06-10"
-	 link="http://hadess.net/"
-	 linktitle="click for more">
-<p>This design was shamlessly stolen from
-<a href="http://hadess.net/">http://hadess.net/</a>.
-and recoded in Erlang.
-</article>
-<p>
-
-<article title="To do"
-	 date="2001-06-10"
-	 link=""
-	 linktitle="">
+<p>UBF is a language for transporting and describing complex data structures across a network. It has two components:
 <ul>
-<li>Recode this using a nice red color - done
-<li>Make sure it passes html_check
-<li>Change ehtml to write the output files in a different
-directory
-<li>Write a makefile for this.
-</article>
+<li>
 
+<a href="ubfa.html">UBF(A)</a> is a data transport format, roughly
+equivalent to well-formed XML.
+
+<li><a href="ubfb.html">UBF(B)</a> is a programming langauge
+for describing types in UBF(A) and protocols between clients
+and servers.
+UBF(B) is roughly equivalent to to Verified XML,
+XML-schemas, SOAP and WDSL.
+
+</ul>
+
+<p>While the XML series of languages had the goal of having a human
+readable format the UBF languages take the opposite view and provide a
+"machine friendly" format.
+
+<p>UBF is designed to be easy to implement. As a proof of concept - UBF drivers
+For Erlang, Oz, Java and TCL can be found in the download area. 
+Implementors are welcome to add new languages.
+
+<p>UBF is designed to be "language neutral" - UBF(A) defines a
+language neutral binary format for transporting data across a
+network. UBF(B) is a type system for describing client/server
+interactions which use UBF(A).
+
+<h3>Programming by Contract</h3>
+<center>
+<img  src="$ROOT/images/ubf.gif">
+</center>
+
+<p>Central to UBF is the idea of a "contract" which regulates the
+set of legal conversations that can take place between a client and a server.
+
+<p>A software component (the contract checker) is place between a client and server which checks that all interactions between thew client and server are legal.
+
+<p>The digram shows a Java client talking to a C++ server.
+
+
+</article>
 <bot/>
 
 

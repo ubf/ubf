@@ -35,7 +35,7 @@ loop(Socket, Pid, Cont) ->
 	{Pid, Term} ->
 	    %% io:format("ubf_driver sending:~p~n",[Term]),
 	    Data = ubf:encode(Term),
-	    io:format("ubf_driver sending:~s~n",[Data]),
+	    %% io:format("ubf_driver sending:~s~n",[Data]),
 	    gen_tcp:send(Socket, Data),
 	    loop(Socket, Pid, Cont);
     	stop ->
@@ -49,7 +49,7 @@ loop(Socket, Pid, Cont) ->
 	    exit(socket_closed);
 	{tcp, Socket, Data} ->
 	    T = binary_to_list(Data),
-	    io:format("ubf driver received raw=|~s|~n",[T]),
+	    %% io:format("ubf driver received raw=|~s|~n",[T]),
 	    Cont1 = ubf:decode(T, Cont),
 	    %% io:format("Cont1=~p~n",[Cont1]),
 	    handle_data(Socket, Pid, Cont1);

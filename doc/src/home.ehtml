@@ -1,7 +1,15 @@
 <include>layout.mac</include>
 <top/>
 
-<article title="White paper"
+<article title="Warning"
+	 date="2002-03-05"
+	 link=""
+	 linktitle="">
+<p>
+Pre-release. Be warned. Things change frequently
+</article>
+<p>
+<article title="UBF Home"
 	 date="2002-03-05"
 	 link=""
 	 linktitle="">

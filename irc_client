@@ -1,2 +1,3 @@
 #! /bin/sh
-erl -noshell -s irc_client batch $1
+make
+erl -noshell -s irc_client_gs batch $1

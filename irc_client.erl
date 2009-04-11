@@ -25,8 +25,6 @@ start(Nick) ->
     end,
     io:format("client stops~n").
 
-
-
 loop(Pid, Group, Gs, Nick) ->
     io:format("Status: Nick=~s Group=~s Joined groups=~p~n",[Nick, Group, Gs]),
     case io:get_line('> ') of
