@@ -8,27 +8,15 @@
 
 <h3>UBF(C)</h3>
 
-<p>The following UBF(A) messages are understood:
+<p>All client/server remote-proceedure calls have the following
+form:
 
 <pre>
- 'help'$  => string()
-           Help info
- 'info'$ => string()
-           Short string describing the application
- 'description'$ => string()
-	   Long string describing the application
- 'services'$ => [string()]
-           Return a list of services that this server can handle
- {'start',"XXX"}$ => {ok, string()} | {error, Why}
-	  Start the service XXX - XX must be one of the services 
-	  in the list of services returned by the previos command
- 'contract'$  => contract()
-           Return the service contract
+ Msg$  => {Reply, NextState}$
+</pre>
 
- Once a service has been started remote proceedure calls can be made
-
- {'rpc', Q} => {'rpcReply, X, State}
- </pre>
+<p>Here <b>Msg</b> and <b>Type</b> are UBF(A) types and <b>NextState</b>
+is the next state of the server.
 
 </article>
 <bot/>

@@ -22,7 +22,7 @@ start_server(Port) ->
     %% set up a UBF listener on Port
     Server = self(),
     start_ubf_listener(Port, Server),
-    plugin_handler:manager(server_plugin).
+    plugin_handler:manager(server_plugin, []).
 
 start_ubf_listener(Port, Server) ->
     io:format("starting proc_socket:~p~n",[Port]),
@@ -63,7 +63,8 @@ start_ubf_listener(Port, Server) ->
 		     0).
 
 help() ->
-    s("\n\n type 'help'$ for help\n\n").
+    s("\n\n see http://www.sics.se/~joe/ubf/ for details of this service\n"
+      " type 'info'$ for information\n\n").
 
 sendEvent(Pid, Msg) ->
     %% io:format("sendEvent (server) ~p to ~p~n",[Msg,Pid]),

@@ -38,33 +38,52 @@ Connected to localhost.localdomain.
 Escape character is '^]'.
 {'ubf1.0',"meta_server","
 
- type 'help'$ for help
+ see http://www.sics.se/~joe/ubf/ for details of this service
+ type 'info'$ for information
+
 
 "}$
 <font color="blue">Ask for information</font>
 <font color="red">'info'$</font>
-"I am a meta server - I start other servers"$
+
+{"I am a meta server - 
+
+    type 'help'$
+
+to find out what I can do",'start'}$
 
 <font color="blue">Ask for a list of servers</font>
 <font color="red">'services'$</font>
-{'services',#"test_server"&"irc_server"&"file_server"&}$
+{#"test_server"&"irc_server"&"file_server"&,'start'}$
 
 <font color="blue">Activate a service</font>
-<font color="red">{'start',"file_server"}$</font>
-{'ok',"I am a mini file server"}$
+<font color="red">{'startService',"file_server",#}$</font>
+{{'ok',"I am a mini file server"},'start'}$
 
 <font color="blue">Ask for information - note this
 has now changed since we are now talking to a different service</font>
 <font color="red">'info'$</font>
-"I am a mini file server"$
+{"I am a mini file server",'start'}$
+
+<font color="blue">Ask for the long description - note this
+has now changed since we are now talking to a different service</font>
+<font color="red">'description'$</font>
+{"
+
+Commands:
+
+    'ls'$  List files
+    {'get' File} => Length ~ ... ~ | noSuchFile
+    
+",'start'}$
 
 <font color="blue">Do a list command</font>
-<font color="red">{'rpc','ls'}$</font>
-{'rpcReply',{'files',#"ubf.erl"&"client.erl"&"Makefile"& ...
+<font color="red">'ls'$</font>
+{{'files',#"ubf.erl"&"client.erl"&"Makefile"& ...
 
 <font color="blue">Fetch a file</font>
-<font color="red">{'rpc',{'get',"Makefile"}}$</font>
-{'rpcReply',1274~ ... ~}$
+<font color="red">{'get',"Makefile"}$</font>
+{1274~ ... ~'start'}$
 
 <font color="blue">Fetch the contract - this is the UBF(A) parse tree
 of the UBF(B) contract given above :-)</font>

@@ -24,14 +24,19 @@ ss() ->
 
 test() ->
     {ok, Pid, Name} = client:connect(host(), defaultPort()),
-    Info = client:info(Pid),
-    Services = client:services(Pid),
+    Info = client:rpc(Pid, info),
+    io:format("Info=~p~n",[Info]),
+    Services = client:rpc(Pid, services),
     io:format("Services=~p~n",[Services]),
     %% Try to start a missing  service
-    R1 = client:start(Pid, "missing"),
+    R1 = client:rpc(Pid, {startService, s("missing"), []}),
     io:format("R1=~p~n",[R1]),
-    R2 = client:start(Pid, "test_server"),
+    %% Try to start the test server with the wrong password
+    R2 = client:rpc(Pid, {startService, s("test_server"), guess}),
     io:format("R2=~p~n",[R2]),
+    %% Now the correct password
+    R3 = client:rpc(Pid, {startService, s("test_server"), secret}),
+    io:format("R3=~p~n",[R3]),
     rpc(Pid, {logon,s("joe")}),
     {reply, {files, _}, active} = rpc(Pid, ls),
     install_single_callback_handler(Pid),

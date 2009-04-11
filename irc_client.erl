@@ -13,13 +13,13 @@ batch([Name]) ->
 
 start(Nick) ->
     {ok, Pid, Name} = client:connect("localhost", 2000),
-    {ok,_} = client:start(Pid, "irc_server"),
+    {reply,{ok,_}, _} = rpc(Pid, {startService, s("irc_server"), []}),
     client:install_handler(Pid, fun print_msg/1),
     {reply, _, _} = rpc(Pid, logon),
     case rpc(Pid, {nick, s(Nick)}) of
-	{reply, nickInUse, _} ->
+	{reply, false, _} ->
 	    client:stop(Pid);
-	{reply, nickChanged, active} ->
+	{reply, true, active} ->
 	    {reply,_,_}   = rpc(Pid, {join, s("erlang")}),
 	    loop(Pid, "erlang", ["erlang"], Nick)
     end,

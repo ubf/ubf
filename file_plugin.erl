@@ -1,8 +1,9 @@
 -module(file_plugin).
 
--export([manager_start/2, client_stop/3,
-	 managerStart/0, handlerStartState/0, 
-	 manager_rpc/2, handle_rpc/4]).
+-export([info/0, description/0,
+	 managerStart/1, handlerStop/3,
+	 handlerStart/2, 
+	 managerRpc/2, handlerRpc/4]).
 
 -import(lists, [map/2, member/2]).
 
@@ -16,36 +17,39 @@ s(X) -> {'#S', X}.
 
 %% The initial state of the manager
 
-managerStart() -> myManagerState.
+info() -> "I am a mini file server".
 
-handlerStartState() -> myHandlerState.
+description() -> "
+
+Commands:
+
+    'ls'$  List files
+    {'get' File} => Length ~ ... ~ | noSuchFile
     
-%% manager_start(Args, State) is called every time a session is started
-%% Args comes from client:start(Host,Port,Service,Args)
-%% Service in the rcp:start must match name()
-%% manager_start(Args, State) -> {accept, Reply, State} | {reject, Why, State}
-%% State is the manager state.
+".
 
-manager_start(_, ManagerState) ->
-    Reply = yesOffWeGo,
+managerStart(_) -> {ok, myManagerState}.
+
+managerRpc(secret, State) ->
+    {accept, welcomeToFTP, State};
+managerRpc(_, State) ->
+    {reject, badPassword, State}.
+
+handlerStart(_, ManagerPid) ->
+    Reply = s(info()),
     HandlerState = start,
-    HandlerData = myInitailData0,
-    {accept, Reply, HandlerState, HandlerData, ManagerState}.
+    HandlerData = myFirstData0,
+    {accept, Reply, HandlerState, HandlerData}.
 
-client_stop(Pid, Reason, State) ->
+handlerStop(Pid, Reason, State) ->
     io:format("Client stopped:~p ~p~n",[Pid, Reason]),
     State.
 
-manager_rpc(secret, State) ->
-    {accept, welcomeToFTP, State};
-manager_rpc(_, State) ->
-    {reject, badPassword, State}.
-
-handle_rpc(start, ls, State, Env) ->
+handlerRpc(start, ls, State, Env) ->
     {ok, Files} = file:list_dir("."),
     Ret = map(fun(I) -> s(I) end, Files),
     {{files, Ret}, start, State};
-handle_rpc(start, {get, ?S(File)}, State, Env) ->
+handlerRpc(start, {get, ?S(File)}, State, Env) ->
     {ok, Files} = file:list_dir("."),
     case member(File, Files) of
 	true ->
@@ -53,7 +57,13 @@ handle_rpc(start, {get, ?S(File)}, State, Env) ->
 	    {Bin, start, State};
 	false ->
 	    {noSuchFile, stop, State}
-    end.
+    end;
+handlerRpc(Any, info, State, _) ->
+    {s(info()), Any, State};
+handlerRpc(Any, description, State, Manager) ->
+    {s(description()), Any, State}.
+
+
 
 
 

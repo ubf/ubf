@@ -7,7 +7,6 @@ public class UBFList extends UBFObject
     public final LinkedList value = new LinkedList();
 
     public UBFList() {
-	
     }
 
     public UBFList(UBFObject[] arr) {

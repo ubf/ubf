@@ -1,8 +1,10 @@
 -module(test_plugin).
 
--export([manager_start/2, client_stop/3,
-	 managerStart/0, handlerStartState/0, 
-	 manager_rpc/2, handle_rpc/4]).
+
+-export([info/0, description/0,
+	 managerStart/1, managerRpc/2, 
+	 handlerStart/2, handlerRpc/4, handlerStop/3
+	]).
 
 -import(server, [sendEvent/2]).
 -import(lists, [map/2]).
@@ -15,53 +17,52 @@
 s(Str) -> {'#S', Str}.
 -define(S(Str), {'#S',Str}).
 
-managerStart() -> myManagerState.
 
-handlerStartState() -> myHandlerState.
-    
-%% manager_start(Args, State) is called every time a session is started
-%% Args comes from client:start(Host,Port,Service,Args)
-%% Service in the rcp:start must match name()
-%% manager_start(Args, State) -> {accept, Reply, State} | {reject, Why, State}
-%% State is the manager state.
+info() -> "I am a test server".
 
-manager_start(secret, ManagerState) ->
-    Reply = yesOffWeGo,
-    HandlerState = start,
-    HandlerData = myInitailData0,
-    {accept, Reply, HandlerState, HandlerData, ManagerState};
-manager_start(Other, ManagerState) ->
-    {reject, bad_password, ManagerState}.
+description() -> "The test server is a ...
+	bla
+	bla
+	bla".
 
+managerStart(_) -> {ok, myManagerState}.
 
-client_stop(Pid, Reason, State) ->
-    io:format("Client stopped:~p ~p~n",[Pid, Reason]),
-    State.
-
-manager_rpc(secret, State) ->
+managerRpc(secret, State) ->
     {accept, welcomeToFTP, State};
-manager_rpc(_, State) ->
+managerRpc(_, State) ->
     {reject, badPassword, State}.
 
-handle_rpc(start, {logon, _}, State, Env) ->
+%% handlerStart(Args, ManagerPid) ->
+%%   {accept, State, InitialData}
+
+handlerStart(secret, ManagerPid) ->
+    {accept, yesOffWeGo, start, myInitailData0};
+handlerStart(Other, ManagerPid) ->
+    {reject, bad_password}.
+
+handlerRpc(start, {logon, _}, State, Env) ->
     {ok, active, State};
-handle_rpc(active, ls, State, Env) ->
+handlerRpc(active, ls, State, Env) ->
     {{files, [s("a"), s("b")]}, active, State};
-handle_rpc(active, {callback, X}, State, Manager) ->
+handlerRpc(active, {callback, X}, State, Manager) ->
     sendEvent(self(), {callback, X}),
     {callbackOnItsWay, active, State};
-handle_rpc(active, {get, File}, State, Env) ->
+handlerRpc(active, {get, File}, State, Env) ->
     {{ok,(<<>>)}, active, State};
-handle_rpc(active, testAmbiguities, State, Env) ->
+handlerRpc(active, testAmbiguities, State, Env) ->
     {yes, funny, State};
-handle_rpc(funny, ?S(S), State, Env) ->
+handlerRpc(funny, ?S(S), State, Env) ->
     io:format("Upcase ~p~n",[S]),
     {s(up_case(S)), funny, State};
-handle_rpc(funny, List, State, Env) ->
+handlerRpc(funny, List, State, Env) ->
     io:format("Double ~p~n",[List]),
     {map(fun(I) -> 2*I end, List), funny, State};
-handle_rpc(funny, stop, State, Env) ->
+handlerRpc(funny, stop, State, Env) ->
     {ack, start, State}.
+
+handlerStop(Pid, Reason, State) ->
+    io:format("Client stopped:~p ~p~n",[Pid, Reason]),
+    State.
 
 up_case(I) ->
     map(fun to_upper/1 , I).

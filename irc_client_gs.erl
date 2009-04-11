@@ -16,7 +16,8 @@ start(Nick) ->
 init1(Nick) ->
     case client:connect("enfield.sics.se", 2000) of
 	{ok, Pid, Name} ->
-	    {ok,_} = client:start(Pid, "irc_server"),
+	    {reply, {ok,_},_} = client:rpc(Pid, {startService, s("irc_server"),
+						 []}),
 	    client:install_handler(Pid, fun print_msg/1),
 	    {reply, _, _} = rpc(Pid, logon),
 	    Self = self(),
@@ -24,11 +25,11 @@ init1(Nick) ->
 						send_self(M, Self)
 					end),
 	    case rpc(Pid, {nick, s(Nick)}) of
-		{reply, nickInUse, _} ->
+		{reply, false, _} ->
 		    client:stop(Pid),
 		    io:format("Nick was in use try again~n"),
 		    erlang:halt();
-		{reply, nickChanged, active} ->
+		{reply, true, active} ->
 		    init(Pid, Nick)
 	    end,
 	    io:format("client stops~n");
@@ -57,10 +58,10 @@ loop(S, Dict, Pid, L1, E1, E2) ->
 	    Nick = gs:read(E2, text),
 	    io:format("Change nick to:~s~n",[Nick]), 
 	    case rpc(Pid, {nick, s(Nick)}) of
-		{reply, nickInUse, _} ->
+		{reply, false, _} ->
 		    gs:config(E2, {text, "** bad nick **"}),
 		    loop(S, Dict, Pid, L1, E1, E2);
-		{reply, nickChanged, active} ->
+		{reply, true, active} ->
 		    io:format("nick was changed~n"),
 		    gs:config(L1, {label, {text, "Nick: " ++ Nick}}),
 		    loop(S, Dict, Pid, L1, E1, E2)

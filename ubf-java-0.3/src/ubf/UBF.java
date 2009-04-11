@@ -6,17 +6,7 @@ import java.io.*;
 
 public class UBF
 {
-    public static void write(UBFObject object, OutputStream output)
-	throws IOException
-    {
-	new UBFEncoder(output).write(object);
-    }
-
-    public static UBFObject read(InputStream input)
-	throws IOException, UBFException
-    {
-	return new UBFDecoder(input).read();
-    }
+    public static final boolean DEBUG = false;
 
     public static UBFObject tuple(UBFObject a) {
 	return new UBFTuple(new UBFObject[] { a });
@@ -37,6 +27,26 @@ public class UBF
 
     public static UBFAtom atom(String s) {
 	return new UBFAtom(s);
+    }
+
+    /* Networking */
+
+    public static void write(UBFObject object, OutputStream output)
+	throws IOException
+    {
+	new UBFEncoder(output).write(object);
+    }
+
+    public static UBFObject read(InputStream input)
+	throws IOException, UBFException
+    {
+	return new UBFDecoder(input).read();
+    }
+
+    public static void debug(String msg)
+    {
+	if (DEBUG)
+	    System.err.println(msg);
     }
 
 }

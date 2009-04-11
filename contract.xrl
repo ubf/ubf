@@ -17,13 +17,11 @@ Rules.
 				   false -> {atom,YYline,Atom}
 			       end}.
 VSN             :       {token,{vsn, YYline}}.
-TYPE            :       {token,{typeKwd,YYline}}.
+TYPES           :       {token,{typeKwd,YYline}}.
 STATE           :       {token,{state,YYline}}.
+ANYSTATE        :       {token,{anystate,YYline}}.
 EVENT           :       {token,{event,YYline}}.
 NAME            :       {token,{name,YYline}}.
-INFO            :       {token,{info,YYline}}.
-DESCRIPTION     :       {token,{description,YYline}}.
-SERVICES        :       {token,{services,YYline}}.
 "[^"]*"         :	S = lists:sublist(YYtext, 2, length(YYtext) - 2),
 			{token,{string,YYline,S}}.
 =>		:	{token,{'=>',YYline}}.

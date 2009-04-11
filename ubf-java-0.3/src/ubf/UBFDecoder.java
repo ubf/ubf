@@ -91,8 +91,8 @@ public class UBFDecoder
 	    if (ch == '-' || Character.isDigit(ch))
 		return readInteger();
 	    else
-		throw new UBFException("Invalid start character: " +
-				       String.valueOf(ch));
+		throw new UBFException("Invalid start character: '" +
+				       ch + "' (" + (int)ch + ")");
 	}
     }
 

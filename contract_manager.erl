@@ -54,69 +54,15 @@ wait() ->
 	    loop(Client, Server, State, Mod)
     end.
 
-relay(Client, Server) ->
-    receive
-	{Client, Msg} ->
-	    Server ! {self(), Msg},
-	    relay(Client, Server);
-	{Server, Msg} ->
-	    Client ! {self(), Msg},
-	    relay(Client, Server);
-	{contract, State, Mod} ->
-	    loop(Client, Server, State, Mod);
-	Other ->
-	    io:format("ContactManager Relay dropped:~p~n",[Other]),
-	    relay(Client, Server)
-    end.
-
 loop(Client, Server, State1, Mod) ->
     %% io:format("contract_manager ~p waiting for Driver=~p in state:~p ~n",
     %% [Client, self(), State1]),
-    receive
-	{Client, help} ->
-	    Client ! {self(),s(help())},
-	    loop(Client, Server, State1, Mod);
-	{Client, info} ->
-	    Client ! {self(),s(Mod:contract_info())},
-	    loop(Client, Server, State1, Mod);
-	{Client, description} ->
-	    Client ! {self(),s(Mod:contract_description())},
-	    loop(Client, Server, State1, Mod);
-	{Client, services} ->
-	    S = Mod:contract_services(),
-	    S1 = map(fun(I) -> s(I) end, S),
-	    Client ! {self(), {services, S1}},
-	    loop(Client, Server, State1, Mod);
+    receive 
 	{Client, contract} ->
-	    S = contract(Mod),
-	    Client ! {self(), {contract, S}},
-	    loop(Client, Server, State1, Mod);
-	{Client, {start, ?S(Service)}} ->
-	    S = Mod:contract_services(),
-	    case member(Service, S) of
-		true ->
-		    Server ! {self(), {startService, Service}},
-		    receive
-			{Server, {accept, HandlerMod, ManagerPid}} ->
-			    Info = HandlerMod:contract_info(),
-			    Client ! {self(), {ok, s(Info)}},
-			    loop(Client, Server, start, HandlerMod);
-			{Server, {reject, Why}} ->
-			    Client ! {self(), {error,Why}},
-			    loop(Client, Server, State1, Mod)
-		    end;
-		false ->
-		    Client ! {self(), noSuchService},
-		    loop(Client, Server, State1, Mod)
-	    end,
-	    loop(Client, Server, State1, Mod);
-	{Client, expect} ->
-	    Client ! {self(),{expectReply, get_expect(State1, Mod)}},
-	    loop(Client, Server, State1, Mod);
-	{Client, state} ->
-	    Client ! {self(), {stateReply, State1}},
-	    loop(Client, Server, State1, Mod);
-	{Client, {rpc, Q}} ->
+            S = contract(Mod),
+            Client ! {self(), {contract, S}},
+            loop(Client, Server, State1, Mod);
+	{Client, Q} ->
 	    do_rpc(Client, Server, State1, Mod, Q);
 	{event, Msg} ->
 	    %% io:format("Check dispatch:~p ~p ~p~n",[Msg, State1, Mod]),
@@ -153,83 +99,55 @@ do_rpc(Client, Server, State1, Mod, Q) ->
 	    Client ! {self(),
 		      {clientBrokeContract, {state, State1}, Expect}},
 	    io:format("Expecting:~p~n",[Expect]),
-	    exit(fatal);
+	    Client ! stop;
 	FSM2 ->
 	    %% io:format("contract yes FSM2=~p~n", [FSM2]),
 	    %% io:format("I ~p call handle_rpc ~p~n",[self(), Q]),
 	    Server ! {self(), {rpc, Q}},
 	    receive
-		{Server, R1={rpcReply, Reply, State2}} ->
+		{Server, {rpcReply, Reply, State2, Next}} ->
 		    %% check contract
 		    %% io:format("Contract check reply:~p ~p~n",
 		    %% [Reply, State2]),
 		    case checkOut(Reply, State2, FSM2, Mod) of
 			true ->
 			    %% io:format("contract Reply accepted~n"),
-			    Client ! {self(), R1},
-			    loop(Client,Server,State2,Mod);
+			    case Next of
+				same ->
+				    Client ! {self(), {Reply, State2}},
+				    loop(Client,Server,State2,Mod);
+				{new, NewMod, State3} ->
+				    Client ! {self(), {Reply, State3}},
+				    loop(Client, Server, State3, NewMod)
+			    end;
 			false ->
+			    Expect = map(fun(I) -> element(2, I) end, FSM2),
 			    io:format("***** " 
 				      "Server broke contract replying "
 				      "to client~n"
 				      "Original state=~p~n"
 				      "Client message=~p~n"
-				      "Server response=~p~n",
-				      [State1, Q, Reply]),
+				      "Server response=~p~n"
+				      "Expecting type=~p~n",
+				      [State1, Q, Reply, Expect]),
 			    exit(fatal)
-		    end;
-		{Server, R1={rpcReplyNew, Reply, State2, Mod2}} ->
-		    Client ! {self(), {rpcReply, Reply, State2}},
-		    io:format("Swop contract to:~p~n",[Mod2]),
-		    loop(Client, Server, State2, Mod2)
+		    end
 	    end
     end.
 
-%% returns the set of types for the next message
-get_expect(State,Mod) ->
-    T = Mod:contract_state(State),
-    [Type||{input, Type, _} <- T].
 
 contract(Mod) ->    
     {{name,s(Mod:contract_name())},
-     {info, s(Mod:contract_info())},
-     {description, s(Mod:contract_description())},
-     {services, map(fun(I) -> s(I) end, Mod:contract_services())},
      {states,
       map(fun(S) ->
 		  {S, Mod:contract_state(S)}
 	  end, Mod:contract_states())},
+     {anystate, Mod:contract_anystate()},
      {types,
       map(fun(S) ->
 		  {S, Mod:contract_type(S)}
 	  end, Mod:contract_types())}}.
 
-help() ->
-    "\n\n
-This server speaks Universal Binary Format 1.0
-
-See http://www.sics.se/~joe/ubf.html
-
-UBF servers are introspective - which means the
-servers can describe themselves. The following commands are
-always available:
-
-'help'$          This information
-'info'$          Short information about the current service
-'description'$   Long information  about the current service
-'services'$      A list of available services
-'contract'$      Return the service contract
-                 (Note this is encoded in UBF)
-
-To start a service:
-
-{'start', \"Name\"} Name should be one of the names in the
-                  services list
-
-Warning without reading the documentation you might find the output from
-some of these commands difficult to understand :-)
-
-".
 
      
 			    

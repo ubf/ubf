@@ -96,4 +96,22 @@ Client RPC are perfomed with
 	Plugin:handle_rpc(State1, Q, handerState(), Env) ->
 		{reply, Val, State2, Data2}
 
-When
+...
+
+	Try this
+
+	set the environment variable WHERE to $HOME
+
+	./irc_server in one window
+
+	./irc_client "luke" in window  1
+	./irc_client "fred" in window  2
+
+	Look in irc_clinet.erl
+		irc_plugin.erl
+		irc_plugin.con
+
+	If it doesn't work the paths aren't picking up the code
+
+
+        (mail me if you have problems with cc:joe.armstrong@telia.com)

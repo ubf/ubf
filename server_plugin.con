@@ -2,32 +2,26 @@
 
 +VSN("ubf1.0").
 
-+INFO("I am a meta server - I start other servers").
++TYPES
 
-+DESCRIPTION("
-To program the meta server
-see  http://www.sics.se/~joe/ubf.html
-").
+info()         = info;
+description()  = description;
+services()     = services;
+contract()     = contract;
+serviceList()  = [string()] "Names of the offered services";
 
-+SERVICES("file_server", "irc_server", "test_server").
+help()         = help;
+startService() = {startService, string(), term()};
+ok()           = {ok, term()};
+error()        = {error, term()}.
 
 +STATE start
-	info => string() & start;
-	description => string() & start;
-	services => [string()] & start;
-	contract => term() & start;
-	help => string() & start;
-	{startService, string()} => ok & start
-				 | {error, term()} & start.
+	help()         => string() & start;
+	startService() => ok() & start
+		       |  error() & start.
 
-
-
-
-
-
-
-
-
-
-  
-
++ANYSTATE
+	info()        => string();
+	description() => string();
+	services()    => serviceList();
+	contract()    => term().

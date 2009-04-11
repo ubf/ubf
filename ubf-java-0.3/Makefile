@@ -4,7 +4,7 @@ JAVAC_FLAGS = -d classes -classpath classes:src
 SOURCES := $(shell find src -name "*.java")
 CLASSES = $(patsubst src/%.java,classes/%.class,$(SOURCES))
 
-VERSION=0.2
+VERSION=0.3
 
 .PHONY: clean
 

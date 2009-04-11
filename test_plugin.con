@@ -2,41 +2,57 @@
 
 +VSN("ubf1.0").
 
-+INFO("I am a test server").
++TYPES
 
-+DESCRIPTION("The test server is a ...
-	bla
-	bla
-	bla").
+info()         = info;
+description()  = description;
+services()     = services;
+contract()     = contract;
+serviceList()  = [string()];
 
-+SERVICES().
-
-+TYPE password() = string().
-+TYPE file() = string().
-+TYPE callback() = {callback, void()}.
-+TYPE noSuchFile() = {error, noSuchFile}.
-+TYPE doubleInt() = [int()].
-+TYPE upCase() = string().
+password()     = string();
+file()         = string();
+noSuchFile()   = {error, noSuchFile};
+doubleInt()    = [int()];
+upCase()       = string();
+logon()        = {logon, password()};
+ls()           = ls;
+files()        = {files, [string()]} "request a list of file";
+callback()     =  {callback, void()};
+getFile()      = {get, file()};
+okFile()       = {ok, binary()};
+stop()         = stop;
+yes()          = yes;
+ack()          = ack;
+error()        = error;
+ok()           = ok;
+intList()      = [int()];
+testAmbiguities()  = testAmbiguities;
+callbackOnItsWay() = callbackOnItsWay.
 
 +STATE start 
-	{logon, password()}  => ok    & active 
-			      |  error & stop.
+	logon()  => ok()    & active 
+	         |  error() & stop.
 
 +STATE active 
-       ls                      => {files, [string()]} & active;
-       {callback, void()}        => callbackOnItsWay & active;
-       {get, file()}              => {ok, binary()} & active
-				  |  noSuchFile() & stop;
-       stop                      => void() & stop;
-      testAmbiguities           => yes & funny;
-      EVENT => callback().
+       ls()              => files() & active;
+       callback()        => callbackOnItsWay() & active;
+       getFile()         => okFile() & active
+		         |  noSuchFile() & stop;
+       stop()            => void() & stop;
+      testAmbiguities()  => yes() & funny;
+      EVENT 		 => callback(). 
 
 +STATE funny
-	string() => upCase() & funny;
-	[int()]  => doubleInt() & funny;
-	stop     => ack & start.
+	string()   => upCase() & funny;
+	intList()  => doubleInt() & funny;
+	stop()     => ack() & start.
 
-
++ANYSTATE
+	info()        => string();
+	description() => string();
+	services()    => serviceList();
+	contract()    => term().
 
 
 

@@ -223,65 +223,54 @@ between clients are servers.
 
 +VSN("ubf1.0").
 
-+INFO("I am an IRC server").
 
-+DESCRIPTION("
++TYPES
 
-  This is an experimental IRC server programmed 
-to communicate via UBF
+info()         = info;
+description()  = description;
+contract()     = contract;
 
-").
+bool()         = true | false;
+nick()         = string();
+oldnick()      = string();
+newnick()      = string();
+group()        = string();
+logon()        = logon;
+proceed()      = {ok, nick()} "A random nick is assigned";
+listGroups()   = groups;
+groups()       = [group()];
+joinGroup()    = {join, group()} 
+	         "You must join a group before you can send a message to it";
+leaveGroup()   = {leave, group()};
+ok()           = ok;
+changeNick()   = {nick, nick()} "Change your nick in all groups";
+msg()          = {msg, group(), string()} "send a message to a group";
+msgEvent()     = {msg, nick(), group(), string()};
+joinEvent()    = {joins, nick(), group()};
+leaveEvent()   =  {leaves, nick(), group()};
+changeNameEvent() = {changesName, oldnick(),newnick(), group()}.
 
-+SERVICES().
+%% I am assigned an initial (random) nick
 
-+TYPE nick() = string().
-+TYPE oldnick() = string().
-+TYPE newnick() = string().
-+TYPE group() = string().
-+TYPE msg() = string().
-
-+TYPE time() = {int(), int(), int(), int(), int(), int()}.
-
-+STATE start
-	logon => {ok, nick()} & active.
-	%% I am assigned an initial (random) nick
++STATE start logon() => proceed() & active. 
 
 +STATE active
        
-   groups  => [string()]  & active;   	% Tell me which groups 
-					% are available
+   listGroups() => groups() & active;  
+   joinGroup()  => ok() & active;
+   leaveGroup() => ok() & active;
+   changeNick() => bool() & active; 
+   msg()        => bool() & active;   % false if you have not joined the group
 
+   EVENT => msgEvent();        % A group sends me a message
+   EVENT => joinEvent();       % Nick joins group
+   EVENT => leaveEvent();     % Nick leaves group
+   EVENT => changeNameEvent(). % Nick changes name
 
-   {join, group()} => ok & active;  	% I try to join a group 
-					% This always works	
-
-   {leave, group()} => ok & active;	% I leave a group
-
-   {nick, newnick()} => 
-	nickChanged  & active 		% I try to change my nick
-     |  nickInUse & active;   		% This does not work
-					% If the nick is in use	
-
-
-   {msg, group(), msg()} => ok & active	% send a msg to a group
-                         |  notJoined 
-			    & active; 	% no message is sent if
-					% I have not joined the
-					% the group
-	  
-
-   EVENT => {msg, nick(), group(), msg()};      % A group sends me a message
-
-   EVENT => {joins, nick(), group()};		% Nick joins group
-	
-   EVENT => {leaves, nick(), group()};		% Nick leaves group
-
-	
-   EVENT => {changesName, oldnick(), 		% Nick changes name
-	     newnick(), group()}.
-
- 
-
++ANYSTATE
+	info()        => string();
+	description() => string();
+	contract()    => term().
 
 
 

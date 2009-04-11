@@ -2,26 +2,30 @@
 
 +VSN("ubf1.0").
 
-+INFO("I am a mini file server").
++TYPES
 
-+DESCRIPTION("
+info()         = info;
+description()  = description;
+services()     = services;
+contract()     = contract;
 
-Commands:
-
-    'ls'$  List files
-    {'get' File} => Length ~ ... ~ | noSuchFile
-    
-").
-
-+SERVICES().
-
-+TYPE file()     = string().
+file()         = string();
+ls()           = ls;
+files()        = {files, [file()]};
+getFile()      = {get, file()};
+noSuchFile()   = noSuchFile.
 
 
 +STATE start 
-       ls                      => {files, [string()]} & start;
-       {get, file()}           => binary()            & start
-			        | noSuchFile          & stop.
+       ls()      => files()     & start;
+       getFile() => binary()    & start
+		 | noSuchFile() & stop.
+
+
++ANYSTATE
+	info()        => string();
+	description() => string();
+	contract()    => term().
 
 
 

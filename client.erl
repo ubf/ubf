@@ -7,16 +7,15 @@
 %% stop(Pid)   -> ack.
 
 -export([connect/2, rpc/2, stop/1, install_default_handler/1, 
-	 info/1, services/1, install_handler/2, start/2]).
+	 install_handler/2]).
 
 -import(ubf_utils, [spawn_link_debug/2]).
 -import(lists, [reverse/1]).
 
-s(X) ->
-    {'#S', X}.
+%% s(X) -> {'#S', X}.
 
 debug(F, S) -> true.
-%% debug(F, S) -> io:format(F, S).
+%%debug(F, S) -> io:format(F, S).
 
 connect(Host, Port) ->
     Self = self(),
@@ -76,23 +75,6 @@ rpc(Pid, Q) ->
 	    Reply
     end.
 
-info(Pid)     -> meta(Pid, info).
-decription(Pid)     -> meta(Pid, description).
-services(Pid) -> meta(Pid, services).
-start(Pid, Service) -> meta(Pid, {start, s(Service)}).
-contract(Pid) -> meta(Pid, contract).
-    
-    
-meta(Pid, Q) ->
-    Pid ! {self(), {meta, Q}},
-    receive
-	{Pid, Reply} -> 
-	    debug(">>> client META (~p)~n"
-		  "<<< ~p ~n",[Q, Reply]),
-	    Reply
-    end.
-
-
 install_default_handler(Pid) ->
     install_handler(Pid, fun drop_fun/1).
 
@@ -117,30 +99,16 @@ loop(Driver, Fun) ->
 	    loop(Driver, Fun1);
 	{From, {rpc, Q}} ->
 	    %% rpc
-	    Driver ! {self(), {rpc, Q}},
+	    Driver ! {self(), Q},
 	    receive
-		{Driver, {rpcReply, R, S}} ->
+		{Driver, {R, S}} ->
 		    From ! {self(), {reply, R, S}},
 		    loop(Driver, Fun);
 		{Driver, {error, X}} ->
-		    From ! {self(), {error, X}}
+		    From ! {self(), {error, X}};
+		{Driver, Other} ->
+		    From ! {self(), {error, Other}}
 	    end;
-	{From, {meta, Q}} ->
-	    Driver ! {self(), Q},
-	    receive
-		{Driver, Reply} ->
-		    From ! {self(), Reply}
-	    end,
-	    loop(Driver, Fun);
-	{From, P={startService, Name, Reply}} ->
-	    Driver ! {self(), P},
-	    receive
-		{Driver, {accept, Val, State}} ->
-		    From ! {self(), {ok, Val, State}};
-		{Driver, {reject, Reason}} ->
-		    From ! {self(), {error, Reason}}
-	    end,
-	    loop(Driver, Fun);
 	{'EXIT', Driver, _} ->
 	    wait_terminate();
 	{Driver, {event, Msg, State}} ->

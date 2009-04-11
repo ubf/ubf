@@ -28,9 +28,16 @@ checkIn(Msg, State, Mod) ->
     %% incoming states
     %% io:format("check: Msg=~p, State=~p, plugin=~p~n",[Msg,State,Mod]),
     T = Mod:contract_state(State),
+    %% io:format("T=~p~n",[T]),
+    T1 = Mod:contract_anystate(),
+    %% io:format("T1=~p~n",[T1]),
     Outs = [Out||{input, Type, Out} <- T,
 		 isType(Type, Msg, Mod)],
-    lists:append(Outs).
+    Outs1 = [{output, OutType, State} || {InType,OutType} <- T1, 
+					 isType(InType, Msg, Mod)],
+    FSM2 = lists:append(Outs) ++ Outs1,
+    %% io:format("FSM2=~p~n",[FSM2]),
+    FSM2.
 
 checkOut(MsgOut, StateOut, FSM2, Mod) ->
     any(fun({output,Type,S2}) when S2 == StateOut -> 
@@ -51,10 +58,10 @@ checkCallback(Msg, ThisState, Mod) ->
 isType(Type, X, Defs) ->
     %% io:format("isType(~p,~p,~p)~n",[Type, X, Defs]),
     case (catch check_term(Type, X, 1, Defs)) of
-	{'EXIT', Why} ->
+	fail ->
 	    %% io:format("***false~n"),
 	    false;
-	_ ->
+	ok ->
 	    %% io:format("***true~n"),
 	    true
     end.
@@ -85,7 +92,7 @@ check_term1({tuple, Args}, L, Level, DefTypes) ->
 	length(Args) == size(L) ->
 	    check_term_list(Args, tuple_to_list(L), Level, DefTypes);
 	true ->
-	    exit(tupleSize)
+	    fail
     end;
 check_term1({prim,int}, I, _, _) when integer(I) ->
     ok;
@@ -93,15 +100,16 @@ check_term1({range,Min,Max}, I, _, _) when integer(I),
 					   I >= Min, I =< Max ->
     ok;
 check_term1({prim,int}, I, _, _) ->
-    exit({I,isNot,integer});
+    fail;
 check_term1({prim, binary},I, _, _) when binary(I) ->
     ok;
 check_term1(P={prim,string}, {'#S',S}, Level, DefTypes) ->
     case is_string(S) of
 	true -> ok;
-	false ->
-	    exit({S, isNota, string})
+	false -> fail
     end;
+check_term1(P={prim,string}, _, _, _) ->
+    fail;
 check_term1({prim, void}, _, _, _) ->
     ok;
 check_term1({prim, term}, _, _, _) ->
@@ -114,11 +122,12 @@ check_term1({prim, Type}, X, Level, DefTypes) ->
 	Level < 10010 ->
 	    check_term(Rhs, X, Level+1, DefTypes);
 	true ->
-	    false
+	    fail
     end;
 check_term1(X, Y, Level, DefTypes) ->
     %% io:format("~p isnot ~p~n", [Y, X]),
-    exit({Y,isNotA, X}).
+    %% exit({Y,isNotA, X}).
+    fail.
 
 check_term_list([H|T], [H1|T1], Level, DefTypes) ->
     case check_term(H, H1, Level, DefTypes) of
@@ -131,7 +140,7 @@ check_term_list([], [], _, _) ->
     ok.
 
 locate(Type, Mod) ->
-    Mod:contract_type(Type).
+    element(1, Mod:contract_type(Type)).
 
 is_string([H|T]) when integer(H), H < 256, H > -1 -> 
     is_string(T);

@@ -38,32 +38,32 @@ test() ->
 make_code(C) ->
     F1 = {function,0,contract_name,0,
 	  [{clause,0,[],[],[{string,0,C#contract.name}]}]},
-    F2 = {function,0,contract_info,0,
-	  [{clause,0,[],[],[{string,0,C#contract.info}]}]},
-    F3 = {function,0,contract_description,0,
-	  [{clause,0,[],[],[{string,0,C#contract.description}]}]},
-    Tmp1 = map(fun({Type,Val}) ->
-		    {clause,1,[{atom,0,Type}],[],[erl_parse:abstract(Val)]}
+    Tmp1 = map(fun({Type,Val,Str}) ->
+		    {clause,1,[{atom,0,Type}],[],
+		     [erl_parse:abstract({Val,Str})]}
 	    end,  C#contract.types),
+    Any = C#contract.anystate,
+    F2 = {function,0,contract_anystate,0,
+	  [{clause,0,[],[],[erl_parse:abstract(Any, 0)]}]},
+    %% io:format("Tmp1=~p~n",[Tmp1]),
     F4 = {function,0,contract_type,1, Tmp1},
     Tmp2 = map(fun({State,Val}) ->
 		       {clause,1,[{atom,0,State}],[],[erl_parse:abstract(Val)]}
 	       end,  C#contract.transitions),
+    %% io:format("Tmp2=~p~n",[Tmp2]),
     F5 = {function,0,contract_state,1, Tmp2},
-    TypeNames = map(fun({Type,_}) -> Type end, C#contract.types),
+    TypeNames = map(fun({Type,_, _}) -> Type end, C#contract.types),
     F6 = {function,0,contract_types,0,
 	  [{clause,0,[],[],[erl_parse:abstract(TypeNames, 0)]}]},
     StateNames = map(fun({State,_}) -> State end, C#contract.transitions),
     F7 = {function,0,contract_states,0,
 	  [{clause,0,[],[],[erl_parse:abstract(StateNames, 0)]}]},
-    F8 = {function,0,contract_services,0,
-	  [{clause,0,[],[],[erl_parse:abstract(C#contract.services)]}]},
-    Funcs =  [F1,F2,F3,F4,F5,F6,F7,F8],
+    Funcs =  [F1,F2,F4,F5,F6,F7],
+    
     Exports = {attribute,0,export,
-	       [{contract_name,0},{contract_info,0},
-		{contract_description,0},
-		{contract_services,0},
+	       [{contract_name,0},
 		{contract_types,0},
+		{contract_anystate,0},
 		{contract_states,0},
 		{contract_type,1},
 		{contract_state,1}]},
@@ -139,13 +139,10 @@ preDefinedTypes() -> [int, string, constant, binary, term, void].
 pass2(F, P) ->
     Name = require(one, name, P),
     Vsn  = require(one, vsn, P),
-    Info = require(one, info, P),
-    Description = require(one, description, P),
-    Types = require(many, type, P),
+    Types = require(one, types, P),
+    Any   = require(one, anystate, P),
     Trans = require(many, transition, P),
-    Services = require(one, services, P),
-    C = #contract{name=Name, vsn=Vsn, info=Info, description=
-		  Description, services=Services,
+    C = #contract{name=Name, vsn=Vsn, anystate=Any,
 		  types=Types, transitions=Trans},
     pass3(C).
 
@@ -169,13 +166,19 @@ pass3(C) ->
     Transitions = C#contract.transitions,
     Name = C#contract.name,
     Vsn = C#contract.vsn,
-    DefinedTypes = map(fun({I,_}) -> I end, Types) ++ preDefinedTypes(),
+    AnyState = C#contract.anystate,
+    %% io:format("Types=~p~n",[Types]),
+    DefinedTypes = map(fun({I,_, _}) -> I end, Types) ++ preDefinedTypes(),
+    %% io:format("Defined types=~p~n",[DefinedTypes]),
     case duplicates(DefinedTypes, []) of
 	[] -> true;
 	L1 -> exit({duplicated_types, L1})
     end,
-    UsedTypes = extract_prims({Types,Transitions}, []),
+    %% io:format("Transitions=~p~n",[Transitions]),
+    UsedTypes = extract_prims({Types,Transitions,AnyState}, []),
     MissingTypes = UsedTypes -- DefinedTypes,
+
+    %% io:format("Used types=~p~n",[UsedTypes]),
     case MissingTypes of
 	[] ->
 	    DefinedStates = [S||{S,_} <- Transitions] ++ [stop],

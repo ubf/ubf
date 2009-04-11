@@ -14,8 +14,9 @@ s(X) -> {'#S', X}.
     
 test() ->
     {ok, Pid, Name} = client:connect(host(), defaultPort()),
-    {ok, ?S(Info)} = client:start(Pid, "file_server"),
-    io:format("Info=~s~n",[Info]),
+    {reply, Info, _} = client:rpc(Pid, 
+				      {startService, s("file_server"), []}),
+    io:format("Info=~p~n",[Info]),
     {reply,  {files, Fs}, start} = rpc(Pid, ls),
     Files = map(fun(?S(I)) -> I end, Fs),
     io:format("Files=~p~n",[Files]),

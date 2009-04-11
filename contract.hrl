@@ -1,3 +1,3 @@
--record(contract, {name, vsn, info, services, description,types,transitions}).
+-record(contract, {name, vsn, types,transitions, anystate}).
 
 

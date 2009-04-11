@@ -14,6 +14,9 @@
 %%   out_of_date checks for "out of date files".
 %%     find:out_of_date(".",".erl",".jam")
 %%     finds all out of date Erlang files in the current directory.
+%%
+%%   find:files(Dir, RegExp, Recursive, Fun/2, Acc0)
+%%      applies Fun(File, Acc) -> Acc. to each file
 
 -export([files/3, files/5, out_of_date/3]).
 
