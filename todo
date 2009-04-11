@@ -1,3 +1,0 @@
-Fix bug when server is stoped clients don't stop
-
-Change atom to const

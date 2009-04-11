@@ -1,3 +1,0 @@
-#! /bin/sh
-#make
-erl -noshell -s contract_parser batch $* -s erlang halt
