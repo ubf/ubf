@@ -107,7 +107,9 @@ loop(Driver, Fun) ->
 		{Driver, {error, X}} ->
 		    From ! {self(), {error, X}};
 		{Driver, Other} ->
-		    From ! {self(), {error, Other}}
+		    From ! {self(), {error, Other}};
+		{'EXIT', Driver, _} ->
+		    wait_terminate()
 	    end;
 	{'EXIT', Driver, _} ->
 	    wait_terminate();
