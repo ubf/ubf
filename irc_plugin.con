@@ -1,0 +1,71 @@
++NAME("irc").
+
++VSN("ubf1.0").
+
++INFO("I am an IRC server").
+
++DESCRIPTION("The IRC is a
+	bla
+	bla
+	bla").
+
++TYPE nick() = string().
++TYPE oldnick() = string().
++TYPE newnick() = string().
++TYPE group() = string().
++TYPE msg() = string().
+
++TYPE time() = {int(), int(), int(), int(), int(), int()}.
+
++STATE start
+	logon => {ok, nick()} & active.
+	%% I am assigned an initial (random) nick
+
++STATE active
+       
+   groups  => [string()]  & active;   	% Tell me which groups 
+					% are available
+
+
+   {join, group()} => ok & active;  	% I try to join a group 
+					% This always works	
+
+   {leave, group()} => ok & active;	% I leave a group
+
+   {nick, newnick()} => 
+	nickChanged  & active 		% I try to change my nick
+     |  nickInUse & active;   		% This does not work
+					% If the nick is in use	
+
+
+   {msg, group(), msg()} => ok & active	% send a msg to a group
+                         |  notJoined 
+			    & active; 	% no message is sent if
+					% I have not joined the
+					% the group
+	  
+
+   EVENT => {msg, nick(), group(), msg()};      % A group sends me a message
+
+   EVENT => {joins, nick(), group()};		% Nick joins group
+	
+   EVENT => {leaves, nick(), group()};		% Nick leaves group
+
+	
+   EVENT => {changesName, oldnick(), 		% Nick changes name
+	     newnick(), group()}.
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+  
+

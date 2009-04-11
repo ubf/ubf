@@ -1,0 +1,46 @@
++NAME("test").
+
++VSN("ubf1.0").
+
++INFO("I am a test server").
+
++DESCRIPTION("The test server is a ...
+	bla
+	bla
+	bla").
+
++TYPE password() = string().
++TYPE file() = string().
++TYPE callback() = {callback, void()}.
++TYPE noSuchFile() = {error, noSuchFile}.
++TYPE doubleInt() = [int()].
++TYPE upCase() = string().
+
++STATE start 
+	{logon, password()}  => ok    & active 
+			      |  error & stop.
+
++STATE active 
+       ls                      => {files, [string()]} & active;
+       {callback, void()}        => callbackOnItsWay & active;
+       {get, file()}              => {ok, binary()} & active
+				  |  noSuchFile() & stop;
+       stop                      => void() & stop;
+      testAmbiguities           => yes & funny;
+      EVENT => callback().
+
++STATE funny
+	string() => upCase() & funny;
+	[int()]  => doubleInt() & funny;
+	stop     => ack & start.
+
+
+
+
+
+
+
+
+
+  
+

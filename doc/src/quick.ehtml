@@ -1,0 +1,75 @@
+<include>layout.mac</include>
+<top/>
+
+<article title="Quick start"
+	 date="2002-03-05"
+	 link=""
+	 linktitle="">
+
+<banner>Quick start with UBF</banner>
+
+<p>This will jump start you with UBF.
+
+<p>All you need is an internet connection and Telnet to get started.
+<p>First read the contract - in the next section. Then
+fire up Telnet and investigate the server (by hand) - then you can see
+what's really going on
+<banner>The Contract</banner>
+<p>
+<quotefile>../../file_plugin.con</quotefile> 
+<p>
+<banner>A telnet session</banner>
+
+<p>
+The following is a telnet session.
+
+<p>User input is in red. Server output is in black, some lines have
+been omitted:
+
+<p>
+<box>
+<font color="red">telnet enfield.sics.se 2000</font>
+Trying 127.0.0.1...
+Connected to localhost.localdomain.
+Escape character is '^]'.
+{'ubf1.0',"meta_server","I am a meta server
+See http://www.sics.se/~joe/ubf.html
+This server speaks Universal Binary Format 1.0
+For more information type 'description'$ at the dollar prompt
+Remember the $ and quote marks :-)
+"}$
+<font color="red">{'rpc',{'startService',"file_server",#}}$</font>
+
+{'rpcReply',{'ok','yesOffWeGo'},'start'}$
+
+<font color="red">{'rpc',{'logon',"jimmy"}}$</font>
+
+{'rpcReply','ok','active'}$
+
+<font color="red">{'rpc','ls'}$</font>
+
+{'rpcReply',{'files',#"ubf.erl"&"client.erl"&
+             ... 
+
+<font color="red">{'rpc',{'get',"ubf.erl"}}$</font>
+
+{'rpcReply',7852~-module(ubf).
+
+-compile(export_all).
+
+-export([decode_init/0, decode/1, decode/2, encode/1, encode/2]).
+-export([encode_print/1, ubf2term/1, deabstract/1]).
+
+...
+
+Connection closed by foreign host.
+[joe@enfield joe]$ exit     
+</box>
+</article>
+<bot/>
+
+
+
+
+
+

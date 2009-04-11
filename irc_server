@@ -1,0 +1,4 @@
+#! /bin/sh
+make
+erl -noshell  -s test ss
+

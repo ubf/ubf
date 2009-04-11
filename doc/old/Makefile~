@@ -1,0 +1,25 @@
+.SUFFIXES:  .beam .hrl .erl .html .ehtml .fig .gif
+
+.erl.beam: 
+	erlc -W $<
+
+.fig.gif:
+	fig2dev -L gif $< >$@
+
+XFIG = msg1.fig start_client.fig  start_fail1.fig  start_xml.fig\
+       register.fig  start_erl.fig     start_fail2.fig  termination.fig\
+	start_client_ubf.fig start_server_ubf.fig
+
+ERL = c_server.erl  contract_checker.erl  middle_man.erl  ubf.erl\
+	proc_socket_server.erl pic_plugin.erl plugins.erl server.erl\
+	test.erl ubf_driver.erl ubf_test.erl contract_c.erl client.erl
+
+
+BEAM_FILES = $(ERL:.erl=.beam)
+
+GIFS = ${XFIG:.fig=.gif} 
+
+all: ${BEAM_FILES} ${GIFS}
+
+clean:
+	rm -f ${BEAM_FILES} ${GIFS}

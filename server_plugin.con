@@ -1,0 +1,49 @@
++NAME("meta_server").
+
++VSN("ubf1.0").
+
++INFO("I am a meta server
+See http://www.sics.se/~joe/ubf.html
+This server speaks Universal Binary Format 1.0
+For more information type 'description'$ at the dollar prompt
+Remember the $ and quote marks :-)
+").
+
++DESCRIPTION("
+UBF is a universal binary format for describing binary data
+It is described at http://www.sics.se/~joe/ubf.html
+
+This server understands the following commands:
+
+'info'$      
+    Return sort information about the service
+'description'$ 
+    Return a description
+'services'$
+    Returns a list of services
+{'start', string(), term()}$
+    Try to start a service
+
+Warning without reading the documentation you might find the output from
+some of these commands difficult to understand :-)
+
+").
+
++STATE start
+	info => string() & start;
+	description => string() & start;
+	services => [string()] & start;
+	{startService, string(), term()} => ok & start
+					 | {error, term()} & start.
+
+
+
+
+
+
+
+
+
+
+  
+

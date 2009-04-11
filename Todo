@@ -1,0 +1,6 @@
+1) Add logging syslogd
+
+2) Change startup procedure to use ubf_driver with a timeout
+
+3) Check we can run things using telnet
+

@@ -1,0 +1,58 @@
+<include>layout.mac</include>
+<top/>
+
+<article title="White paper"
+	 date="2002-03-05"
+	 link=""
+	 linktitle="">
+
+
+<p>UBF is a language for transporting and describing complex data structures across a network. It has two components:
+<ul>
+<li>
+
+<a href="ubfa.html">UBF(A)</a> is a data transport format, roughly
+equivalent to well-formed XML.
+
+<li><a href="ubfb.html">UBF(B)</a> is a programming langauge
+for describing types in UBF(A) and protocols between clients
+and servers.
+UBF(B) is roughly equivalent to to Verified XML,
+XML-schemas, SOAP and WDSL.
+
+</ul>
+
+<p>While the XML series of languages had the goal of having a human
+readable format the UBF languages take the opposite view and provide a
+"machine friendly" format.
+
+<p>UBF is designed to be easy to implement. As a proof of concept - UBF drivers
+For Erlang, Oz, Java and TCL can be found in the download area. 
+Implementors are welcome to add new languages.
+
+<p>UBF is designed to be "language neutral" - UBF(A) defines a
+language neutral binary format for transporting data across a
+network. UBF(B) is a type system for describing client/server
+interactions which use UBF(A).
+
+<h3>Programming by Contract</h3>
+<center>
+<img  src="$ROOT/images/ubf.gif">
+</center>
+
+<p>Central to UBF is the idea of a "contract" which regulates the
+set of legal conversations that can take place between a client and a server.
+
+<p>A software component (the contract checker) is place between a client and server which checks that all interactions between thew client and server are legal.
+
+<p>The digram shows a Java client talking to a C++ server.
+
+
+</article>
+<bot/>
+
+
+
+
+
+

@@ -1,0 +1,23 @@
+
+<menu title="Documents">
+  <a href="intro.html">Introduction</a>
+  <br><a href="ubfa.html">UBF(A) spec</a>
+  <br><a href="ubfb.html">UBF(B) spec</a>
+</menu>
+<p>
+
+<menu title="Services">
+  <a href="irc.html">IRC</a>
+  <br><a href="messagebox.html">Message Box</a>
+  <br><a href="ftp.html">FTP</a>
+</menu>
+
+<p>
+
+<menu title="Downloads">
+  <a href="downloads.html">Downloads</a>
+</menu>
+
+<p>
+
+

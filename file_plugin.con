@@ -1,0 +1,23 @@
++NAME("file_server").
+
++VSN("ubf1.0").
+
++INFO("I am a mini file server").
+
++DESCRIPTION("The mini file server 
+allows only list, and get operations
+").
+
++TYPE password() = string().
++TYPE file()     = string().
+
++STATE start 
+	{logon, password()}  => ok    & active 
+			      | error & stop.
+
++STATE active 
+       ls                      => {files, [string()]} & active;
+       {get, file()}           => binary()            & active
+			        | noSuchFile          & stop.
+
+

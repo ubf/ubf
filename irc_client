@@ -1,0 +1,2 @@
+#! /bin/sh
+erl -noshell -s irc_client batch $1

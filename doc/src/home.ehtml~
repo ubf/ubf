@@ -1,0 +1,57 @@
+<include>layout.mac</include>
+<top/>
+
+<article title="Manifesto"
+	 date="2001-06-10"
+	 link=""
+	 linktitle="">
+
+<p>Magna virtus tua et vivebam etiam Et quoniam cum me, formasti mihi quasi
+necesse esset nisi vero; illa prior.  Item si cum in quam me urgeret
+quod non est, innocentia est, fit, ut eam ut vides, haec ipsa tamen
+loqui quoniam itaque.
+
+<p>Iactabam domine, et confiteri me delicta mea,
+deus, es domine, non servientibus (et magistris a paedagogis et mineris
+ingentes miserias)?  Salus tua, relicto te vult homo circumferens
+mortalitem suam, circumferens mortalitem inrisormeus, cui loquor. <P>
+
+<p>Hocadum i et confiteri me delicta mea,
+deus, es domine, non servientibus (et magistris a paedagogis et mineris
+ingentes miserias)?  Salus tua, relicto te vult homo circumferens
+<a href="http://www.dedicated-servers.co.uk/">www.dedicated-servers.co.uk</a>
+ingentes miserias)?  Salus tua, relicto te vult homo circumferens.
+
+</article>
+
+<p>
+
+<article title="Design"
+	 date="2001-06-10"
+	 link="http://hadess.net/"
+	 linktitle="click for more">
+<p>This design was shamlessly stolen from
+<a href="http://hadess.net/">http://hadess.net/</a>.
+and recoded in Erlang.
+</article>
+<p>
+
+<article title="To do"
+	 date="2001-06-10"
+	 link=""
+	 linktitle="">
+<ul>
+<li>Recode this using a nice red color - done
+<li>Make sure it passes html_check
+<li>Change ehtml to write the output files in a different
+directory
+<li>Write a makefile for this.
+</article>
+
+<bot/>
+
+
+
+
+
+

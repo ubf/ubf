@@ -1,0 +1,103 @@
+<include>layout.mac</include>
+<top/>
+
+<article title="UBF(B)"
+	 date="2002-03-05"
+	 link=""
+	 linktitle="">
+
+<h3>UBF(B)</h3>
+
+<p><a href="ubfb_quick.html">UBF(B) - quick summary</a>
+
+<p>UBF(B) has:
+<dl>
+
+<dt><b>A type system</b>
+<dd>Strings are written enclosed in double quotes, thus:
+<dt><b>A protocol description language</b>
+<dd>The protocol description language
+allows allows us to specific client server interaction in terms of 
+a non-deterministic finite state machine.
+</dl>
+<h3>The type system</h3>
+The notation:
+
+<ul>
+<li><tt>int()</tt> Means a UBF(A) integer.
+<li><tt>string()</tt> Means a UBF(A) string.
+<li><tt>atom()</tt> Means a UBF(A) atom.
+<li><tt>bin()</tt> Means a UBF(A) binary data item.
+<li><tt>X()</tt> Means an Object of type <tt>X</tt>
+</ul>
+
+<p>UBF(A) literals are written as follows:
+<ul>
+<li><tt>"..."</tt> - denotes a UBF(A) string.
+<li><tt>[a-z][a-zA-Z0-9_]*</tt> - denotes a UBF(A) atom.
+<li><tt>[-][0-9]+</tt> - denotes a UBF(A) integer.
+</ul>
+
+<p>Complex types are defined recursively:
+
+<dl>
+<dt><tt>{T1, T2, ..., Tn}</tt>
+<dd>Is the <i>tuple type</i> if <tt>T1</tt> .. <tt>Tn</tt> are types.
+<p>We say that <tt>{X1, X2, ..., Xn}</tt> is of type
+<tt>{T1, T2, ..., Tn}</tt> if <tt>X1</tt> is of type <tt>T1</tt>, 
+ <tt>X2</tt> is of type <tt>T2</tt>, ... and
+ <tt>Xn</tt> is of type <tt>Tn</tt>.
+
+
+<dt><tt>[T]</tt>
+<dd>Is the <i>list type</i> if <tt>T</tt> is a type.
+<p>We say that <tt># Xn & Xn-1 & ... X2 & x1</tt> is of type
+<tt>[T]</tt> if all <tt>Xi</tt> are of type <tt>T</tt>.
+
+<dt><tt>T1 | T2 </tt>
+<dd>Is the <i>alternation type</i> if <tt>T1</tt> and <tt>T2</tt> are types.
+<p>We say that <tt>X</tt> is of type
+<tt>T1 | T2 </tt> if <tt>X</tt> is of type <tt>T1</tt> or if
+<tt>X</tt> is of type <tt>T2</tt>.
+</dl>
+
+<h3>New types</h3>
+
+<p>New types are introduced in UBF(B) with the notation:
+<pre>
+   +TYPE X() = Type
+</pre>
+
+<p>Examples:
+
+<pre>
+   +TYPE person() = {person, firstname(), lastname(), sex(), age()}.
+   +TYPE firstname() = string(). 
+   +TYPE lastname() = string().
+   +TYPE age() = int().
+   +TYPE sex() = male | female.
+   +Type people() = [person()].
+</pre>
+<p>This type schema defines a number of different types.
+For example, it is easily seen that:
+<pre>
+   'person' >p 
+    # {p "jim" "smith" male 10} & 
+    # {p "susan" "jones" female 14} & $
+</pre>
+Is of type <tt>people()</tt>.
+
+<p>Note that UBF(B) type is a <i>language independent type schema</i>.
+
+<p>language independent type schema are the basis of <i>Contracts</i>
+between clients are servers.
+
+<quotefile>../../irc_plugin.con</quotefile> 
+</article>
+<bot/>
+
+
+
+
+
+
