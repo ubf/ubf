@@ -1,0 +1,4 @@
+
+This is ubf, a framework for Getting Erlang to talk to the outside
+world.  This repository is based on Joe Armstrong's original UBF code
+with an MIT license file added to the distribution.
