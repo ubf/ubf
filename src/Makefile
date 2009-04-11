@@ -66,7 +66,8 @@ check: all
 		-s test_ubf tests \
 		-s erlang halt \
 		> ./check.log
-# TEMPORARILY DISABLE jsf_test to avoid failures if erlang-rfc4627
+# TEMPORARILY DISABLE jsf_test to avoid failures if erlang-rfc4627 is
+# not available
 #	$(RUNERL1) -noinput -noshell -pz $(TEST_DIR) \
 #		-s jsf_test tests \
 #		-s erlang halt \
