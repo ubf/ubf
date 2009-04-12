@@ -48,6 +48,8 @@ To do (in medium term)
   - ubf contract generators for quickcheck
   - ABNF (RFC 5234) support and integration
   - erlang spec (EEP 8) integration
+  - asynchronous events from client to server
+  - n-bidirectional requests/responses over single tcp/ip connection (similiar to smpp)
   - replace plugin manager and plugin handler with gen_server-based
     implementation
   - enable/disable contract checker by configuration
