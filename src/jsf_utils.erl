@@ -5,15 +5,16 @@
 -module(jsf_utils).
 -include("ubf.hrl").
 
--export([ubf_contract/1]).
+-export([ubf_contract/1, ubf_contract/2]).
 
 get_type(Name,Mod) ->
     get_type(Name,true,Mod).
 
 get_type(Name,Strict,Mod) ->
-    case lists:keysearch(Name,1,Mod:contract_types()) of
-        {value,Type} ->
-            Type;
+    case lists:member(Name,Mod:contract_types()) of
+        true ->
+            {Type, Tag} = Mod:contract_type(Name),
+            {Name, Type, Tag};
         false ->
             if Strict ->
                     exit({undefined_ubf_type,Name});
@@ -34,7 +35,7 @@ typeref({tuple,Elements},Mod) ->
 typeref({record,Name,Elements},Mod) when is_atom(Name) ->
     Values = tl(tl(Elements)),
     RecordKey = {Name,length(Elements)-2},
-    {value, {RecordKey, Fields}} = lists:keysearch(RecordKey, 1, Mod:contract_records()),
+    Fields = Mod:contract_record(RecordKey),
     io_lib:format("{\"$R\" : \"~p\", ~s}",
                   [Name, join([ io_lib:format("\"~p\" : ~s", [Field, typeref(Element, Mod)])
                                 || {Field,Element} <- lists:zip(Fields,Values) ], ", ")]);
@@ -101,6 +102,12 @@ typeref({list_required_and_repeatable,Element},Mod) ->
 typeref(Type, _Mod) ->
     io_lib:format("~p()", [Type]).
 
+ubf_contract(Mod, FileName) ->
+    Contract = ubf_contract(Mod),
+    file:write_file(FileName, Contract).
+
+ubf_contract(Mod) when is_list(Mod) ->
+    ubf_contract(list_to_atom(Mod));
 ubf_contract(Mod) ->
     X0 = [""
           , "///"
