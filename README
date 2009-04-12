@@ -20,9 +20,8 @@ To build
 4. Run the unit test
    $ make check
 
-   NOTE: jsf_test is commented out in src/Makefile by default.
-   Uncomment if you have installed erlang-rfc4627 and wish to check
-   the jsf functionality.
+5. If you have installed erlang-rfc4627, run the unit test for jsf
+   $ make check-jsf
 
 
    

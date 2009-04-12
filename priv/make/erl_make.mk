@@ -275,43 +275,6 @@ clean::
 	rm -f $(EBIN)/*.{P,d,huc} $(PRIV_DIR)/*.{P,d,huc} $(TEST_DIR)/*.{P,d,huc} $(EUNITTEST_DIR)/*.{P,d,huc} $(QUICKTEST_DIR)/*.{P,d,huc}
 	rm -f core core.* *.core erl_crash.dump *.boot *.script *.log
 
-##
-## NOTE: Dialyzer's behavior has changed since R11B-5.  Let's generate
-## the plt manually until there is time to investigate how to best
-## integrate and automate this process for nightly builds, developers,
-## etc.
-##
-## The following command will construct a new PLT table in the file
-## ~/.dialyzer_plt
-##
-## $ dialyzer --build_plt -r /usr/local/gemini/ert/R12B-5/lib/erlang/lib/{compiler-*,crypto-*,edoc-*,inets-*,kernel-*,mnesia-*,odbc-*,parsetools-*,sasl-*,stdlib-*,tools-*,xmerl-*}/ebin
-##
-
-##
-## TODO: Figure out how to fix the no_return and no_unused warnings in
-## the source code
-##
-
-## NOTE: exclude src/erl-third-party/quviq/eqc since we only have beam
-## files
-run-dialyzer: all
-	-$(DIALYZER) --verbose \
-		-Wno_return \
-		-Wno_unused \
-		-r $(EBIN) $(wildcard $(TEST_DIR)) $(wildcard $(EUNITTEST_DIR)) $(wildcard $(QUICKTEST_DIR)) \
-		$(subst -pz,,$(DEP_EBINS_NOEQC) $(wildcard $(DEP_TESTS)) $(wildcard $(DEP_EUNITTESTS)) $(wildcard $(DEP_QUICKTESTS))) \
-		> dialyzer.log
-
-run-dialyzer-interactive: all
-	-@set -e; (sleep 4 ; \
-	 echo "\r\n" ; \
-	 echo "\r\n" ; \
-	 echo "In the lower-left window, click on the 'src' dir.\r\n" ; \
-	 echo "Then click the 'Add recursively' button, then 'Run'.\r\n" ; \
-	 echo "\r\n") &
-	( cd ../../../../.. ; $(DIALYZER) )
-
-
 PRERUNAPP= \
 	env ERL_MAX_ETS_TABLES=10007 \
 	$(ERL) \
@@ -320,9 +283,7 @@ POSTRUNAPP= \
 	-pz $(EBIN) \
 	$(DEP_EBINS) \
 	-kernel net_ticktime $(TICKTIME) \
-	-config ../priv/sys \
-	-central_config ../priv/central.conf \
-	-ticket_broker_config ../priv/broker.conf
+	-config ../priv/sys
 
 RUNERL1= \
 	$(PRERUNAPP) \

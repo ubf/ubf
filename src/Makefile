@@ -81,6 +81,13 @@ check: all
 		-s erlang halt \
 		>> ./check.log
 
+check-jsf: all
+	-rm -f ./*.log
+	$(RUNERL1) -noinput -noshell -pz $(TEST_DIR) \
+		-s jsf_test tests \
+		-s erlang halt \
+		>> ./check.log
+
 # special targets - ubf
 ${TESTPLUGINS:%=$(TEST_DIR)/%.$(EMULATOR)}: ${TESTPLUGINS:%=$(TEST_DIR)/%.con}
 ${PLUGINS:%=$(EBIN)/%.$(EMULATOR)} ${TESTPLUGINS:%=$(TEST_DIR)/%.$(EMULATOR)}: \
