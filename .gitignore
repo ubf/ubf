@@ -1,0 +1,6 @@
+*.beam
+*.d
+*.huc
+*.P
+src/contract_lex.erl
+src/contract_yecc.erl
