@@ -1,4 +1,4 @@
-%%% $Id: jsf_utils.erl 131834 2009-04-11 14:31:28Z norton $
+%%% $Id: jsf_utils.erl 131914 2009-04-13 09:02:30Z norton $
 %%% Description: utils for jsf
 %%%-------------------------------------------------------------------
 
@@ -203,7 +203,8 @@ ubf_contract(Mod) ->
           , ""
           , ""
          ],
-    X2 = [ [atom_to_list(Name), "()", "\n", ubf(Name,Mod)] || Name <- Mod:contract_leaftypes() ],
+    X2 = [ [atom_to_list(Name), "()", "\n", ubf(Name,Mod)]
+           || Name <- lists:sort(Mod:contract_leaftypes()) ],
     X3 = [""
           , "// --------------------"
           , "// JSON-RPC"
@@ -220,8 +221,8 @@ ubf_contract(Mod) ->
                    end,
                Result =
                    case get_type(Output,false,Mod) of
-                       {Output, Type, _} ->
-                           typeref(Type, Mod);
+                       {Output, OutputType, _} ->
+                           typeref(OutputType, Mod);
                        undefined ->
                            io_lib:format("~p()", [Output])
                    end,
