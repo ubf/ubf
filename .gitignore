@@ -2,5 +2,6 @@
 *.d
 *.huc
 *.P
-src/contract_lex.erl
+src/check.log
 src/contract_yecc.erl
+src/contract_lex.erl
