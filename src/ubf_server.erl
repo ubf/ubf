@@ -12,30 +12,29 @@
 %% Here we start the server
 %% This is the *only* registered process on the server side
 
-start(Plugins, Port) ->
-    start(Plugins, Port, []).
+start(PluginModules, Port) ->
+    start(PluginModules, Port, []).
 
-start(Plugins, Port, Options) ->
-    start_registered(ubf_server, fun() -> start_server(Plugins, Port, Options) end).
+start(PluginModules, Port, Options) ->
+    start_registered(ubf_server, fun() -> start_server(PluginModules, Port, Options) end).
 
-start_link(Plugins, Port) ->
-    start_link(Plugins, Port, []).
+start_link(PluginModules, Port) ->
+    start_link(PluginModules, Port, []).
 
-start_link(Plugins, Port, Options) ->
-    proc_lib:start_link(?MODULE, init, [self(), Plugins, Port, Options]).
+start_link(PluginModules, Port, Options) ->
+    proc_lib:start_link(?MODULE, init, [self(), PluginModules, Port, Options]).
 
-init(Parent, Plugins, Port, Options) ->
+init(Parent, PluginModules, Port, Options) ->
     proc_lib:init_ack(Parent, {ok, self()}),
-    start_server(Plugins, Port, Options).
+    start_server(PluginModules, Port, Options).
 
-start_server(Plugins, Port, Options) ->
-    {PluginServices,PluginModules} = lists:unzip(Plugins),
+start_server(PluginModules, Port, Options) ->
     MetaServerModule =
         case proplists:get_value(statelessrpc,Options,false) of
             false ->
-                ubf_plugin_meta_serverful:new(PluginServices, PluginModules);
+                ubf_plugin_meta_serverful:new(PluginModules);
             true ->
-                ubf_plugin_meta_serverless:new(PluginServices, PluginModules)
+                ubf_plugin_meta_serverless:new(PluginModules)
         end,
     %% set up a UBF listener on Port
     Server = self(),
@@ -111,14 +110,13 @@ start_ubf_listener(MetaServerModule, Port, Server, Options) ->
                      PacketType,
                      0).
 
-start_term_listener(Server, Plugins, Options) ->
-    {PluginServices,PluginModules} = lists:unzip(Plugins),
+start_term_listener(Server, PluginModules, Options) ->
     MetaServerModule =
         case proplists:get_value(statelessrpc,Options,false) of
             false ->
-                ubf_plugin_meta_serverful:new(PluginServices, PluginModules);
+                ubf_plugin_meta_serverful:new(PluginModules);
             true ->
-                ubf_plugin_meta_serverless:new(PluginServices, PluginModules)
+                ubf_plugin_meta_serverless:new(PluginModules)
         end,
     ServerHello =
         proplists:get_value(serverhello,Options,MetaServerModule:contract_name()),

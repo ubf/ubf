@@ -1,8 +1,8 @@
 %%% -*- mode: erlang -*-
-%%% $Id: ubf_plugin_meta_serverless.erl 131834 2009-04-11 14:31:28Z norton $
+%%% $Id: ubf_plugin_meta_serverless.erl 132057 2009-04-14 08:22:27Z norton $
 %%%
 
--module(ubf_plugin_meta_serverless, [SERVICES, MODULES]).
+-module(ubf_plugin_meta_serverless, [MODULES]).
 
 -import(ubf_server, [ask_manager/2]).
 
@@ -22,7 +22,7 @@
 
 %% The server plugin only knows how to start it's sub-services
 
-services() -> SERVICES.
+services() -> [ Module:contract_name() || Module <- MODULES ].
 
 info() -> "I am a meta server -
 
@@ -75,7 +75,7 @@ Commands:
 
 
 managerStart(_) ->
-    {ok, lists:zip(SERVICES, [ {M, undefined} || M <- MODULES ])}.
+    {ok, lists:zip(services(), [ {M, undefined} || M <- MODULES ])}.
 
 managerRestart(Args,Manager) ->
     ask_manager(Manager,{restartManager, Args}).

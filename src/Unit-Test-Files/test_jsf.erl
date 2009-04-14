@@ -5,7 +5,7 @@
 -import(lists, [map/2, foldl/3, filter/2]).
 -import(ubf_client, [rpc/2]).
 
-defaultPlugins() -> [{"test_server", test_plugin}, {"irc_server", irc_plugin}, {"file_server", file_plugin}].
+defaultPlugins() -> [test_plugin, irc_plugin, file_plugin].
 defaultServer() -> ubf_server.
 defaultOptions() -> [].
 defaultTimeout() -> 10000.
@@ -39,10 +39,10 @@ test() ->
     R1 = ubf_client:rpc(Pid, {startSession, s("missing"), []}),
     io:format("R1=~p~n",[R1]),
     %% Try to start the test server with the wrong password
-    R2 = ubf_client:rpc(Pid, {startSession, s("test_server"), guess}),
+    R2 = ubf_client:rpc(Pid, {startSession, s("test"), guess}),
     io:format("R2=~p~n",[R2]),
     %% Now the correct password
-    R3 = ubf_client:rpc(Pid, {startSession, s("test_server"), secret}),
+    R3 = ubf_client:rpc(Pid, {startSession, s("test"), secret}),
     io:format("R3=~p~n",[R3]),
     rpc(Pid, {logon,s("joe")}),
     {reply, {files, _}, active} = rpc(Pid, ls),

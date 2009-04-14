@@ -1,8 +1,8 @@
 %%% -*- mode: erlang -*-
-%%% $Id: ubf_plugin_meta_serverful.erl 131834 2009-04-11 14:31:28Z norton $
+%%% $Id: ubf_plugin_meta_serverful.erl 132057 2009-04-14 08:22:27Z norton $
 %%%
 
--module(ubf_plugin_meta_serverful, [SERVICES, MODULES]).
+-module(ubf_plugin_meta_serverful, [MODULES]).
 
 -import(ubf_server, [ask_manager/2]).
 
@@ -22,49 +22,49 @@
 
 %% The server plugin only knows how to start it's sub-services
 
-services() -> SERVICES.
+services() -> [ Module:contract_name() || Module <- MODULES ].
 
 info() -> "I am a meta server -
 
     type 'help'$
 
-to find out what I can do".
+              to find out what I can do".
 
 help() ->
-    "\n\n
+               "\n\n
 This server speaks Universal Binary Format 1.0
 
-See http://www.sics.se/~joe/ubf.html
+                   See http://www.sics.se/~joe/ubf.html
 
-UBF servers are introspective - which means the servers can describe
-themselves. The following commands are always available:
+                   UBF servers are introspective - which means the servers can describe
+                   themselves. The following commands are always available:
 
 'help'$          This information
 'info'$          Short information about the current service
 'description'$   Long information  about the current service
 'services'$      A list of available services
 'contract'$      Return the service contract
-                 (Note this is encoded in UBF)
+(Note this is encoded in UBF)
 
 To start a service:
 
 {'startService', \"Name\", Args} Name should be one of the names in the
                                  services list - args is an optional argument
 
-Warning without reading the documentation you might find the output from
-some of these commands difficult to understand :-)
+ Warning without reading the documentation you might find the output from
+ some of these commands difficult to understand :-)
 
 ".
 
 description() -> "
 Commands:
-   'services'$                   -- list services
-   {'startService', Name, Args}$ -- start a service
-   'info'$                       -- provide informat
-   'description'$                -- this information
-   'contract'$                   -- Show the contract
-                                 (see  http://www.sics.se/~joe/ubf.html)
-".
+                     'services'$                   -- list services
+                                                             {'startService', Name, Args}$ -- start a service
+                     'info'$                       -- provide informat
+                     'description'$                -- this information
+                     'contract'$                   -- Show the contract
+                                                                 (see  http://www.sics.se/~joe/ubf.html)
+                     ".
 
 %% managerStart(Args) -> {ok, State} | {error, Why}
 %% handlerRpc(Q, State, Data, ManagerPid) -> {Reply, State', Data'}
@@ -75,7 +75,7 @@ Commands:
 
 
 managerStart(_) ->
-    {ok, lists:zip(SERVICES, [ {M, ubf_plugin_handler:start_manager(M, [])} || M <- MODULES ])}.
+    {ok, lists:zip(services(), [ {M, ubf_plugin_handler:start_manager(M, [])} || M <- MODULES ])}.
 
 managerRestart(Args,Manager) ->
     ask_manager(Manager,{restartManager, Args}).
