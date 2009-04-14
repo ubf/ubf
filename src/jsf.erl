@@ -243,15 +243,14 @@ rpc_v11_req_decode(AuthInfo, X) ->
     rpc_v11_req_decode(AuthInfo, X, []).
 
 rpc_v11_req_decode(AuthInfo, X, UBFMod) ->
+    %% @todo handle version
     case rfc4627:decode(X) of
-        {ok,{obj,[{"method",MethodBin},
-                  {"params",JsonParams},
-                  {"id",Id},
-                  {"version",<<"1.1">>}
-                 ]},
-         []} ->
+        {ok, {obj, Props}, []} ->
+            {value, {"method", MethodBin}, Props1} = keytake("method", 1, Props),
+            {value, {"params", JsonParams}, Props2} = keytake("params", 1, Props1),
+            {value, {"id", Id}, _Ver} = keytake("id", 1, Props2),
             Method = binary_to_existing_atom(MethodBin),
-            Params = do_decode(JsonParams,UBFMod),
+            Params = do_decode(JsonParams, UBFMod),
             if Params =:= [] ->
                     {ok, Method, Id};
                true ->
@@ -261,7 +260,7 @@ rpc_v11_req_decode(AuthInfo, X, UBFMod) ->
                             {ok, list_to_tuple([Method|[AuthInfo|Params]]), Id}
                     end
             end;
-        Other -> { error, Other}
+        Other -> {error, Other}
     end.
 
 
@@ -298,6 +297,7 @@ rpc_v11_res_decode(X) ->
     rpc_v11_res_decode(X, []).
 
 rpc_v11_res_decode(X, _UBFMod) ->
+    %% @todo handle version
     case rfc4627:decode(X) of
         {ok, {obj, Props}, []} ->
             {value, {"result", Result}, Props1} = keytake("result", 1, Props),
