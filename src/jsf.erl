@@ -266,14 +266,14 @@ rpc_v11_res_encode(X, Id, UBFMod)  ->
 rpc_v11_res_decode_print(X, UBFMod) ->
     io:format("~s~n", [rpc_v11_res_decode(X, UBFMod)]).
 
-rpc_v11_res_decode(X, _UBFMod) ->
+rpc_v11_res_decode(X, UBFMod) ->
     %% @todo handle version
     case rfc4627:decode(X) of
         {ok, {obj, Props}, []} ->
             {value, {"result", Result}, Props1} = keytake("result", 1, Props),
             {value, {"error", Error}, Props2} = keytake("error", 1, Props1),
             {value, {"id", Id}, [_Ver]} = keytake("id", 1, Props2),
-            {ok, do_decode(Result,[]), Error, Id}
+            {ok, do_decode(Result,UBFMod), Error, Id}
     end.
 
 
