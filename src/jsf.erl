@@ -4,23 +4,23 @@
 
 -compile(export_all).
 
--export([rpc_v11_req_encode_print/2, rpc_v11_req_encode_print/3]).
--export([rpc_v11_req_encode/2, rpc_v11_req_encode/3]).
+-export([rpc_v11_req_encode_print/3]).
+-export([rpc_v11_req_encode/3]).
 
--export([rpc_v11_req_decode_print/1, rpc_v11_req_decode_print/2, rpc_v11_req_decode_print/3]).
--export([rpc_v11_req_decode/1, rpc_v11_req_decode/2, rpc_v11_req_decode/3]).
+-export([rpc_v11_req_decode_print/3]).
+-export([rpc_v11_req_decode/3]).
 
--export([rpc_v11_res_encode_print/2, rpc_v11_res_encode_print/3]).
--export([rpc_v11_res_encode/2, rpc_v11_res_encode/3]).
+-export([rpc_v11_res_encode_print/3]).
+-export([rpc_v11_res_encode/3]).
 
--export([rpc_v11_res_decode_print/1, rpc_v11_res_decode_print/2]).
--export([rpc_v11_res_decode/1, rpc_v11_res_decode/2]).
+-export([rpc_v11_res_decode_print/2]).
+-export([rpc_v11_res_decode/2]).
 
--export([encode_print/1, encode_print/2]).
--export([encode/1, encode/2]).
+-export([encode_print/2]).
+-export([encode/2]).
 
--export([decode_print/1, decode_print/2]).
--export([decode/1, decode/2]).
+-export([decode_print/2]).
+-export([decode/2]).
 
 %%
 %% Links:
@@ -205,14 +205,8 @@
 %%---------------------------------------------------------------------
 %%
 
-rpc_v11_req_encode_print(X, Id) ->
-    rpc_v11_req_encode_print(X, Id, []).
-
 rpc_v11_req_encode_print(X, Id, UBFMod) ->
     io:format("~s~n", [rpc_v11_req_encode(X, Id, UBFMod)]).
-
-rpc_v11_req_encode(X, Id) ->
-    rpc_v11_req_encode(X, Id, []).
 
 rpc_v11_req_encode(Method, Id, _UBFMod) when is_atom(Method) ->
     {undefined, {obj, [{"method", atom_to_binary(Method)}, {"params", []}, {"id", Id}, {"version", <<"1.1">>}]}};
@@ -227,20 +221,8 @@ rpc_v11_req_encode(X, Id, UBFMod) when is_tuple(X), size(X) > 1, is_atom(element
 %%---------------------------------------------------------------------
 %%
 
-rpc_v11_req_decode_print(X) ->
-    rpc_v11_req_decode_print(undefined, X).
-
-rpc_v11_req_decode_print(AuthInfo, X) ->
-    rpc_v11_req_decode_print(AuthInfo, X, []).
-
 rpc_v11_req_decode_print(AuthInfo, X, UBFMod) ->
     io:format("~s~n", [rpc_v11_req_decode(AuthInfo, X, UBFMod)]).
-
-rpc_v11_req_decode(X) ->
-    rpc_v11_req_decode(undefined, X).
-
-rpc_v11_req_decode(AuthInfo, X) ->
-    rpc_v11_req_decode(AuthInfo, X, []).
 
 rpc_v11_req_decode(AuthInfo, X, UBFMod) ->
     %% @todo handle version
@@ -268,14 +250,8 @@ rpc_v11_req_decode(AuthInfo, X, UBFMod) ->
 %%---------------------------------------------------------------------
 %%
 
-rpc_v11_res_encode_print(X, Id) ->
-    rpc_v11_res_encode_print(X, Id, []).
-
 rpc_v11_res_encode_print(X, Id, UBFMod) ->
     io:format("~s~n", [rpc_v11_res_encode(X, Id, UBFMod)]).
-
-rpc_v11_res_encode(X, Id) ->
-    rpc_v11_res_encode(X, Id, []).
 
 rpc_v11_res_encode(X, Id, UBFMod)  ->
     Rsp = do_encode(X,UBFMod),
@@ -287,14 +263,8 @@ rpc_v11_res_encode(X, Id, UBFMod)  ->
 %%---------------------------------------------------------------------
 %%
 
-rpc_v11_res_decode_print(X) ->
-    rpc_v11_res_decode_print(X, []).
-
 rpc_v11_res_decode_print(X, UBFMod) ->
     io:format("~s~n", [rpc_v11_res_decode(X, UBFMod)]).
-
-rpc_v11_res_decode(X) ->
-    rpc_v11_res_decode(X, []).
 
 rpc_v11_res_decode(X, _UBFMod) ->
     %% @todo handle version
@@ -311,14 +281,8 @@ rpc_v11_res_decode(X, _UBFMod) ->
 %%---------------------------------------------------------------------
 %%
 
-encode_print(X) ->
-    encode_print(X, []).
-
 encode_print(X, UBFMod) ->
     io:format("~s~n", [encode(X, UBFMod)]).
-
-encode(X) ->
-    encode(X, []).
 
 encode(X, UBFMod) ->
     rfc4627:encode(do_encode(X, UBFMod)).
@@ -361,11 +325,13 @@ encode_tuple(X, UBFMod) when not is_atom(element(1, X)) ->
     {obj, [{"$T", encode_tuple(1, X, [], UBFMod)}]};
 encode_tuple(X, UBFMod) ->
     RecName = element(1, X),
-    Y = {RecName, size(X)},
-    case lists:keysearch(Y, 1, UBFMod) of
+    Y = {RecName, size(X)-1},
+    case lists:member(Y, UBFMod:contract_records()) of
         false ->
             {obj, [{"$T", encode_tuple(1, X, [], UBFMod)}]};
-        {value, {Y, Keys}} ->
+        true ->
+            %% @todo optimize this code
+            Keys = list_to_tuple(UBFMod:contract_record(Y)),
             {obj, [{"$R", atom_to_binary(RecName)}|encode_record(2, X, Keys, [], UBFMod)]}
     end.
 
@@ -385,15 +351,8 @@ encode_record(N, X, Keys, Acc, UBFMod) ->
 %%
 %%---------------------------------------------------------------------
 %%
-
-decode_print(X) ->
-    decode_print(X, []).
-
 decode_print(X, UBFMod) ->
     io:format("~s~n", [decode(X, UBFMod)]).
-
-decode(X) ->
-    decode(X, []).
 
 decode(X, UBFMod) ->
     case rfc4627:decode(X) of
@@ -449,18 +408,16 @@ decode_tuple([H|T], Acc, UBFMod) ->
     NewAcc = [do_decode(H, UBFMod)|Acc],
     decode_tuple(T, NewAcc, UBFMod).
 
-decode_record(RecName, X, UBFMod) ->
+decode_record(RecNameStr, X, UBFMod) ->
+    RecName = binary_to_existing_atom(RecNameStr),
     Y = {RecName, length(X)},
-    case lists:keysearch(Y, 1, UBFMod:get_records()) of
-        {value, Z} ->
-            Keys = UBFMod:get_record(Z),
-            decode_record(RecName, Keys, X, [], UBFMod)
-    end.
+    Keys = UBFMod:contract_record(Y),
+    decode_record(RecName, Keys, X, [], UBFMod).
 
 decode_record(RecName, [], [], Acc, _UBFMod) ->
-    list_to_tuple([binary_to_existing_atom(RecName)|lists:reverse(Acc)]);
+    list_to_tuple([RecName|lists:reverse(Acc)]);
 decode_record(RecName, [H|T], X, Acc, UBFMod) ->
-    K = atom_to_binary(H),
+    K = atom_to_list(H),
     case keytake(K, 1, X) of
         {value, {K, V}, NewX} ->
             NewAcc = [do_decode(V, UBFMod)|Acc],

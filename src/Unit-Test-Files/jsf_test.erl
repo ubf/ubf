@@ -2,7 +2,7 @@
 
 -compile(export_all).
 
--import(jsf, [encode/1, decode/1]).
+-import(jsf, [encode/2, decode/2]).
 -import(lists, [foldl/3, reverse/1, map/2, seq/2, sort/1]).
 
 tests() ->
@@ -17,13 +17,13 @@ tests() ->
 
 test() ->
     decode("'person' >p # {p 1479 -22} &"
-           "  {p \"bingo\" 23} & $").
+           "  {p \"bingo\" 23} & $", test_plugin).
 
 test1() ->
-    decode("#5&4&3&2&1&$").
+    decode("#5&4&3&2&1&$", test_plugin).
 
 test2() ->
-    L = encode(abc),
+    L = encode(abc, test_plugin),
     L = "{\"$A\":\"abc\"}",
     L.
 
@@ -41,7 +41,7 @@ test11() ->
     test_jsf(T).
 
 encode_print(X) ->
-    io:format("~s~n",[jsf:encode(X)]).
+    io:format("~s~n",[jsf:encode(X, test_plugin)]).
 
 
 bug1() ->
@@ -61,10 +61,10 @@ bug2() ->
 test_jsf(T) ->
     B = term_to_binary(T),
     io:format("encode test #Bin=~p~n",[size(B)]),
-    L = encode(T),
+    L = encode(T, test_plugin),
     %%io:format("L=~p~n",[L]),
     io:format("jsf size =~p~n",[length(L)]),
-    Val = decode(L),
+    Val = decode(L, test_plugin),
     case Val of
         {ok, T, _} ->
             io:format("Identical~n");
