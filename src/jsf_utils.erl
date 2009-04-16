@@ -212,12 +212,17 @@ ubf_contract(Mod) ->
           , ""
          ],
     X4 = [ begin
-               Params =
+               {InputTag, Params} =
                    case get_type(Input,true,Mod) of
-                       {Input, {tuple, Elements1}, _} ->
-                           io_lib:format("[ ~s ]", [join([typeref(E, Mod) || E <- tl(Elements1), E =/= {prim,authinfo}], ", ")]);
-                       {Input, {atom, _Atom}, _} ->
-                           io_lib:format("[]", [])
+                       {_Input, {tuple, [{atom, Atom}|Elements1]}, _} ->
+                           {Atom
+                            , io_lib:format("[ ~s ]", [join([typeref(E, Mod) || E <- Elements1, E =/= {prim,authinfo}], ", ")])
+                           };
+                       {_Input, {atom, Atom}, _} ->
+                           {Atom
+                            , io_lib:format("[]"
+                                            , [])
+                           }
                    end,
                Result =
                    case get_type(Output,false,Mod) of
@@ -229,12 +234,12 @@ ubf_contract(Mod) ->
                join([
                      ""
                      , "// ----------"
-                     , io_lib:format("// ~p", [Input])
+                     , io_lib:format("// ~p", [InputTag])
                      , "//"
                      , "request {"
                      , io_lib:format("\t\"version\" : \"1.1\"", [])
                      , io_lib:format("\t\"id\"      : binary()", [])
-                     , io_lib:format("\t\"method\"  : \"~p\"", [Input])
+                     , io_lib:format("\t\"method\"  : \"~p\"", [InputTag])
                      , io_lib:format("\t\"params\"  : ~s", [Params])
                      , " }"
                      , "response {"

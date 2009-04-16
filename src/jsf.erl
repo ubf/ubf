@@ -209,12 +209,12 @@ rpc_v11_req_encode_print(X, Id, UBFMod) ->
     io:format("~s~n", [rpc_v11_req_encode(X, Id, UBFMod)]).
 
 rpc_v11_req_encode(Method, Id, _UBFMod) when is_atom(Method) ->
-    {undefined, {obj, [{"method", atom_to_binary(Method)}, {"params", []}, {"id", Id}, {"version", <<"1.1">>}]}};
+    {undefined, {obj, [{"version", <<"1.1">>}, {"id", Id}, {"method", atom_to_binary(Method)}, {"params", []}]}};
 
 rpc_v11_req_encode(X, Id, UBFMod) when is_tuple(X), size(X) > 1, is_atom(element(1, X)) ->
     [Method|[AuthInfo|Params]] = tuple_to_list(X),
     EncodedParams = do_encode(Params,UBFMod),
-    {AuthInfo, {obj, [{"method", atom_to_binary(Method)}, {"params", EncodedParams}, {"id", Id}, {"version", <<"1.1">>}]}}.
+    {AuthInfo, {obj, [{"version", <<"1.1">>}, {"id", Id}, {"method", atom_to_binary(Method)}, {"params", EncodedParams}]}}.
 
 
 %%
@@ -225,12 +225,12 @@ rpc_v11_req_decode_print(AuthInfo, X, UBFMod) ->
     io:format("~s~n", [rpc_v11_req_decode(AuthInfo, X, UBFMod)]).
 
 rpc_v11_req_decode(AuthInfo, X, UBFMod) ->
-    %% @todo handle version
     case rfc4627:decode(X) of
         {ok, {obj, Props}, []} ->
-            {value, {"method", MethodBin}, Props1} = keytake("method", 1, Props),
-            {value, {"params", JsonParams}, Props2} = keytake("params", 1, Props1),
-            {value, {"id", Id}, _Ver} = keytake("id", 1, Props2),
+            {value, {"version", <<"1.1">>}, Props1} = keytake("version", 1, Props),
+            {value, {"id", Id}, Props2} = keytake("id", 1, Props1),
+            {value, {"method", MethodBin}, Props3} = keytake("method", 1, Props2),
+            {value, {"params", JsonParams}, []} = keytake("params", 1, Props3),
             Method = binary_to_existing_atom(MethodBin),
             Params = do_decode(JsonParams, UBFMod),
             if Params =:= [] ->
@@ -254,8 +254,8 @@ rpc_v11_res_encode_print(X, Id, UBFMod) ->
     io:format("~s~n", [rpc_v11_res_encode(X, Id, UBFMod)]).
 
 rpc_v11_res_encode(X, Id, UBFMod)  ->
-    Rsp = do_encode(X,UBFMod),
-    Y = {obj, [{<<"result">>, Rsp}, {<<"error">>, null}, {<<"id">>, Id}, {<<"version">>, <<"1.1">>}]},
+    Result = do_encode(X,UBFMod),
+    Y = {obj, [{<<"version">>, <<"1.1">>}, {<<"id">>, Id}, {<<"result">>, Result}, {<<"error">>, null}]},
     rfc4627:encode(Y).
 
 
@@ -267,12 +267,12 @@ rpc_v11_res_decode_print(X, UBFMod) ->
     io:format("~s~n", [rpc_v11_res_decode(X, UBFMod)]).
 
 rpc_v11_res_decode(X, UBFMod) ->
-    %% @todo handle version
     case rfc4627:decode(X) of
         {ok, {obj, Props}, []} ->
-            {value, {"result", Result}, Props1} = keytake("result", 1, Props),
-            {value, {"error", Error}, Props2} = keytake("error", 1, Props1),
-            {value, {"id", Id}, [_Ver]} = keytake("id", 1, Props2),
+            {value, {"version", <<"1.1">>}, Props1} = keytake("version", 1, Props),
+            {value, {"id", Id}, Props2} = keytake("id", 1, Props1),
+            {value, {"result", Result}, Props3} = keytake("result", 1, Props2),
+            {value, {"error", Error}, []} = keytake("error", 1, Props3),
             {ok, do_decode(Result,UBFMod), Error, Id}
     end.
 
