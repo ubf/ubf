@@ -1,5 +1,5 @@
 %%% -*- mode: erlang -*-
-%%% $Id: ubf_plugin_meta_server.con 131834 2009-04-11 14:31:28Z norton $
+%%% $Id$
 %%%
 
 +NAME("meta_server").
