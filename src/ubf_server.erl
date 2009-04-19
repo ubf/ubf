@@ -139,8 +139,10 @@ start_term_listener(Server, PluginModules, Options) ->
     ContractManager.
 
 help() ->
-    ?S("\n\n see http://www.sics.se/~joe/ubf/ for details of this service\n"
-       " type 'info'$ for information\n\n").
+    ?S("\n\n See http://www.sics.se/~joe/ubf/ for details of this service.\n"
+       " See http://github.com/norton/ubf/tree/master for some source code\n"
+       "     extensions available as part of the larger OSS community.\n"
+       " Type 'info'$ for information\n\n").
 
 sendEvent(Pid, Msg) ->
     %% io:format("sendEvent (ubf_server) ~p to ~p~n",[Msg,Pid]),

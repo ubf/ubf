@@ -1,5 +1,5 @@
 %%% -*- mode: erlang -*-
-%%% $Id$
+%%% $Id: ubf_plugin_meta_server.con 131834 2009-04-11 14:31:28Z norton $
 %%%
 
 +NAME("meta_server").
@@ -21,7 +21,15 @@ ok()             = {ok, term()};
 error()          = {error, term()}.
 
 +STATE start
-	help()           => string() & start;
+	%% Joe Armstrong's original meta-server contract used a string()
+	%% type for help()'s output.  However, the string style requires
+	%% icky backslash escaping of double-quotes.  For UBF beginners
+	%% who are using "telnet" or "nc"/netcat as their protocol client,
+	%% the \" quoting stuff is a big hassle.
+	%% So we now use a binary() to make reading help() output slightly
+	%% easier ... and give an example of what a binary looks like to
+	%% any human eyes that look.  :-)
+	help()           => binary() & start;
 	restartService() => ok() & start
 		         |  error() & start;
 	startSession() => ok() & start

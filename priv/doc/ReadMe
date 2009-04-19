@@ -4,7 +4,7 @@ test:test() run a test
 <h3>Testing with telnet</h3>
 <pre>
 	telnet localhost 2000
-	{'rpc', 'info'}$  replys with info
+	'info'$  ... replies with info
 
 
 <h3>The *complete* callback structure</h3>

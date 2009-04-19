@@ -1,5 +1,5 @@
 %%% -*- mode: erlang -*-
-%%% $Id$
+%%% $Id: ubf_plugin_meta_serverless.erl 132057 2009-04-14 08:22:27Z norton $
 %%%
 
 -module(ubf_plugin_meta_serverless, [MODULES]).
@@ -28,16 +28,19 @@ info() -> "I am a meta server -
 
     type 'help'$
 
-              to find out what I can do".
+    ... to find out what I can do".
 
 help() ->
-               "\n\n
+    <<"\n\n
 This server speaks Universal Binary Format 1.0
 
-                   See http://www.sics.se/~joe/ubf.html
+    See http://www.sics.se/~joe/ubf.html
+    See http://github.com/norton/ubf/tree/master for some
+    source code extensions available as part of the larger
+    OSS community.
 
-                   UBF servers are introspective - which means the servers can describe
-                   themselves. The following commands are always available:
+UBF servers are introspective - which means the servers can describe
+themselves. The following commands are always available:
 
 'help'$          This information
 'info'$          Short information about the current service
@@ -48,23 +51,27 @@ This server speaks Universal Binary Format 1.0
 
 To start a service:
 
-{'startService', \"Name\", Args} Name should be one of the names in the
-                                 services list - args is an optional argument
+{'startService', \"Name\", Arg}  Name should be one of the names in the
+                                 services list.  Arg is an initial
+    argument for the Name service and is specific to that service; use
+    'foo' or # (the empty list) if the service ignores this argument.
 
- Warning without reading the documentation you might find the output from
- some of these commands difficult to understand :-)
+Warning: Without reading the documentation you might find the output
+from some of these commands difficult to understand :-)
 
-".
+">>.
 
 description() -> "
 Commands:
-                     'services'$                   -- list services
-                                                             {'startService', Name, Args}$ -- start a service
-                     'info'$                       -- provide informat
-                     'description'$                -- this information
-                     'contract'$                   -- Show the contract
-                                                                 (see  http://www.sics.se/~joe/ubf.html)
-                     ".
+    'services'$                   -- List services.
+    {'startService', Name, Arg}$  -- Start a service.
+                                  -- Reminder: Service names are strings
+                                  -- and therefore must be double-quoted.
+    'info'$                       -- Provide information.
+    'description'$                -- This information.
+    'contract'$                   -- Show the contract.
+                                     See http://www.sics.se/~joe/ubf.html
+".
 
 %% managerStart(Args) -> {ok, State} | {error, Why}
 %% handlerRpc(Q, State, Data, ManagerPid) -> {Reply, State', Data'}
@@ -104,7 +111,7 @@ handlerRpc(Any, info, State, _Manager) ->
 handlerRpc(Any, description, State, _Manager) ->
     {?S(description()), Any, State};
 handlerRpc(Any, help, State, _Manager) ->
-    {?S(help()), Any, State};
+    {help(), Any, State};
 handlerRpc(Any, services, State, _Manager) ->
     Ss = map(fun(I) -> ?S(I) end, services()),
     {Ss, Any, State};
@@ -145,7 +152,7 @@ handlerRpc(Any, {info,_}, State, _Manager) ->
 handlerRpc(Any, {description,_}, State, _Manager) ->
     {?S(description()), Any, State};
 handlerRpc(Any, {help,_}, State, _Manager) ->
-    {?S(help()), Any, State};
+    {help(), Any, State};
 handlerRpc(Any, {services,_}, State, _Manager) ->
     Ss = map(fun(I) -> ?S(I) end, services()),
     {Ss, Any, State};
