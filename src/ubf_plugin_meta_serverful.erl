@@ -81,8 +81,8 @@ Commands:
 %%    | {reject, Why}.
 
 
-managerStart(_) ->
-    {ok, lists:zip(services(), [ {M, ubf_plugin_handler:start_manager(M, [])} || M <- MODULES ])}.
+managerStart(Args) ->
+    {ok, lists:zip(services(), [ {M, ubf_plugin_handler:start_manager(M, Args)} || M <- MODULES ])}.
 
 managerRestart(Args,Manager) ->
     ask_manager(Manager,{restartManager, Args}).
