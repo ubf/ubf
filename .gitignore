@@ -2,6 +2,10 @@
 *.d
 *.huc
 *.P
+
+erl_crash.dump
+
 src/check.log
+
 src/contract_yecc.erl
 src/contract_lex.erl
