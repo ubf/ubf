@@ -1,5 +1,7 @@
 -module(irc_plugin).
 
+-include("ubf.hrl").
+
 -export([handlerStart/2, handlerRpc/4, handlerStop/3,
          managerStart/1, managerRpc/2]).
 
@@ -10,9 +12,6 @@
 
 -compile({parse_transform,contract_parser}).
 -add_contract("./Unit-Test-Files/irc_plugin").
-
--define(S(X), {'#S',X}).
-s(X) -> {'#S', X}.
 
 
 info() ->"I am an IRC server".
@@ -74,7 +73,7 @@ managerRpc({join, Pid, Group}, Ets) ->
             ets:insert(Ets, {{facts, Pid}, {Nick,[Group|Gs]}}),
             Pids = [Pid|pids(Ets, Group)],
             ets:insert(Ets, {{group,Group}, Pids}),
-            broadcast_to_group(Pids, {joins, s(Nick), s(Group)}),
+            broadcast_to_group(Pids, {joins, ?S(Nick), ?S(Group)}),
             {ok, Ets}
     end;
 managerRpc({leave, Pid, Group}, Ets) ->
@@ -85,7 +84,7 @@ managerRpc({leave, Pid, Group}, Ets) ->
             ets:insert(Ets, {{facts, Pid}, {Nick,delete(Group, Gs)}}),
             Pids = delete(Pid, pids(Ets, Group)),
             ets:insert(Ets, {{group,Group}, Pids}),
-            broadcast_to_group(Pids, {leaves, s(Nick), s(Group)}),
+            broadcast_to_group(Pids, {leaves, ?S(Nick), ?S(Group)}),
             {ok, Ets}
     end;
 managerRpc({msg, Pid, Group, Msg}, Ets) ->
@@ -94,13 +93,13 @@ managerRpc({msg, Pid, Group, Msg}, Ets) ->
         false -> {notJoined, Ets};
         true ->
             broadcast_to_group(pids(Ets, Group),
-                               {msg, s(Nick), s(Group), s(Msg)}),
+                               {msg, ?S(Nick), ?S(Group), ?S(Msg)}),
             {ok, Ets}
     end;
 managerRpc(groups, Ets) ->
     M = ets:match(Ets, {{group,'$1'},'_'}),
     io:format("Here Groups=~p~n",[M]),
-    Strs = map(fun([I]) -> s(I) end, M),
+    Strs = map(fun([I]) -> ?S(I) end, M),
     {Strs, Ets};
 managerRpc(P={logon, Pid}, Ets) ->
     Nick = random_nick(6),
@@ -123,8 +122,8 @@ managerRpc({change_nick,Old,New,Pid}, Ets) ->
             foreach(fun(G) ->
                             Pids = pids(Ets, G),
                             broadcast_to_group(Pids, {changesName,
-                                                      s(Old), s(New),
-                                                      s(G)})
+                                                      ?S(Old), ?S(New),
+                                                      ?S(G)})
                     end, Groups),
             {ok, Ets};
         _ ->
@@ -140,7 +139,7 @@ managerRpc({handlerStopped, Pid, Reason}, Ets) ->
                     Pids = pids(Ets, G),
                     Pids1 = delete(Pid, Pids),
                     ets:insert(Ets, {{group,G}, Pids1}),
-                    broadcast_to_group(Pids1, {leaves, s(Nick), s(G)})
+                    broadcast_to_group(Pids1, {leaves, ?S(Nick), ?S(G)})
             end, Groups),
     Ets.
 
@@ -150,7 +149,7 @@ broadcast_to_group(L, Msg) ->
 
 handlerRpc(start, logon, _State, Manager) ->
     R = ask_manager(Manager, {logon, self()}),
-    {{ok, s(R)}, active, R};
+    {{ok, ?S(R)}, active, R};
 handlerRpc(active, {join, ?S(Group)}, Nick, Manager) ->
     ask_manager(Manager, {join, self(), Group}),
     {ok, active, Nick};
@@ -171,9 +170,9 @@ handlerRpc(active, groups, Nick, Manager) ->
     Groups = ask_manager(Manager, groups),
     {Groups, active, Nick};
 handlerRpc(Any, info, State, _) ->
-    {s(info()), Any, State};
+    {?S(info()), Any, State};
 handlerRpc(Any, description, State, _Manager) ->
-    {s(description()), Any, State}.
+    {?S(description()), Any, State}.
 
 random_nick(0) ->
     [];

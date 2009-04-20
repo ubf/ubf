@@ -1,11 +1,11 @@
+%% NOTE: This module is a copy of irc_client.erl, except for one buggy line.
+
 -module(bug).
+
+-include("ubf.hrl").
 
 -compile(export_all).
 -import(ubf_client, [rpc/2]).
-
-
--define(S(X), {'#S',X}).
-s(X) -> {'#S', X}.
 
 batch([Name]) ->
     start(atom_to_list(Name)),
@@ -13,14 +13,16 @@ batch([Name]) ->
 
 start(Nick) ->
     {ok, Pid, _Name} = ubf_client:connect("localhost", 2000),
+    %% NOTE: The following line is buggy: it does not use the ?S()
+    %% wrapper function for proper UBF string handling.
     {reply,{ok,_}, _} = rpc(Pid, {startSession, "irc_server", []}),
     ubf_client:install_handler(Pid, fun print_msg/1),
     {reply, _, _} = rpc(Pid, logon),
-    case rpc(Pid, {nick, s(Nick)}) of
+    case rpc(Pid, {nick, ?S(Nick)}) of
         {reply, false, _} ->
             ubf_client:stop(Pid);
         {reply, true, active} ->
-            {reply,_,_}   = rpc(Pid, {join, s("erlang")}),
+            {reply,_,_}   = rpc(Pid, {join, ?S("erlang")}),
             loop(Pid, "erlang", ["erlang"], Nick)
     end,
     io:format("client stops~n").
@@ -37,14 +39,14 @@ loop(Pid, Group, Gs, Nick) ->
                     io:format("Groups=~p~n",[G]),
                     loop(Pid, Group, Gs, Nick);
                 ["join", G] ->
-                    {reply, _, _} = rpc(Pid, {join, s(G)}),
+                    {reply, _, _} = rpc(Pid, {join, ?S(G)}),
                     loop(Pid, Group, [G|Gs], Nick);
                 ["leave", G] ->
-                    rpc(Pid, {leave, s(G)}),
+                    rpc(Pid, {leave, ?S(G)}),
                     _Gs1 = lists:delete(G, Gs),
                     loop(Pid, Group, [G|Gs], Nick);
                 ["nick", N] ->
-                    case rpc(Pid, {nick, s(N)}) of
+                    case rpc(Pid, {nick, ?S(N)}) of
                         {reply, nickInUse, _} ->
                             loop(Pid, Group, Gs, Nick);
                         {reply, nickChanged, active} ->
@@ -60,7 +62,7 @@ loop(Pid, Group, Gs, Nick) ->
 
              end;
         Msg ->
-            case rpc(Pid, {msg, s(Group), s(Msg)}) of
+            case rpc(Pid, {msg, ?S(Group), ?S(Msg)}) of
                 {reply, _R,_} ->
                     loop(Pid, Group, Gs, Nick);
                 {error, stop, stop} ->

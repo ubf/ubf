@@ -16,14 +16,14 @@ start(Nick) ->
 init1(Nick) ->
     case ubf_client:connect("localhost", 2000) of
         {ok, Pid, _Name} ->
-            {reply, {ok,_},_} = ubf_client:rpc(Pid, {startSession, s("irc_server"),
+            {reply, {ok,_},_} = ubf_client:rpc(Pid, {startSession, s("irc"),
                                                  []}),
             ubf_client:install_handler(Pid, fun print_msg/1),
             {reply, _, _} = rpc(Pid, logon),
             Self = self(),
             ubf_client:install_handler(Pid, fun(M) ->
                                                 send_self(M, Self)
-                                        end),
+					    end),
             case rpc(Pid, {nick, s(Nick)}) of
                 {reply, false, _} ->
                     ubf_client:stop(Pid),
