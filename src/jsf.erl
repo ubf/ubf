@@ -17,6 +17,7 @@
 -export([rpc_v11_res_decode/2]).
 
 -export([encode_print/2]).
+-export([encode/1, contract_records/0]).	% hack/kludge
 -export([encode/2]).
 
 -export([decode_print/2]).
@@ -283,6 +284,12 @@ rpc_v11_res_decode(X, UBFMod) ->
 
 encode_print(X, UBFMod) ->
     io:format("~s~n", [encode(X, UBFMod)]).
+
+contract_records() ->
+    [].						% Dummy hack/kludge.
+
+encode(X) ->
+    encode(X, jsf).
 
 encode(X, UBFMod) ->
     rfc4627:encode(do_encode(X, UBFMod)).
