@@ -1,11 +1,28 @@
 -module(irc_client_gs).
 
+-include("ubf.hrl").
+
 -compile(export_all).
 
 -import(ubf_client, [rpc/2]).
 
--define(S(X), {'#S',X}).
-s(X) -> {'#S', X}.
+%% Prerequisites:
+%%
+%% 1. The current working directory must be "..", because test() will
+%%    try to access the file fileNameToGet(), which exists in our
+%%    parent directory.  (Or else create a symbolic link with that
+%%    name that points to the file in "..".
+%%
+%% 2. A UBF server must be listening to TCP port defaultPort() and
+%%    have the "irc" contract, which is implemented by the
+%%    "irc_plugin" module.
+%%
+%% Here is minimal recipe.
+%%
+%%   erl -pz ../../ebin
+%%
+%%   > ubf_server:start([irc_plugin], 2000, []).
+%%   > irc_client_gs:start("TestNickName").
 
 batch([Nick]) ->
     start(atom_to_list(Nick)).
@@ -16,7 +33,7 @@ start(Nick) ->
 init1(Nick) ->
     case ubf_client:connect("localhost", 2000) of
         {ok, Pid, _Name} ->
-            {reply, {ok,_},_} = ubf_client:rpc(Pid, {startSession, s("irc"),
+            {reply, {ok,_},_} = ubf_client:rpc(Pid, {startSession, ?S("irc"),
                                                  []}),
             ubf_client:install_handler(Pid, fun print_msg/1),
             {reply, _, _} = rpc(Pid, logon),
@@ -24,7 +41,7 @@ init1(Nick) ->
             ubf_client:install_handler(Pid, fun(M) ->
                                                 send_self(M, Self)
 					    end),
-            case rpc(Pid, {nick, s(Nick)}) of
+            case rpc(Pid, {nick, ?S(Nick)}) of
                 {reply, false, _} ->
                     ubf_client:stop(Pid),
                     io:format("Nick was in use try again~n"),
@@ -57,7 +74,7 @@ loop(S, Dict, Pid, L1, E1, E2) ->
         {gs,_,click,nick,_} ->
             Nick = gs:read(E2, text),
             io:format("Change nick to:~s~n",[Nick]),
-            case rpc(Pid, {nick, s(Nick)}) of
+            case rpc(Pid, {nick, ?S(Nick)}) of
                 {reply, false, _} ->
                     gs:config(E2, {text, "** bad nick **"}),
                     loop(S, Dict, Pid, L1, E1, E2);
@@ -73,7 +90,7 @@ loop(S, Dict, Pid, L1, E1, E2) ->
                 {ok, {W,_}} ->
                     gs:destroy(W),
                     Dict1 = dict:erase(Group, Dict),
-                    rpc(Pid, {leave, s(Group)}),
+                    rpc(Pid, {leave, ?S(Group)}),
                     loop(S, Dict1, Pid, L1, E1, E2);
                 error ->
                     loop(S, Dict, Pid, L1, E1, E2)
@@ -90,7 +107,7 @@ loop(S, Dict, Pid, L1, E1, E2) ->
                             loop(S, Dict, Pid, L1, E1, E2);
                         error ->
                             W = new_group(S, Group),
-                            rpc(Pid, {join, s(Group)}),
+                            rpc(Pid, {join, ?S(Group)}),
                             loop(S, dict:store(Group, W, Dict), Pid,
                                  L1, E1, E2)
                     end
@@ -101,7 +118,7 @@ loop(S, Dict, Pid, L1, E1, E2) ->
             Str = gs:read(Obj, text),
             gs:config(Obj, {text, ""}),
             io:format("Send: ~s to ~s~n",[Str, G]),
-            rpc(Pid, {msg, s(G), s(Str ++ "\n")}),
+            rpc(Pid, {msg, ?S(G), ?S(Str ++ "\n")}),
             loop(S, Dict, Pid, L1, E1, E2);
         {gs,_Obj,keypress,_G,_} ->
             loop(S, Dict, Pid, L1, E1, E2);

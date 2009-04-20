@@ -5,13 +5,39 @@
 -compile(export_all).
 -import(ubf_client, [rpc/2]).
 
+%% Prerequisites:
+%%
+%% 1. The current working directory must be "..", because test() will
+%%    try to access the file fileNameToGet(), which exists in our
+%%    parent directory.  (Or else create a symbolic link with that
+%%    name that points to the file in "..".
+%%
+%% 2. A UBF server must be listening to TCP port defaultPort() and
+%%    have the "irc" contract, which is implemented by the
+%%    "irc_plugin" module.
+%%
+%% Here is minimal recipe.
+%%
+%%   erl -pz ../../ebin
+%%
+%%   > ubf_server:start([irc_plugin], 2000, []).
+%%   > irc_client:start("TestNickName").
+%%
+%%   Commands to join and leave groups, etc ... see the loop() function
+%%   for details.
+%%
+%% In another window/login session on the same machine, run another
+%% "erl" shell, like the one above.
+%%
+%%   > irc_client:start("2nd-nick").
+
 batch([Name]) ->
     start(atom_to_list(Name)),
     erlang:halt().
 
 start(Nick) ->
     {ok, Pid, _Name} = ubf_client:connect("localhost", 2000),
-    {reply,{ok,_}, _} = rpc(Pid, {startSession, ?S("irc_server"), []}),
+    {reply,{ok,_}, _} = rpc(Pid, {startSession, ?S("irc"), []}),
     ubf_client:install_handler(Pid, fun print_msg/1),
     {reply, _, _} = rpc(Pid, logon),
     case rpc(Pid, {nick, ?S(Nick)}) of
@@ -39,14 +65,14 @@ loop(Pid, Group, Gs, Nick) ->
                     loop(Pid, Group, [G|Gs], Nick);
                 ["leave", G] ->
                     rpc(Pid, {leave, ?S(G)}),
-                    _Gs1 = lists:delete(G, Gs),
-                    loop(Pid, Group, [G|Gs], Nick);
-                ["nick", N] ->
-                    case rpc(Pid, {nick, ?S(N)}) of
-                        {reply, nickInUse, _} ->
+                    Gs1 = lists:delete(G, Gs),
+                    loop(Pid, Group, Gs1, Nick);
+                ["nick", NewNick] ->
+                    case rpc(Pid, {nick, ?S(NewNick)}) of
+                        {reply, false, _} ->
                             loop(Pid, Group, Gs, Nick);
-                        {reply, nickChanged, active} ->
-                            loop(Pid, "erlang", ["erlang"], N)
+                        {reply, true, active} ->
+                            loop(Pid, Group, Gs, NewNick)
                     end;
                 ["quit"] ->
                     ubf_client:stop(Pid),
