@@ -1,2 +1,2 @@
 {packages,[]}.
-{modules,[ubf_client,ubf_server]}.
+{modules,[file_plugin,ubf_client,ubf_server]}.
