@@ -74,10 +74,9 @@ start(PluginModules, Port) ->
 %%
 %% Valid properties in the Options proplist are:
 %% <ul>
-%% <li> {ebf, true | false} ... Enable the EBF version of the protocol's
-%%      wire format.
-%%      Only one of ebf, jsf, and ubf should be specified.
-%%      Default: false. </li>
+%% <li> {proto, {ubf | ebf | jsf}} ... Enable the UBF, EBF, or JSF version
+%%      of the protocol's wire format.
+%%      Default: ubf. </li>
 %% <li> {idletimer, integer() | infinity} ... Maximum time (in milliseconds)
 %%      that a client connection may remain idle before the server will
 %%      close the connection.
@@ -85,10 +84,9 @@ start(PluginModules, Port) ->
 %% <li> {maxconn, integer()} ... Maximum number of simultaneous TCP
 %%      connections allowed.
 %%      Default: 10,000. </li>
-%% <li> {jsf, true | false} ... Enable the JSON version of the protocol's
-%%      wire format.
-%%      Only one of ebf, jsf, and ubf should be specified.
-%%      Default: false. </li>
+%% <li> {proto, {ubf | ebf | jsf}} ... Enable the UBF, EBF, or JSF version
+%%      of the protocol's wire format.
+%%      Default: ubf. </li>
 %% <li> {serverhello, string()} ... Meta contract greeting string, sent
 %%      when a client first connects to the server.
 %%      Default: "meta_server" </li>
@@ -97,10 +95,9 @@ start(PluginModules, Port) ->
 %%      Joe Armstrong's original UBF server implementation.
 %%      Default: false.
 %%      TO-DO: JoeNorton, add more? </li>
-%% <li> {ubf, true | false} ... Enable the JSON version of the protocol's
-%%      wire format.
-%%      Only one of ebf, jsf, and ubf should be specified.
-%%      Default: true. </li>
+%% <li> {proto, {ubf | ebf | jsf}} ... Enable the UBF, EBF, or JSF version
+%%      of the protocol's wire format.
+%%      Default: ubf. </li>
 %% <li> {verboserpc, true | false} ... Set the verbose RPC mode.
 %%      Default: false.
 %%      TO-DO: JoeNorton, add more? </li>
@@ -146,16 +143,13 @@ start_ubf_listener(MetaServerModule, Port, Server, Options) ->
         proplists:get_value(verboserpc,Options,false),
 
     {DriverModule, DriverVersion, PacketType} =
-        case proplists:get_value(ebf,Options,false) of
-            false ->
-                case proplists:get_value(jsf,Options,false) of
-                    false ->
-                        {ubf_driver, 'ubf1.0', 0};
-                    true ->
-                        {jsf_driver, 'jsf1.0', 0}
-                end;
-            true ->
-                {ebf_driver, 'ebf1.0', 4}
+        case proplists:get_value(proto,Options,ubf) of
+            ubf ->
+                {ubf_driver, 'ubf1.0', 0};
+            ebf ->
+                {ebf_driver, 'ebf1.0', 4};
+            jsf ->
+                {jsf_driver, 'jsf1.0', 0}
         end,
     IdleTimer =
         case proplists:get_value(idletimer,Options,16#ffffffff) of

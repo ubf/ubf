@@ -1,5 +1,5 @@
 %%% -*- mode: erlang -*-
-%%% $Id: ubf_plugin_meta_serverful.erl 132057 2009-04-14 08:22:27Z norton $
+%%% $Id$
 %%%
 
 -module(ubf_plugin_meta_serverful, [MODULES]).

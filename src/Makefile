@@ -35,10 +35,11 @@ TESTS = \
 	socket_test_client \
 	socket_test_server \
 	test_plugin \
+	test_sup \
 	test_ubf \
-	test_jsf \
 	test_ebf \
 	test_etf \
+	test_jsf \
 	ubf_test \
 	jsf_test
 
@@ -64,25 +65,12 @@ check: all
 	$(RUNERL1) -noinput -noshell -pz $(TEST_DIR) \
 		-s ubf_test tests \
 		-s test_ubf tests \
-		-s erlang halt \
-		> ./check.log
-# TEMPORARILY DISABLE jsf_test to avoid failures if erlang-rfc4627 is
-# not available
-#	$(RUNERL1) -noinput -noshell -pz $(TEST_DIR) \
-#		-s jsf_test tests \
-#		-s erlang halt \
-#		>> ./check.log
-	$(RUNERL1) -noinput -noshell -pz $(TEST_DIR) \
 		-s test_ebf tests \
-		-s erlang halt \
-		>> ./check.log
-	$(RUNERL1) -noinput -noshell -pz $(TEST_DIR) \
 		-s test_etf tests \
 		-s erlang halt \
-		>> ./check.log
+		> ./check.log
 
 check-jsf: all
-	-rm -f ./*.log
 	$(RUNERL1) -noinput -noshell -pz $(TEST_DIR) \
 		-s jsf_test tests \
 		-s erlang halt \

@@ -21,12 +21,12 @@
 %% stop(Pid)   -> ack.
 
 -export([connect/2, connect/3, connect/4, rpc/2, rpc/3, stop/1,
-	 install_default_handler/1, install_handler/2]).
+         install_default_handler/1, install_handler/2]).
 
 -import(ubf_utils, [spawn_link_debug/2]).
 
 %% @type address() = string() | ip_address(). A DNS hostname or IP address.
-%% @type connect_options() = list(ubf | ebf | jsf).
+%% @type connect_options() = list({proto, ubf | ebf | jsf}).
 %%       An OTP-style property list, see 'proplists' module for details.
 %% @type ip_address() = string() | tuple().  An IP address in string form,
 %%       e.g. "127.0.0.1" (IPv4) or "::1" (IPv6), or in tuple form (see
@@ -114,16 +114,13 @@ ubf_client(Parent, Host, Port, Options, Timeout)
     DefaultConnectOptions =
         [binary, {nodelay, true}, {active, false}],
     {DriverModule, DriverVersion, ConnectOptions} =
-        case proplists:get_value(ebf,Options,false) of
-            false ->
-                case proplists:get_value(jsf,Options,false) of
-                    false ->
-                        {ubf_driver, 'ubf1.0', DefaultConnectOptions};
-                    true ->
-                        {jsf_driver, 'jsf1.0', DefaultConnectOptions}
-                end;
-            true ->
-                {ebf_driver, 'ebf1.0', DefaultConnectOptions++[{packet,4}]}
+        case proplists:get_value(proto,Options,ubf) of
+            ubf ->
+                {ubf_driver, 'ubf1.0', DefaultConnectOptions};
+            ebf ->
+                {ebf_driver, 'ebf1.0', DefaultConnectOptions++[{packet,4}]};
+            jsf ->
+                {jsf_driver, 'jsf1.0', DefaultConnectOptions}
         end,
     %% io:format("QQQ: ~p : ~p : ~p ~n", [DriverModule, DriverVersion, ConnectOptions]),
     case gen_tcp:connect(Host, Port, ConnectOptions) of
