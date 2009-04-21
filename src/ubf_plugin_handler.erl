@@ -88,7 +88,7 @@ loop(Client, State1, Data, Manager, Mod) ->
             if Manager /= undefined ->
                     Manager ! {client_has_died, self(), Why};
                true ->
-                    case (catch Mod:handlerStop(Why, Data)) of
+                    case (catch Mod:handlerStop(undefined, Why, Data)) of
                         {'EXIT', OOps} ->
                             io:format("plug in error:~p~n",[OOps]);
                         _ ->
