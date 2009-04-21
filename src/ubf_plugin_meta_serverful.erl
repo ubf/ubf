@@ -22,7 +22,8 @@
 
 %% The server plugin only knows how to start it's sub-services
 
-services() -> [ Module:contract_name() || Module <- MODULES ].
+services() -> [ Module:contract_name()
+                || Module <- MODULES ].
 
 info() -> "I am a meta server -
 
@@ -82,7 +83,8 @@ Commands:
 
 
 managerStart(Args) ->
-    {ok, lists:zip(services(), [ {M, ubf_plugin_handler:start_manager(M, Args)} || M <- MODULES ])}.
+    {ok, lists:zip(services(), [ {M, ubf_plugin_handler:start_manager(M, Args)}
+                                 || M <- MODULES ])}.
 
 managerRestart(Args,Manager) ->
     ask_manager(Manager,{restartManager, Args}).

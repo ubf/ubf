@@ -123,12 +123,13 @@ init(Parent, PluginModules, Port, Options) ->
     start_server(PluginModules, Port, Options).
 
 start_server(PluginModules, Port, Options) ->
+    SortedPluginModules = lists:usort(PluginModules),
     MetaServerModule =
         case proplists:get_value(statelessrpc,Options,false) of
             false ->
-                ubf_plugin_meta_serverful:new(PluginModules);
+                ubf_plugin_meta_serverful:new(SortedPluginModules);
             true ->
-                ubf_plugin_meta_serverless:new(PluginModules)
+                ubf_plugin_meta_serverless:new(SortedPluginModules)
         end,
     %% set up a UBF listener on Port
     Server = self(),
@@ -202,12 +203,13 @@ start_ubf_listener(MetaServerModule, Port, Server, Options) ->
                      0).
 
 start_term_listener(Server, PluginModules, Options) ->
+    SortedPluginModules = lists:usort(PluginModules),
     MetaServerModule =
         case proplists:get_value(statelessrpc,Options,false) of
             false ->
-                ubf_plugin_meta_serverful:new(PluginModules);
+                ubf_plugin_meta_serverful:new(SortedPluginModules);
             true ->
-                ubf_plugin_meta_serverless:new(PluginModules)
+                ubf_plugin_meta_serverless:new(SortedPluginModules)
         end,
     ServerHello =
         proplists:get_value(serverhello,Options,MetaServerModule:contract_name()),
