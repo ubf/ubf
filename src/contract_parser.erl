@@ -260,12 +260,14 @@ pass2(_F, P, Imports) ->
     Any = require(zero_or_one, anystate, P),
     Trans = require(many, transition, P),
 
-    ImportTypes = lists:flatten([ [ begin {TDef, TTag} = Mod:contract_type(T), {T,TDef, TTag} end
-                                    || T <- TL ] || {Mod, TL} <- Imports ]),
+    ImportTypes = lists:flatten(
+                    [ [ begin {TDef, TTag} = Mod:contract_type(T), {T,TDef, TTag} end
+                        || T <- TL ] || {Mod, TL} <- Imports ]
+                   ),
 
     C = #contract{name=Name, vsn=Vsn, anystate=Any,
-                  types=Types++ImportTypes, transitions=Trans},
-    pass3(C).
+                  types=Types, transitions=Trans},
+    pass3(C, ImportTypes).
 
 require(Multiplicity, Tag, P) ->
     Vals =  [ Val || {T,Val} <- P, T == Tag],
@@ -291,23 +293,34 @@ require(Multiplicity, Tag, P) ->
             Vals
     end.
 
-pass3(C) ->
-    Types = C#contract.types,
-    Transitions = C#contract.transitions,
-    _Name = C#contract.name,
-    _Vsn = C#contract.vsn,
-    AnyState = C#contract.anystate,
-    %% io:format("Types=~p~n",[Types]),
-    DefinedTypes = map(fun({I,_, _}) -> I end, Types) ++ preDefinedTypes(),
-    %% io:format("Defined types=~p~n",[DefinedTypes]),
-    case duplicates(DefinedTypes, []) of
+pass3(C1, ImportTypes) ->
+    Types1 = C1#contract.types,
+    Transitions = C1#contract.transitions,
+    _Name = C1#contract.name,
+    _Vsn = C1#contract.vsn,
+    AnyState = C1#contract.anystate,
+
+    %% io:format("Types1=~p~n",[Types1]),
+    DefinedTypes1 = map(fun({I,_, _}) -> I end, Types1) ++ preDefinedTypes(),
+    %% io:format("Defined types1=~p~n",[DefinedTypes1]),
+    case duplicates(DefinedTypes1, []) of
         [] -> true;
         L1 -> exit({duplicated_types, L1})
     end,
-    %% io:format("Transitions=~p~n",[Transitions]),
-    UsedTypes = extract_prims({Types,Transitions,AnyState}, []),
-    MissingTypes = UsedTypes -- DefinedTypes,
 
+    C2 = C1#contract{types=lists:usort(Types1 ++ ImportTypes)},
+    Types2 = C2#contract.types,
+    %% io:format("Types2=~p~n",[Types2]),
+    DefinedTypes2 = map(fun({I,_, _}) -> I end, Types2) ++ preDefinedTypes(),
+    %% io:format("Defined types2=~p~n",[DefinedTypes2]),
+    case duplicates(DefinedTypes2, []) of
+        [] -> true;
+        L2 -> exit({duplicated_import_types, L2})
+    end,
+
+    %% io:format("Transitions=~p~n",[Transitions]),
+    UsedTypes = extract_prims({Types2,Transitions,AnyState}, []),
+    MissingTypes = UsedTypes -- DefinedTypes2,
     %% io:format("Used types=~p~n",[UsedTypes]),
     case MissingTypes of
         [] ->
@@ -315,7 +328,7 @@ pass3(C) ->
             %% io:format("defined states=~p~n",[DefinedStates]),
             case duplicates(DefinedStates, []) of
                 [] -> true;
-                L2 -> exit({duplicated_states, L2})
+                L3 -> exit({duplicated_states, L3})
             end,
             %% io:format("Transitions=~p~n",[Transitions]),
             UsedStates0 = [S||{_,Rules} <- Transitions,
@@ -327,7 +340,7 @@ pass3(C) ->
                                            not member(I, DefinedStates) end,
                                    UsedStates),
             case MissingStates of
-                [] -> C;
+                [] -> C2;
                 _  -> exit({missing_states, MissingStates})
             end;
         _ ->
