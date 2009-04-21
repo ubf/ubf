@@ -73,6 +73,7 @@ check: all
 check-jsf: all
 	$(RUNERL1) -noinput -noshell -pz $(TEST_DIR) \
 		-s jsf_test tests \
+		-s test_jsf tests \
 		-s erlang halt \
 		>> ./check.log
 

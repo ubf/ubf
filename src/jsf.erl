@@ -24,13 +24,7 @@
 
 
 %% Dummy hack/kludge.
--export([encode/1, xdecode/1, contract_records/0]).
-
-encode(X) ->
-    encode(X, ?MODULE).
-
-xdecode(X) ->
-    decode(X, ?MODULE).
+-export([contract_records/0]).
 
 contract_records() ->
     [].

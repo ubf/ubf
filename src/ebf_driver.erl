@@ -45,6 +45,8 @@ loop(Socket, Pid, Timeout, Cont) ->
             %% io:format("~p:~p stop~n", [?FILE, self()]),
             gen_tcp:close(Socket),
             exit(normal);
+        {changeContract, _HandlerMod1} ->
+            loop(Socket, Pid, Timeout, Cont);
         {relay, _From, Pid1} ->
             loop(Socket, Pid1, Timeout, Cont);
         {tcp_closed, Socket} ->
