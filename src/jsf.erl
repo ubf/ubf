@@ -10,8 +10,8 @@
 -export([rpc_v11_req_decode_print/3]).
 -export([rpc_v11_req_decode/3]).
 
--export([rpc_v11_res_encode_print/3]).
--export([rpc_v11_res_encode/3]).
+-export([rpc_v11_res_encode_print/4]).
+-export([rpc_v11_res_encode/4]).
 
 -export([rpc_v11_res_decode_print/2]).
 -export([rpc_v11_res_decode/2]).
@@ -258,13 +258,14 @@ rpc_v11_req_decode(AuthInfo, X, UBFMod) ->
 %%---------------------------------------------------------------------
 %%
 
-rpc_v11_res_encode_print(X, Id, UBFMod) ->
-    io:format("~s~n", [rpc_v11_res_encode(X, Id, UBFMod)]).
+rpc_v11_res_encode_print(X, Y, Id, UBFMod) ->
+    io:format("~s~n", [rpc_v11_res_encode(X, Y, Id, UBFMod)]).
 
-rpc_v11_res_encode(X, Id, UBFMod)  ->
+rpc_v11_res_encode(X, Y, Id, UBFMod)  ->
     Result = do_encode(X,UBFMod),
-    Y = {obj, [{<<"version">>, <<"1.1">>}, {<<"id">>, Id}, {<<"result">>, Result}, {<<"error">>, null}]},
-    rfc4627:encode(Y).
+    Error = do_encode(Y,UBFMod),
+    Z = {obj, [{<<"version">>, <<"1.1">>}, {<<"id">>, Id}, {<<"result">>, Result}, {<<"error">>, Error}]},
+    rfc4627:encode(Z).
 
 
 %%
@@ -281,7 +282,7 @@ rpc_v11_res_decode(X, UBFMod) ->
             {value, {"id", Id}, Props2} = keytake("id", 1, Props1),
             {value, {"result", Result}, Props3} = keytake("result", 1, Props2),
             {value, {"error", Error}, []} = keytake("error", 1, Props3),
-            {ok, do_decode(Result,UBFMod), Error, Id}
+            {ok, do_decode(Result,UBFMod), do_decode(Error,UBFMod), Id}
     end.
 
 
