@@ -52,7 +52,7 @@ themselves. The following commands are always available:
 
 To start a service:
 
-{'startService', \"Name\", Arg}  Name should be one of the names in the
+{'startSession', \"Name\", Arg}  Name should be one of the names in the
                                  services list.  Arg is an initial
     argument for the Name service and is specific to that service; use
     'foo' or # (the empty list) if the service ignores this argument.
@@ -65,7 +65,7 @@ from some of these commands difficult to understand :-)
 description() -> "
 Commands:
     'services'$                   -- List services.
-    {'startService', Name, Arg}$  -- Start a service.
+    {'startSession', Name, Arg}$  -- Start a service.
                                   -- Reminder: Service names are strings
                                   -- and therefore must be double-quoted.
     'info'$                       -- Provide information.

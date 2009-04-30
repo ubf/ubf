@@ -74,9 +74,6 @@ start(PluginModules, Port) ->
 %%
 %% Valid properties in the Options proplist are:
 %% <ul>
-%% <li> {proto, {ubf | ebf | jsf}} ... Enable the UBF, EBF, or JSF version
-%%      of the protocol's wire format.
-%%      Default: ubf. </li>
 %% <li> {idletimer, integer() | infinity} ... Maximum time (in milliseconds)
 %%      that a client connection may remain idle before the server will
 %%      close the connection.

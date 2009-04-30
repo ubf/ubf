@@ -38,6 +38,7 @@ error()        = error;
 ok()           = ok;
 intList()      = [integer()];
 testAmbiguities()  = testAmbiguities;
+foo()          = #foo{attribute1 = term()};
 callbackOnItsWay() = callbackOnItsWay.
 
 +STATE start 
@@ -67,16 +68,8 @@ callbackOnItsWay() = callbackOnItsWay.
 	dummy3a()        => dummy3a();
 	dummy3b()        => dummy3b();
 	dummy4()         => dummy4();
+	foo()            => term();
 	info()           => string();
 	description()    => string();
 	services()       => serviceList();
 	contract()       => term().
-
-
-
-
-
-
-
-  
-

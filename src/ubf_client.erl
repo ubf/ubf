@@ -61,7 +61,7 @@ connect(Host, Port, Timeout)
     connect(Host, Port, [], Timeout).
 
 %% @spec (address() | plugin_module_list(), tcp_port() | pid() | atom(),
-%%        timeout(), proplist()) ->
+%%        proplist(), timeout()) ->
 %%       {ok, pid(), service()} | {error, term()}
 %% @doc Connect to a UBF server at address Host + TCP port Port, or at
 %%      pid/registered name Server.
@@ -72,6 +72,9 @@ connect(Host, Port, Timeout)
 %% <li> Server: either a process id (pid()) or process registered
 %%      name (atom()) for an already-started UBF server. </li>
 %% </ol>
+%%
+%% See the docs for ubf_server:start_link() for a description of the
+%% <tt>Options</tt> proplist.
 
 connect(Host, Port, Options, Timeout)
   when is_integer(Port) andalso is_list(Options) ->

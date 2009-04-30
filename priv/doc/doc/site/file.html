@@ -207,7 +207,7 @@ s(X) -> {'#S', X}.
 test() ->
     {ok, Pid, Name} = client:connect(host(), defaultPort()),
     {reply, Info, _} = client:rpc(Pid, 
-				      {startService, s("file_server"), []}),
+				      {startSession, s("file_server"), []}),
     io:format("Info=~p~n",[Info]),
     {reply,  {files, Fs}, start} = rpc(Pid, ls),
     Files = map(fun(?S(I)) -> I end, Fs),

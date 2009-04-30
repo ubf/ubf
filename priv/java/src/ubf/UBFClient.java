@@ -36,17 +36,17 @@ public class UBFClient
 	/* first skip the welcome banner */
 	read();
 	startEventThread();
-	startService(service, args);
+	startSession(service, args);
     }
 
-    protected void startService(UBFString service, UBFList args)
+    protected void startSession(UBFString service, UBFList args)
 	throws IOException, UBFException
     {
-	UBFObject reply = rpc(UBF.tuple(new UBFAtom("startService"),
+	UBFObject reply = rpc(UBF.tuple(new UBFAtom("startSession"),
 					service,
 					args));
 	if (!reply.isTaggedTuple("ok", 2))
-	    throw new UBFException("Unexpected reply to startService: " +
+	    throw new UBFException("Unexpected reply to startSession: " +
 				   reply);
     }
 

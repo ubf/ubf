@@ -120,9 +120,9 @@ manager(Mod, Args) ->
 manager_loop(Mod, State) ->
     %% io:format("~p manager waiting for something to do~n", [Mod]),
     receive
-        {From, {startService, Service}} ->
-            %% io:format("HHHH startService~p~n",[Service]),
-            case (catch Mod:startService(Service, State)) of
+        {From, {startSession, Service}} ->
+            %% io:format("HHHH startSession~p~n",[Service]),
+            case (catch Mod:startSession(Service, State)) of
                 {accept, HandlerMod, ModManagerPid, State2} ->
                     %% io:format("returning accept ~p~n",[Mod]),
                     From ! {self(), {accept,HandlerMod, ModManagerPid}},
