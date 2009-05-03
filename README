@@ -42,10 +42,11 @@ One of the better places to start is to look in the "edoc" directory.
 The docs for the three modules there represent most of the public API
 for creating UBF/EBF/JSF servers.
 
-The unit tests in the "src/Unit-Test-Files" directory provide
-small examples of how to use all of the public API.  In particular,
-the *client*.erl files contain comments at the top with a list of
-prerequisites and small examples, recipe-style, for using the client.
+The unit tests in the "src/Unit-Test-Files" directory provide small
+examples of how to use all of the public API.  In particular, the
+*client*.erl files contain comments at the top with a list of
+prerequisites and small examples, recipe-style, for starting each
+server and using the client.
 
 The original documentation is in the "priv/doc" directory.
 
@@ -148,9 +149,29 @@ To do (in short term)
   - add ChangeLog template
   - document new features
     + ubf contract (and contract checker) primitives
+      - integer(), float(), atom(), string(), binary(), tuple(),
+        term(), void()
+      - atom(ascii), atom(asciiprintable), atom(nonempty), atom(nonundefined),
+        atom(ascii,nonempty), atom(ascii,nonundefined),
+        atom(asciiprintable,nonempty), atom(asciiprintable,nonundefined),
+        atom(ascii,nonempty,nonundefined),
+        atom(asciiprintable,nonempty,nonundefined)
+      - string(ascii), string(asciiprintable), string(nonempty),
+        string(ascii,nonempty), string(asciiprintable,nonempty)
+      - binary(ascii), binary(asciiprintable), binary(nonempty),
+        binary(ascii,nonempty), binary(asciiprintable,nonempty)
+      - term(nonempty), term(nonundefined), term(nonempty,nonundefined)
+      - ascii: all items in atom name/string/binary are ASCII values
+      - asciiprintable: all items in atom name/string/binary are printable
+        ASCII values
+      - nonempty: not equal to '', [], <<>>, or {}
+      - nonundefined: not equal to 'undefined'
     + ubf contract type imports
     + ubf server and ubf client
     + stateless server w/simplified plugin handler callbacks
+      - For protocols that do not require state transitions: a single
+        state called ANYSTATE is used for the contract, and
+        the implementation callback function API is a bit less complex.
     + network formats
       * ebf - Erlang Binary Format
       * jsf - Java Script Format
@@ -162,7 +183,7 @@ To do (in short term)
 To do (in medium term)
 ======================
 
-  - ubf contract generators for quickcheck
+  - ubf contract generators for QuickCheck
   - ABNF (RFC 5234) support and integration
   - erlang spec (EEP 8) integration
   - asynchronous events from client to server
