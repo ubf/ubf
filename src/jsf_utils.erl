@@ -79,6 +79,12 @@ typeref({float,Value},_Mod) ->
     io_lib:format("~p", [Value]);
 typeref({range,Lo,Hi},_Mod) ->
     io_lib:format("~p..~p", [Lo, Hi]);
+typeref({atom,true},_Mod) ->
+    "true";
+typeref({atom,false},_Mod) ->
+    "false";
+typeref({atom,undefined},_Mod) ->
+    "null";
 typeref({atom,Value},_Mod) ->
     io_lib:format("{\"$A\" : \"~p\"}", [Value]);
 typeref({string,Value},_Mod) ->
