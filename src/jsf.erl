@@ -233,24 +233,34 @@ rpc_v11_req_decode_print(AuthInfo, X, UBFMod) ->
     io:format("~s~n", [rpc_v11_req_decode(AuthInfo, X, UBFMod)]).
 
 rpc_v11_req_decode(AuthInfo, X, UBFMod) ->
-    case rfc4627:decode(X) of
-        {ok, {obj, Props}, []} ->
-            {value, {"version", <<"1.1">>}, Props1} = keytake("version", 1, Props),
-            {value, {"id", Id}, Props2} = keytake("id", 1, Props1),
-            {value, {"method", MethodBin}, Props3} = keytake("method", 1, Props2),
-            {value, {"params", JsonParams}, []} = keytake("params", 1, Props3),
-            Method = binary_to_existing_atom(MethodBin),
-            Params = do_decode(JsonParams, UBFMod),
-            if Params =:= [] ->
-                    {ok, Method, Id};
-               true ->
-                    if AuthInfo =:= undefined ->
-                            {ok, list_to_tuple([Method|Params]), Id};
-                       true ->
-                            {ok, list_to_tuple([Method|[AuthInfo|Params]]), Id}
-                    end
-            end;
-        Other -> {error, Other}
+    try
+        case rfc4627:decode(X) of
+            {ok, {obj, Props}, []} ->
+                {value, {"version", <<"1.1">>}, Props1} = keytake("version", 1, Props),
+                {value, {"id", Id}, Props2} = keytake("id", 1, Props1),
+                {value, {"method", MethodBin}, Props3} = keytake("method", 1, Props2),
+                {value, {"params", JsonParams}, []} = keytake("params", 1, Props3),
+                Method = binary_to_existing_atom(MethodBin),
+                case catch (do_decode(JsonParams, UBFMod)) of
+                    {'EXIT', Reason} ->
+                        {error, Reason, Id};
+                    [] ->
+                        {ok, Method, Id};
+                    Params ->
+                        if AuthInfo =:= undefined ->
+                                {ok, list_to_tuple([Method|Params]), Id};
+                           true ->
+                                {ok, list_to_tuple([Method|[AuthInfo|Params]]), Id}
+                        end
+                end;
+            Other ->
+                {error, Other}
+        end
+    catch
+        {'EXIT', Reason1} ->
+            {error, Reason1};
+          Else ->
+            Else
     end.
 
 
@@ -282,7 +292,9 @@ rpc_v11_res_decode(X, UBFMod) ->
             {value, {"id", Id}, Props2} = keytake("id", 1, Props1),
             {value, {"result", Result}, Props3} = keytake("result", 1, Props2),
             {value, {"error", Error}, []} = keytake("error", 1, Props3),
-            {ok, do_decode(Result,UBFMod), do_decode(Error,UBFMod), Id}
+            {ok, do_decode(Result,UBFMod), do_decode(Error,UBFMod), Id};
+        Other ->
+            {error, Other}
     end.
 
 
@@ -387,7 +399,8 @@ do_decode({obj, X}, UBFMod) ->
     case keytake("$R", 1, X) of
         {value, {"$R", RecName}, Y} ->
             decode_record(RecName, Y, UBFMod);
-        _Other -> do_decode(X,UBFMod)
+        false ->
+            do_decode(X, UBFMod)
     end.
 
 decode_atom(true) ->
@@ -430,7 +443,9 @@ decode_record(RecName, [H|T], X, Acc, UBFMod) ->
     case keytake(K, 1, X) of
         {value, {K, V}, NewX} ->
             NewAcc = [do_decode(V, UBFMod)|Acc],
-            decode_record(RecName, T, NewX, NewAcc, UBFMod)
+            decode_record(RecName, T, NewX, NewAcc, UBFMod);
+        false ->
+            exit({badrecord, RecName})
     end.
 
 
