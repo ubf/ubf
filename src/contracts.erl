@@ -31,7 +31,6 @@ getContract(Mod) ->
 %% checkIn(internal(), StateIn, Msg) -> error | {ok, [{S2,M2}]}
 %% checkOut(internal(), [{S2,M2}], S2, M2) -> ok | error.
 
-
 checkIn(Msg, State, Mod) ->
     %% Check that the Msg is in the set of
     %% incoming states
@@ -66,7 +65,7 @@ checkOut(MsgOut, StateOut, FSM2, Mod) ->
 
 checkCallback(Msg, ThisState, Mod) ->
     T = Mod:contract_state(ThisState),
-    Events = [E||{event,E} <- T],
+    Events = [ E ||{event,E} <- T ],
     %% io:format("Events=~p~n",[Events]),
     any(fun(Type) -> isType(Type, Msg, Mod) end, Events).
 

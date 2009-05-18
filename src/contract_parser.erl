@@ -4,14 +4,15 @@
 %% Copyright 2002 Joe Armstrong (joe@sics.se)
 %% Documentation http:://www.sics.se/~joe/ubf.html
 
+-include("ubf_impl.hrl").
+
 -export([parse_transform/2,
          make/0, make_lex/0, make_yecc/0, outfileExtension/0, preDefinedTypes/0, preDefinedTypesWithAttrs/0,
-         file/1, batch/1]).
+         tags/1, tags/2, file/1,
+         parse_transform_contract/2
+        ]).
 
 -import(lists, [filter/2, map/2, member/2, foldl/3]).
-
--record(contract,
-        {name, vsn, types=[], leaftypenames=[], records=[], transitions=[], anystate=[]}).
 
 parse_transform(In, Opts) ->
     %% io:format("In:~p~n   Opts: ~p~n",[In, Opts]),
@@ -19,7 +20,7 @@ parse_transform(In, Opts) ->
     Out = case [X||{attribute,_,add_contract,X} <- In] of
               [File] ->
                   %% io:format("Contract: ~p ~p~n", [File, Imports]),
-                  case file1(File ++ ".con", Imports) of
+                  case file1(File ++ infileExtension(), Imports) of
                       {ok, Contract, Header} ->
                           HeaderFile =
                               filename:join(
@@ -35,24 +36,27 @@ parse_transform(In, Opts) ->
 %%%
 \n"]
                               ++ ["-ifndef('", File ++ ".huc", "').\n"]
-                               ++ ["-define('", File ++ ".huc", "', true).\n"]
-                               ++ [Header|"\n"]
-                               ++ ["-endif.\n"],
+                              ++ ["-define('", File ++ ".huc", "', true).\n"]
+                              ++ [Header|"\n"]
+                              ++ ["-endif.\n"],
                           %% io:format("Contract Header written: ~p~n", [HeaderFile]),
-                               ok = file:write_file(HeaderFile, TermHUC),
+                          ok = file:write_file(HeaderFile, TermHUC),
                           %% io:format("Contract added:~n"),
-                               {Export, Fns} = make_code(Contract),
-                               In1 = merge_in_code(In, Export, Fns),
-                          %% lists:foreach(fun(I) -> io:format(">>~s<<~n",[erl_pp:form(I)]) end, In1),
-                               In1;
-                               {error, Why} ->
-                                      io:format("Error in contract:~p~n", [Why]),
-                                      exit(error)
-                              end;
-                               [] ->
-                                      In
-                              end,
-                               Out.
+                          parse_transform_contract(In, Contract);
+                      {error, Why} ->
+                          io:format("Error in contract:~p~n", [Why]),
+                          exit(error)
+                  end;
+              [] ->
+                  In
+          end,
+    Out.
+
+parse_transform_contract(In, Contract) ->
+    {Export, Fns} = make_code(Contract),
+    In1 = merge_in_code(In, Export, Fns),
+    %% lists:foreach(fun(I) -> io:format(">>~s<<~n",[erl_pp:form(I)]) end, In1),
+    In1.
 
 make_code(C) ->
     %% contract name
@@ -154,12 +158,6 @@ infileExtension()  -> ".con".
 outfileExtension() -> ".buc".  %% binary UBF contract
 outfileHUCExtension() -> ".huc".  %% hrl UBF contract records
 
-batch([A]) ->
-    File = atom_to_list(A),
-    {ok, {ubfSize,_Size,bsize,_Bsize}} = file(File),
-    %% io:format("~p~n", [Parse]),
-    true.
-
 file(F) ->
     case {infileExtension(), filename:extension(F)} of
         {X, X} ->
@@ -190,47 +188,53 @@ file1(F, Imports) ->
     file:close(Stream),
     case P of
         {ok, P1} ->
-            case (catch pass2(F, P1, Imports)) of
+            tags(P1, Imports);
+        E -> E
+    end.
+
+tags(P1) ->
+    tags(P1, []).
+
+tags(P1, Imports) ->
+    case (catch pass2(P1, Imports)) of
+        {'EXIT', E} ->
+            {error, E};
+        Contract ->
+            case (catch pass4(Contract)) of
                 {'EXIT', E} ->
                     {error, E};
-                Contract ->
-                    case (catch pass4(Contract)) of
-                        {'EXIT', E} ->
-                            {error, E};
-                        {Records,RecordExts} ->
-                            case pass5(Contract) of
-                                [] ->
-                                    noop;
-                                UnusedTypes ->
-                                    if Contract#contract.transitions =/= [] orelse Contract#contract.anystate =/= [] ->
-                                            exit({unused_types, UnusedTypes});
-                                       true ->
-                                            noop
-                                    end
-                            end,
-                            %% extra leaf type names
-                            LeafTypeNames = pass6(Contract),
-                            %% create Records
-                            AllRecords =
-                                lists:keysort(1, [ {{Name,length(Fields)}, Fields} || [Name|Fields] <- Records ]
-                                              ++ [ {{Name,length(Fields)+2}, ['$fields'|['$extra'|Fields]]} || [Name|Fields] <- RecordExts ]),
-                            %% create Header
-                            Header =
-                                lists:flatten(foldl(fun({{Name,_}, Fields},L) ->
-                                                            FieldStrs = [["'", atom_to_list(Field), "'"] || Field <- Fields],
-                                                            FStr = join(FieldStrs, $,),
-                                                            NameStr = atom_to_list(Name),
-                                                            IfNdef = io_lib:format("-ifndef(~s).~n",[NameStr]),
-                                                            Define = io_lib:format("-define(~s,true).~n",[NameStr]),
-                                                            Record = io_lib:format("-record(~s,{~s}).~n",[ NameStr, FStr]),
-                                                            EndIf = "-endif.",
-                                                            L++io_lib:format("~n~s~s~s~s~n",[IfNdef,Define,Record,EndIf])
-                                                    end
-                                                    , "\n", AllRecords)),
-                            {ok, Contract#contract{leaftypenames=LeafTypeNames, records=AllRecords}, Header}
-                    end
-            end;
-        E -> E
+                {Records,RecordExts} ->
+                    case pass5(Contract) of
+                        [] ->
+                            noop;
+                        UnusedTypes ->
+                            if Contract#contract.transitions =/= [] orelse Contract#contract.anystate =/= [] ->
+                                    exit({unused_types, UnusedTypes});
+                               true ->
+                                    noop
+                            end
+                    end,
+                    %% extra leaf type names
+                    LeafTypeNames = pass6(Contract),
+                    %% create Records
+                    AllRecords =
+                        lists:keysort(1, [ {{Name,length(Fields)}, Fields} || [Name|Fields] <- Records ]
+                                      ++ [ {{Name,length(Fields)+2}, ['$fields'|['$extra'|Fields]]} || [Name|Fields] <- RecordExts ]),
+                    %% create Header
+                    Header =
+                        lists:flatten(foldl(fun({{Name,_}, Fields},L) ->
+                                                    FieldStrs = [["'", atom_to_list(Field), "'"] || Field <- Fields],
+                                                    FStr = join(FieldStrs, $,),
+                                                    NameStr = atom_to_list(Name),
+                                                    IfNdef = io_lib:format("-ifndef(~s).~n",[NameStr]),
+                                                    Define = io_lib:format("-define(~s,true).~n",[NameStr]),
+                                                    Record = io_lib:format("-record(~s,{~s}).~n",[ NameStr, FStr]),
+                                                    EndIf = "-endif.",
+                                                    L++io_lib:format("~n~s~s~s~s~n",[IfNdef,Define,Record,EndIf])
+                                            end
+                                            , "\n", AllRecords)),
+                    {ok, Contract#contract{leaftypenames=LeafTypeNames, records=AllRecords}, Header}
+            end
     end.
 
 preDefinedTypes() -> [integer, float, atom, string, binary, tuple, term, void] ++ preDefinedTypesWithAttrs().
@@ -253,7 +257,7 @@ preDefinedTypesWithAttrs() ->
      , {term,[nonempty,nonundefined]}
     ].
 
-pass2(_F, P, Imports) ->
+pass2(P, Imports) ->
     Name = require(one, name, P),
     Vsn = require(one, vsn, P),
     Types = require(one, types, P),
@@ -261,7 +265,7 @@ pass2(_F, P, Imports) ->
     Trans = require(many, transition, P),
 
     ImportTypes = lists:flatten(
-                    [ [ begin {TDef, TTag} = Mod:contract_type(T), {T,TDef, TTag} end
+                    [ [ begin {TDef, TTag} = Mod:contract_type(T), {T, TDef, TTag} end
                         || T <- TL ] || {Mod, TL} <- Imports ]
                    ),
 
@@ -270,7 +274,7 @@ pass2(_F, P, Imports) ->
     pass3(C, ImportTypes).
 
 require(Multiplicity, Tag, P) ->
-    Vals =  [ Val || {T,Val} <- P, T == Tag],
+    Vals =  [ Val || {T,Val} <- P, T == Tag ],
     case Multiplicity of
         zero_or_one ->
             case Vals of
