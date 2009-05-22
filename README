@@ -149,7 +149,8 @@ To do (in short term)
   - add ChangeLog template
   - document new features
     + ubf contract (and contract checker) primitives
-      - atom(), float(), integer(), binary(), proplist(), string(), term(), tuple(), void()
+      - atom(), binary(), float(), integer(), proplist(), string(), term(),
+        tuple(), void()
       - atom(ascii), atom(asciiprintable), atom(nonempty), atom(nonundefined),
         atom(ascii,nonempty), atom(ascii,nonundefined),
         atom(asciiprintable,nonempty), atom(asciiprintable,nonundefined),
