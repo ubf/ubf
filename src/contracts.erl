@@ -79,11 +79,13 @@ isTypeAttr(atom,nonundefined) -> true;
 isTypeAttr(binary,ascii) -> true;
 isTypeAttr(binary,asciiprintable) -> true;
 isTypeAttr(binary,nonempty) -> true;
+isTypeAttr(proplist,nonempty) -> true;
 isTypeAttr(string,ascii) -> true;
 isTypeAttr(string,asciiprintable) -> true;
 isTypeAttr(string,nonempty) -> true;
 isTypeAttr(term,nonempty) -> true;
 isTypeAttr(term,nonundefined) -> true;
+isTypeAttr(tuple,nonempty) -> true;
 isTypeAttr(_,_) -> false.
 
 %%----------------------------------------------------------------------
@@ -202,6 +204,25 @@ check_term1({{binary,Attrs},B}=Check, B, _, _) when is_binary(B) ->
             ok;
        true ->
             ?FAIL(CheckList)
+    end;
+check_term1({proplist,?P(P)}=Check, ?P(P), _, _) when is_list(P) ->
+    case is_proplist(P) of
+        true ->
+            ok;
+        false ->
+            ?FAIL({Check,P})
+    end;
+check_term1({{proplist,Attrs},?P(P)}=Check, ?P(P), _, _) when is_list(P) ->
+    case is_proplist(P) of
+        true ->
+            CheckList = check_term_attrlist(proplist,Attrs,P),
+            if CheckList =:= [] ->
+                    ok;
+               true ->
+                    ?FAIL(CheckList)
+            end;
+        false ->
+            ?FAIL({Check,P})
     end;
 check_term1({tuple,T}, T, _, _) when is_tuple(T) ->
     ok;
@@ -422,6 +443,11 @@ is_string(<<H:8,T>>) when is_integer(H), H < 256, H > -1 ->
 is_string([]) -> true;
 is_string(<<>>) -> true;
 is_string(_)  -> false.
+
+is_proplist([{_,_}|T]) ->
+    is_proplist(T);
+is_proplist([]) -> true;
+is_proplist(_)  -> false.
 
 is_ascii(A) when is_atom(A) ->
     is_ascii(atom_to_list(A));

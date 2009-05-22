@@ -20,20 +20,20 @@ To build
 4. Run the unit test
    $ make check
 
-5. If you have installed erlang-rfc4627, run the unit test for jsf
-   $ make check-jsf
+5. If you have installed erlang-rfc4627, run the unit test for jsf $
+   make check-jsf
 
    One quick/kludge method to "install" is to obtain & compile the
    erlang-rfc4627 code from LShift and add a "-pz /path/to/.../ebin"
-   flag to the "check-jsf" target inside "src/Makefile", then
-   run "make check-jsf".
+   flag to the "check-jsf" target inside "src/Makefile", then run
+   "make check-jsf".
 
 
 Documentation -- Where should I start?
 ======================================
 
-This README is a good first step.  Check out and build using the
-"To build" instructions above.
+This README is a good first step.  Check out and build using the "To
+build" instructions above.
 
 The documentation is in a state of slow improvement.  Contributions
 from the wider world are welcome.  :-)
@@ -54,12 +54,12 @@ The original documentation is in the "priv/doc" directory.
 What is UBF?
 ============
 
-UBF is the "Universal Binary Format", designed and implemented by
-Joe Armstrong.  See http://www.sics.se/~joe/ubf.html for full details.
-A really short summary:
+UBF is the "Universal Binary Format", designed and implemented by Joe
+Armstrong.  See http://www.sics.se/~joe/ubf.html for full details.  A
+really short summary:
 
-   * UBF(A) is a protocol above a stream transport (e.g. TCP/IP),
-     for encoding structured data roughly equivalent to well-formed XML.
+   * UBF(A) is a protocol above a stream transport (e.g. TCP/IP), for
+     encoding structured data roughly equivalent to well-formed XML.
 
    * UBF(B) is a programming langauge for describing types in UBF(A)
      and protocols between clients and servers. UBF(B) is roughly
@@ -70,11 +70,11 @@ What is EBF?
 ============
 
 EBF is an implementation of UBF(B) but does not use UBF(A) for
-client<->server communication.  Instead, Erlang-style conventions
-are used instead:
+client<->server communication.  Instead, Erlang-style conventions are
+used instead:
 
-   * Structured terms are serialized via the Erlang BIFs term_to_binary()
-     and binary_to_term().
+   * Structured terms are serialized via the Erlang BIFs
+     term_to_binary() and binary_to_term().
 
    * Terms are framed using the 'gen_tcp' {packet, 4} format: a 32-bit
      unsigned integer (big-endian?) specifies packet length.
@@ -94,30 +94,30 @@ client<->server communication.  Instead, JSON (RFC 4627) is used.
 
 "JSF" is short for "JavaScript Format".
 
-There is no agreed-upon convention for converting Erlang terms to
-JSON objects.  This library uses the convention set forth by LShift's
-JSON library (see URL above).  In addition, there are a couple of
-other conventions layered on top of LShift's implementation.
+There is no agreed-upon convention for converting Erlang terms to JSON
+objects.  This library uses the convention set forth by LShift's JSON
+library (see URL above).  In addition, there are a couple of other
+conventions layered on top of LShift's implementation.
 
    The UBF(B) contract checker has been modified to make a distinction
-   between an Erlang record and an arbitrary Erlang tuple.  An experience
-   Erlang developer would view such a distinction either with skepticism
-   or with approval.
+   between an Erlang record and an arbitrary Erlang tuple.  An
+   experience Erlang developer would view such a distinction either
+   with skepticism or with approval.
 
    For the skeptics, the contract author has the option of having the
    UBF(B) contract compiler automatically generate Erlang -record()
-   definitions for appropriate tuples within the contract.  Such record
-   definitions are very convenient for developers on the Erlang side
-   of the world, but they introduce more complication to the JavaScript
-   side of the world.  For example, JavaScript does not have a concept
-   of an arbitrary atom, as Erlang does.  Also, the JavaScript side must
-   make a distinction between {foo, 42} and {bar, 42} when #foo is a
-   record on the Erlang side but #bar is not.
+   definitions for appropriate tuples within the contract.  Such
+   record definitions are very convenient for developers on the Erlang
+   side of the world, but they introduce more complication to the
+   JavaScript side of the world.  For example, JavaScript does not
+   have a concept of an arbitrary atom, as Erlang does.  Also, the
+   JavaScript side must make a distinction between {foo, 42} and {bar,
+   42} when #foo is a record on the Erlang side but #bar is not.
 
-This extra convention creates something slightly messy-looking, if
-you look at the raw JSON passed back-and-forth.  The examples of
-the Erlang record {foo, 42} and the general tuple {bar, 42} would
-look like this:
+This extra convention creates something slightly messy-looking, if you
+look at the raw JSON passed back-and-forth.  The examples of the
+Erlang record {foo, 42} and the general tuple {bar, 42} would look
+like this:
 
    record (defined in the contract as "foo() = #foo{attribute1 = term()};")
 
@@ -128,8 +128,8 @@ look like this:
       {"$T":[{"$A":"bar"}, 42]}
 
 However, it requires very little JavaScript code to convert objects
-with the "$R", "$T", and "$A" notation (for records, tuples, and atoms)
-into whatever object is most convenient.
+with the "$R", "$T", and "$A" notation (for records, tuples, and
+atoms) into whatever object is most convenient.
 
 
 Does the package include a JSON-RPC server?
@@ -149,18 +149,19 @@ To do (in short term)
   - add ChangeLog template
   - document new features
     + ubf contract (and contract checker) primitives
-      - integer(), float(), atom(), string(), binary(), tuple(),
-        term(), void()
+      - atom(), float(), integer(), binary(), proplist(), string(), term(), tuple(), void()
       - atom(ascii), atom(asciiprintable), atom(nonempty), atom(nonundefined),
         atom(ascii,nonempty), atom(ascii,nonundefined),
         atom(asciiprintable,nonempty), atom(asciiprintable,nonundefined),
         atom(ascii,nonempty,nonundefined),
         atom(asciiprintable,nonempty,nonundefined)
-      - string(ascii), string(asciiprintable), string(nonempty),
-        string(ascii,nonempty), string(asciiprintable,nonempty)
       - binary(ascii), binary(asciiprintable), binary(nonempty),
         binary(ascii,nonempty), binary(asciiprintable,nonempty)
+      - proplist(nonempty)
+      - string(ascii), string(asciiprintable), string(nonempty),
+        string(ascii,nonempty), string(asciiprintable,nonempty)
       - term(nonempty), term(nonundefined), term(nonempty,nonundefined)
+      - tuple(nonempty)
       - ascii: all items in atom name/string/binary are ASCII values
       - asciiprintable: all items in atom name/string/binary are printable
         ASCII values
@@ -202,5 +203,5 @@ Many, many thanks to Joe Armstrong, UBF's designer and original
 implementor.
 
 Gemini Mobile Technologies, Inc. has approved the release of its
-extensions, improvements, etc. under an MIT license.  Joe Armstrong has
-also given his blessing to Gemini's license choice.
+extensions, improvements, etc. under an MIT license.  Joe Armstrong
+has also given his blessing to Gemini's license choice.

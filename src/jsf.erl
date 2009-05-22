@@ -169,6 +169,8 @@ contract_records() ->
 %%
 %% ubf::string() = {'$S', [integer()]}
 %%
+%% ubf::proplist() = {'$P', [{term(), term()}]}
+%%
 %% ubf::binary() = binary()
 %%
 %% ubf::true() = true
@@ -191,6 +193,8 @@ contract_records() ->
 %% ubf::number() = integer() | float()
 %%
 %% ubf::string() = {obj, [{"$S", binary()}]}
+%%
+%% ubf::proplist() = {obj, [{binary(), value()}]}
 %%
 %% ubf::binary() = binary()
 %%
@@ -316,6 +320,8 @@ do_encode(X, UBFMod) when is_list(X) ->
     encode_list(X, UBFMod);
 do_encode(?S(X), _UBFMod) ->
     encode_string(X);
+do_encode(?P(X), UBFMod) ->
+    encode_proplist(X, UBFMod);
 do_encode(X, UBFMod) when is_tuple(X) ->
     encode_tuple(X, UBFMod).
 
@@ -339,6 +345,9 @@ encode_list([H|T], Acc, UBFMod) ->
 
 encode_string(X) when is_list(X) ->
     {obj, [{"$S", list_to_binary(X)}]}.
+
+encode_proplist(X, UBFMod) when is_list(X) ->
+    {obj, [ {K, do_encode(V, UBFMod)} || {K, V} <- X ]}.
 
 encode_tuple({}, _UBFMod) ->
     {obj, [{"$T", []}]};
@@ -400,7 +409,7 @@ do_decode({obj, X}, UBFMod) ->
         {value, {"$R", RecName}, Y} ->
             decode_record(RecName, Y, UBFMod);
         false ->
-            do_decode(X, UBFMod)
+            decode_proplist(X, UBFMod)
     end.
 
 decode_atom(true) ->
@@ -423,6 +432,9 @@ decode_list([H|T], Acc, UBFMod) ->
 
 decode_string(X) when is_binary(X) ->
     ?S(binary_to_list(X)).
+
+decode_proplist(X, UBFMod) when is_list(X) ->
+    ?P([ {list_to_binary(K), do_decode(V, UBFMod)} || {K, V} <- X ]).
 
 decode_tuple([], Acc, _UBFMod) ->
     list_to_tuple(lists:reverse(Acc));

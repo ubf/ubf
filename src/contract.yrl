@@ -4,7 +4,7 @@ transitions transition outputs types responseAndState
 form type typeDef typeRef primType typeAttr typeSeq typeRec.
 
 Terminals
-event vsn anystate name integer float atom string binary tuple term void typeKwd state
+event vsn anystate name atom binary integer float proplist string term tuple void typeKwd state
  '+' '|'  '=' '#' '{' '}' '&' ';' ',' '[]' '[' ']' '(' ')' ']?' ']{0}' ']{1}' ']+' ')?' '){0}' '){1}' '++' '..' '##' '=>' dot.
 
 
@@ -52,6 +52,7 @@ primType -> atom                            : {atom, unwrap('$1')}.
 primType -> integer                         : {integer, unwrap('$1')}.
 primType -> integer '..' integer            : {range, unwrap('$1'), unwrap('$3')}.
 primType -> float                           : {float, unwrap('$1')}.
+primType -> proplist                        : {proplist, unwrap('$1')}.
 primType -> string                          : {string, unwrap('$1')}.
 primType -> binary                          : {binary, unwrap('$1')}.
 primType -> tuple                           : {tuple, unwrap('$1')}.

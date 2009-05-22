@@ -37,6 +37,7 @@ ack()          = ack;
 error()        = error;
 ok()           = ok;
 intList()      = [integer()];
+propList()     = proplist();
 testAmbiguities()  = testAmbiguities;
 foo()          = #foo{attribute1 = term()};
 callbackOnItsWay() = callbackOnItsWay.
@@ -51,12 +52,13 @@ callbackOnItsWay() = callbackOnItsWay.
        getFile()         => okFile() & active
 		         |  noSuchFile() & stop;
        stop()            => void() & stop;
-      testAmbiguities()  => yes() & funny;
+       testAmbiguities() => yes() & funny;
       EVENT 		 => callback(). 
 
 +STATE funny
 	string()         => upCase() & funny;
 	intList()        => doubleInt() & funny;
+	propList()       => propList() & funny;
 	stop()           => ack() & start.
 
 +ANYSTATE

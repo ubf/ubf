@@ -51,6 +51,9 @@ handlerRpc(active, testAmbiguities, State, _Env) ->
 handlerRpc(funny, ?S(S), State, _Env) ->
     io:format("Upcase ~p~n",[S]),
     {?S(up_case(S)), funny, State};
+handlerRpc(funny, ?P(List), State, _Env) when is_list(List) ->
+    io:format("PropList ~p~n",[List]),
+    {?P(List), funny, State};
 handlerRpc(funny, List, State, _Env) when is_list(List) ->
     io:format("Double ~p~n",[List]),
     {map(fun(I) -> 2*I end, List), funny, State};

@@ -41,7 +41,8 @@ TESTS = \
 	test_etf \
 	test_jsf \
 	ubf_test \
-	jsf_test
+	jsf_test \
+	jsf_test2
 
 PLUGINS = \
 	ubf_plugin_meta_serverful \
@@ -73,6 +74,7 @@ check: all
 check-jsf: all
 	$(RUNERL1) -noinput -noshell -pz $(TEST_DIR) \
 		-s jsf_test tests \
+		-s jsf_test2 tests \
 		-s test_jsf tests \
 		-s erlang halt \
 		>> ./check.log

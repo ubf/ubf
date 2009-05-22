@@ -237,7 +237,7 @@ tags(P1, Imports) ->
             end
     end.
 
-preDefinedTypes() -> [integer, float, atom, string, binary, tuple, term, void] ++ preDefinedTypesWithAttrs().
+preDefinedTypes() -> [atom, binary, float, integer, proplist, string, term, tuple, void] ++ preDefinedTypesWithAttrs().
 
 preDefinedTypesWithAttrs() ->
     [
@@ -246,15 +246,19 @@ preDefinedTypesWithAttrs() ->
      , {atom,[ascii,nonempty]}, {atom,[ascii,nonundefined]}, {atom,[asciiprintable,nonempty]}, {atom,[asciiprintable,nonundefined]}
      , {atom,[ascii,nonempty,nonundefined]}, {atom,[asciiprintable,nonempty,nonundefined]}
      , {atom,[nonempty,nonundefined]}
-     %% string
-     , {string,[ascii]}, {string,[asciiprintable]}, {string,[nonempty]}
-     , {string,[ascii,nonempty]}, {string,[asciiprintable,nonempty]}
      %% binary
      , {binary,[ascii]}, {binary,[asciiprintable]}, {binary,[nonempty]}
      , {binary,[ascii,nonempty]}, {binary,[asciiprintable,nonempty]}
+     %% proplist
+     , {proplist,[nonempty]}
+     %% string
+     , {string,[ascii]}, {string,[asciiprintable]}, {string,[nonempty]}
+     , {string,[ascii,nonempty]}, {string,[asciiprintable,nonempty]}
      %% term
      , {term,[nonempty]}, {term,[nonundefined]}
      , {term,[nonempty,nonundefined]}
+     %% tuple
+     , {tuple,[nonempty]}
     ].
 
 pass2(P, Imports) ->

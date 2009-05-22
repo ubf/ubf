@@ -51,6 +51,10 @@ typeref({prim,string},_Mod) ->
     "string()";
 typeref({prim,{string,Attrs}},_Mod) ->
     io_lib:format("string(~s)", [join([ atom_to_list(Attr) || Attr <- Attrs ], ",")]);
+typeref({prim,proplist},_Mod) ->
+    "proplist()";
+typeref({prim,{proplist,Attrs}},_Mod) ->
+    io_lib:format("proplist(~s)", [join([ atom_to_list(Attr) || Attr <- Attrs ], ",")]);
 typeref({prim,binary},_Mod) ->
     "binary()";
 typeref({prim,{binary,Attrs}},_Mod) ->
@@ -80,6 +84,8 @@ typeref({range,Lo,Hi},_Mod) ->
 typeref({atom,Value},_Mod) ->
     io_lib:format("~p", [Value]);
 typeref({string,Value},_Mod) ->
+    io_lib:format("~p", [Value]);
+typeref({proplist,Value},_Mod) ->
     io_lib:format("~p", [Value]);
 typeref({binary,Value},_Mod) ->
     io_lib:format("~p", [Value]);
@@ -149,8 +155,15 @@ ubf_contract(Mod) ->
           , "binary(BinaryAttrs)\n\t\tbinary"
           , "binary(BinaryAttrs)?\n\t\tbinary | undefined"
           , ""
+          , "proplist()\n\t\tproplist"
+          , "proplist()?\n\t\tproplist | undefined"
+          , "proplist(PropListAttrs)\n\t\tproplist"
+          , "proplist(PropListAttrs)?\n\t\tproplist | undefined"
+          , ""
           , "tuple()\n\t\ttuple"
           , "tuple()?\n\t\ttuple | undefined"
+          , "tuple(TupleAttrs)\n\t\ttuple"
+          , "tuple(TupleAttrs)?\n\t\ttuple | undefined"
           , ""
           , "record()\n\t\trecord"
           , "record()?\n\t\trecord | undefined"
@@ -189,6 +202,12 @@ ubf_contract(Mod) ->
           , ""
           , "BinaryAttrs"
           , "\t ascii | asciiprintable"
+          , "\t nonempty"
+          , ""
+          , "PropListAttrs"
+          , "\t nonempty"
+          , ""
+          , "TupleAttrs"
           , "\t nonempty"
           , ""
           , "TermAttrs"
