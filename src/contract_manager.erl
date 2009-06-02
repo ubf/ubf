@@ -48,15 +48,14 @@ start(VerboseRPC) ->
     spawn_link(fun() -> wait(VerboseRPC) end).
 
 wait(VerboseRPC) ->
-    process_flag(trap_exit, true),
     receive
         {start, Client, Server, State, Mod} ->
-            loop(Client, Server, State, Mod, VerboseRPC)
+            loop(Client, Server, State, Mod, VerboseRPC);
+        stop ->
+            exit({serverContractManager, stop})
     end.
 
 loop(Client, Server, State1, Mod, VerboseRPC) ->
-    %% io:format("contract_manager ~p waiting for Driver=~p in state:~p ~n",
-    %% [Client, self(), State1]),
     receive
         {Client, contract} ->
             S = contract(Mod),
@@ -65,10 +64,8 @@ loop(Client, Server, State1, Mod, VerboseRPC) ->
         {Client, Q} ->
             do_rpc(Client, Server, State1, Mod, Q, VerboseRPC);
         {event, Msg} ->
-            %% io:format("Check dispatch:~p ~p ~p~n",[Msg, State1, Mod]),
             case checkCallback(Msg, State1, Mod) of
                 true ->
-                    %% io:format("sending event to ubf_client:~p~n",[Msg]),
                     Client ! {self(), {event, Msg}},
                     loop(Client, Server, State1, Mod, VerboseRPC);
                 false ->
@@ -78,37 +75,20 @@ loop(Client, Server, State1, Mod, VerboseRPC) ->
                               [State1, Msg]),
                     loop(Client, Server, State1,  Mod, VerboseRPC)
             end;
-        {'EXIT', Client, Why} ->
-            %% The handler dies *but* we tell the
-            %% manager
-            Server ! {client_has_died, self(),  Why},
-            true;
         stop ->
-            Server ! {client_has_died, self(),  normal},
-            true;
-        X ->
-            io:format("*****PM******Wow:~p (Client=~p)~n",[X,Client]),
-            exit(die)
+            Server ! stop;
+        Why ->
+            exit({serverContractManager, Why})
     end.
 
 do_rpc(Client, Server, State1, Mod, Q, VerboseRPC) ->
-    %% io:format("contract_manager do_rpc~p~n",[Q]),
     %% check contract
     case checkIn(Q, State1, Mod) of
         [] ->
             Expect = Mod:contract_state(State1),
-            io:format("***** "
-                      "Client broke contract ~p "
-                      "to server~n"
-                      "State=~p~n"
-                      "Client message=~p~n"
-                      "Expecting type=~p~n",
-                      [Mod, State1, Q, Expect]),
             Client ! {self(), {{clientBrokeContract, Q, Expect}, State1}},
-            Client ! stop;
+            loop(Client, Server, State1, Mod, VerboseRPC);
         FSM2 ->
-            %% io:format("contract yes FSM2=~p~n", [FSM2]),
-            %% io:format("I ~p call handle_rpc ~p~n",[self(), Q]),
             if VerboseRPC ->
                     Server ! {self(), {rpc, {Q, FSM2}}};
                true ->
@@ -117,11 +97,8 @@ do_rpc(Client, Server, State1, Mod, Q, VerboseRPC) ->
             receive
                 {Server, {rpcReply, Reply, State2, Next}} ->
                     %% check contract
-                    %% io:format("Contract check reply:~p ~p~n",
-                    %% [Reply, State2]),
                     case checkOut(Reply, State2, FSM2, Mod) of
                         true ->
-                            %% io:format("contract Reply accepted~n"),
                             case Next of
                                 same ->
                                     Client ! {self(), {Reply, State2}},
@@ -132,17 +109,11 @@ do_rpc(Client, Server, State1, Mod, Q, VerboseRPC) ->
                             end;
                         false ->
                             Expect = map(fun(I) -> element(2, I) end, FSM2),
-                            io:format("***** "
-                                      "Server broke contract ~p replying "
-                                      "to client~n"
-                                      "Original state=~p~n"
-                                      "Client message=~p~n"
-                                      "Server response=~p~n"
-                                      "Expecting type=~p~n",
-                                      [Mod, State1, Q, Reply, Expect]),
                             Client ! {self(), {{serverBrokeContract, {Q, Reply}, Expect}, State1}},
-                            Client ! stop
-                    end
+                            loop(Client, Server, State1, Mod, VerboseRPC)
+                    end;
+                stop ->
+                    exit(Server, stop)
             end
     end.
 

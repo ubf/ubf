@@ -54,7 +54,6 @@
 
 -include("ubf.hrl").
 
--import(ubf_utils, [spawn_link_debug/2]).
 -import(proc_socket_server, [start_raw_server/5]).
 
 %% @spec (list(atom()), integer()) -> true
@@ -134,7 +133,6 @@ start_server(PluginModules, Port, Options) ->
     ubf_plugin_handler:manager(MetaServerModule, [ListenerPidUBF]).
 
 start_ubf_listener(MetaServerModule, Port, Server, Options) ->
-    %% io:format("starting proc_socket:~p~n",[Port]),
     ServerHello =
         proplists:get_value(serverhello,Options,MetaServerModule:contract_name()),
     VerboseRPC =
@@ -182,7 +180,6 @@ start_ubf_listener(MetaServerModule, Port, Server, Options) ->
                              %% (The next three lines are pretty
                              %% devious but they work !)  send hello
                              %% back to the opening program
-                             %% io:format("ubf_server sending hello~n"),
                              self() ! {self(), {DriverVersion, ?S(ServerHello), help()}},
                              %% swap the driver
                              DriverModule:relay(self(), ContractManager),
@@ -192,7 +189,6 @@ start_ubf_listener(MetaServerModule, Port, Server, Options) ->
                                         Server, MetaServerModule},
                              %% and activate the loop that will now
                              %% execute the last two statements :-)
-                             put('$ubfinfo', {ubfdriver,ubf_server}),
                              DriverModule:loop(Socket, self(), IdleTimer)
                      end,
                      proplists:get_value(maxconn,Options,10000),
@@ -235,7 +231,6 @@ help() ->
        " Type 'info'$ for information\n\n").
 
 sendEvent(Pid, Msg) ->
-    %% io:format("sendEvent (ubf_server) ~p to ~p~n",[Msg,Pid]),
     Pid ! {event, Msg}.
 
 ask_manager(Manager, Q) ->
@@ -252,8 +247,7 @@ start_registered(Name, F) ->
     case whereis(Name) of
         undefined ->
             Me = self(),
-            P = spawn_link_debug({registered,Name},
-                                 fun() -> start_proc(Me, Name, F) end),
+            P = spawn_link(fun() -> start_proc(Me, Name, F) end),
             receive
                 {P, ack} ->
                     true
@@ -269,6 +263,5 @@ start_proc(Parent, Name, F) ->
             true;
         _ ->
             Parent ! {self(), ack},
-            %% io:format("starting ~p~n",[Name]),
             F()
     end.

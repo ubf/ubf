@@ -15,17 +15,17 @@ start() ->
     spawn_link(fun() -> start1() end).
 
 start1() ->
-    put('$ubfinfo', {ubfdriver, ubf_client}),
     receive
         {start, Socket, Pid} ->
-            loop(Socket, Pid)
+            loop(Socket, Pid);
+        stop ->
+            exit(start)
     end.
 
 loop(Socket, Pid) ->
     loop(Socket, Pid, 16#ffffffff).
 
 loop(Socket, Pid, Timeout) ->
-    %% io:format("~p:~p starting Socket=~p Pid=~p~n", [Socket,Pid]),
     Cont = ubf:decode_init(),
     loop(Socket, Pid, Timeout, Cont).
 
@@ -33,34 +33,26 @@ relay(Pid, Pid1) ->
     Pid ! {relay, self(), Pid1}.
 
 loop(Socket, Pid, Timeout, Cont) ->
-    %% io:format("~p:~p loop Cont=~p~n", [?FILE, self(), Cont]),
     receive
         {Pid, Term} ->
-            %% io:format("~p:~p sending:~p~n",[?FILE, self(), Term]),
             Data = ubf:encode(Term),
-            %% io:format("~p:~p sending:~s~n",[?FILE, self(), Data]),
             gen_tcp:send(Socket, [Data,"\n"]),
             loop(Socket, Pid, Timeout, Cont);
         stop ->
-            %% io:format("~p:~p stop~n", [?FILE, self()]),
-            gen_tcp:close(Socket),
-            exit(normal);
+            Pid ! stop,
+            gen_tcp:close(Socket);
         {changeContract, _HandlerMod1} ->
             loop(Socket, Pid, Timeout, Cont);
         {relay, _From, Pid1} ->
             loop(Socket, Pid1, Timeout, Cont);
         {tcp_closed, Socket} ->
-            %% io:format("~p:~p closing~n",[?FILE, self()]),
             exit(socket_closed);
         {tcp_error, Socket} ->
-            %% io:format("~p:~p closing~n",[?FILE, self()]),
             gen_tcp:close(Socket),
             exit(socket_error);
         {tcp, Socket, Data} ->
             T = binary_to_list(Data),
-            %% io:format("~p:~p received raw=|~s|~n",[?FILE, self(), T]),
             Cont1 = ubf:decode(T, Cont),
-            %% io:format("~p:~p Cont1=~p~n",[?FILE, self(), Cont1]),
             handle_data(Socket, Pid, Timeout, Cont1);
         Any ->
             io:format("~p:~p *** ~p dropping:~p~n",[?FILE, self(), Pid, Any]),
@@ -73,9 +65,7 @@ loop(Socket, Pid, Timeout, Cont) ->
 handle_data(Socket, Pid, Timeout, Cont1 = {more, _}) ->
     loop(Socket, Pid, Timeout, Cont1);
 handle_data(Socket, Pid, Timeout, {done, Term, Str1}) ->
-    %% io:format("~p:~p sending to ~p ~p~n", [?FILE, self(), Pid, {self(),Term}]),
     Pid ! {self(), Term},
-    %% io:format("~p:~p Str1=~p~n",[?FILE, self(), Str1]),
     Cont1 = ubf:decode(Str1),
     handle_data(Socket, Pid, Timeout, Cont1);
 handle_data(_Socket, _Pid, _Timeout, XX) ->
