@@ -59,13 +59,19 @@ UBF server to your client process.</p>
 <tr><td valign="top"><a href="#connect-3">connect/3</a></td><td>Connect to a UBF server at address Host + TCP port Port.</td></tr>
 <tr><td valign="top"><a href="#connect-4">connect/4</a></td><td>Connect to a UBF server at address Host + TCP port Port, or at       
 pid/registered name Server.</td></tr>
+<tr><td valign="top"><a href="#debug-2">debug/2*</a></td><td>Debugging function, uncomment the alternate form for
+  io:format()/"printf()"-style debugging messages.</td></tr>
+<tr><td valign="top"><a href="#drop_fun-1">drop_fun/1*</a></td><td></td></tr>
 <tr><td valign="top"><a href="#install_default_handler-1">install_default_handler/1</a></td><td>Install a default handler function (callback-style) for  
 asynchronous UBF messages.</td></tr>
 <tr><td valign="top"><a href="#install_handler-2">install_handler/2</a></td><td>Install a handler function (callback-style) for asynchronous  
 UBF messages.</td></tr>
+<tr><td valign="top"><a href="#loop-2">loop/2*</a></td><td>Main loop for the UBF client process.</td></tr>
 <tr><td valign="top"><a href="#rpc-2">rpc/2</a></td><td>Perform a synchronous RPC call.</td></tr>
 <tr><td valign="top"><a href="#rpc-3">rpc/3</a></td><td>Perform a synchronous RPC call.</td></tr>
 <tr><td valign="top"><a href="#stop-1">stop/1</a></td><td>Stop a UBF client process.</td></tr>
+<tr><td valign="top"><a href="#ubf_client-5">ubf_client/5*</a></td><td>This executes inside the ubf_client.</td></tr>
+<tr><td valign="top"><a href="#ubf_client_loop-1">ubf_client_loop/1*</a></td><td>Entry function for the UBF client process.</td></tr>
 </table>
 
 <h2><a name="functions">Function Details</a></h2>
@@ -82,7 +88,7 @@ UBF messages.</td></tr>
 
 <h3 class="function"><a name="connect-4">connect/4</a></h3>
 <div class="spec">
-<p><tt>connect(Host::<a href="#type-address">address()</a> | <a href="#type-plugin_module_list">plugin_module_list()</a>, Port::<a href="#type-tcp_port">tcp_port()</a> | pid() | atom(), Options::<a href="#type-proplist">proplist()</a>, Timeout::<a href="#type-timeout">timeout()</a>) -&gt; {ok, pid(), <a href="#type-service">service()</a>} | {error, term()}</tt></p>
+<p><tt>connect(X::<a href="#type-address">address()</a> | <a href="#type-plugin_module_list">plugin_module_list()</a>, Y::<a href="#type-tcp_port">tcp_port()</a> | pid() | atom(), Options::<a href="#type-proplist">proplist()</a>, Timeout::<a href="#type-timeout">timeout()</a>) -&gt; {ok, pid(), <a href="#type-service">service()</a>} | {error, term()}</tt></p>
 </div><p><p>Connect to a UBF server at address Host + TCP port Port, or at       
 pid/registered name Server.</p>
  
@@ -95,6 +101,17 @@ pid/registered name Server.</p>
  
   See the docs for ubf_server:start_link() for a description of the
   <tt>Options</tt> proplist.</p>
+
+<h3 class="function"><a name="debug-2">debug/2 *</a></h3>
+<div class="spec">
+<p><tt>debug(F::string(), S::list()) -&gt; term()</tt></p>
+</div><p>Debugging function, uncomment the alternate form for
+  io:format()/"printf()"-style debugging messages.</p>
+
+<h3 class="function"><a name="drop_fun-1">drop_fun/1 *</a></h3>
+<div class="spec">
+<p><tt>drop_fun(Msg) -&gt; any()</tt></p>
+</div>
 
 <h3 class="function"><a name="install_default_handler-1">install_default_handler/1</a></h3>
 <div class="spec">
@@ -123,13 +140,18 @@ called with the UBF message as its single argument.</p>
   is executing the event loop processing function,
   <tt>irc_client_gs:loop/6</tt>.</p>
 
+<h3 class="function"><a name="loop-2">loop/2 *</a></h3>
+<div class="spec">
+<p><tt>loop(Driver, Fun) -&gt; any()</tt></p>
+</div><p>Main loop for the UBF client process.</p>
+
 <h3 class="function"><a name="rpc-2">rpc/2</a></h3>
 <div class="spec">
 <p><tt>rpc(Pid::pid(), Q::term()) -&gt; timeout | term()</tt></p>
 </div><p><p>Perform a synchronous RPC call.</p>
  
-  NOTE: It is not recommended that a UBF client return the
-  bare atom 'timeout' in response to any RPC call.</p>
+  NOTE: It is not recommended that a UBF client return the bare atom
+  'timeout' in response to any RPC call.</p>
 
 <h3 class="function"><a name="rpc-3">rpc/3</a></h3>
 <div class="spec">
@@ -140,9 +162,19 @@ called with the UBF message as its single argument.</p>
 <div class="spec">
 <p><tt>stop(Pid::pid()) -&gt; ok</tt></p>
 </div><p>Stop a UBF client process.</p>
+
+<h3 class="function"><a name="ubf_client-5">ubf_client/5 *</a></h3>
+<div class="spec">
+<p><tt>ubf_client(Parent, Host, Port, Options, Timeout) -&gt; any()</tt></p>
+</div><p>This executes inside the ubf_client</p>
+
+<h3 class="function"><a name="ubf_client_loop-1">ubf_client_loop/1 *</a></h3>
+<div class="spec">
+<p><tt>ubf_client_loop(Driver) -&gt; any()</tt></p>
+</div><p>Entry function for the UBF client process.</p>
 <hr>
 
 <div class="navbar"><a name="#navbar_bottom"></a><table width="100%" border="0" cellspacing="0" cellpadding="2" summary="navigation bar"><tr><td><a href="overview-summary.html" target="overviewFrame">Overview</a></td><td><a href="http://www.erlang.org/"><img src="erlang.png" align="right" border="0" alt="erlang logo"></a></td></tr></table></div>
-<p><i>Generated by EDoc, Apr 29 2009, 20:24:53.</i></p>
+<p><i>Generated EDoc, $Id$</i></p>
 </body>
 </html>

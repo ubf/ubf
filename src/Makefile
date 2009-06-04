@@ -10,6 +10,7 @@ MODULES = \
 	ubf_server \
 	ubf_plugin_handler \
 	proc_socket_server \
+	proc_utils \
 	contracts \
 	contract_manager \
 	ubf \
@@ -44,6 +45,15 @@ TESTS = \
 	jsf_test \
 	jsf_test2
 
+EUNITTESTS = \
+	types_plugin \
+	stateless_plugin \
+	stateless_plugin_sup \
+	stateless_plugin_test \
+	stateful_plugin \
+	stateful_plugin_sup \
+	stateful_plugin_test
+
 PLUGINS = \
 	ubf_plugin_meta_serverful \
 	ubf_plugin_meta_serverless
@@ -52,6 +62,11 @@ TESTPLUGINS = \
 	$(TEST_DIR)/file_plugin \
         $(TEST_DIR)/irc_plugin \
         $(TEST_DIR)/test_plugin
+
+EUNITTESTPLUGINS = \
+	$(EUNITTEST_DIR)/types_plugin \
+	$(EUNITTEST_DIR)/stateless_plugin \
+	$(EUNITTEST_DIR)/stateful_plugin
 
 # include erl make
 include ../priv/make/erl_make.mk
@@ -63,11 +78,13 @@ clean::
 
 check: all
 	-rm -f ./*.log
-	$(RUNERL1) -noinput -noshell -pz $(TEST_DIR) \
+	$(RUNERL1) -noinput -noshell -pz $(TEST_DIR) -pz $(EUNITTEST_DIR) \
 		-s ubf_test tests \
 		-s test_ubf tests \
 		-s test_ebf tests \
 		-s test_etf tests \
+		-s stateless_plugin_test do_eunit \
+		-s stateful_plugin_test do_eunit \
 		-s erlang halt \
 		> ./check.log
 
@@ -80,8 +97,15 @@ check-jsf: all
 		>> ./check.log
 
 # special targets - ubf
-${TESTPLUGINS:%=$(TEST_DIR)/%.$(EMULATOR)}: ${TESTPLUGINS:%=$(TEST_DIR)/%.con}
-${PLUGINS:%=$(EBIN)/%.$(EMULATOR)} ${TESTPLUGINS:%=$(TEST_DIR)/%.$(EMULATOR)}: \
+${TESTPLUGINS:%=$(TEST_DIR)/%.$(EMULATOR)}: \
+	${TESTPLUGINS:%=$(TEST_DIR)/%.con}
+
+${EUNITTESTPLUGINS:%=$(EUNITTEST_DIR)/%.$(EMULATOR)}: \
+	${TESTPLUGINS:%=$(TEST_DIR)/%.con}
+
+${PLUGINS:%=$(EBIN)/%.$(EMULATOR)} \
+${TESTPLUGINS:%=$(TEST_DIR)/%.$(EMULATOR)} \
+${EUNITTESTPLUGINS:%=$(EUNITTEST_DIR)/%.$(EMULATOR)}: \
 	$(EBIN)/contracts.$(EMULATOR) \
 	$(EBIN)/contract_parser.$(EMULATOR) \
 	$(EBIN)/contract_lex.$(EMULATOR) \

@@ -28,7 +28,7 @@ all_tests_(Setup,Teardown) ->
      Teardown,
      (all_actual_tests_("localhost",2000,ubf))(not_used)
      ++ (all_actual_tests_("localhost",2001,ebf))(not_used)
-     ++ (all_actual_tests_("localhost",2002,jsf))(not_used)
+     %% ++ (all_actual_tests_("localhost",2002,jsf))(not_used)
      %% TODO ++ (all_actual_tests_("localhost",none,etf))(not_used)
     }.
 
