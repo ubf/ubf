@@ -264,7 +264,7 @@ preDefinedTypesWithAttrs() ->
 pass2(P, Imports) ->
     Name = require(one, name, P),
     Vsn = require(one, vsn, P),
-    Types = require(one, types, P),
+    Types = require(zero_or_one, types, P),
     Any = require(zero_or_one, anystate, P),
     Trans = require(many, transition, P),
 

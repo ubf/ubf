@@ -79,7 +79,7 @@ connect(X, Y, Options, infinity) ->
 connect(Host, Port, Options, Timeout)
   when is_integer(Port) andalso is_list(Options) ->
     Self = self(),
-    Pid = spawn_link(fun() -> ubf_client(Self, Host, Port, Options, Timeout) end),
+    Pid = proc_utils:spawn_link_debug(fun() -> ubf_client(Self, Host, Port, Options, Timeout) end, ?MODULE),
     receive
         {Pid, {ok, Service}} ->
             debug(">>> ubf_client:start ~p ~p~n"
@@ -99,7 +99,7 @@ connect(Host, Port, Options, Timeout)
 connect(Plugins, Server, Options, Timeout)
   when is_list(Plugins) andalso length(Plugins) > 0 andalso (is_atom(Server) orelse is_pid(Server)) andalso is_list(Options) ->
     Self = self(),
-    Pid = spawn_link(fun() -> ubf_client(Self, Plugins, Server, Options, Timeout) end),
+    Pid = proc_utils:spawn_link_debug(fun() -> ubf_client(Self, Plugins, Server, Options, Timeout) end, ?MODULE),
     receive
         {Pid, {ok, Service}} ->
             debug(">>> ubf_client:start ~p ~p ~p~n"

@@ -8,7 +8,7 @@
 %% Handler stuff
 
 start_handler() ->
-    spawn_link(fun() -> wait() end).
+    proc_utils:spawn_link_debug(fun() -> wait() end, ?MODULE).
 
 wait() ->
     receive
@@ -85,7 +85,7 @@ loop(Client, State1, Data, Manager, Mod) ->
 %%----------------------------------------------------------------------
 
 start_manager(Mod, Args) ->
-    spawn_link(fun() -> manager(Mod, Args) end).
+    proc_utils:spawn_link_debug(fun() -> manager(Mod, Args) end, ?MODULE).
 
 manager(Mod, Args) ->
     process_flag(trap_exit, true),

@@ -12,7 +12,7 @@
 %% If one side dies the process dies
 
 start() ->
-    spawn_link(fun() -> start1() end).
+    proc_utils:spawn_link_debug(fun() -> start1() end, ?MODULE).
 
 start1() ->
     receive
@@ -30,6 +30,7 @@ loop(Socket, Pid, Timeout) ->
     loop(Socket, Pid, Timeout, Cont).
 
 relay(Pid, Pid1) ->
+    put('$ubfinfo', ?MODULE),
     Pid ! {relay, self(), Pid1}.
 
 loop(Socket, Pid, Timeout, Cont) ->
@@ -40,12 +41,14 @@ loop(Socket, Pid, Timeout, Cont) ->
             loop(Socket, Pid, Timeout, Cont);
         stop ->
             Pid ! stop,
-            gen_tcp:close(Socket);
+            gen_tcp:close(Socket),
+            exit(normal);
         {changeContract, _HandlerMod1} ->
             loop(Socket, Pid, Timeout, Cont);
         {relay, _From, Pid1} ->
             loop(Socket, Pid1, Timeout, Cont);
         {tcp_closed, Socket} ->
+            Pid ! stop,
             exit(socket_closed);
         {tcp_error, Socket} ->
             gen_tcp:close(Socket),
@@ -60,7 +63,8 @@ loop(Socket, Pid, Timeout, Cont) ->
     after Timeout ->
             gen_tcp:close(Socket),
             exit(timeout)
-    end.
+    end,
+    exit(unknown).
 
 handle_data(Socket, Pid, Timeout, Cont1 = {more, _}) ->
     loop(Socket, Pid, Timeout, Cont1);

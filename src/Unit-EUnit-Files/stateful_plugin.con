@@ -1,0 +1,32 @@
+%%% -*- mode: erlang -*-
+
++NAME("stateful").
+
++VSN("ubf1.0").
+
+%%%%%
+%%% states
++STATE start
+  client_breaks_req1()  => client_breaks_res1() & start;
+  server_breaks_req2()  => server_breaks_res2() & start;
+  client_breaks_req3()  => client_breaks_res3() & other;
+  server_breaks_req4()  => server_breaks_res4() & other.
+
++STATE other
+  dummy_req5()          => dummy_res5() & start;
+  dummy_req6()          => dummy_res6() & other;
+  timeout_req7()        => timeout_res7() & other;
+  timeout_req8()        => timeout_res8() & start.
+
+
+%%%%%
+%%% anystate
++ANYSTATE
+
+%% keepalive
+keepalive_req()         => keepalive_res();
+
+%% meta methods
+info_req()              => info_res();
+description_req()       => description_res();
+contract_req()          => contract_res().

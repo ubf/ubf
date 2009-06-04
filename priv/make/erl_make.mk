@@ -35,14 +35,18 @@ endif
 ERL ?= erl
 ERLC ?= erlc
 ERLC_EMULATOR = $(ERL)
-ifeq ($(ERL), erl)
-	export DIALYZER ?= dialyzer
-else
-	export DIALYZER ?= $(patsubst %/bin/erl,%/bin/dialyzer,$(ERL))
-endif
 export ERL
 export ERLC
 export ERLC_EMULATOR
+
+DIALYZER_PLT=~/.dialyzer_plt
+ifeq ($(ERL), erl)
+	DIALYZER ?= dialyzer
+else
+	DIALYZER ?= $(patsubst %/bin/erl,%/bin/dialyzer,$(ERL))
+endif
+export DIALYZER_PLT
+export DIALYZER
 
 ERLDIRNAME1 := $(shell which $(ERL))
 ERLDIRNAME2 := $(patsubst %/bin/erl,%,$(ERLDIRNAME1))
@@ -167,11 +171,11 @@ $(PRIV_DIR)/%.d: $(PRIV_DIR)/%.P
 ###################################
 # TEST_DIR
 $(TEST_DIR)/%.$(EMULATOR): $(TEST_DIR)/%.erl
-	$(ERLC) $(ERL_FLAGS) $(TESTONLY_ERL_COMPILE_FLAGS) -o $(TEST_DIR) $<
+	$(ERLC) $(ERL_FLAGS) $(TESTONLY_ERL_COMPILE_FLAGS) -pz $(TEST_DIR) -o $(TEST_DIR) $<
 
 $(TEST_DIR)/%.P: $(TEST_DIR)/%.erl
 	-@set -e; rm -f $@; \
-	($(ERLC) $(ERL_FLAGS) $(ERL_COMPILE_FLAGS) -o $(TEST_DIR) \
+	($(ERLC) $(ERL_FLAGS) $(ERL_COMPILE_FLAGS) -pz $(TEST_DIR) -o $(TEST_DIR) \
 		-W0 -P $< \
 		> /dev/null 2>&1 || touch $@)
 	touch $@
@@ -185,11 +189,11 @@ $(TEST_DIR)/%.d: $(TEST_DIR)/%.P
 ###################################
 # EUNITTEST_DIR
 $(EUNITTEST_DIR)/%.$(EMULATOR): $(EUNITTEST_DIR)/%.erl
-	$(ERLC) $(ERL_FLAGS) $(TESTONLY_ERL_COMPILE_FLAGS) -o $(EUNITTEST_DIR) $<
+	$(ERLC) $(ERL_FLAGS) $(TESTONLY_ERL_COMPILE_FLAGS) -pz $(EUNITTEST_DIR) -o $(EUNITTEST_DIR) $<
 
 $(EUNITTEST_DIR)/%.P: $(EUNITTEST_DIR)/%.erl
 	-@set -e; rm -f $@; \
-	($(ERLC) $(ERL_FLAGS) $(ERL_COMPILE_FLAGS) -o $(EUNITTEST_DIR) \
+	($(ERLC) $(ERL_FLAGS) $(ERL_COMPILE_FLAGS) -pz $(EUNITTEST_DIR) -o $(EUNITTEST_DIR) \
 		-W0 -P $< \
 		> /dev/null 2>&1 || touch $@)
 
@@ -202,11 +206,11 @@ $(EUNITTEST_DIR)/%.d: $(EUNITTEST_DIR)/%.P
 ###################################
 # QUICKTEST_DIR
 $(QUICKTEST_DIR)/%.$(EMULATOR): $(QUICKTEST_DIR)/%.erl
-	$(ERLC) $(ERL_FLAGS) $(TESTONLY_ERL_COMPILE_FLAGS) -o $(QUICKTEST_DIR) $<
+	$(ERLC) $(ERL_FLAGS) $(TESTONLY_ERL_COMPILE_FLAGS) -pz $(QUICKTEST_DIR) -o $(QUICKTEST_DIR) $<
 
 $(QUICKTEST_DIR)/%.P: $(QUICKTEST_DIR)/%.erl
 	-@set -e; rm -f $@; \
-	($(ERLC) $(ERL_FLAGS) $(ERL_COMPILE_FLAGS) -o $(QUICKTEST_DIR) \
+	($(ERLC) $(ERL_FLAGS) $(ERL_COMPILE_FLAGS) -pz $(QUICKTEST_DIR) -o $(QUICKTEST_DIR) \
 		-W0 -P $< \
 		> /dev/null 2>&1 || touch $@)
 

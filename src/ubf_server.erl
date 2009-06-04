@@ -247,7 +247,7 @@ start_registered(Name, F) ->
     case whereis(Name) of
         undefined ->
             Me = self(),
-            P = spawn_link(fun() -> start_proc(Me, Name, F) end),
+            P = proc_utils:spawn_link_debug(fun() -> start_proc(Me, Name, F) end, ?MODULE),
             receive
                 {P, ack} ->
                     true

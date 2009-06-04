@@ -1,0 +1,62 @@
+%%% -*- mode: erlang -*-
+
++NAME("types").
+
++VSN("ubf1.0").
+
+%%%%%%
++TYPES
+
+
+%%%%%
+%%% well-known primitives
+bool()                  = true | false;
+expires()               = {integer(), integer(), integer()}; %% erlang-style timestamp
+opaque()                = binary();
+time_t()                = integer();
+timeout()               = infinity | integer(); %% milliseconds
+timeout_or_expires()    = timeout() | expires();
+ts()                    = integer();
+utf8()                  = binary();
+
+
+%%%%%
+%%% common primitives
+
+client_breaks_req1()    = client_breaks_req1;
+server_breaks_req2()    = server_breaks_req2;
+client_breaks_req3()    = client_breaks_req3;
+server_breaks_req4()    = server_breaks_req4;
+dummy_req5()            = dummy_req5;
+dummy_req6()            = dummy_req6;
+timeout_req7()          = dummy_req7;
+timeout_req8()          = dummy_req8;
+not_implemented_req9()  = not_implemented_req9;
+
+client_breaks_res1()    = client_breaks_res1;
+server_breaks_res2()    = server_breaks_res2;
+client_breaks_res3()    = client_breaks_res3;
+server_breaks_res4()    = server_breaks_res4;
+dummy_res5()            = dummy_res5;
+dummy_res6()            = dummy_res6;
+timeout_res7()          = dummy_res7;
+timeout_res8()          = dummy_res8;
+not_implemented_res9()  = not_implemented_res9;
+
+
+%%%%%
+%%% keepalive
+keepalive_req()         = keepalive;
+keepalive_res()         = ok;
+
+
+%%%%%
+%%% meta methods
+info_req()              = info;
+info_res()              = string();
+
+description_req()       = description;
+description_res()       = string();
+
+contract_req()          = contract;
+contract_res()          = term().

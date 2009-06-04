@@ -35,8 +35,8 @@ start_raw_server(Port, Fun, Max, PacketType, PacketSize) ->
     Name = port_name(Port),
     case whereis(Name) of
         undefined ->
-            Pid = spawn_link(?MODULE, cold_start,
-                             [Port, Fun, Max, PacketType, PacketSize]),
+            Pid = proc_lib:spawn_link(?MODULE, cold_start,
+                                      [Port, Fun, Max, PacketType, PacketSize]),
             register(Name, Pid),
             {ok, Pid};
         _Pid ->
@@ -114,7 +114,7 @@ possibly_start_another(false, Listen, Active, Fun, Max) ->
     end.
 
 start_accept(Listen, Fun) ->
-    spawn_link(?MODULE, start_child, [self(), Listen, Fun]).
+    proc_lib:spawn_link(?MODULE, start_child, [self(), Listen, Fun]).
 
 start_child(Parent, Listen, Fun) ->
     case gen_tcp:accept(Listen) of
@@ -129,7 +129,7 @@ start_child(Parent, Listen, Fun) ->
                 {'EXIT', socket_closed} ->
                     true;
                 {'EXIT', Why} ->
-                    io:format("Child failure:~p~n",[Why])
+                    exit(Why)
             end;
         _Other ->
             exit(oops)

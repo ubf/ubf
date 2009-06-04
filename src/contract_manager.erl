@@ -45,7 +45,7 @@ start() ->
     start(false).
 
 start(VerboseRPC) ->
-    spawn_link(fun() -> wait(VerboseRPC) end).
+    proc_utils:spawn_link_debug(fun() -> wait(VerboseRPC) end, ?MODULE).
 
 wait(VerboseRPC) ->
     receive
