@@ -1,0 +1,1176 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Module contract_yecc</title>
+<link rel="stylesheet" type="text/css" href="stylesheet.css" title="EDoc">
+</head>
+<body bgcolor="white">
+<div class="navbar"><a name="#navbar_top"></a><table width="100%" border="0" cellspacing="0" cellpadding="2" summary="navigation bar"><tr><td><a href="overview-summary.html" target="overviewFrame">Overview</a></td><td><a href="http://www.erlang.org/"><img src="erlang.png" align="right" border="0" alt="erlang logo"></a></td></tr></table></div>
+<hr>
+
+<h1>Module contract_yecc</h1>
+<ul class="index"><li><a href="#index">Function Index</a></li><li><a href="#functions">Function Details</a></li></ul>
+
+
+<h2><a name="index">Function Index</a></h2>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#add_prim_term-0">add_prim_term/0*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#econcat-2">econcat/2*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#eor-2">eor/2*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#format_error-1">format_error/1</a></td><td></td></tr>
+<tr><td valign="top"><a href="#parse-1">parse/1</a></td><td></td></tr>
+<tr><td valign="top"><a href="#parse_and_scan-1">parse_and_scan/1</a></td><td></td></tr>
+<tr><td valign="top"><a href="#return_error-2">return_error/2</a></td><td></td></tr>
+<tr><td valign="top"><a href="#unwrap-1">unwrap/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#unwraprecfields-1">unwraprecfields/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#unwraprecvalues-1">unwraprecvalues/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#unwraptypeattr-2">unwraptypeattr/2*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yecc_error_type-2">yecc_error_type/2*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccerror-1">yeccerror/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccgoto_annotation-7">yeccgoto_annotation/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccgoto_anyrule-7">yeccgoto_anyrule/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccgoto_anyrules-7">yeccgoto_anyrules/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccgoto_form-7">yeccgoto_form/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccgoto_outputs-7">yeccgoto_outputs/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccgoto_primType-7">yeccgoto_primType/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccgoto_responseAndState-7">yeccgoto_responseAndState/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccgoto_transition-7">yeccgoto_transition/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccgoto_transitions-7">yeccgoto_transitions/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccgoto_type-7">yeccgoto_type/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccgoto_typeAttr-7">yeccgoto_typeAttr/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccgoto_typeDef-7">yeccgoto_typeDef/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccgoto_typeRec-7">yeccgoto_typeRec/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccgoto_typeRef-7">yeccgoto_typeRef/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccgoto_typeSeq-7">yeccgoto_typeSeq/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccgoto_types-7">yeccgoto_types/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars0-2">yeccpars0/2*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars1-5">yeccpars1/5*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars1-7">yeccpars1/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2-7">yeccpars2/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_0-7">yeccpars2_0/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_1-7">yeccpars2_1/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_10-7">yeccpars2_10/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_101-7">yeccpars2_101/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_101_-1">yeccpars2_101_/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_102-7">yeccpars2_102/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_103-7">yeccpars2_103/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_103_-1">yeccpars2_103_/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_104-7">yeccpars2_104/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_105-7">yeccpars2_105/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_106-7">yeccpars2_106/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_107-7">yeccpars2_107/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_107_-1">yeccpars2_107_/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_108-7">yeccpars2_108/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_109-7">yeccpars2_109/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_11-7">yeccpars2_11/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_110-7">yeccpars2_110/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_110_-1">yeccpars2_110_/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_112-7">yeccpars2_112/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_112_-1">yeccpars2_112_/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_113-7">yeccpars2_113/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_113_-1">yeccpars2_113_/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_115-7">yeccpars2_115/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_115_-1">yeccpars2_115_/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_11_-1">yeccpars2_11_/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_12-7">yeccpars2_12/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_13-7">yeccpars2_13/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_13_-1">yeccpars2_13_/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_14-7">yeccpars2_14/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_15-7">yeccpars2_15/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_16-7">yeccpars2_16/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_17-7">yeccpars2_17/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_18-7">yeccpars2_18/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_18_-1">yeccpars2_18_/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_19-7">yeccpars2_19/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_2-7">yeccpars2_2/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_20-7">yeccpars2_20/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_21-7">yeccpars2_21/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_23-7">yeccpars2_23/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_23_-1">yeccpars2_23_/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_24-7">yeccpars2_24/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_24_-1">yeccpars2_24_/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_25-7">yeccpars2_25/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_25_-1">yeccpars2_25_/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_26-7">yeccpars2_26/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_26_-1">yeccpars2_26_/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_27-7">yeccpars2_27/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_27_-1">yeccpars2_27_/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_28-7">yeccpars2_28/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_28_-1">yeccpars2_28_/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_29-7">yeccpars2_29/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_29_-1">yeccpars2_29_/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_3-7">yeccpars2_3/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_30-7">yeccpars2_30/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_30_-1">yeccpars2_30_/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_31-7">yeccpars2_31/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_31_-1">yeccpars2_31_/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_32-7">yeccpars2_32/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_32_-1">yeccpars2_32_/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_34-7">yeccpars2_34/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_35-7">yeccpars2_35/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_35_-1">yeccpars2_35_/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_37-7">yeccpars2_37/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_37_-1">yeccpars2_37_/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_38-7">yeccpars2_38/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_38_-1">yeccpars2_38_/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_39-7">yeccpars2_39/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_4-7">yeccpars2_4/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_40-7">yeccpars2_40/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_40_-1">yeccpars2_40_/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_41-7">yeccpars2_41/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_42-7">yeccpars2_42/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_43-7">yeccpars2_43/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_43_-1">yeccpars2_43_/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_44-7">yeccpars2_44/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_44_-1">yeccpars2_44_/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_45-7">yeccpars2_45/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_45_-1">yeccpars2_45_/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_46-7">yeccpars2_46/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_46_-1">yeccpars2_46_/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_47-7">yeccpars2_47/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_47_-1">yeccpars2_47_/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_48-7">yeccpars2_48/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_49-7">yeccpars2_49/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_49_-1">yeccpars2_49_/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_5-7">yeccpars2_5/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_50-7">yeccpars2_50/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_50_-1">yeccpars2_50_/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_51-7">yeccpars2_51/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_51_-1">yeccpars2_51_/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_52-7">yeccpars2_52/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_52_-1">yeccpars2_52_/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_53-7">yeccpars2_53/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_53_-1">yeccpars2_53_/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_54-7">yeccpars2_54/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_55-7">yeccpars2_55/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_55_-1">yeccpars2_55_/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_56-7">yeccpars2_56/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_56_-1">yeccpars2_56_/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_57-7">yeccpars2_57/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_57_-1">yeccpars2_57_/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_58-7">yeccpars2_58/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_58_-1">yeccpars2_58_/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_59-7">yeccpars2_59/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_59_-1">yeccpars2_59_/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_6-7">yeccpars2_6/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_60-7">yeccpars2_60/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_61-7">yeccpars2_61/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_62-7">yeccpars2_62/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_63-7">yeccpars2_63/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_65-7">yeccpars2_65/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_65_-1">yeccpars2_65_/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_67-7">yeccpars2_67/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_67_-1">yeccpars2_67_/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_68-7">yeccpars2_68/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_68_-1">yeccpars2_68_/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_69-7">yeccpars2_69/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_7-7">yeccpars2_7/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_71-7">yeccpars2_71/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_72-7">yeccpars2_72/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_72_-1">yeccpars2_72_/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_75-7">yeccpars2_75/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_75_-1">yeccpars2_75_/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_76-7">yeccpars2_76/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_76_-1">yeccpars2_76_/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_77-7">yeccpars2_77/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_77_-1">yeccpars2_77_/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_78-7">yeccpars2_78/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_78_-1">yeccpars2_78_/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_79-7">yeccpars2_79/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_79_-1">yeccpars2_79_/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_8-7">yeccpars2_8/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_81-7">yeccpars2_81/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_81_-1">yeccpars2_81_/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_82-7">yeccpars2_82/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_82_-1">yeccpars2_82_/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_83-7">yeccpars2_83/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_84-7">yeccpars2_84/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_85-7">yeccpars2_85/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_86-7">yeccpars2_86/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_86_-1">yeccpars2_86_/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_87-7">yeccpars2_87/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_88-7">yeccpars2_88/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_9-7">yeccpars2_9/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_90-7">yeccpars2_90/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_90_-1">yeccpars2_90_/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_91-7">yeccpars2_91/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_92-7">yeccpars2_92/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_92_-1">yeccpars2_92_/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_94-7">yeccpars2_94/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_94_-1">yeccpars2_94_/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_95-7">yeccpars2_95/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_95_-1">yeccpars2_95_/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_97-7">yeccpars2_97/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_98-7">yeccpars2_98/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_98_-1">yeccpars2_98_/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_99-7">yeccpars2_99/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars2_99_-1">yeccpars2_99_/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yecctoken2string-1">yecctoken2string/1*</a></td><td></td></tr>
+</table>
+
+<h2><a name="functions">Function Details</a></h2>
+
+<h3 class="function"><a name="add_prim_term-0">add_prim_term/0 *</a></h3>
+<div class="spec">
+<p><tt>add_prim_term() -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="econcat-2">econcat/2 *</a></h3>
+<div class="spec">
+<p><tt>econcat(X, Y) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="eor-2">eor/2 *</a></h3>
+<div class="spec">
+<p><tt>eor(X, Y) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="format_error-1">format_error/1</a></h3>
+<div class="spec">
+<p><tt>format_error(Message) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="parse-1">parse/1</a></h3>
+<div class="spec">
+<p><tt>parse(Tokens) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="parse_and_scan-1">parse_and_scan/1</a></h3>
+<div class="spec">
+<p><tt>parse_and_scan(X1) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="return_error-2">return_error/2</a></h3>
+<div class="spec">
+<p><tt>return_error(Line, Message) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="unwrap-1">unwrap/1 *</a></h3>
+<div class="spec">
+<p><tt>unwrap(X) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="unwraprecfields-1">unwraprecfields/1 *</a></h3>
+<div class="spec">
+<p><tt>unwraprecfields(L) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="unwraprecvalues-1">unwraprecvalues/1 *</a></h3>
+<div class="spec">
+<p><tt>unwraprecvalues(L) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="unwraptypeattr-2">unwraptypeattr/2 *</a></h3>
+<div class="spec">
+<p><tt>unwraptypeattr(T, L) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yecc_error_type-2">yecc_error_type/2 *</a></h3>
+<div class="spec">
+<p><tt>yecc_error_type(X1, X2) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccerror-1">yeccerror/1 *</a></h3>
+<div class="spec">
+<p><tt>yeccerror(Token) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccgoto_annotation-7">yeccgoto_annotation/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccgoto_annotation(S, Cat, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccgoto_anyrule-7">yeccgoto_anyrule/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccgoto_anyrule(X1, Cat, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccgoto_anyrules-7">yeccgoto_anyrules/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccgoto_anyrules(S, Cat, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccgoto_form-7">yeccgoto_form/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccgoto_form(X1, Cat, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccgoto_outputs-7">yeccgoto_outputs/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccgoto_outputs(S, Cat, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccgoto_primType-7">yeccgoto_primType/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccgoto_primType(X1, Cat, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccgoto_responseAndState-7">yeccgoto_responseAndState/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccgoto_responseAndState(X1, Cat, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccgoto_transition-7">yeccgoto_transition/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccgoto_transition(X1, Cat, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccgoto_transitions-7">yeccgoto_transitions/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccgoto_transitions(S, Cat, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccgoto_type-7">yeccgoto_type/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccgoto_type(S, Cat, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccgoto_typeAttr-7">yeccgoto_typeAttr/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccgoto_typeAttr(S, Cat, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccgoto_typeDef-7">yeccgoto_typeDef/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccgoto_typeDef(X1, Cat, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccgoto_typeRec-7">yeccgoto_typeRec/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccgoto_typeRec(S, Cat, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccgoto_typeRef-7">yeccgoto_typeRef/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccgoto_typeRef(S, Cat, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccgoto_typeSeq-7">yeccgoto_typeSeq/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccgoto_typeSeq(S, Cat, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccgoto_types-7">yeccgoto_types/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccgoto_types(S, Cat, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars0-2">yeccpars0/2 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars0(Tokens, MFA) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars1-5">yeccpars1/5 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars1(Tokens, Tokenizer, State, States, Vstack) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars1-7">yeccpars1/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars1(State1, State, States, Vstack, Stack1, Tokens, Tokenizer) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2-7">yeccpars2/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2(S, Cat, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_0-7">yeccpars2_0/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_0(S, X2, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_1-7">yeccpars2_1/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_1(S, X2, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_10-7">yeccpars2_10/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_10(S, X2, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_101-7">yeccpars2_101/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_101(S, Cat, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_101_-1">yeccpars2_101_/1 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_101_(Stack0) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_102-7">yeccpars2_102/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_102(S, X2, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_103-7">yeccpars2_103/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_103(S, Cat, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_103_-1">yeccpars2_103_/1 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_103_(Stack0) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_104-7">yeccpars2_104/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_104(S, X2, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_105-7">yeccpars2_105/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_105(S, X2, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_106-7">yeccpars2_106/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_106(S, X2, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_107-7">yeccpars2_107/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_107(S, Cat, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_107_-1">yeccpars2_107_/1 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_107_(Stack0) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_108-7">yeccpars2_108/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_108(S, X2, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_109-7">yeccpars2_109/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_109(S, X2, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_11-7">yeccpars2_11/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_11(S, Cat, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_110-7">yeccpars2_110/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_110(S, Cat, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_110_-1">yeccpars2_110_/1 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_110_(Stack0) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_112-7">yeccpars2_112/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_112(S, Cat, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_112_-1">yeccpars2_112_/1 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_112_(Stack0) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_113-7">yeccpars2_113/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_113(S, Cat, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_113_-1">yeccpars2_113_/1 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_113_(Stack0) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_115-7">yeccpars2_115/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_115(S, Cat, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_115_-1">yeccpars2_115_/1 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_115_(Stack0) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_11_-1">yeccpars2_11_/1 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_11_(Stack0) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_12-7">yeccpars2_12/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_12(S, X2, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_13-7">yeccpars2_13/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_13(S, Cat, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_13_-1">yeccpars2_13_/1 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_13_(Stack0) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_14-7">yeccpars2_14/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_14(S, X2, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_15-7">yeccpars2_15/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_15(S, X2, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_16-7">yeccpars2_16/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_16(S, X2, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_17-7">yeccpars2_17/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_17(S, X2, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_18-7">yeccpars2_18/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_18(S, Cat, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_18_-1">yeccpars2_18_/1 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_18_(Stack0) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_19-7">yeccpars2_19/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_19(S, Cat, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_2-7">yeccpars2_2/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_2(S, X2, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_20-7">yeccpars2_20/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_20(S, X2, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_21-7">yeccpars2_21/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_21(S, X2, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_23-7">yeccpars2_23/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_23(S, Cat, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_23_-1">yeccpars2_23_/1 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_23_(Stack0) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_24-7">yeccpars2_24/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_24(S, Cat, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_24_-1">yeccpars2_24_/1 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_24_(Stack0) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_25-7">yeccpars2_25/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_25(S, Cat, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_25_-1">yeccpars2_25_/1 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_25_(Stack0) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_26-7">yeccpars2_26/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_26(S, Cat, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_26_-1">yeccpars2_26_/1 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_26_(Stack0) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_27-7">yeccpars2_27/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_27(S, Cat, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_27_-1">yeccpars2_27_/1 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_27_(Stack0) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_28-7">yeccpars2_28/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_28(S, Cat, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_28_-1">yeccpars2_28_/1 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_28_(Stack0) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_29-7">yeccpars2_29/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_29(S, Cat, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_29_-1">yeccpars2_29_/1 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_29_(Stack0) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_3-7">yeccpars2_3/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_3(S, X2, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_30-7">yeccpars2_30/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_30(S, Cat, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_30_-1">yeccpars2_30_/1 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_30_(Stack0) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_31-7">yeccpars2_31/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_31(S, Cat, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_31_-1">yeccpars2_31_/1 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_31_(Stack0) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_32-7">yeccpars2_32/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_32(S, Cat, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_32_-1">yeccpars2_32_/1 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_32_(Stack0) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_34-7">yeccpars2_34/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_34(S, X2, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_35-7">yeccpars2_35/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_35(S, Cat, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_35_-1">yeccpars2_35_/1 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_35_(Stack0) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_37-7">yeccpars2_37/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_37(S, Cat, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_37_-1">yeccpars2_37_/1 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_37_(Stack0) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_38-7">yeccpars2_38/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_38(S, Cat, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_38_-1">yeccpars2_38_/1 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_38_(Stack0) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_39-7">yeccpars2_39/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_39(S, X2, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_4-7">yeccpars2_4/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_4(S, X2, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_40-7">yeccpars2_40/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_40(S, Cat, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_40_-1">yeccpars2_40_/1 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_40_(Stack0) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_41-7">yeccpars2_41/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_41(S, X2, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_42-7">yeccpars2_42/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_42(S, X2, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_43-7">yeccpars2_43/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_43(S, Cat, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_43_-1">yeccpars2_43_/1 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_43_(Stack0) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_44-7">yeccpars2_44/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_44(S, Cat, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_44_-1">yeccpars2_44_/1 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_44_(Stack0) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_45-7">yeccpars2_45/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_45(S, Cat, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_45_-1">yeccpars2_45_/1 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_45_(Stack0) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_46-7">yeccpars2_46/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_46(S, Cat, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_46_-1">yeccpars2_46_/1 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_46_(Stack0) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_47-7">yeccpars2_47/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_47(S, Cat, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_47_-1">yeccpars2_47_/1 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_47_(Stack0) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_48-7">yeccpars2_48/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_48(S, X2, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_49-7">yeccpars2_49/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_49(S, Cat, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_49_-1">yeccpars2_49_/1 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_49_(Stack0) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_5-7">yeccpars2_5/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_5(S, X2, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_50-7">yeccpars2_50/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_50(S, Cat, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_50_-1">yeccpars2_50_/1 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_50_(Stack0) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_51-7">yeccpars2_51/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_51(S, Cat, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_51_-1">yeccpars2_51_/1 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_51_(Stack0) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_52-7">yeccpars2_52/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_52(S, Cat, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_52_-1">yeccpars2_52_/1 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_52_(Stack0) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_53-7">yeccpars2_53/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_53(S, Cat, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_53_-1">yeccpars2_53_/1 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_53_(Stack0) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_54-7">yeccpars2_54/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_54(S, X2, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_55-7">yeccpars2_55/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_55(S, Cat, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_55_-1">yeccpars2_55_/1 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_55_(Stack0) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_56-7">yeccpars2_56/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_56(S, Cat, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_56_-1">yeccpars2_56_/1 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_56_(Stack0) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_57-7">yeccpars2_57/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_57(S, Cat, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_57_-1">yeccpars2_57_/1 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_57_(Stack0) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_58-7">yeccpars2_58/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_58(S, Cat, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_58_-1">yeccpars2_58_/1 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_58_(Stack0) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_59-7">yeccpars2_59/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_59(S, Cat, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_59_-1">yeccpars2_59_/1 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_59_(Stack0) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_6-7">yeccpars2_6/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_6(S, X2, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_60-7">yeccpars2_60/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_60(S, X2, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_61-7">yeccpars2_61/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_61(S, X2, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_62-7">yeccpars2_62/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_62(S, X2, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_63-7">yeccpars2_63/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_63(S, X2, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_65-7">yeccpars2_65/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_65(S, Cat, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_65_-1">yeccpars2_65_/1 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_65_(Stack0) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_67-7">yeccpars2_67/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_67(S, Cat, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_67_-1">yeccpars2_67_/1 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_67_(Stack0) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_68-7">yeccpars2_68/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_68(S, Cat, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_68_-1">yeccpars2_68_/1 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_68_(Stack0) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_69-7">yeccpars2_69/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_69(S, X2, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_7-7">yeccpars2_7/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_7(S, X2, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_71-7">yeccpars2_71/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_71(S, X2, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_72-7">yeccpars2_72/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_72(S, Cat, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_72_-1">yeccpars2_72_/1 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_72_(Stack0) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_75-7">yeccpars2_75/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_75(S, Cat, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_75_-1">yeccpars2_75_/1 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_75_(Stack0) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_76-7">yeccpars2_76/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_76(S, Cat, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_76_-1">yeccpars2_76_/1 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_76_(Stack0) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_77-7">yeccpars2_77/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_77(S, Cat, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_77_-1">yeccpars2_77_/1 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_77_(Stack0) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_78-7">yeccpars2_78/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_78(S, Cat, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_78_-1">yeccpars2_78_/1 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_78_(Stack0) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_79-7">yeccpars2_79/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_79(S, Cat, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_79_-1">yeccpars2_79_/1 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_79_(Stack0) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_8-7">yeccpars2_8/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_8(S, X2, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_81-7">yeccpars2_81/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_81(S, Cat, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_81_-1">yeccpars2_81_/1 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_81_(Stack0) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_82-7">yeccpars2_82/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_82(S, Cat, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_82_-1">yeccpars2_82_/1 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_82_(Stack0) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_83-7">yeccpars2_83/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_83(S, X2, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_84-7">yeccpars2_84/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_84(S, X2, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_85-7">yeccpars2_85/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_85(S, X2, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_86-7">yeccpars2_86/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_86(S, Cat, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_86_-1">yeccpars2_86_/1 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_86_(Stack0) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_87-7">yeccpars2_87/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_87(S, X2, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_88-7">yeccpars2_88/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_88(S, X2, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_9-7">yeccpars2_9/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_9(S, X2, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_90-7">yeccpars2_90/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_90(S, Cat, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_90_-1">yeccpars2_90_/1 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_90_(Stack0) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_91-7">yeccpars2_91/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_91(S, X2, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_92-7">yeccpars2_92/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_92(S, Cat, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_92_-1">yeccpars2_92_/1 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_92_(Stack0) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_94-7">yeccpars2_94/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_94(S, Cat, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_94_-1">yeccpars2_94_/1 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_94_(Stack0) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_95-7">yeccpars2_95/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_95(S, Cat, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_95_-1">yeccpars2_95_/1 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_95_(Stack0) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_97-7">yeccpars2_97/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_97(S, X2, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_98-7">yeccpars2_98/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_98(S, Cat, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_98_-1">yeccpars2_98_/1 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_98_(Stack0) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_99-7">yeccpars2_99/7 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_99(S, Cat, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yeccpars2_99_-1">yeccpars2_99_/1 *</a></h3>
+<div class="spec">
+<p><tt>yeccpars2_99_(Stack0) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yecctoken2string-1">yecctoken2string/1 *</a></h3>
+<div class="spec">
+<p><tt>yecctoken2string(Other) -&gt; any()</tt></p>
+</div>
+<hr>
+
+<div class="navbar"><a name="#navbar_bottom"></a><table width="100%" border="0" cellspacing="0" cellpadding="2" summary="navigation bar"><tr><td><a href="overview-summary.html" target="overviewFrame">Overview</a></td><td><a href="http://www.erlang.org/"><img src="erlang.png" align="right" border="0" alt="erlang logo"></a></td></tr></table></div>
+<p><i>Generated EDoc, $Id$</i></p>
+</body>
+</html>

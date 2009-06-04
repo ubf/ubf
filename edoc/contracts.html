@@ -1,0 +1,144 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Module contracts</title>
+<link rel="stylesheet" type="text/css" href="stylesheet.css" title="EDoc">
+</head>
+<body bgcolor="white">
+<div class="navbar"><a name="#navbar_top"></a><table width="100%" border="0" cellspacing="0" cellpadding="2" summary="navigation bar"><tr><td><a href="overview-summary.html" target="overviewFrame">Overview</a></td><td><a href="http://www.erlang.org/"><img src="erlang.png" align="right" border="0" alt="erlang logo"></a></td></tr></table></div>
+<hr>
+
+<h1>Module contracts</h1>
+<ul class="index"><li><a href="#index">Function Index</a></li><li><a href="#functions">Function Details</a></li></ul>
+
+
+<h2><a name="index">Function Index</a></h2>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#checkCallback-3">checkCallback/3</a></td><td></td></tr>
+<tr><td valign="top"><a href="#checkIn-3">checkIn/3</a></td><td></td></tr>
+<tr><td valign="top"><a href="#checkOut-4">checkOut/4</a></td><td></td></tr>
+<tr><td valign="top"><a href="#check_term-4">check_term/4*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#check_term1-4">check_term1/4*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#check_term_attr-3">check_term_attr/3*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#check_term_attrlist-3">check_term_attrlist/3*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#check_term_concatlist-5">check_term_concatlist/5*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#check_term_concatlist-6">check_term_concatlist/6*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#check_term_list-4">check_term_list/4*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#getContract-1">getContract/1</a></td><td></td></tr>
+<tr><td valign="top"><a href="#isType-3">isType/3</a></td><td></td></tr>
+<tr><td valign="top"><a href="#isTypeAttr-2">isTypeAttr/2</a></td><td></td></tr>
+<tr><td valign="top"><a href="#is_ascii-1">is_ascii/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#is_asciiprintable-1">is_asciiprintable/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#is_nonempty-1">is_nonempty/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#is_nonundefined-1">is_nonundefined/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#is_proplist-1">is_proplist/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#is_string-1">is_string/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#locate-3">locate/3*</a></td><td></td></tr>
+</table>
+
+<h2><a name="functions">Function Details</a></h2>
+
+<h3 class="function"><a name="checkCallback-3">checkCallback/3</a></h3>
+<div class="spec">
+<p><tt>checkCallback(Msg, ThisState, Mod) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="checkIn-3">checkIn/3</a></h3>
+<div class="spec">
+<p><tt>checkIn(Msg, State, Mod) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="checkOut-4">checkOut/4</a></h3>
+<div class="spec">
+<p><tt>checkOut(MsgOut, StateOut, FSM2, Mod) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="check_term-4">check_term/4 *</a></h3>
+<div class="spec">
+<p><tt>check_term(Type, Term, Level, DefTypes) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="check_term1-4">check_term1/4 *</a></h3>
+<div class="spec">
+<p><tt>check_term1(Check, X, Level, DefTypes) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="check_term_attr-3">check_term_attr/3 *</a></h3>
+<div class="spec">
+<p><tt>check_term_attr(Type, X2, Val) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="check_term_attrlist-3">check_term_attrlist/3 *</a></h3>
+<div class="spec">
+<p><tt>check_term_attrlist(Type, Attrs, Val) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="check_term_concatlist-5">check_term_concatlist/5 *</a></h3>
+<div class="spec">
+<p><tt>check_term_concatlist(B, BCnt, L, Level, DefTypes) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="check_term_concatlist-6">check_term_concatlist/6 *</a></h3>
+<div class="spec">
+<p><tt>check_term_concatlist(A, ACnt, B, L, Level, DefTypes) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="check_term_list-4">check_term_list/4 *</a></h3>
+<div class="spec">
+<p><tt>check_term_list(T, T1, Level, DefTypes) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="getContract-1">getContract/1</a></h3>
+<div class="spec">
+<p><tt>getContract(Mod) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="isType-3">isType/3</a></h3>
+<div class="spec">
+<p><tt>isType(Type, X, Defs) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="isTypeAttr-2">isTypeAttr/2</a></h3>
+<div class="spec">
+<p><tt>isTypeAttr(X1, X2) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="is_ascii-1">is_ascii/1 *</a></h3>
+<div class="spec">
+<p><tt>is_ascii(A) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="is_asciiprintable-1">is_asciiprintable/1 *</a></h3>
+<div class="spec">
+<p><tt>is_asciiprintable(A) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="is_nonempty-1">is_nonempty/1 *</a></h3>
+<div class="spec">
+<p><tt>is_nonempty(X1) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="is_nonundefined-1">is_nonundefined/1 *</a></h3>
+<div class="spec">
+<p><tt>is_nonundefined(X1) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="is_proplist-1">is_proplist/1 *</a></h3>
+<div class="spec">
+<p><tt>is_proplist(T) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="is_string-1">is_string/1 *</a></h3>
+<div class="spec">
+<p><tt>is_string(A) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="locate-3">locate/3 *</a></h3>
+<div class="spec">
+<p><tt>locate(Type, Mod, X) -&gt; any()</tt></p>
+</div>
+<hr>
+
+<div class="navbar"><a name="#navbar_bottom"></a><table width="100%" border="0" cellspacing="0" cellpadding="2" summary="navigation bar"><tr><td><a href="overview-summary.html" target="overviewFrame">Overview</a></td><td><a href="http://www.erlang.org/"><img src="erlang.png" align="right" border="0" alt="erlang logo"></a></td></tr></table></div>
+<p><i>Generated EDoc, $Id$</i></p>
+</body>
+</html>
