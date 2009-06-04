@@ -37,7 +37,7 @@ loop(Socket, Pid, Timeout, Cont) ->
     receive
         {Pid, Term} ->
             Data = erlang:term_to_binary(Term),
-            gen_tcp:send(Socket, Data),
+            ok = gen_tcp:send(Socket, Data),
             loop(Socket, Pid, Timeout, Cont);
         stop ->
             Pid ! stop,
@@ -50,9 +50,9 @@ loop(Socket, Pid, Timeout, Cont) ->
         {tcp_closed, Socket} ->
             Pid ! stop,
             exit(socket_closed);
-        {tcp_error, Socket} ->
+        {tcp_error, Socket, Reason} ->
             gen_tcp:close(Socket),
-            exit(socket_error);
+            exit({socket_error,Reason});
         {tcp, Socket, Data} ->
             T = erlang:binary_to_term(Data),
             handle_data(Socket, Pid, Timeout, {done, T});

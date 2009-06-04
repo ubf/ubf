@@ -37,7 +37,7 @@ loop(Socket, Pid, Timeout, Cont) ->
     receive
         {Pid, Term} ->
             Data = ubf:encode(Term),
-            gen_tcp:send(Socket, [Data,"\n"]),
+            ok = gen_tcp:send(Socket, [Data,"\n"]),
             loop(Socket, Pid, Timeout, Cont);
         stop ->
             Pid ! stop,
@@ -50,9 +50,9 @@ loop(Socket, Pid, Timeout, Cont) ->
         {tcp_closed, Socket} ->
             Pid ! stop,
             exit(socket_closed);
-        {tcp_error, Socket} ->
+        {tcp_error, Socket, Reason} ->
             gen_tcp:close(Socket),
-            exit(socket_error);
+            exit({socket_error,Reason});
         {tcp, Socket, Data} ->
             T = binary_to_list(Data),
             Cont1 = ubf:decode(T, Cont),

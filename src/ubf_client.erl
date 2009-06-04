@@ -141,7 +141,10 @@ ubf_client(Parent, Host, Port, Options, Timeout)
             gen_tcp:controlling_process(Socket, Driver),
             %% Kick off the driver
             Driver ! {start, Socket, self()},       % tell the controller
-            inet:setopts(Socket, [{active, true}]), % before we activate socket
+            inet:setopts(Socket, [{active, true}
+                                  %%, {send_timeout, Timeout}
+                                  %%, {send_timeout_close, true}
+                                 ]),
             %% wait for a startup message
             receive
                 {Driver, {DriverVersion, Service, _}} ->

@@ -189,6 +189,10 @@ start_ubf_listener(MetaServerModule, Port, Server, Options) ->
                                         Server, MetaServerModule},
                              %% and activate the loop that will now
                              %% execute the last two statements :-)
+                             inet:setopts(Socket, [{active, true}
+                                                   %%, {send_timeout, IdleTimer}
+                                                   %%, {send_timeout_close, true}
+                                                  ]),
                              DriverModule:loop(Socket, self(), IdleTimer)
                      end,
                      proplists:get_value(maxconn,Options,10000),
