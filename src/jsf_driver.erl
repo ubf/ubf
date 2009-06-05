@@ -12,7 +12,7 @@
 %% If one side dies the process dies
 
 start() ->
-    proc_utils:spawn_link_debug(fun() -> start1() end, ?MODULE).
+    proc_utils:spawn_link_debug(fun() -> start1() end, jsf_client).
 
 start1() ->
     receive
