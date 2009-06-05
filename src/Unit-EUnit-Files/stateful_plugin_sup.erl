@@ -42,9 +42,9 @@ init(Args) ->
 
     DefaultMaxConn = 10000,
     DefaultTimeout = 60000,
-    DefaultPlugins = proplists:get_value(plugins, Args, [stateful]),
+    DefaultPlugins = proplists:get_value(plugins, Args, [stateful_plugin]),
 
-    CUBF = case proplists:get_value(test_ubf_tcp_port, Args, 2000) of
+    CUBF = case proplists:get_value(test_ubf_tcp_port, Args, 3000) of
                0 ->
                    [];
                UBFPort ->
@@ -63,7 +63,7 @@ init(Args) ->
                    [UBFServer]
            end,
 
-    CEBF = case proplists:get_value(test_ebf_tcp_port, Args, 2001) of
+    CEBF = case proplists:get_value(test_ebf_tcp_port, Args, 3001) of
                0 ->
                    [];
                EBFPort ->
@@ -82,7 +82,7 @@ init(Args) ->
                    [EBFServer]
            end,
 
-    CJSF = case proplists:get_value(test_jsf_tcp_port, Args, 2002) of
+    CJSF = case proplists:get_value(test_jsf_tcp_port, Args, 3002) of
                0 ->
                    [];
                JSFPort ->

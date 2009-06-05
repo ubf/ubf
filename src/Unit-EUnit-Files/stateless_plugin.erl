@@ -3,9 +3,8 @@
 -export([handlerStart/1, handlerStop/3, handlerDispatch/2]).
 -export([info/0, description/0, keepalive/0]).
 
--export([client_breaks_req1/0, server_breaks_req2/0, client_breaks_req3/0, server_breaks_req4/0]).
--export([dummy_req5/0, dummy_req6/0]).
--export([timeout_req7/0, timeout_req8/0]).
+-export([client_breaks_req01/0, client_timeout_req03/1]).
+-export([server_breaks_req01/0, server_timeout_req03/1, server_crash_req05/0]).
 
 -include("ubf.hrl").
 
@@ -14,12 +13,13 @@
 -add_contract("./Unit-EUnit-Files/stateless_plugin").
 -add_types({types_plugin, [contract_res,contract_req,description_res,description_req,info_res,info_req]}).
 -add_types({types_plugin, [keepalive_res,keepalive_req]}).
--add_types({types_plugin, [timeout_res8,timeout_req8,timeout_res7,timeout_req7,
-                                dummy_res6,dummy_req6,dummy_res5,dummy_req5,
-                                server_breaks_res4,server_breaks_req4,
-                                client_breaks_res3,client_breaks_req3,
-                                server_breaks_res2,server_breaks_req2,
-                                client_breaks_res1,client_breaks_req1]}).
+-add_types({types_plugin, [timeout]}).
+-add_types({types_plugin, [server_crash_res05,server_crash_req05,
+                           server_timeout_res03,server_timeout_req03,
+                           server_breaks_res01,server_breaks_req01,
+                           client_timeout_res03,client_timeout_req03,
+                           client_breaks_res01,client_breaks_req01]}).
+
 
 info() ->
     "I am a stateless server".
@@ -44,15 +44,11 @@ handlerStop(undefined, _Reason, _StateData) ->
 handlerDispatch(keepalive, StateData) ->
     {?MODULE, keepalive, StateData};
 handlerDispatch(X, StateData)
-  when X==client_breaks_req1
-       , X==server_breaks_req2
-       , X==client_breaks_req3
-       , X==server_breaks_req4
-       , X==dummy_req5
-       , X==dummy_req6
-       , X==timeout_req7
-       , X==timeout_req8
-       %% NOT IMPLEMENTED, X==not_implemented_req9
+  when X==client_breaks_req01
+       ; X==client_timeout_req03
+       ; X==server_breaks_req01
+       ; X==server_timeout_req03
+       ; X==server_crash_req05
        ->
     {?MODULE, X, StateData};
 handlerDispatch(_X, StateData) ->
@@ -62,35 +58,23 @@ handlerDispatch(_X, StateData) ->
 keepalive() ->
     ok.
 
-client_breaks_req1() ->
-    exit(this_should_not_be_called).
+client_breaks_req01() ->
+    exit(client_breaks_req01_should_not_be_called).
 
-server_breaks_req2() ->
-    server_breaks_req2.
+client_timeout_req03(Timeout) ->
+    timer:sleep(Timeout),
+    client_timeout_res03.
 
-client_breaks_req3() ->
-    exit(this_should_not_be_called).
+server_breaks_req01() ->
+    server_breaks_res01_with_this_response.
 
-server_breaks_req4() ->
-    server_breaks_req4.
+server_timeout_req03(Timeout) ->
+    timer:sleep(Timeout),
+    server_timeout_res03.
 
-dummy_req5() ->
-    dummy_res5.
+server_crash_req05() ->
+    exit(server_crash_res05_with_this_response).
 
-dummy_req6() ->
-    dummy_req6.
-
-timeout_req7() ->
-    receive
-        this_will_never_yield ->
-            exit(this_should_not_be_called)
-    end.
-
-timeout_req8() ->
-    receive
-        this_will_never_yield ->
-            exit(this_should_not_be_called)
-    end.
 
 %%%----------------------------------------------------------------------
 %%% Internal functions

@@ -1,32 +1,35 @@
 %%% -*- mode: erlang -*-
 
-+NAME("stateful").
++NAME("test").
 
 +VSN("ubf1.0").
 
 %%%%%
 %%% states
 +STATE start
-  client_breaks_req1()  => client_breaks_res1() & start;
-  server_breaks_req2()  => server_breaks_res2() & start;
-  client_breaks_req3()  => client_breaks_res3() & other;
-  server_breaks_req4()  => server_breaks_res4() & other.
+  client_breaks_req01()  => client_breaks_res01() & start;
+  client_breaks_req02()  => client_breaks_res02() & finish;
+  client_timeout_req03() => client_timeout_res03() & start;
+  client_timeout_req04() => client_timeout_res04() & finish;
 
-+STATE other
-  dummy_req5()          => dummy_res5() & start;
-  dummy_req6()          => dummy_res6() & other;
-  timeout_req7()        => timeout_res7() & other;
-  timeout_req8()        => timeout_res8() & start.
+  server_breaks_req01()  => server_breaks_res01() & start;
+  server_breaks_req02()  => server_breaks_res02() & finish;
+  server_timeout_req03() => server_timeout_res03() & start;
+  server_timeout_req04() => server_timeout_res04() & finish;
+  server_crash_req05()   => server_crash_res05() & start;
+  server_crash_req06()   => server_crash_res06() & finish.
 
++STATE finish
+  restart_req()          => restart_res() & start.
 
 %%%%%
 %%% anystate
 +ANYSTATE
 
 %% keepalive
-keepalive_req()         => keepalive_res();
+keepalive_req()          => keepalive_res();
 
 %% meta methods
-info_req()              => info_res();
-description_req()       => description_res();
-contract_req()          => contract_res().
+info_req()               => info_res();
+description_req()        => description_res();
+contract_req()           => contract_res().

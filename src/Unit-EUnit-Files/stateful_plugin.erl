@@ -12,12 +12,19 @@
 -add_contract("./Unit-EUnit-Files/stateful_plugin").
 -add_types({types_plugin, [contract_res,contract_req,description_res,description_req,info_res,info_req]}).
 -add_types({types_plugin, [keepalive_res,keepalive_req]}).
--add_types({types_plugin, [timeout_res8,timeout_req8,timeout_res7,timeout_req7,
-                                dummy_res6,dummy_req6,dummy_res5,dummy_req5,
-                                server_breaks_res4,server_breaks_req4,
-                                client_breaks_res3,client_breaks_req3,
-                                server_breaks_res2,server_breaks_req2,
-                                client_breaks_res1,client_breaks_req1]}).
+-add_types({types_plugin, [timeout]}).
+-add_types({types_plugin, [server_crash_res05,server_crash_req05,
+                           server_timeout_res03,server_timeout_req03,
+                           server_breaks_res01,server_breaks_req01,
+                           client_timeout_res03,client_timeout_req03,
+                           client_breaks_res01,client_breaks_req01]}).
+-add_types({types_plugin, [restart_res,restart_req,server_crash_res06,
+                           server_crash_req06,server_timeout_res04,
+                           server_timeout_req04,server_breaks_res02,
+                           server_breaks_req02,client_timeout_res04,
+                           client_timeout_req04,client_breaks_res02,
+                           client_breaks_req02]}).
+
 
 %% records
 

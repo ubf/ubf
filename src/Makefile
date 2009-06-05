@@ -84,7 +84,6 @@ check: all
 		-s test_ebf tests \
 		-s test_etf tests \
 		-s stateless_plugin_test do_eunit \
-		-s stateful_plugin_test do_eunit \
 		-s erlang halt \
 		> ./check.log
 

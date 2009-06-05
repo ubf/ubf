@@ -23,25 +23,33 @@ utf8()                  = binary();
 %%%%%
 %%% common primitives
 
-client_breaks_req1()    = client_breaks_req1;
-server_breaks_req2()    = server_breaks_req2;
-client_breaks_req3()    = client_breaks_req3;
-server_breaks_req4()    = server_breaks_req4;
-dummy_req5()            = dummy_req5;
-dummy_req6()            = dummy_req6;
-timeout_req7()          = dummy_req7;
-timeout_req8()          = dummy_req8;
-not_implemented_req9()  = not_implemented_req9;
+client_breaks_req01()   = client_breaks_req01;
+client_breaks_res01()   = client_breaks_res01;
+client_breaks_req02()   = client_breaks_req02;
+client_breaks_res02()   = client_breaks_res02;
+client_timeout_req03()  = {client_timeout_req03,timeout()};
+client_timeout_res03()  = client_timeout_res03;
+client_timeout_req04()  = {client_timeout_req04,timeout()};
+client_timeout_res04()  = client_timeout_res04;
 
-client_breaks_res1()    = client_breaks_res1;
-server_breaks_res2()    = server_breaks_res2;
-client_breaks_res3()    = client_breaks_res3;
-server_breaks_res4()    = server_breaks_res4;
-dummy_res5()            = dummy_res5;
-dummy_res6()            = dummy_res6;
-timeout_res7()          = dummy_res7;
-timeout_res8()          = dummy_res8;
-not_implemented_res9()  = not_implemented_res9;
+server_breaks_req01()   = server_breaks_req01;
+server_breaks_res01()   = server_breaks_res01;
+server_breaks_req02()   = server_breaks_req02;
+server_breaks_res02()   = server_breaks_res02;
+server_timeout_req03()  = {server_timeout_req03,timeout()};
+server_timeout_res03()  = server_timeout_res03;
+server_timeout_req04()  = {server_timeout_req04,timeout()};
+server_timeout_res04()  = server_timeout_res04;
+server_crash_req05()    = server_crash_req05;
+server_crash_res05()    = server_crash_res05;
+server_crash_req06()    = server_crash_req06;
+server_crash_res06()    = server_crash_res06;
+
+not_implemented_req99() = not_implemented_req99;
+not_implemented_res99() = not_implemented_res99;
+
+restart_req()           = restart_req;
+restart_res()           = restart_res;
 
 
 %%%%%
