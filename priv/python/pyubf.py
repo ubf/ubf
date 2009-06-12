@@ -51,9 +51,8 @@ def List(value):
     assert isinstance(value, list)
     return value
 
-##
+
 ## pyjson -> pyubf
-##
 def from_pyjson(value):
     if value is None:
         return value
@@ -84,9 +83,7 @@ def from_pyjson(value):
     else:
         raise RuntimeError, 'unknown object ~s' % repr(value)
 
-##
 ## pyubf -> pyjson
-##
 def to_pyjson(value):
     if value is None:
         return value

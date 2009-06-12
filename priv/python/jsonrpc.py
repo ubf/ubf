@@ -29,7 +29,7 @@ def do_rpc(UserId, method, *params):
     req = urllib2.Request(url, jsonReq, headers)
     res = urllib2.urlopen(req)
     jsonRes = json.read(res.read())
-    #print jsonRes 
+    #print jsonRes
     if jsonRes["id"] != jsonId:
         raise JsonResError("Invalid request id (is: %s, expected: %s)" % (jsonRes["id"], jsonId))
     if jsonRes["error"] is not None:
@@ -57,7 +57,7 @@ def auth_cookie(UserId):
     strid = str(id)
     return strid[::-1]
 
-
+
 if __name__ == "__main__":
     UserId = 1
 
@@ -79,4 +79,3 @@ if __name__ == "__main__":
     assert res3[0] == 'ok'
     assert res3[1] == profile
     assert res3[2] == res2[1]
-
