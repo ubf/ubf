@@ -28,18 +28,18 @@ ubf(Name,Mod) ->
     type(Type,Mod).
 
 type(Type,Mod) ->
-    io_lib:format("\t\t~s\n", [typeref(Type, Mod)]).
+    io_lib:format("\t\t~s\n", [typeref(Type,Mod)]).
 
 typeref({tuple,Elements},Mod) ->
-    io_lib:format("{\"$T\" : [ ~s ]}", [join([typeref(Element, Mod) || Element <- Elements], ", ")]);
-typeref({record,Name,Elements},Mod) when is_atom(Name) ->
+    io_lib:format("{\"$T\" : [ ~s ]}", [join([typeref(Element,Mod) || Element <- Elements], ", ")]);
+typeref({record,RecName,Elements},Mod) when is_atom(RecName) ->
     Values = tl(tl(Elements)),
-    RecordKey = {Name,length(Elements)-2},
+    RecordKey = {RecName,length(Elements)-2},
     Fields = Mod:contract_record(RecordKey),
     io_lib:format("{\"$R\" : \"~p\", ~s}",
-                  [Name, join([ io_lib:format("\"~p\" : ~s", [Field, typeref(Element, Mod)])
+                  [RecName, join([ io_lib:format("\"~p\" : ~s", [Field, typeref(Element,Mod)])
                                 || {Field,Element} <- lists:zip(Fields,Values) ], ", ")]);
-typeref({record_ext,Name,_,_Elements},_Mod) when is_atom(Name) ->
+typeref({record_ext,RecName,_,_Elements},_Mod) when is_atom(RecName) ->
     erlang:exit(fatal);
 typeref({prim,integer},_Mod) ->
     "integer()";
@@ -63,6 +63,8 @@ typeref({prim,{binary,Attrs}},_Mod) ->
     io_lib:format("binary(~s)", [join([ atom_to_list(Attr) || Attr <- Attrs ], ",")]);
 typeref({prim,tuple},_Mod) ->
     "tuple()";
+typeref({prim,{tuple,Attrs}},_Mod) ->
+    io_lib:format("tuple(~s)", [join([ atom_to_list(Attr) || Attr <- Attrs ], ",")]);
 typeref({prim,term},_Mod) ->
     "term()";
 typeref({prim,{term,Attrs}},_Mod) ->
@@ -94,23 +96,23 @@ typeref({atom,Value},_Mod) ->
 typeref({string,Value},_Mod) ->
     io_lib:format("{\"$S\" : \"~p\"}", [Value]);
 typeref({proplist,Value},Mod) ->
-    io_lib:format("{\"$P\" : \"~p\"}", [typeref(Value, Mod)]);
+    io_lib:format("{\"$P\" : \"~p\"}", [typeref(Value,Mod)]);
 typeref({binary,Value},_Mod) ->
     io_lib:format("\"~p\"", [Value]);
 typeref({alt,Type1,Type2},Mod) ->
-    io_lib:format("~s | ~s", [typeref(Type1, Mod), typeref(Type2, Mod)]);
+    io_lib:format("~s | ~s", [typeref(Type1,Mod), typeref(Type2,Mod)]);
 typeref({concat,Type1,Type2},Mod) ->
-    io_lib:format("~s++~s", [typeref(Type1, Mod), typeref(Type2, Mod)]);
+    io_lib:format("~s++~s", [typeref(Type1,Mod), typeref(Type2,Mod)]);
 typeref({list_optional,Element},Mod) ->
-    io_lib:format("[~s]?", [typeref(Element, Mod)]);
+    io_lib:format("[~s]?", [typeref(Element,Mod)]);
 typeref({list_nil,Element},Mod) ->
-    io_lib:format("[~s]{0}", [typeref(Element, Mod)]);
+    io_lib:format("[~s]{0}", [typeref(Element,Mod)]);
 typeref({list_required,Element},Mod) ->
-    io_lib:format("[~s]{1}", [typeref(Element, Mod)]);
+    io_lib:format("[~s]{1}", [typeref(Element,Mod)]);
 typeref({list,Element},Mod) ->
-    io_lib:format("[~s]", [typeref(Element, Mod)]);
+    io_lib:format("[~s]", [typeref(Element,Mod)]);
 typeref({list_required_and_repeatable,Element},Mod) ->
-    io_lib:format("[~s]+", [typeref(Element, Mod)]);
+    io_lib:format("[~s]+", [typeref(Element,Mod)]);
 typeref(Type, _Mod) ->
     io_lib:format("~p()", [Type]).
 
@@ -241,7 +243,7 @@ ubf_contract(Mod) ->
                    case get_type(Input,true,Mod) of
                        {_Input, {tuple, [{atom, Atom}|Elements1]}, _} ->
                            {Atom
-                            , io_lib:format("[ ~s ]", [join([typeref(E, Mod) || E <- Elements1, E =/= {prim,authinfo}], ", ")])
+                            , io_lib:format("[ ~s ]", [join([typeref(E,Mod) || E <- Elements1, E =/= {prim,authinfo}], ", ")])
                            };
                        {_Input, {atom, Atom}, _} ->
                            {Atom
@@ -252,7 +254,7 @@ ubf_contract(Mod) ->
                Result =
                    case get_type(Output,false,Mod) of
                        {Output, OutputType, _} ->
-                           typeref(OutputType, Mod);
+                           typeref(OutputType,Mod);
                        undefined ->
                            io_lib:format("~p()", [Output])
                    end,
