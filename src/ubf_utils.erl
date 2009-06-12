@@ -23,18 +23,18 @@ ubf(Name,Mod) ->
     type(Type,Mod).
 
 type(Type,Mod) ->
-    io_lib:format("\t\t~s\n", [typeref(Type, Mod)]).
+    io_lib:format("\t\t~s\n", [typeref(Type,Mod)]).
 
 typeref({tuple,Elements},Mod) ->
-    io_lib:format("{ ~s }", [join([typeref(Element, Mod) || Element <- Elements], ", ")]);
-typeref({record,Name,Elements},Mod) when is_atom(Name) ->
+    io_lib:format("{ ~s }", [join([typeref(Element,Mod) || Element <- Elements], ", ")]);
+typeref({record,RecName,Elements},Mod) when is_atom(RecName) ->
     Values = tl(tl(Elements)),
-    RecordKey = {Name,length(Elements)-2},
+    RecordKey = {RecName,length(Elements)-2},
     Fields = Mod:contract_record(RecordKey),
     io_lib:format("#~s{ ~s }",
-                  [Name, join([ io_lib:format("~s=~s", [Field, typeref(Element, Mod)])
-                                || {Field,Element} <- lists:zip(Fields,Values) ], ", ")]);
-typeref({record_ext,Name,_,_Elements},_Mod) when is_atom(Name) ->
+                  [RecName, join([ io_lib:format("~s=~s", [Field, typeref(Element,Mod)])
+                                   || {Field,Element} <- lists:zip(Fields,Values) ], ", ")]);
+typeref({record_ext,RecName,_,_Elements},_Mod) when is_atom(RecName) ->
     erlang:exit(fatal);
 typeref({prim,integer},_Mod) ->
     "integer()";
@@ -58,6 +58,8 @@ typeref({prim,{binary,Attrs}},_Mod) ->
     io_lib:format("binary(~s)", [join([ atom_to_list(Attr) || Attr <- Attrs ], ",")]);
 typeref({prim,tuple},_Mod) ->
     "tuple()";
+typeref({prim,{tuple,Attrs}},_Mod) ->
+    io_lib:format("tuple(~s)", [join([ atom_to_list(Attr) || Attr <- Attrs ], ",")]);
 typeref({prim,term},_Mod) ->
     "term()";
 typeref({prim,{term,Attrs}},_Mod) ->
@@ -87,19 +89,19 @@ typeref({proplist,Value},_Mod) ->
 typeref({binary,Value},_Mod) ->
     io_lib:format("~p", [Value]);
 typeref({alt,Type1,Type2},Mod) ->
-    io_lib:format("~s | ~s", [typeref(Type1, Mod), typeref(Type2, Mod)]);
+    io_lib:format("~s | ~s", [typeref(Type1,Mod), typeref(Type2,Mod)]);
 typeref({concat,Type1,Type2},Mod) ->
-    io_lib:format("~s++~s", [typeref(Type1, Mod), typeref(Type2, Mod)]);
+    io_lib:format("~s++~s", [typeref(Type1,Mod), typeref(Type2,Mod)]);
 typeref({list_optional,Element},Mod) ->
-    io_lib:format("[~s]?", [typeref(Element, Mod)]);
+    io_lib:format("[~s]?", [typeref(Element,Mod)]);
 typeref({list_nil,Element},Mod) ->
-    io_lib:format("[~s]{0}", [typeref(Element, Mod)]);
+    io_lib:format("[~s]{0}", [typeref(Element,Mod)]);
 typeref({list_required,Element},Mod) ->
-    io_lib:format("[~s]{1}", [typeref(Element, Mod)]);
+    io_lib:format("[~s]{1}", [typeref(Element,Mod)]);
 typeref({list,Element},Mod) ->
-    io_lib:format("[~s]", [typeref(Element, Mod)]);
+    io_lib:format("[~s]", [typeref(Element,Mod)]);
 typeref({list_required_and_repeatable,Element},Mod) ->
-    io_lib:format("[~s]+", [typeref(Element, Mod)]);
+    io_lib:format("[~s]+", [typeref(Element,Mod)]);
 typeref(Type, _Mod) ->
     io_lib:format("~p()", [Type]).
 
@@ -229,12 +231,12 @@ ubf_contract(Mod) ->
                Params =
                    case get_type(Input,true,Mod) of
                        {Input, InputType, _} ->
-                           typeref(InputType, Mod)
+                           typeref(InputType,Mod)
                    end,
                Result =
                    case get_type(Output,false,Mod) of
                        {Output, OutputType, _} ->
-                           typeref(OutputType, Mod);
+                           typeref(OutputType,Mod);
                        undefined ->
                            io_lib:format("~p()", [Output])
                    end,
