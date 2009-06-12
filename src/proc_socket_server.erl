@@ -65,7 +65,7 @@ cold_start(Port, Fun, Max, PacketType, PacketSize) ->
     process_flag(trap_exit, true),
     %% io:format("Starting a port server on ~p...~n",[Port]),
     DefaultListenOptions =
-        [binary, {nodelay, true}, {active, false}, {reuseaddr, true}, {backlog, 100}],
+        [binary, {nodelay, true}, {active, true}, {reuseaddr, true}, {backlog, 100}],
     ListenOptions =
         case {PacketType, PacketSize} of
             {0,0} ->
@@ -120,6 +120,7 @@ start_child(Parent, Listen, Fun) ->
     case gen_tcp:accept(Listen) of
         {ok, Socket} ->
             Parent ! {started, self()},             % tell the controller
+            inet:setopts(Socket, [{active, true}]), % before we activate socket
             %% Start the child
             %% io:format("Starting a child on:~p~n",[Socket]),
             case (catch Fun(Socket)) of

@@ -212,7 +212,7 @@ rpc(Pid, Q, Timeout) ->
                   "<<< ~p ~n",[Q, Reply]),
             Reply
     after Timeout ->
-            exit(Pid, timeout),
+            Pid ! stop,
             timeout
     end.
 
@@ -277,7 +277,13 @@ loop(Driver, Fun) ->
                 {Driver, {error, X}} ->
                     From ! {self(), {error, X}};
                 {Driver, Other} ->
-                    From ! {self(), {error, Other}}
+                    From ! {self(), {error, Other}};
+                {'EXIT', Driver, Reason} ->
+                    From ! {self(), {error, Reason}};
+                stop ->
+                    From ! {self(), {error, stop}},
+                    Driver ! stop,
+                    true
             end;
         {Driver, {event, Msg, State}} ->
             Fun1 = Fun(Msg, State),

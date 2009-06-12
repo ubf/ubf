@@ -5,7 +5,7 @@
 -include("ubf.hrl").
 
 do_eunit() ->
-    case eunit:test(?MODULE) of
+    case eunit:test({timeout,30,?MODULE}) of
         ok -> ok;
         _ -> erlang:halt(1)
     end.
@@ -29,7 +29,7 @@ all_tests_(Setup,Teardown) ->
      Teardown,
      (all_actual_tests_("localhost",3000,ubf,false))(not_used)
      ++ (all_actual_tests_("localhost",3001,ebf,false))(not_used)
-     %% ++ (all_actual_tests_("localhost",3002,jsf,false))(not_used)
+     %% DISABLE ++ (all_actual_tests_("localhost",3002,jsf,false))(not_used)
      %% TODO ++ (all_actual_tests_("localhost",none,etf))(not_used)
     }.
 
@@ -51,14 +51,14 @@ all_actual_tests_(Host,Port,Proto,Stateless) ->
 %%%----------------------------------------------------------------------
 
 test_setup(Sup) ->
-%% user_default:dbgoff(),
-%% user_default:dbgon(ubf_client),
-%% user_default:dbgadd(contract_manager),
-%% user_default:dbgadd(ubf_driver),
-%% user_default:dbgadd(ubf_plugin_handler),
-%% user_default:dbgadd(ubf_plugin_metaserverful),
-%% user_default:dbgadd(ubf_plugin_metaserverless),
-%% user_default:dbgadd(ubf_server),
+    %%    user_default:dbgoff(),
+    %%     user_default:dbgon(ubf_client),
+    %%     user_default:dbgadd(contract_manager),
+    %%     user_default:dbgadd(ubf_driver),
+    %%     user_default:dbgadd(ubf_plugin_handler),
+    %%     user_default:dbgadd(ubf_plugin_metaserverful),
+    %%     user_default:dbgadd(ubf_plugin_metaserverless),
+    %%     user_default:dbgadd(ubf_server),
 
     kill_process(undefined),
 
@@ -133,7 +133,6 @@ test_004(Host,Port,Proto,Stateless) ->
     assert_process(Proto, 0, 0, 0).
 
 %% connect -> client timeout -> close
-%% @todo fix ubf_client behavior
 test_005(Host,Port,Proto,Stateless) ->
     assert_process(Proto, 0, 0, 0),
     {ok,Pid,?S("test_meta_server")} = ubf_client:connect(Host,Port,[{proto,Proto},{statelessrpc,Stateless}],infinity),
@@ -143,13 +142,7 @@ test_005(Host,Port,Proto,Stateless) ->
     {reply,ok,none} = ubf_client:rpc(Pid,keepalive),
     assert_process(Proto, 1, 1, 1),
     timeout = ubf_client:rpc(Pid,{client_timeout_req03,1000},500),
-    assert_process(Proto, 1, 1, 1),
-    timer:sleep(1100),
-    assert_process(Proto, 1, 1, 1),
-    {reply,client_timeout_res03,none} = ubf_client:rpc(Pid,keepalive),
-    assert_process(Proto, 1, 1, 1),
-    {reply,ok,none} = ubf_client:rpc(Pid,keepalive),
-    assert_process(Proto, 1, 1, 1),
+    assert_process(Proto, 0, 0, 0),
     ubf_client:stop(Pid),
     assert_process(Proto, 0, 0, 0).
 
@@ -187,7 +180,6 @@ test_007(Host,Port,Proto,Stateless) ->
     assert_process(Proto, 0, 0, 0).
 
 %% connect -> server crash -> close
-%% @todo fix ubf_client behavior
 test_008(Host,Port,Proto,Stateless) ->
     assert_process(Proto, 0, 0, 0),
     {ok,Pid,?S("test_meta_server")} = ubf_client:connect(Host,Port,[{proto,Proto},{statelessrpc,Stateless}],infinity),
@@ -196,7 +188,7 @@ test_008(Host,Port,Proto,Stateless) ->
     assert_process(Proto, 1, 1, 1),
     {reply,ok,none} = ubf_client:rpc(Pid,keepalive),
     assert_process(Proto, 1, 1, 1),
-    timeout = ubf_client:rpc(Pid,server_crash_req05,500),
+    {error,stop} = ubf_client:rpc(Pid,server_crash_req05,50000),
     assert_process(Proto, 0, 0, 0),
     ubf_client:stop(Pid),
     assert_process(Proto, 0, 0, 0).
