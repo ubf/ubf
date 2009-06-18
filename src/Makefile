@@ -114,12 +114,12 @@ ${EUNITTESTPLUGINS:%=$(EUNITTEST_DIR)/%.$(EMULATOR)}: \
 	echo "yecc:yecc($*,$*), halt()." | $(ERL) -noshell
 
 contract_lex.erl: contract.xrl $(EBIN)/contract_parser.$(EMULATOR) $(PRIV_DIR)/leex.$(EMULATOR)
-	$(ERL) -noinput -noshell -pz $(EBIN) -pz $(PRIV_DIR) \
+	$(ERL) -noinput -noshell -pz $(EBIN) -pa $(PRIV_DIR) \
 		-s contract_parser make_lex \
 		-s erlang halt
 
 contract_yecc.erl: contract.yrl $(EBIN)/contract_parser.$(EMULATOR)
-	$(ERL) -noinput -noshell -pz $(EBIN) -pz $(PRIV_DIR) \
+	$(ERL) -noinput -noshell -pz $(EBIN) -pa $(PRIV_DIR) \
 		-s contract_parser make_yecc \
 		-s erlang halt
 
