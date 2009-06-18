@@ -218,22 +218,39 @@ tags(P1, Imports) ->
                     LeafTypeNames = pass6(Contract),
                     %% create Records
                     AllRecords =
-                        lists:keysort(1, [ {{Name,length(Fields)}, Fields} || [Name|Fields] <- Records ]
-                                      ++ [ {{Name,length(Fields)+2}, ['$fields'|['$extra'|Fields]]} || [Name|Fields] <- RecordExts ]),
+                        lists:keysort(1, [ {{Name,length(FieldsNValues)},FieldsNValues}
+                                           || {Name,FieldsNValues} <- Records ]
+                                      ++ [ {{Name,length(FieldsNValues)+2},[{'$fields',undefined}|[{'$extra',undefined}|FieldsNValues]]}
+                                           || {Name,FieldsNValues} <- RecordExts ]),
                     %% create Header
                     Header =
-                        lists:flatten(foldl(fun({{Name,_}, Fields},L) ->
-                                                    FieldStrs = [["'", atom_to_list(Field), "'"] || Field <- Fields],
+                        lists:flatten(foldl(fun({{Name,_}, FieldsNValues},L) ->
+                                                    FieldStrs = [
+                                                                 case Value of
+                                                                     {Type,X} when Type =:= atom;
+                                                                                   Type =:= binary;
+                                                                                   Type =:= float;
+                                                                                   Type =:= integer;
+                                                                                   Type =:= string ->
+                                                                         io_lib:format("'~s'= ~p", [atom_to_list(Field), X]);
+                                                                     _ ->
+                                                                         io_lib:format("'~s'", [atom_to_list(Field)])
+                                                                 end
+                                                                 || {Field,Value} <- FieldsNValues ],
                                                     FStr = join(FieldStrs, $,),
                                                     NameStr = atom_to_list(Name),
-                                                    IfNdef = io_lib:format("-ifndef(~s).~n",[NameStr]),
-                                                    Define = io_lib:format("-define(~s,true).~n",[NameStr]),
-                                                    Record = io_lib:format("-record(~s,{~s}).~n",[ NameStr, FStr]),
+                                                    IfNdef = io_lib:format("-ifndef('~s').~n",[NameStr]),
+                                                    Define = io_lib:format("-define('~s',true).~n",[NameStr]),
+                                                    Record = io_lib:format("-record('~s',{~s}).~n",[NameStr,FStr]),
                                                     EndIf = "-endif.",
                                                     L++io_lib:format("~n~s~s~s~s~n",[IfNdef,Define,Record,EndIf])
                                             end
                                             , "\n", AllRecords)),
-                    {ok, Contract#contract{leaftypenames=LeafTypeNames, records=AllRecords}, Header}
+                    %% filter Records
+                    FilterRecords =
+                        [ {{Name,Arity}, [ Fields || {Fields,_Values} <- FieldsNValues ]}
+                          || {{Name,Arity}, FieldsNValues} <- AllRecords ],
+                    {ok, Contract#contract{leaftypenames=LeafTypeNames, records=FilterRecords}, Header}
             end
     end.
 
@@ -427,8 +444,8 @@ extract_prims(_T, L) ->
     L.
 
 %% ignore nested records
-extract_records({record, Name, [Fields|_Values]}, L) ->
-    X = [Name|extract_fields(Fields)],
+extract_records({record, Name, [Fields|Values]}, L) ->
+    X = {Name,lists:zip(extract_fields(Fields),tl(Values))},
     case member(X, L) of
         true  -> L;
         false -> [X|L]
@@ -441,8 +458,8 @@ extract_records(_T, L) ->
     L.
 
 %% ignore nested record_exts
-extract_record_exts({record_ext, Name, [Fields|_Values]}, L) ->
-    X = [Name|extract_fields(Fields)],
+extract_record_exts({record_ext, Name, [Fields|Values]}, L) ->
+    X = {Name,lists:zip(extract_fields(Fields),tl(Values))},
     case member(X, L) of
         true  -> L;
         false -> [X|L]

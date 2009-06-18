@@ -149,6 +149,7 @@ To do (in short term)
   - add ChangeLog template
   - document new features
     + ubf contract (and contract checker) primitives
+      - #record syntax, ##extended_record syntax
       - atom(), binary(), float(), integer(), proplist(), string(), term(),
         tuple(), void()
       - atom(ascii), atom(asciiprintable), atom(nonempty), atom(nonundefined),
@@ -168,6 +169,7 @@ To do (in short term)
         ASCII values
       - nonempty: not equal to '', [], <<>>, or {}
       - nonundefined: not equal to 'undefined'
+    + automatic erlang record defines based on contract
     + ubf contract type imports
     + ubf server and ubf client
     + stateless server w/simplified plugin handler callbacks

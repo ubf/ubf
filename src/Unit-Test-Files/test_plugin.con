@@ -19,6 +19,7 @@ dummy2b()      = string(asciiprintable,nonempty);
 dummy3a()      = binary(ascii,nonempty);
 dummy3b()      = binary(asciiprintable,nonempty);
 dummy4()       = term(nonempty,nonundefined);
+dummy5()       = #dummy5{hoge1=1, hoge2=two, hoge3=3.0, hoge4=<<"4">>};
 
 password()     = string();
 file()         = string();
@@ -70,6 +71,7 @@ callbackOnItsWay() = callbackOnItsWay.
 	dummy3a()        => dummy3a();
 	dummy3b()        => dummy3b();
 	dummy4()         => dummy4();
+	dummy5()         => dummy5();
 	foo()            => term();
 	info()           => string();
 	description()    => string();
