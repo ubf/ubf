@@ -7,7 +7,7 @@
 import json
 import urllib2
 import time
-import pyubf
+from pyubf_pyjson import to_pyjson, from_pyjson
 from pyubf import Atom, Integer
 
 class JsonResError(RuntimeError):
@@ -18,9 +18,9 @@ class JsonFault(RuntimeError):
 def do_rpc(UserId, method, *params):
     id = getNewId(UserId)
 
-    jsonId = pyubf.to_pyjson(id)
-    jsonMethod = pyubf.to_pyjson(method)
-    jsonParams = [ pyubf.to_pyjson(param) for param in params ]
+    jsonId = to_pyjson(id)
+    jsonMethod = to_pyjson(method)
+    jsonParams = [ to_pyjson(param) for param in params ]
     jsonReq = json.write(dict(version='1.1', id=jsonId, method=jsonMethod, params=jsonParams))
     #print jsonReq
     url = 'http://localhost:7590/rpc'
@@ -33,8 +33,8 @@ def do_rpc(UserId, method, *params):
     if jsonRes["id"] != jsonId:
         raise JsonResError("Invalid request id (is: %s, expected: %s)" % (jsonRes["id"], jsonId))
     if jsonRes["error"] is not None:
-        raise JsonFault("JSON Error", pyubf.from_pyjson(jsonRes["error"]))
-    return pyubf.from_pyjson(jsonRes["result"])
+        raise JsonFault("JSON Error", from_pyjson(jsonRes["error"]))
+    return from_pyjson(jsonRes["result"])
 
 def do_request(url,UserId, method, *params):
     id = getNewId(UserId)

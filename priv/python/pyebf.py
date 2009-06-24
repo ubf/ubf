@@ -5,6 +5,8 @@
 
 import socket, struct, sys, types
 from py_interface import erl_term
+from pyubf_py_interface import to_py_interface, from_py_interface
+from pyubf import Atom, Integer
 
 class SocketError(Exception):
     pass
@@ -13,7 +15,7 @@ class EBFError(Exception):
     pass
 
 class Socket:
-    def __init__(self,host=socket.gethostname(), port=7476):
+    def __init__(self,host=socket.gethostname(), port=7580):
         self.host = host
         self.port = port
         self.SocketError = SocketError()
@@ -29,7 +31,7 @@ class Socket:
         return 'Socket created on Host='+str(self.host)+',Port='+str(self.port)
 
 class Client(Socket):
-    def connect(self, host=socket.gethostname(), port=7476, timeout=10):
+    def connect(self, host=socket.gethostname(), port=7580, timeout=10):
         self.host = host
         self.port = port
         self.sock.settimeout(timeout)
@@ -109,7 +111,7 @@ class EBF(Client):
     def is_list(self, t, v=None):
         return type(t)==types.ListType and (v is None or len(t)==v)
 
-    def login(self, module, host=socket.gethostname(), port=7476, timeout=10):
+    def login(self, module, meta_server, host=socket.gethostname(), port=7580, timeout=10):
         self.connect(host, port, timeout)
         self.module = module
         self.timeout = timeout
@@ -118,9 +120,9 @@ class EBF(Client):
         term = erl_term.BinaryToTerm(self.recv())
         if not self.is_tuple(term, 3):
             raise EBFError, term
-        if not self.is_string(term[0], 'ebf1.0'):
+        if not self.is_atom(term[0], 'ebf1.0'):
             raise EBFError, (term[0], term)
-        if not self.is_ubfstring(term[1], 'meta_server'):
+        if not self.is_ubfstring(term[1], meta_server):
             raise EBFError, (term[1], term)
         # ignore term[2]
 
@@ -140,76 +142,8 @@ class EBF(Client):
         if not self.is_atom(term[1], 'none'):
             raise EBFError, (term[1], term)
 
-    def info(self, timeout=None):
-        # write request
-        if timeout is None:
-            self.sock.settimeout(self.timeout)
-        else:
-            self.sock.settimeout(timeout)
-        self.send(erl_term.TermToBinary(self.atom('info')))
-
-        # read response
-        term = erl_term.BinaryToTerm(self.recv())
-        if not self.is_tuple(term, 2):
-            raise EBFError, term
-
-        self.sock.settimeout(self.timeout)
-        return term
-
-    def description(self, timeout=None):
-        # write request
-        if timeout is None:
-            self.sock.settimeout(self.timeout)
-        else:
-            self.sock.settimeout(timeout)
-        self.send(erl_term.TermToBinary(self.atom('description')))
-
-        # read response
-        term = erl_term.BinaryToTerm(self.recv())
-        if not self.is_tuple(term, 2):
-            raise EBFError, term
-
-        self.sock.settimeout(self.timeout)
-        return term
-
-    def contract(self, timeout=None):
-        # write request
-        if timeout is None:
-            self.sock.settimeout(self.timeout)
-        else:
-            self.sock.settimeout(timeout)
-        self.send(erl_term.TermToBinary(self.atom('contract')))
-
-        # read response
-        term = erl_term.BinaryToTerm(self.recv())
-        if not self.is_tuple(term, 2):
-            raise EBFError, term
-
-        self.sock.settimeout(self.timeout)
-        return term
-
-    ### keepalive
-    def keepalive(self, timeout=None):
-        # write request
-        if timeout is None:
-            self.sock.settimeout(self.timeout)
-        else:
-            self.sock.settimeout(timeout)
-        self.send(erl_term.TermToBinary(self.atom('keepalive')))
-
-        # read response
-        term = erl_term.BinaryToTerm(self.recv())
-        if not self.is_tuple(term, 2):
-            raise EBFError, term
-        if not self.is_atom(term[0], 'ok'):
-            raise EBFError, (term[0], term)
-        if not self.is_atom(term[1], 'none'):
-            raise EBFError, (term[1], term)
-
-        self.sock.settimeout(self.timeout)
-
     ### rpc
-    def rpc(self, module, function, args, maxsize=None, writetimeout=None, readtimeout=None):
+    def rpc(self, module, request, maxsize=None, writetimeout=None, readtimeout=None):
         # TODO: implement maxsize
 
         if not self.module==module:
@@ -220,7 +154,8 @@ class EBF(Client):
             self.sock.settimeout(self.timeout)
         else:
             self.sock.settimeout(writetimeout)
-        self.send(erl_term.TermToBinary(self.tuple([self.atom(function), args])))
+
+        self.send(erl_term.TermToBinary(to_py_interface(request)))
 
         # read response
         if readtimeout is None:
@@ -237,34 +172,54 @@ class EBF(Client):
         if self.is_tuple(term, 3) and self.is_atom(term[0], 'serverBrokeContract'):
             raise EBFError, term
 
+        # check for server broke contract
+        if not self.is_tuple(term, 2):
+            raise EBFError, term
+
         self.sock.settimeout(self.timeout)
-        return term
+        return from_py_interface(term[0])
 
 if __name__ == "__main__":
     ebf = EBF()
 
-    ebf.login('dque_db_deliveryque')
-    ebf.keepalive()
-    ebf.keepalive()
+    %% login
+    ebf.login('gdss', 'gdss_meta_server')
 
-    print "info: "
-    print repr(ebf.info())
+    ## setup
+    req0 = (Atom('do'), Atom('tab1'), [(Atom('delete'), 'foo', [])], [], 1000)
+    res0 = ebf.rpc('gdss', req0)
 
-    print "description: "
-    print repr(ebf.description())
+    ## get - ng
+    req1 = (Atom('do'), Atom('tab1'), [(Atom('get'), 'foo', [])], [], 1000)
+    res1 = ebf.rpc('gdss', req1)
+    assert res1[0] == 'key_not_exist'
 
-    print "contract: "
-    print repr(ebf.contract())[0:80], "..."
+    ## add - ok
+    req2 = (Atom('do'), Atom('tab1'), [(Atom('add'), 'foo', 1, 'bar', 0, [])], [], 1000)
+    res2 = ebf.rpc('gdss', req2)
+    assert res2[0] == 'ok'
 
-    ebf.keepalive()
-    ebf.keepalive()
+    ## add - ng
+    req3 = (Atom('do'), Atom('tab1'), [(Atom('add'), 'foo', 1, 'bar', 0, [])], [], 1000)
+    res3 = ebf.rpc('gdss', req3)
+    assert res3[0][0] == 'key_exists'
+    assert res3[0][1] == 1
 
-    try:
-        ebf.rpc('dque_db_deliveryque', 'foobar', [])
-    except EBFError, msg:
-        pass
+    ## get - ok
+    req4 = (Atom('do'), Atom('tab1'), [(Atom('get'), 'foo', [])], [], 1000)
+    res4 = ebf.rpc('gdss', req4)
+    assert res4[0][0] == 'ok'
+    assert res4[0][1] == 1
+    assert res4[0][2] == 'bar'
 
-    try:
-        ebf.keepalive()
-    except socket.error, msg:
-        pass
+    ## set - ok
+    req5 = (Atom('do'), Atom('tab1'), [(Atom('set'), 'foo', 2, 'baz', 0, [])], [], 1000)
+    res5 = ebf.rpc('gdss', req5)
+    assert res5[0] == 'ok'
+
+    ## get - ok
+    req6 = (Atom('do'), Atom('tab1'), [(Atom('get'), 'foo', [])], [], 1000)
+    res6 = ebf.rpc('gdss', req6)
+    assert res6[0][0] == 'ok'
+    assert res6[0][1] == 2
+    assert res6[0][2] == 'baz'
