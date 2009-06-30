@@ -4,6 +4,7 @@
 -import(lists, [any/2]).
 
 -export([checkCallback/3, checkIn/3, checkOut/4, isTypeAttr/2, isType/3, getContract/1]).
+-export([checkType/3]).
 -include("ubf.hrl").
 
 %% DISABLE -define(enable_fail_debug,true).
@@ -477,3 +478,142 @@ is_nonempty(_) -> true.
 
 is_nonundefined(undefined) -> false;
 is_nonundefined(_) -> true.
+
+isit(HumanType, Term, Mod) ->
+    isType({prim, HumanType}, Term, Mod).
+
+%% @spec (contract_type_name_atom(), term(), contract_module_name_atom()) ->
+%%       yup | error_hints_term_only_human_readable_sorry()
+%% @doc Given a contract type name, a term to check against that contract
+%%      type, and a contract module name, verify the term against that
+%%      contract's type.
+%%
+%% Example usage from the irc_plugin.con contract:
+%% <ul>
+%% <li> contracts:checkType(ok, ok, irc_plugin). </li>
+%% <li> contracts:checkType(bool, true, irc_plugin). </li>
+%% <li> contracts:checkType(nick, {'#S', "foo"}, irc_plugin). </li>
+%% <li> contracts:checkType(joinEvent, {joins, {'#S', "nck"}, {'#S', "grp"}}, irc_plugin). </li>
+%% <li> contracts:checkType(joinEvent, {joins, {'#S', "nck"}, {'#S', foo_atom}}, irc_plugin). </li>
+%% </ul>
+%%
+%% Wow, this is a gawdawful-brute-force-don't-know-what-I'm-doing mess.
+%% But it works, in its brute-force way, as long as you don't try to
+%% have a computer parse the output in error cases.
+
+checkType(HumanType, Term, Mod) ->
+    case (catch Mod:contract_type(HumanType)) of
+	{'EXIT', {function_clause, _}} ->
+	    type_not_in_contract;
+	{{record, _, _}, []} ->
+	    checkType2({prim, HumanType}, Term, Mod);
+	{{tuple, _}, []} ->
+	    checkType2({prim, HumanType}, Term, Mod);
+	{{alt, TypeA, TypeB}, []} ->
+	    ResA = checkType2(TypeA, Term, Mod),
+	    ResB = checkType2(TypeB, Term, Mod),
+	    if ResA == yup; ResB == yup ->
+		    yup;
+	       true ->
+		    {bad_alternative, HumanType, Term}
+		    %%{bad_alt, ResA, ResB}
+	    end;
+	{ContractTypeMaybe, []} ->
+	    checkType2(ContractTypeMaybe, Term, Mod);
+	_ ->
+	    case checkType2(HumanType, Term, Mod) of
+		yup ->
+		    yup;
+		Res ->
+		    {badType, bug_or_bad_input, Res}
+	    end
+    end.
+
+checkType2({prim, HumanType} = Type, Term, Mod) ->
+    case (catch Mod:contract_type(HumanType)) of
+	{{record, HumanType, Elements}, []} ->
+	    case isType(Type, Term, Mod) of
+		true ->
+		    yup;
+		false ->
+		    RecTypes = [{atom, HumanType}|tl(tl(Elements))],
+		    bad_zip(RecTypes, tuple_to_list(Term), Mod)
+	    end;
+	{{alt, TypeA, TypeB}, []} ->
+	    ResA = checkType2(TypeA, Term, Mod),
+	    ResB = checkType2(TypeB, Term, Mod),
+	    if ResA == yup; ResB == yup ->
+		    yup;
+	       true ->
+		    {badType, HumanType, Term}
+		    %%older: {bad_alt, ResA, ResB}
+	    end;
+	{Something, []} ->
+	    checkType2(Something, Term, Mod);
+	{'EXIT', {function_clause, _}} ->
+	    case isType(Type, Term, Mod) of
+		true ->
+		    yup;
+		false ->
+		    {badType, {type_wanted, Type, Term}}
+	    end
+    end;
+checkType2({tuple, TupleTypes} = Type, Term, Mod)
+  when length(TupleTypes) /= size(Term); not is_tuple(Term) ->
+    {badTupleSize, Term, expected, length(TupleTypes)};
+checkType2({tuple, TupleTypes} = Type, Term, Mod) ->
+    case isType(Type, Term, Mod) of
+	true ->
+	    yup;
+	false ->
+	    bad_zip(TupleTypes, tuple_to_list(Term), Mod)
+    end;
+checkType2(Type, Term, Mod) ->
+    case isType(Type, Term, Mod) of
+	true ->
+	    yup;
+	false ->
+	    checkType_investigate_deeper(Type, Term, Mod)
+%% 	    {badType, Type, Term}
+    end;
+checkType2(_, _, _) ->	
+    sorry_I_dunno.
+
+bad_zip(TypesList, TermList, Mod) ->
+    TpsTrm = lists:zip3(TypesList, TermList, lists:seq(1, length(TermList))),
+
+    Items = [{isType(Type, Part, Mod), Type, _Pos} ||
+		{Type, Part, _Pos} <- TpsTrm],
+    BadItems = [{WantedType, Pos} || {false, WantedType, Pos} <- Items],
+    lists:map(
+      fun({WantedType, Pos}) ->
+	      {badType, WantedType,
+	       checkType2(WantedType, lists:nth(Pos, TermList), Mod)}
+      end, BadItems).
+
+bool_fudge(L) ->
+    lists:map(
+      fun({true, X, Y}) ->
+	      {yup, X, Y};
+	 ({false, X, Y}) ->
+	      {badType, X, Y};
+	 (X) ->
+	      X
+      end, L).
+
+%% checkType_investigate_deeper({prim, _} = Type, Term, Mod) ->
+%%     INFINITE LOOP, don't do this....
+%%     checkType2(Type, Term, Mod);
+checkType_investigate_deeper({ListType, Type}, TermL, Mod)
+  when ListType == list_required_and_repeatable;
+       ListType == list;
+       ListType == list_optional;
+       ListType == list_nil;
+       ListType == list_required ->
+    if is_list(TermL) ->
+	    bad_zip(lists:duplicate(length(TermL), Type), TermL, Mod);
+       true ->
+	    {expecting_list_but_got, TermL}
+    end;
+checkType_investigate_deeper(Type, Term, _Mod) ->
+    {badType, Type, Term}.
