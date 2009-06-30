@@ -182,7 +182,7 @@ class EBF(Client):
 if __name__ == "__main__":
     ebf = EBF()
 
-    %% login
+    ## login
     ebf.login('gdss', 'gdss_meta_server')
 
     ## setup
