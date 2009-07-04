@@ -273,12 +273,42 @@ ubf_contract(Mod) ->
                      , io_lib:format("\t\"version\" : \"1.1\"", [])
                      , io_lib:format("\t\"id\"      : binary()", [])
                      , io_lib:format("\t\"result\"  : ~s | null", [Result])
-                     , io_lib:format("\t\"error\"   : term()?", [])
+                     , io_lib:format("\t\"error\"   : error()?", [])
                      , " }"
                     ], "\n")
            end
            || {{prim,Input}, {prim,Output}} <- Mod:contract_anystate() ],
-    lists:flatten([ join(L, "\n") || L <- [X0, X1, X2, X3, X4] ]).
+
+    X5 = [""
+          , ""
+          , "error() = null"
+          , "\t| { \"name\" : \"JSONRPCError\", \"code\" : 100, \"message\" : \"Parse error (clientBrokeRPC)\", \"error\" : term()? }"
+          , "\t| { \"name\" : \"JSONRPCError\", \"code\" : 101, \"message\" : \"Procedure not found (clientBrokeRPC)\", \"error\" : term()? }"
+
+          , "\t| { \"name\" : \"JSONRPCError\", \"code\" : 102, \"message\" : \"Bad call (clientBrokeContract)\", \"error\" : term()? }"
+          , "\t| { \"name\" : \"JSONRPCError\", \"code\" : 103, \"message\" : \"Service error (serverBrokeContract)\", \"error\" : term()? }"
+          , ""
+         ],
+    X6 =
+        [""
+         , ""
+         , "// ----------"
+         , "// HTTP"
+         , "//"
+         , "// request headers:"
+         , "//"
+         , "// \t\"X-Max-Content-Length\" requests the server to enforce a max response body size"
+         , "//"
+         , "// \t\"X-Auth-Source-IP-Address\" requests the server to use the specified source ip address for client authorization"
+         , "//"
+         , "// response status code and reason phrases:"
+         , "//"
+         , "// \t\"513 Message Too Large\" informs the client the max response body size was exceeded"
+         , "//"
+         , ""
+        ],
+
+    lists:flatten([ join(L, "\n") || L <- [X0, X1, X2, X3, X4, X5, X6] ]).
 
 join(L, Sep) ->
     lists:flatten(join2(L, Sep)).
