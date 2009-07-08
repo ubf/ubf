@@ -62,8 +62,7 @@ loop(Socket, Pid, Timeout, Cont) ->
     after Timeout ->
             gen_tcp:close(Socket),
             exit(timeout)
-    end,
-    exit(unknown).
+    end.
 
 handle_data(Socket, Pid, Timeout, {done, Term}) ->
     Pid ! {self(), Term},

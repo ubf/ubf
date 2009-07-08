@@ -63,8 +63,7 @@ loop(Socket, Pid, Timeout, Cont, HandlerMod) ->
     after Timeout ->
             gen_tcp:close(Socket),
             exit(timeout)
-    end,
-    exit(unknown).
+    end.
 
 handle_data(Socket, Pid, Timeout, {ok, Term, []}, HandlerMod) ->
     Pid ! {self(), Term},
