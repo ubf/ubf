@@ -305,6 +305,20 @@ check_term1({list_required_and_repeatable,X}=Check, L, Level, DefTypes) when is_
         true ->
             ?FAIL({Check,L})
     end;
+%% @TODO ABNF TYPES -- START
+check_term1({seq,_}, B, _, _) when is_binary(B) ->
+    ok; %% temporarily ok for any binary
+check_term1({repeat,_,_,_}=Check, B, _, _) when is_binary(B) ->
+    ?FAIL({Check,B});
+check_term1({byte_range,_,_}=Check, B, _, _) when is_binary(B) ->
+    ?FAIL({Check,B});
+check_term1({byte_alt,_,_}=Check, B, _, _) when is_binary(B) ->
+    ?FAIL({Check,B});
+check_term1({byte_seq,_}=Check, B, _, _) when is_binary(B) ->
+    ?FAIL({Check,B});
+check_term1({byte_val,_}=Check, B, _, _) when is_binary(B) ->
+    ?FAIL({Check,B});
+%% @TODO ABNF TYPES -- END
 check_term1(Check, X, _Level, _DefTypes) ->
     %% io:format("~p isnot ~p~n", [Check, X]),
     %% exit({Y,isNotA, X}).
@@ -439,7 +453,7 @@ is_string(A) when is_atom(A) ->
     is_string(atom_to_list(A));
 is_string([H|T]) when is_integer(H), H < 256, H > -1 ->
     is_string(T);
-is_string(<<H:8,T>>) when is_integer(H), H < 256, H > -1 ->
+is_string(<<H:8,T/binary>>) when is_integer(H), H < 256, H > -1 ->
     is_string(T);
 is_string([]) -> true;
 is_string(<<>>) -> true;
@@ -454,7 +468,7 @@ is_ascii(A) when is_atom(A) ->
     is_ascii(atom_to_list(A));
 is_ascii([H|T]) when is_integer(H), H < 128, H > -1 ->
     is_ascii(T);
-is_ascii(<<H:8,T>>) when is_integer(H), H < 128, H > -1 ->
+is_ascii(<<H:8,T/binary>>) when is_integer(H), H < 128, H > -1 ->
     is_ascii(T);
 is_ascii([]) -> true;
 is_ascii(<<>>) -> true;
@@ -464,7 +478,7 @@ is_asciiprintable(A) when is_atom(A) ->
     is_asciiprintable(atom_to_list(A));
 is_asciiprintable([H|T]) when is_integer(H), H < 127, H > 31 ->
     is_asciiprintable(T);
-is_asciiprintable(<<H:8,T>>) when is_integer(H), H < 127, H > 31 ->
+is_asciiprintable(<<H:8,T/binary>>) when is_integer(H), H < 127, H > 31 ->
     is_asciiprintable(T);
 is_asciiprintable([]) -> true;
 is_asciiprintable(<<>>) -> true;
@@ -503,102 +517,102 @@ isit(HumanType, Term, Mod) ->
 
 checkType(HumanType, Term, Mod) ->
     case (catch Mod:contract_type(HumanType)) of
-	{'EXIT', {function_clause, _}} ->
-	    type_not_in_contract;
-	{{record, _, _}, []} ->
-	    checkType2({prim, HumanType}, Term, Mod);
-	{{tuple, _}, []} ->
-	    checkType2({prim, HumanType}, Term, Mod);
-	{{alt, TypeA, TypeB}, []} ->
-	    ResA = checkType2(TypeA, Term, Mod),
-	    ResB = checkType2(TypeB, Term, Mod),
-	    if ResA == yup; ResB == yup ->
-		    yup;
-	       true ->
-		    {bad_alternative, HumanType, Term}
-		    %%{bad_alt, ResA, ResB}
-	    end;
-	{ContractTypeMaybe, []} ->
-	    checkType2(ContractTypeMaybe, Term, Mod);
-	_ ->
-	    case checkType2(HumanType, Term, Mod) of
-		yup ->
-		    yup;
-		Res ->
-		    {badType, bug_or_bad_input, Res}
-	    end
+        {'EXIT', {function_clause, _}} ->
+            type_not_in_contract;
+        {{record, _, _}, []} ->
+            checkType2({prim, HumanType}, Term, Mod);
+        {{tuple, _}, []} ->
+            checkType2({prim, HumanType}, Term, Mod);
+        {{alt, TypeA, TypeB}, []} ->
+            ResA = checkType2(TypeA, Term, Mod),
+            ResB = checkType2(TypeB, Term, Mod),
+            if ResA == yup; ResB == yup ->
+                    yup;
+               true ->
+                    {bad_alternative, HumanType, Term}
+                    %%{bad_alt, ResA, ResB}
+            end;
+        {ContractTypeMaybe, []} ->
+            checkType2(ContractTypeMaybe, Term, Mod);
+        _ ->
+            case checkType2(HumanType, Term, Mod) of
+                yup ->
+                    yup;
+                Res ->
+                    {badType, bug_or_bad_input, Res}
+            end
     end.
 
 checkType2({prim, HumanType} = Type, Term, Mod) ->
     case (catch Mod:contract_type(HumanType)) of
-	{{record, HumanType, Elements}, []} ->
-	    case isType(Type, Term, Mod) of
-		true ->
-		    yup;
-		false ->
-		    RecTypes = [{atom, HumanType}|tl(tl(Elements))],
-		    bad_zip(RecTypes, tuple_to_list(Term), Mod)
-	    end;
-	{{alt, TypeA, TypeB}, []} ->
-	    ResA = checkType2(TypeA, Term, Mod),
-	    ResB = checkType2(TypeB, Term, Mod),
-	    if ResA == yup; ResB == yup ->
-		    yup;
-	       true ->
-		    {badType, HumanType, Term}
-		    %%older: {bad_alt, ResA, ResB}
-	    end;
-	{Something, []} ->
-	    checkType2(Something, Term, Mod);
-	{'EXIT', {function_clause, _}} ->
-	    case isType(Type, Term, Mod) of
-		true ->
-		    yup;
-		false ->
-		    {badType, {type_wanted, Type, Term}}
-	    end
+        {{record, HumanType, Elements}, []} ->
+            case isType(Type, Term, Mod) of
+                true ->
+                    yup;
+                false ->
+                    RecTypes = [{atom, HumanType}|tl(tl(Elements))],
+                    bad_zip(RecTypes, tuple_to_list(Term), Mod)
+            end;
+        {{alt, TypeA, TypeB}, []} ->
+            ResA = checkType2(TypeA, Term, Mod),
+            ResB = checkType2(TypeB, Term, Mod),
+            if ResA == yup; ResB == yup ->
+                    yup;
+               true ->
+                    {badType, HumanType, Term}
+                    %%older: {bad_alt, ResA, ResB}
+            end;
+        {Something, []} ->
+            checkType2(Something, Term, Mod);
+        {'EXIT', {function_clause, _}} ->
+            case isType(Type, Term, Mod) of
+                true ->
+                    yup;
+                false ->
+                    {badType, {type_wanted, Type, Term}}
+            end
     end;
 checkType2({tuple, TupleTypes} = Type, Term, Mod)
   when length(TupleTypes) /= size(Term); not is_tuple(Term) ->
     {badTupleSize, Term, expected, length(TupleTypes)};
 checkType2({tuple, TupleTypes} = Type, Term, Mod) ->
     case isType(Type, Term, Mod) of
-	true ->
-	    yup;
-	false ->
-	    bad_zip(TupleTypes, tuple_to_list(Term), Mod)
+        true ->
+            yup;
+        false ->
+            bad_zip(TupleTypes, tuple_to_list(Term), Mod)
     end;
 checkType2(Type, Term, Mod) ->
     case isType(Type, Term, Mod) of
-	true ->
-	    yup;
-	false ->
-	    checkType_investigate_deeper(Type, Term, Mod)
-%% 	    {badType, Type, Term}
+        true ->
+            yup;
+        false ->
+            checkType_investigate_deeper(Type, Term, Mod)
+            %%          {badType, Type, Term}
     end;
-checkType2(_, _, _) ->	
+checkType2(_, _, _) ->
     sorry_I_dunno.
 
 bad_zip(TypesList, TermList, Mod) ->
     TpsTrm = lists:zip3(TypesList, TermList, lists:seq(1, length(TermList))),
 
     Items = [{isType(Type, Part, Mod), Type, _Pos} ||
-		{Type, Part, _Pos} <- TpsTrm],
+                {Type, Part, _Pos} <- TpsTrm],
     BadItems = [{WantedType, Pos} || {false, WantedType, Pos} <- Items],
     lists:map(
       fun({WantedType, Pos}) ->
-	      {badType, WantedType,
-	       checkType2(WantedType, lists:nth(Pos, TermList), Mod)}
+              {badType, WantedType,
+               checkType2(WantedType, lists:nth(Pos, TermList), Mod)}
       end, BadItems).
 
 bool_fudge(L) ->
     lists:map(
       fun({true, X, Y}) ->
-	      {yup, X, Y};
-	 ({false, X, Y}) ->
-	      {badType, X, Y};
-	 (X) ->
-	      X
+              {yup, X, Y};
+         ({false, X, Y}) ->
+              {badType, X, Y};
+         (X) ->
+              X
       end, L).
 
 %% checkType_investigate_deeper({prim, _} = Type, Term, Mod) ->
@@ -611,9 +625,9 @@ checkType_investigate_deeper({ListType, Type}, TermL, Mod)
        ListType == list_nil;
        ListType == list_required ->
     if is_list(TermL) ->
-	    bad_zip(lists:duplicate(length(TermL), Type), TermL, Mod);
+            bad_zip(lists:duplicate(length(TermL), Type), TermL, Mod);
        true ->
-	    {expecting_list_but_got, TermL}
+            {expecting_list_but_got, TermL}
     end;
 checkType_investigate_deeper(Type, Term, _Mod) ->
     {badType, Type, Term}.
