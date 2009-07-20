@@ -306,18 +306,47 @@ check_term1({list_required_and_repeatable,X}=Check, L, Level, DefTypes) when is_
             ?FAIL({Check,L})
     end;
 %% @TODO ABNF TYPES -- START
-check_term1({seq,_}, B, _, _) when is_binary(B) ->
+check_term1({seq,_}, Bin, _, _) when is_binary(Bin) ->
     ok; %% temporarily ok for any binary
-check_term1({repeat,_,_,_}=Check, B, _, _) when is_binary(B) ->
-    ?FAIL({Check,B});
-check_term1({byte_range,_,_}=Check, B, _, _) when is_binary(B) ->
-    ?FAIL({Check,B});
-check_term1({byte_alt,_,_}=Check, B, _, _) when is_binary(B) ->
-    ?FAIL({Check,B});
-check_term1({byte_seq,_}=Check, B, _, _) when is_binary(B) ->
-    ?FAIL({Check,B});
-check_term1({byte_val,_}=Check, B, _, _) when is_binary(B) ->
-    ?FAIL({Check,B});
+check_term1({repeat,_,_,_}=Check, Bin, _, _) when is_binary(Bin) ->
+    ?FAIL({Check,Bin});
+check_term1({byte_range, Min, Max}=Check, Bin, _, _) when is_binary(Bin) ->
+    case Bin of
+	<<C:8, _/binary>> ->
+	    if Min =< C, C =< Max ->
+		    ok;
+	       true ->
+		    ?FAIL({Check, Bin})
+	    end;
+	<<>> ->
+	    ?FAIL({Check, Bin})
+    end;
+check_term1({byte_alt, A, B}=Check, Bin, Level, DefTypes) when is_binary(Bin) ->
+    case check_term(A, Bin, Level, DefTypes) of
+        ok  -> ok;
+        _   -> check_term(B, Bin, Level, DefTypes)
+    end;
+check_term1({byte_seq, [Type|Types]}=Check, Bin, Level, DefTypes) when is_binary(Bin) ->
+    case check_term1(Type, Bin, Level, DefTypes) of
+	ok ->
+	    <<_:1/binary, Bin2/binary>> = Bin,
+	    check_term1({byte_seq, Types}, Bin2, Level, DefTypes);
+	_ ->
+	    ?FAIL({Check,Bin})
+    end;
+check_term1({byte_seq, []}=Check, <<>>, Level, DefTypes) ->
+    ok;
+check_term1({byte_val, Byte}=Check, Bin, _, _) when is_binary(Bin) ->
+    case Bin of
+	<<C:8, _/binary>> ->
+	    if C == Byte ->
+		    ok;
+	       true ->
+		    ?FAIL({Check, Bin})
+	    end;
+	<<>> ->
+	    ?FAIL({Check, Bin})
+    end;
 %% @TODO ABNF TYPES -- END
 check_term1(Check, X, _Level, _DefTypes) ->
     %% io:format("~p isnot ~p~n", [Check, X]),
