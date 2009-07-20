@@ -57,7 +57,7 @@ loop(Client, State1, Data, Manager, Mod) ->
                             exit({serverPluginHandler, Why3});
                         Data2 ->
                             %% special case - hard-coded not_implemented reply
-                            Reply = not_implemented,
+                            Reply = {serverBrokeContract, {Q, not_implemented}, undefined},
                             Client ! {self(), {rpcReply, Reply, State1, same}},
                             loop(Client, State1, Data2, Manager, Mod)
                     end
