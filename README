@@ -20,13 +20,16 @@ To build
 4. Run the unit test
    $ make check
 
-5. If you have installed erlang-rfc4627, run the unit test for jsf $
-   make check-jsf
+5. If you have installed erlang-rfc4627, run the unit test for jsf
+   $ make check-jsf
 
    One quick/kludge method to "install" is to obtain & compile the
-   erlang-rfc4627 code from LShift and add a "-pz /path/to/.../ebin"
-   flag to the "check-jsf" target inside "src/Makefile", then run
-   "make check-jsf".
+   erlang-rfc4627 code from LShift.  (Optionally, copy its .beam files
+   to a more permanent installation location.)
+
+   Then edit "src/Makefile" to change the "MY_ERLANG_RFC4627_EBIN"
+   variable to point to where the ebin directory that contains
+   erlang-rfc4627's .beam files.  Then run "make check-jsf".
 
 
 Documentation -- Where should I start?
