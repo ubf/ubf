@@ -51,6 +51,9 @@ examples of how to use all of the public API.  In particular, the
 prerequisites and small examples, recipe-style, for starting each
 server and using the client.
 
+The eunit tests in the "src/Unit-EUnit-Files" directory perform
+several smoke and error handling uses cases.
+
 The original documentation is in the "priv/doc" directory.
 
 
@@ -190,6 +193,7 @@ To do (in short term)
 To do (in medium term)
 ======================
 
+  - support multiple listeners for a single ubf server
   - ubf contract generators for QuickCheck
   - ABNF (RFC 5234) support and integration
   - erlang spec (EEP 8) integration
