@@ -71,6 +71,8 @@ EUNITTESTPLUGINS = \
 	$(EUNITTEST_DIR)/stateless_plugin \
 	$(EUNITTEST_DIR)/stateful_plugin
 
+MY_ERLANG_RFC4627_EBIN = ./example-symlink-to-erlang-rfc4627-ebin
+
 # include erl make
 include ../priv/make/erl_make.mk
 
@@ -92,6 +94,7 @@ check: all
 
 check-jsf: all
 	$(RUNERL1) -noinput -noshell -pz $(TEST_DIR) \
+		-pz $(MY_ERLANG_RFC4627_EBIN) \
 		-s jsf_test tests \
 		-s jsf_test2 tests \
 		-s test_jsf tests \
