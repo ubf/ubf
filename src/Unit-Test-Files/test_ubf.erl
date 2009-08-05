@@ -14,18 +14,16 @@ defaultTimeout() -> 10000.
 defaultPort() -> 2000.
 
 tests() ->
-    catch (erlang:exit(whereis(test_sup))),
-    sleep(1),
     ss(),
-    sleep(1), %%% we have to wait if we run *immediately* there
-    %% is no way of knowing if the server has started
     test(),
+    application:stop(test),
     true.
 
 
 ss() ->
-    test_sup:start_link(defaultOptions()).
-
+    application:start(sasl),
+    application:stop(test),
+    ok = application:start(test).
 
 test() ->
     {ok, Pid, _Name} = ubf_client:connect(host(), defaultPort(), [{proto,ubf}], defaultTimeout()),

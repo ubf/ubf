@@ -6,7 +6,7 @@
 %% Purpose : Keeps track of a number of TCP sessions
 
 
-%% start_server(Port, Fun, Max) -> bool().
+%% start_server(Port, Fun, Max) | start_server(Name, Port, Fun, Max) -> bool().
 %%   This server accepts up to Max connections on Port
 %%   Each time a new connection is made
 %%   Fun(Socket) is called.
@@ -14,30 +14,34 @@
 %% stop_server(Port) -> ok.
 %% children(Port) -> [Pids]
 
--export([start_raw_server/5, start_server/3, stop_server/1, children/1]).
+-export([start_raw_server/5, start_raw_server/6, start_server/3, start_server/4, stop_server/1, children/1]).
 
 %% Internal imports (used by spawn)
 
--export([cold_start/5, start_child/3]).
+-export([cold_start/6, start_child/3]).
 
 %% Fun = fun(Socket, Binary) -> Fun'
 
 %% raw server uses packet length 0
 
 start_server(Port, Max, Fun) ->
-    start_raw_server(Port, Fun, Max, 0, 0).
+    start_raw_server(undefined, Port, Fun, Max, 0, 0).
 
-port_name(Port) when is_integer(Port) ->
-    list_to_atom("picoSocketServer_" ++ integer_to_list(Port)).
+start_server(Name, Port, Max, Fun) ->
+    start_raw_server(Name, Port, Fun, Max, 0, 0).
 
 start_raw_server(Port, Fun, Max, PacketType, PacketSize) ->
-    %% io:format("start raw server:~p ~p ~p ~p ~n",[Port, Max, PacketType, PacketSize]),
+    start_raw_server(undefined, Port, Fun, Max, PacketType, PacketSize).
+
+start_raw_server(undefined, Port, Fun, Max, PacketType, PacketSize) ->
     Name = port_name(Port),
+    start_raw_server(Name, Port, Fun, Max, PacketType, PacketSize);
+start_raw_server(Name, Port, Fun, Max, PacketType, PacketSize) ->
+    %% io:format("start raw server:~p ~p ~p ~p ~p ~n",[Name, Port, Max, PacketType, PacketSize]),
     case whereis(Name) of
         undefined ->
             Pid = proc_lib:spawn_link(?MODULE, cold_start,
-                                      [Port, Fun, Max, PacketType, PacketSize]),
-            register(Name, Pid),
+                                      [Name, Port, Fun, Max, PacketType, PacketSize]),
             {ok, Pid};
         _Pid ->
             false
@@ -45,6 +49,8 @@ start_raw_server(Port, Fun, Max, PacketType, PacketSize) ->
 
 stop_server(Port) when is_integer(Port) ->
     Name = port_name(Port),
+    stop_server(Name);
+stop_server(Name) ->
     case whereis(Name) of
         undefined ->
             ok;
@@ -60,10 +66,13 @@ children(Port) when is_integer(Port) ->
         {session_server, Reply} -> Reply
     end.
 
+port_name(Port) when is_integer(Port) ->
+    list_to_atom("picoSocketServer_" ++ integer_to_list(Port)).
 
-cold_start(Port, Fun, Max, PacketType, PacketSize) ->
+cold_start(Name, Port, Fun, Max, PacketType, PacketSize) ->
     process_flag(trap_exit, true),
-    %% io:format("Starting a port server on ~p...~n",[Port]),
+    register(Name, self()),
+    %% io:format("Starting a port server on ~p ~p...~n",[Name, Port]),
     DefaultListenOptions =
         [binary, {nodelay, true}, {active, true}, {reuseaddr, true}, {backlog, 100}],
     ListenOptions =
@@ -132,6 +141,6 @@ start_child(Parent, Listen, Fun) ->
                     gen_tcp:close(Socket),
                     exit(Why)
             end;
-        _Other ->
-            exit(oops)
+        Other ->
+            exit(Other)
     end.

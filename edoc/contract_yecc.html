@@ -24,6 +24,7 @@
 <tr><td valign="top"><a href="#unwraprecfields-1">unwraprecfields/1*</a></td><td></td></tr>
 <tr><td valign="top"><a href="#unwraprecvalues-1">unwraprecvalues/1*</a></td><td></td></tr>
 <tr><td valign="top"><a href="#unwraptypeattr-2">unwraptypeattr/2*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yecc_end-1">yecc_end/1*</a></td><td></td></tr>
 <tr><td valign="top"><a href="#yecc_error_type-2">yecc_error_type/2*</a></td><td></td></tr>
 <tr><td valign="top"><a href="#yeccerror-1">yeccerror/1*</a></td><td></td></tr>
 <tr><td valign="top"><a href="#yeccgoto_annotation-7">yeccgoto_annotation/7*</a></td><td></td></tr>
@@ -42,7 +43,7 @@
 <tr><td valign="top"><a href="#yeccgoto_typeRef-7">yeccgoto_typeRef/7*</a></td><td></td></tr>
 <tr><td valign="top"><a href="#yeccgoto_typeSeq-7">yeccgoto_typeSeq/7*</a></td><td></td></tr>
 <tr><td valign="top"><a href="#yeccgoto_types-7">yeccgoto_types/7*</a></td><td></td></tr>
-<tr><td valign="top"><a href="#yeccpars0-2">yeccpars0/2*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yeccpars0-5">yeccpars0/5*</a></td><td></td></tr>
 <tr><td valign="top"><a href="#yeccpars1-5">yeccpars1/5*</a></td><td></td></tr>
 <tr><td valign="top"><a href="#yeccpars1-7">yeccpars1/7*</a></td><td></td></tr>
 <tr><td valign="top"><a href="#yeccpars2-7">yeccpars2/7*</a></td><td></td></tr>
@@ -205,6 +206,9 @@
 <tr><td valign="top"><a href="#yeccpars2_99-7">yeccpars2_99/7*</a></td><td></td></tr>
 <tr><td valign="top"><a href="#yeccpars2_99_-1">yeccpars2_99_/1*</a></td><td></td></tr>
 <tr><td valign="top"><a href="#yecctoken2string-1">yecctoken2string/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yecctoken_end_location-1">yecctoken_end_location/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yecctoken_location-1">yecctoken_location/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yecctoken_to_string-1">yecctoken_to_string/1*</a></td><td></td></tr>
 </table>
 
 <h2><a name="functions">Function Details</a></h2>
@@ -262,6 +266,11 @@
 <h3 class="function"><a name="unwraptypeattr-2">unwraptypeattr/2 *</a></h3>
 <div class="spec">
 <p><tt>unwraptypeattr(T, L) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yecc_end-1">yecc_end/1 *</a></h3>
+<div class="spec">
+<p><tt>yecc_end(Line) -&gt; any()</tt></p>
 </div>
 
 <h3 class="function"><a name="yecc_error_type-2">yecc_error_type/2 *</a></h3>
@@ -354,19 +363,19 @@
 <p><tt>yeccgoto_types(S, Cat, Ss, Stack, T, Ts, Tzr) -&gt; any()</tt></p>
 </div>
 
-<h3 class="function"><a name="yeccpars0-2">yeccpars0/2 *</a></h3>
+<h3 class="function"><a name="yeccpars0-5">yeccpars0/5 *</a></h3>
 <div class="spec">
-<p><tt>yeccpars0(Tokens, MFA) -&gt; any()</tt></p>
+<p><tt>yeccpars0(Tokens, Tzr, State, States, Vstack) -&gt; any()</tt></p>
 </div>
 
 <h3 class="function"><a name="yeccpars1-5">yeccpars1/5 *</a></h3>
 <div class="spec">
-<p><tt>yeccpars1(Tokens, Tokenizer, State, States, Vstack) -&gt; any()</tt></p>
+<p><tt>yeccpars1(Tokens, Tzr, State, States, Vstack) -&gt; any()</tt></p>
 </div>
 
 <h3 class="function"><a name="yeccpars1-7">yeccpars1/7 *</a></h3>
 <div class="spec">
-<p><tt>yeccpars1(State1, State, States, Vstack, Stack1, Tokens, Tokenizer) -&gt; any()</tt></p>
+<p><tt>yeccpars1(State1, State, States, Vstack, Token0, Tokens, Tzr) -&gt; any()</tt></p>
 </div>
 
 <h3 class="function"><a name="yeccpars2-7">yeccpars2/7 *</a></h3>
@@ -1167,6 +1176,21 @@
 <h3 class="function"><a name="yecctoken2string-1">yecctoken2string/1 *</a></h3>
 <div class="spec">
 <p><tt>yecctoken2string(Other) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yecctoken_end_location-1">yecctoken_end_location/1 *</a></h3>
+<div class="spec">
+<p><tt>yecctoken_end_location(Token) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yecctoken_location-1">yecctoken_location/1 *</a></h3>
+<div class="spec">
+<p><tt>yecctoken_location(Token) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="yecctoken_to_string-1">yecctoken_to_string/1 *</a></h3>
+<div class="spec">
+<p><tt>yecctoken_to_string(Token) -&gt; any()</tt></p>
 </div>
 <hr>
 

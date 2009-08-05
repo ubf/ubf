@@ -36,6 +36,7 @@ TESTS = \
 	socket_test_client \
 	socket_test_server \
 	test_plugin \
+	test_app \
 	test_sup \
 	test_ubf \
 	test_ebf \
@@ -48,9 +49,11 @@ TESTS = \
 EUNITTESTS = \
 	types_plugin \
 	stateless_plugin \
+	stateless_plugin_app \
 	stateless_plugin_sup \
 	stateless_plugin_test \
 	stateful_plugin \
+	stateful_plugin_app \
 	stateful_plugin_sup \
 	stateful_plugin_test
 

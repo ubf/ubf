@@ -559,7 +559,6 @@ checkType(HumanType, Term, Mod) ->
                     yup;
                true ->
                     {bad_alternative, HumanType, Term}
-                    %%{bad_alt, ResA, ResB}
             end;
         {ContractTypeMaybe, []} ->
             checkType2(ContractTypeMaybe, Term, Mod);
@@ -589,7 +588,6 @@ checkType2({prim, HumanType} = Type, Term, Mod) ->
                     yup;
                true ->
                     {badType, HumanType, Term}
-                    %%older: {bad_alt, ResA, ResB}
             end;
         {Something, []} ->
             checkType2(Something, Term, Mod);
@@ -617,10 +615,7 @@ checkType2(Type, Term, Mod) ->
             yup;
         false ->
             checkType_investigate_deeper(Type, Term, Mod)
-            %%          {badType, Type, Term}
-    end;
-checkType2(_, _, _) ->
-    sorry_I_dunno.
+    end.
 
 bad_zip(TypesList, TermList, Mod) ->
     TpsTrm = lists:zip3(TypesList, TermList, lists:seq(1, length(TermList))),

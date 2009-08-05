@@ -55,9 +55,10 @@ init(Args) ->
                                  , {proto,ubf}
                                  , {maxconn,UBFMaxConn}
                                  , {idletimer,UBFIdleTimer}
+                                 , {registeredname,test_ubf_tcp_port}
                                 ],
                    UBFServer =
-                       {ubf_server, {ubf_server, start_link, [DefaultPlugins, UBFPort, UBFOptions]},
+                       {ubf_server, {ubf_server, start_link, [test_ubf, DefaultPlugins, UBFPort, UBFOptions]},
                         permanent, 2000, worker, [ubf_server]},
 
                    [UBFServer]
@@ -74,9 +75,10 @@ init(Args) ->
                                  , {proto,ebf}
                                  , {maxconn,EBFMaxConn}
                                  , {idletimer,EBFIdleTimer}
+                                 , {registeredname,test_ebf_tcp_port}
                                 ],
                    EBFServer =
-                       {ebf_server, {ubf_server, start_link, [DefaultPlugins, EBFPort, EBFOptions]},
+                       {ebf_server, {ubf_server, start_link, [test_ebf, DefaultPlugins, EBFPort, EBFOptions]},
                         permanent, 2000, worker, [ebf_server]},
 
                    [EBFServer]
@@ -93,9 +95,10 @@ init(Args) ->
                                  , {proto,jsf}
                                  , {maxconn,JSFMaxConn}
                                  , {idletimer,JSFIdleTimer}
+                                 , {registeredname,test_jsf_tcp_port}
                                 ],
                    JSFServer =
-                       {jsf_server, {ubf_server, start_link, [DefaultPlugins, JSFPort, JSFOptions]},
+                       {jsf_server, {ubf_server, start_link, [test_jsf, DefaultPlugins, JSFPort, JSFOptions]},
                         permanent, 2000, worker, [jsf_server]},
 
                    [JSFServer]

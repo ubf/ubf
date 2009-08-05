@@ -162,8 +162,16 @@ ubf_client(Parent, Host, Port, Options, Timeout)
             Parent ! {self(), {error, socket}}
     end;
 
+ubf_client(Parent, Plugins, Name, Options, Timeout)
+  when is_atom(Name) ->
+    case whereis(Name) of
+        undefined ->
+            erlang:error(badarg);
+        Server ->
+            ubf_client(Parent, Plugins, Server, Options, Timeout)
+    end;
 ubf_client(Parent, Plugins, Server, Options, Timeout)
-  when is_list(Plugins) andalso length(Plugins) > 0 andalso (is_atom(Server) orelse is_pid(Server)) andalso is_list(Options) ->
+  when is_list(Plugins) andalso length(Plugins) > 0 andalso is_pid(Server) andalso is_list(Options) ->
     process_flag(trap_exit, true),
     Driver = ubf_server:start_term_listener(Server, Plugins, Options),
     %% wait for a startup message
@@ -280,6 +288,11 @@ loop(Driver, Fun) ->
                     From ! {self(), {error, Other}};
                 {'EXIT', Driver, Reason} ->
                     From ! {self(), {error, Reason}};
+                {'EXIT', _, _Reason} ->
+                    %% TBD corner case for etf client
+                    From ! {self(), {error, stop}},
+                    Driver ! stop,
+                    true;
                 stop ->
                     From ! {self(), {error, stop}},
                     Driver ! stop,

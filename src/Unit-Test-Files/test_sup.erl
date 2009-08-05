@@ -57,7 +57,7 @@ init(Args) ->
                                  , {idletimer,UBFIdleTimer}
                                 ],
                    UBFServer =
-                       {ubf_server, {ubf_server, start_link, [DefaultPlugins, UBFPort, UBFOptions]},
+                       {ubf_server, {ubf_server, start_link, [undefined, DefaultPlugins, UBFPort, UBFOptions]},
                         permanent, 2000, worker, [ubf_server]},
 
                    [UBFServer]
@@ -76,7 +76,7 @@ init(Args) ->
                                  , {idletimer,EBFIdleTimer}
                                 ],
                    EBFServer =
-                       {ebf_server, {ubf_server, start_link, [DefaultPlugins, EBFPort, EBFOptions]},
+                       {ebf_server, {ubf_server, start_link, [undefined, DefaultPlugins, EBFPort, EBFOptions]},
                         permanent, 2000, worker, [ebf_server]},
 
                    [EBFServer]
@@ -95,7 +95,7 @@ init(Args) ->
                                  , {idletimer,JSFIdleTimer}
                                 ],
                    JSFServer =
-                       {jsf_server, {ubf_server, start_link, [DefaultPlugins, JSFPort, JSFOptions]},
+                       {jsf_server, {ubf_server, start_link, [undefined, DefaultPlugins, JSFPort, JSFOptions]},
                         permanent, 2000, worker, [jsf_server]},
 
                    [JSFServer]

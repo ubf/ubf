@@ -1,16 +1,9 @@
 %%%
 %%% @doc UBF server-side public API.
 %%%
-%%% TO-DO: JoeNorton, I can't seem to start multiple listeners, only
-%%% the first one succeeds.  At a casual glance, that seems to be The
-%%% Current Correct Behavior, but it'd be awful nice to have multiple
-%%% listeners inside the same VM.  Is there another way to do that?
-%%% ubf_server:start([file_plugin], 2000, []).
-%%% ubf_server:start([irc_plugin], 2001, []).
-%%%
-%%% TO-DO: JoeNorton, ubf_server:start([file_plugin], 2000, [jsf]) will
-%%% give a JSON-speaking server that has a lot of difficulty decoding
-%%% and encoding stuff.  Do you have any plan to fix it?
+%%% TO-DO: JoeNorton, ubf_server:start([file_plugin], 2000, [jsf])
+%%% will give a JSON-speaking server that has a lot of difficulty
+%%% decoding and encoding stuff.  Do you have any plan to fix it?
 %%%
 %%% This module implements most of the commonly-used server-side
 %%% functions: starting TCP listeners and registering their
@@ -48,28 +41,40 @@
 
 -module(ubf_server).
 
--export([start/2, start/3, start_link/2, start_link/3, init/4, ask_manager/2, sendEvent/2]).
+-export([start/2, start/3, start/4, start_link/2, start_link/3, start_link/4, init/5, ask_manager/2, sendEvent/2]).
 
 -export([start_term_listener/3]).
 
 -include("ubf.hrl").
 
--import(proc_socket_server, [start_raw_server/5]).
+-import(proc_socket_server, [start_raw_server/6]).
 
 %% @spec (list(atom()), integer()) -> true
-%% @doc Start a TCP listener on port Port and register all of the
-%% protocol implementation modules in the PluginModules list.
+%% @doc Start a server and a TCP listener on port Port and register
+%% all of the protocol implementation modules in the PluginModules
+%% list.
 %%
 %% Here we start the server.
-%% This is the *only* registered process on the server side.
 
 start(PluginModules, Port) ->
-    start(PluginModules, Port, []).
+    start(undefined, PluginModules, Port).
 
-%% @spec (list(atom()), integer(), proplist()) -> true
-%% @doc Start a TCP listener on port Port with the Options properties
-%% list and register all of the protocol implementation modules in the
-%% PluginModules list.
+%% @spec (atom(), list(atom()), integer()) -> true
+%% @doc Start a registered server and a TCP listener on port Port and
+%% register all of the protocol implementation modules in the
+%% PluginModules list. If Name is undefined, the server is not
+%% registered.
+%%
+%% Here we start the server.
+
+start(Name, PluginModules, Port) ->
+    start(Name, PluginModules, Port, []).
+
+%% @spec (atom(), list(atom()), integer(), proplist()) -> true
+%% @doc Start a registered server and a TCP listener on port Port with
+%% the Options properties list and register all of the protocol
+%% implementation modules in the PluginModules list.  If Name is
+%% undefined, the server is not registered
 %%
 %% Valid properties in the Options proplist are:
 %% <ul>
@@ -95,26 +100,42 @@ start(PluginModules, Port) ->
 %%      of the protocol's wire format.
 %%      Default: ubf. </li>
 %% <li> {verboserpc, true | false} ... Set the verbose RPC mode.
-%%      Default: false.
-%%      TO-DO: JoeNorton, add more? </li>
+%%      Default: false. </li>
+%% <li> {registeredname, atom()} ... Set the name to be registered for
+%%      the TCP listener.  If undefined, a default name is automatically
+%%      registered.
+%%      Default: undefined. </li>
+%%
+%% <li> TO-DO: JoeNorton, add more? </li>
 %% </ul>
 
-start(PluginModules, Port, Options) ->
-    start_registered(ubf_server, fun() -> start_server(PluginModules, Port, Options) end).
+start(Name, PluginModules, Port, Options) ->
+    start_registered(Name, fun() -> start_server(PluginModules, Port, Options) end).
 
 %% @spec (list(atom()), integer()) -> true
 %% @doc See start/2, but also link the server processs to the caller.
 
 start_link(PluginModules, Port) ->
-    start_link(PluginModules, Port, []).
+    start_link(undefined, PluginModules, Port).
 
-%% @spec (list(atom()), integer(), proplist()) -> true
+%% @spec (atom(), list(atom()), integer()) -> true
 %% @doc See start/3, but also link the server processs to the caller.
 
-start_link(PluginModules, Port, Options) ->
-    proc_lib:start_link(?MODULE, init, [self(), PluginModules, Port, Options]).
+start_link(Name, PluginModules, Port) ->
+    start_link(Name, PluginModules, Port, []).
 
-init(Parent, PluginModules, Port, Options) ->
+%% @spec (atom(), list(atom()), integer(), proplist()) -> true
+%% @doc See start/4, but also link the server processs to the caller.
+
+start_link(Name, PluginModules, Port, Options) ->
+    proc_lib:start_link(?MODULE, init, [Name, self(), PluginModules, Port, Options]).
+
+init(Name, Parent, PluginModules, Port, Options) ->
+    if Name /= undefined ->
+            register(Name, self());
+       true ->
+            noop
+    end,
     proc_lib:init_ack(Parent, {ok, self()}),
     start_server(PluginModules, Port, Options).
 
@@ -156,42 +177,47 @@ start_ubf_listener(MetaServerModule, Port, Server, Options) ->
             Else ->
                 Else
         end,
+    ServerFun =
+        fun(Socket) ->
+                %% This gets spawned every time a new
+                %% socket connection is is established on
+                %% this port.
+                %%
+                %% We have to start 2 additional
+                %% processes - a contract manager and a
+                %% plugin handler The driver (This
+                %% process) sends messages to the
+                %% contract manager The contract manager
+                %% sends messages to the handler.
+                Driver          = self(),
+                ContractManager =
+                    if VerboseRPC ->
+                            contract_manager:start(true);
+                       true ->
+                            contract_manager:start()
+                    end,
+                Handler         = ubf_plugin_handler:start_handler(),
+                %% (The next three lines are pretty
+                %% devious but they work !)  send hello
+                %% back to the opening program
+                self() ! {self(), {DriverVersion, ?S(ServerHello), help()}},
+                %% swap the driver
+                DriverModule:relay(self(), ContractManager),
+                ContractManager ! {start, Driver, Handler,
+                                   start, MetaServerModule},
+                Handler ! {start, ContractManager,
+                           Server, MetaServerModule},
+                %% and activate the loop that will now
+                %% execute the last two statements :-)
+                DriverModule:loop(Socket, self(), IdleTimer)
+        end,
+    MaxConn =
+        proplists:get_value(maxconn,Options,10000),
 
-    start_raw_server(Port,
-                     fun(Socket) ->
-                             %% This gets spawned every time a new
-                             %% socket connection is is established on
-                             %% this port.
-                             %%
-                             %% We have to start 2 additional
-                             %% processes - a contract manager and a
-                             %% plugin handler The driver (This
-                             %% process) sends messages to the
-                             %% contract manager The contract manager
-                             %% sends messages to the handler.
-                             Driver          = self(),
-                             ContractManager =
-                                 if VerboseRPC ->
-                                         contract_manager:start(true);
-                                    true ->
-                                         contract_manager:start()
-                                 end,
-                             Handler         = ubf_plugin_handler:start_handler(),
-                             %% (The next three lines are pretty
-                             %% devious but they work !)  send hello
-                             %% back to the opening program
-                             self() ! {self(), {DriverVersion, ?S(ServerHello), help()}},
-                             %% swap the driver
-                             DriverModule:relay(self(), ContractManager),
-                             ContractManager ! {start, Driver, Handler,
-                                                start, MetaServerModule},
-                             Handler ! {start, ContractManager,
-                                        Server, MetaServerModule},
-                             %% and activate the loop that will now
-                             %% execute the last two statements :-)
-                             DriverModule:loop(Socket, self(), IdleTimer)
-                     end,
-                     proplists:get_value(maxconn,Options,10000),
+    start_raw_server(proplists:get_value(registeredname,Options),
+                     Port,
+                     ServerFun,
+                     MaxConn,
                      PacketType,
                      0).
 
@@ -204,11 +230,13 @@ start_term_listener(Server, PluginModules, Options) ->
             true ->
                 ubf_plugin_meta_serverless:new(SortedPluginModules)
         end,
+
     ServerHello =
         proplists:get_value(serverhello,Options,MetaServerModule:contract_name()),
     VerboseRPC =
         proplists:get_value(verboserpc,Options,false),
 
+    Driver = self(),
     ContractManager =
         if VerboseRPC ->
                 contract_manager:start(true);
@@ -216,12 +244,14 @@ start_term_listener(Server, PluginModules, Options) ->
                 contract_manager:start()
         end,
     Handler = ubf_plugin_handler:start_handler(),
-    Driver = self(),
-
-    ContractManager ! {start,Driver,Handler,start,MetaServerModule},
-    Handler ! {start,ContractManager,Server,MetaServerModule},
 
     self() ! {ContractManager, {'etf1.0', ?S(ServerHello), help()}},
+
+    ContractManager ! {start, Driver, Handler,
+                       start, MetaServerModule},
+    Handler ! {start, ContractManager,
+               Server, MetaServerModule},
+
     ContractManager.
 
 help() ->
@@ -256,6 +286,9 @@ start_registered(Name, F) ->
             true
     end.
 
+start_proc(Parent, undefined, F) ->
+    Parent ! {self(), ack},
+    F();
 start_proc(Parent, Name, F) ->
     case (catch register(Name, self())) of
         {'EXIT', _} ->
