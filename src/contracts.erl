@@ -522,9 +522,6 @@ is_nonempty(_) -> true.
 is_nonundefined(undefined) -> false;
 is_nonundefined(_) -> true.
 
-isit(HumanType, Term, Mod) ->
-    isType({prim, HumanType}, Term, Mod).
-
 %% @spec (contract_type_name_atom(), term(), contract_module_name_atom()) ->
 %%       yup | error_hints_term_only_human_readable_sorry()
 %% @doc Given a contract type name, a term to check against that contract
