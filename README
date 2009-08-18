@@ -154,10 +154,9 @@ To do (in short term)
   - cleanup (or remove) old documentation under priv/doc
   - add ChangeLog template
   - document new features
-    + ubf contract (and contract checker) primitives
-      - #record syntax, ##extended_record syntax
-      - atom(), binary(), float(), integer(), proplist(), string(), term(),
-        tuple(), void()
+    + predefined ubf contract (and contract checker) primitives
+      - atom(), binary(), float(), integer(), list(), proplist(),
+        string(), term(), tuple(), void()
       - atom(ascii), atom(asciiprintable), atom(nonempty), atom(nonundefined),
         atom(ascii,nonempty), atom(ascii,nonundefined),
         atom(asciiprintable,nonempty), atom(asciiprintable,nonundefined),
@@ -165,6 +164,7 @@ To do (in short term)
         atom(asciiprintable,nonempty,nonundefined)
       - binary(ascii), binary(asciiprintable), binary(nonempty),
         binary(ascii,nonempty), binary(asciiprintable,nonempty)
+      - list(nonempty)
       - proplist(nonempty)
       - string(ascii), string(asciiprintable), string(nonempty),
         string(ascii,nonempty), string(asciiprintable,nonempty)
@@ -175,13 +175,21 @@ To do (in short term)
         ASCII values
       - nonempty: not equal to '', [], <<>>, or {}
       - nonundefined: not equal to 'undefined'
-    + automatic erlang record defines based on contract
+      - type()? for optional types
+      - type(){0} for undefined types
+    + user-defined ubf contract (and contract checker) primitives
+      - atom(), binary(), float(), integer(), and string() constants
+      - #record syntax, ##extended_record syntax with automatic erlang record defines
+      - integer ranges (min..max, ..max, min..)
+      - [type()]? for optional lists
+      - [type()]+ for mandatory lists
+      - [type()]{N}, [type()]{N,}, [type()]{M,N} for length-constrained lists
     + ubf contract type imports
     + ubf server and ubf client
     + stateless server w/simplified plugin handler callbacks
       - For protocols that do not require state transitions: a single
-        state called ANYSTATE is used for the contract, and
-        the implementation callback function API is a bit less complex.
+        state called ANYSTATE is used for the contract, and the
+        implementation callback function API is a bit less complex.
     + network formats
       * ebf - Erlang Binary Format
       * jsf - Java Script Format

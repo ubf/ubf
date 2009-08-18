@@ -18,18 +18,19 @@
 <tr><td valign="top"><a href="#checkCallback-3">checkCallback/3</a></td><td></td></tr>
 <tr><td valign="top"><a href="#checkIn-3">checkIn/3</a></td><td></td></tr>
 <tr><td valign="top"><a href="#checkOut-4">checkOut/4</a></td><td></td></tr>
-<tr><td valign="top"><a href="#checkType-3">checkType/3</a></td><td>Given a contract type name, a term to check against that contract       
-type, and a contract module name, verify the term against that       
-contract's type.</td></tr>
+<tr><td valign="top"><a href="#checkType-3">checkType/3</a></td><td>Given a contract type name, a term to check against that  
+contract type, and a contract module name, verify the term against  
+that contract's type.</td></tr>
 <tr><td valign="top"><a href="#checkType2-3">checkType2/3*</a></td><td></td></tr>
 <tr><td valign="top"><a href="#checkType_investigate_deeper-3">checkType_investigate_deeper/3*</a></td><td></td></tr>
 <tr><td valign="top"><a href="#check_term-4">check_term/4*</a></td><td></td></tr>
-<tr><td valign="top"><a href="#check_term1-4">check_term1/4*</a></td><td></td></tr>
 <tr><td valign="top"><a href="#check_term_attr-3">check_term_attr/3*</a></td><td></td></tr>
 <tr><td valign="top"><a href="#check_term_attrlist-3">check_term_attrlist/3*</a></td><td></td></tr>
-<tr><td valign="top"><a href="#check_term_concatlist-5">check_term_concatlist/5*</a></td><td></td></tr>
-<tr><td valign="top"><a href="#check_term_concatlist-6">check_term_concatlist/6*</a></td><td></td></tr>
 <tr><td valign="top"><a href="#check_term_list-4">check_term_list/4*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#check_term_predef-2">check_term_predef/2*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#check_term_prim-6">check_term_prim/6*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#check_term_range-3">check_term_range/3*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#check_term_seq-4">check_term_seq/4*</a></td><td></td></tr>
 <tr><td valign="top"><a href="#getContract-1">getContract/1</a></td><td></td></tr>
 <tr><td valign="top"><a href="#isType-3">isType/3</a></td><td></td></tr>
 <tr><td valign="top"><a href="#isTypeAttr-2">isTypeAttr/2</a></td><td></td></tr>
@@ -39,7 +40,6 @@ contract's type.</td></tr>
 <tr><td valign="top"><a href="#is_nonundefined-1">is_nonundefined/1*</a></td><td></td></tr>
 <tr><td valign="top"><a href="#is_proplist-1">is_proplist/1*</a></td><td></td></tr>
 <tr><td valign="top"><a href="#is_string-1">is_string/1*</a></td><td></td></tr>
-<tr><td valign="top"><a href="#locate-3">locate/3*</a></td><td></td></tr>
 </table>
 
 <h2><a name="functions">Function Details</a></h2>
@@ -72,9 +72,9 @@ contract's type.</td></tr>
 <h3 class="function"><a name="checkType-3">checkType/3</a></h3>
 <div class="spec">
 <p><tt>checkType(HumanType::<a href="#type-contract_type_name_atom">contract_type_name_atom()</a>, Term::term(), Mod::<a href="#type-contract_module_name_atom">contract_module_name_atom()</a>) -&gt; yup | <a href="#type-error_hints_term_only_human_readable_sorry">error_hints_term_only_human_readable_sorry()</a></tt></p>
-</div><p><p>Given a contract type name, a term to check against that contract       
-type, and a contract module name, verify the term against that       
-contract's type.</p>
+</div><p><p>Given a contract type name, a term to check against that  
+contract type, and a contract module name, verify the term against  
+that contract's type.</p>
  
   Example usage from the irc_plugin.con contract:
   <ul>
@@ -85,9 +85,10 @@ contract's type.</p>
   <li> contracts:checkType(joinEvent, {joins, {'#S', "nck"}, {'#S', foo_atom}}, irc_plugin). </li>
   </ul>
  
-  Wow, this is a gawdawful-brute-force-don't-know-what-I'm-doing mess.
-  But it works, in its brute-force way, as long as you don't try to
-  have a computer parse the output in error cases.</p>
+  Wow, this is a gawdawful-brute-force-don't-know-what-I'm-doing
+  mess.  But it works, in its brute-force way, as long as you don't
+  try to have a computer parse the output in error cases.</p>
+<p><b><font color="red">To do</font></b><ul><li><font color="red">implementation needs updating for new primitives</font></li></ul></p>
 
 <h3 class="function"><a name="checkType2-3">checkType2/3 *</a></h3>
 <div class="spec">
@@ -101,12 +102,7 @@ contract's type.</p>
 
 <h3 class="function"><a name="check_term-4">check_term/4 *</a></h3>
 <div class="spec">
-<p><tt>check_term(Type, Term, Level, DefTypes) -&gt; any()</tt></p>
-</div>
-
-<h3 class="function"><a name="check_term1-4">check_term1/4 *</a></h3>
-<div class="spec">
-<p><tt>check_term1(Check, X, Level, DefTypes) -&gt; any()</tt></p>
+<p><tt>check_term(Check, X, Level, Mod) -&gt; any()</tt></p>
 </div>
 
 <h3 class="function"><a name="check_term_attr-3">check_term_attr/3 *</a></h3>
@@ -119,19 +115,29 @@ contract's type.</p>
 <p><tt>check_term_attrlist(Type, Attrs, Val) -&gt; any()</tt></p>
 </div>
 
-<h3 class="function"><a name="check_term_concatlist-5">check_term_concatlist/5 *</a></h3>
-<div class="spec">
-<p><tt>check_term_concatlist(B, BCnt, L, Level, DefTypes) -&gt; any()</tt></p>
-</div>
-
-<h3 class="function"><a name="check_term_concatlist-6">check_term_concatlist/6 *</a></h3>
-<div class="spec">
-<p><tt>check_term_concatlist(A, ACnt, B, L, Level, DefTypes) -&gt; any()</tt></p>
-</div>
-
 <h3 class="function"><a name="check_term_list-4">check_term_list/4 *</a></h3>
 <div class="spec">
-<p><tt>check_term_list(T, T1, Level, DefTypes) -&gt; any()</tt></p>
+<p><tt>check_term_list(Args, T, Level, Mod) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="check_term_predef-2">check_term_predef/2 *</a></h3>
+<div class="spec">
+<p><tt>check_term_predef(X1, X) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="check_term_prim-6">check_term_prim/6 *</a></h3>
+<div class="spec">
+<p><tt>check_term_prim(X1, X2, TypeDef, X, Level, Mod) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="check_term_range-3">check_term_range/3 *</a></h3>
+<div class="spec">
+<p><tt>check_term_range(Min, Max, X) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="check_term_seq-4">check_term_seq/4 *</a></h3>
+<div class="spec">
+<p><tt>check_term_seq(Args, L, Level, Mod) -&gt; any()</tt></p>
 </div>
 
 <h3 class="function"><a name="getContract-1">getContract/1</a></h3>
@@ -141,7 +147,7 @@ contract's type.</p>
 
 <h3 class="function"><a name="isType-3">isType/3</a></h3>
 <div class="spec">
-<p><tt>isType(Type, X, Defs) -&gt; any()</tt></p>
+<p><tt>isType(Type, X, Mod) -&gt; any()</tt></p>
 </div>
 
 <h3 class="function"><a name="isTypeAttr-2">isTypeAttr/2</a></h3>
@@ -177,11 +183,6 @@ contract's type.</p>
 <h3 class="function"><a name="is_string-1">is_string/1 *</a></h3>
 <div class="spec">
 <p><tt>is_string(A) -&gt; any()</tt></p>
-</div>
-
-<h3 class="function"><a name="locate-3">locate/3 *</a></h3>
-<div class="spec">
-<p><tt>locate(Type, Mod, X) -&gt; any()</tt></p>
 </div>
 <hr>
 

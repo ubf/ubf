@@ -80,6 +80,7 @@ isTypeAttr(atom,nonundefined) -> true;
 isTypeAttr(binary,ascii) -> true;
 isTypeAttr(binary,asciiprintable) -> true;
 isTypeAttr(binary,nonempty) -> true;
+isTypeAttr(list,nonempty) -> true;
 isTypeAttr(proplist,nonempty) -> true;
 isTypeAttr(string,ascii) -> true;
 isTypeAttr(string,asciiprintable) -> true;
@@ -92,373 +93,355 @@ isTypeAttr(_,_) -> false.
 %%----------------------------------------------------------------------
 %% Check type
 
-isType(Type, X, Defs) ->
-    %% DISABLE io:format("isType(~p,~p,~p)~n",[Type, X, Defs]),
-    case (catch check_term(Type, X, 1, Defs)) of
-        ?FAILMATCH() ->
-            %% DISABLE io:format("***false: ~p~n", [Result]),
-            false;
+isType(Type, X, Mod) ->
+    %% DISABLE io:format("isType(~p,~p,~p)~n",[Type, X, Mod]),
+    case check_term(Type, X, 1, Mod) of
         ok ->
             %% DISABLE io:format("***true~n"),
-            true
+            true;
+        ?FAILMATCH() ->
+            %% DISABLE io:format("***false: ~p~n", [Result]),
+            false
     end.
 
-check_term(Type, Term, Level, DefTypes) ->
-    %% io:format("Check level(~p) ~p isA ~p~n",[Level, Term, Type]),
-    check_term1(Type, Term, Level, DefTypes).
-
-check_term1({prim, Type}=Check, X, Level, DefTypes) ->
-    %% io:format("looking up def of ~p in ~p~n",[Type, DefTypes]),
-    Rhs = locate(Type, DefTypes, X),
-    %% io:format("Rhs=~p Level=~p~n",[Rhs,Level]),
-    if
-        Level < 10010 ->
-            check_term(Rhs, X, Level+1, DefTypes);
-        true ->
-            ?FAIL({Check,X})
+%% alt
+check_term({alt, A, B}, X, Level, Mod) ->
+    case check_term(A, X, Level, Mod) of
+        ok  ->
+            ok;
+        _   ->
+            check_term(B, X, Level, Mod)
     end;
-check_term1({prim_optional, Type}=Check, X, Level, DefTypes) ->
-    %% io:format("looking up def of ~p in ~p~n",[Type, DefTypes]),
-    Rhs = locate(Type, DefTypes, X),
-    %% io:format("Rhs=~p Level=~p~n",[Rhs,Level]),
-    if
-        Level < 10010 ->
-            if X =/= undefined ->
-                    check_term(Rhs, X, Level+1, DefTypes);
-               true ->
-                    ok
-            end;
-        true ->
-            ?FAIL({Check,X})
-    end;
-check_term1({prim_nil, Type}=Check, X, Level, DefTypes) ->
-    %% io:format("looking up def of ~p in ~p~n",[Type, DefTypes]),
-    _Rhs = locate(Type, DefTypes, X),
-    %% io:format("Rhs=~p Level=~p~n",[Rhs,Level]),
-    if
-        Level < 10010 ->
-            if X =:= undefined ->
+%% concat
+check_term({concat, _A, _B}=_Check, X, _Level, _Mod) ->
+    %% @todo not (re-)implemented now
+    ?FAIL({notimplemented,X});
+%% prim
+check_term({prim, Min, Max, Type}=Check, X, Level, Mod) ->
+    %% NOTE: hard-coded max level of 10010
+    if Level < 10010 ->
+            TypeDef =
+                case Type of
+                    {predef,_} ->
+                        Type;
+                    _ ->
+                        element(1, Mod:contract_type(Type))
+                end,
+            case check_term_prim(Min, Max, TypeDef, X, Level+1, Mod) of
+                true ->
                     ok;
+                false ->
+                    ?FAIL({Check,X})
+            end;
+       true ->
+            ?FAIL({maxlevel,X})
+    end;
+%% tuple
+check_term({tuple,Args}=Check, X, Level, Mod) ->
+    if is_tuple(X) ->
+            if length(Args) == size(X) ->
+                    case check_term_seq(Args, tuple_to_list(X), Level, Mod) of
+                        true ->
+                            ok;
+                        false ->
+                            ?FAIL({Check,X})
+                    end;
                true ->
                     ?FAIL({Check,X})
             end;
-        true ->
+       true ->
             ?FAIL({Check,X})
     end;
-check_term1({prim_required, Type}=Check, X, Level, DefTypes) ->
-    %% io:format("looking up def of ~p in ~p~n",[Type, DefTypes]),
-    Rhs = locate(Type, DefTypes, X),
-    %% io:format("Rhs=~p Level=~p~n",[Rhs,Level]),
-    if
-        Level < 10010 ->
-            if X =/= undefined ->
-                    check_term(Rhs, X, Level+1, DefTypes);
+%% record
+check_term({record,Name,Args}=Check, X, Level, Mod) ->
+    if is_tuple(X) ->
+            if length(Args)+(1-2) == size(X) ->
+                    case check_term_seq([{atom,Name}|tl(tl(Args))], tuple_to_list(X), Level, Mod) of
+                        true ->
+                            ok;
+                        false ->
+                            ?FAIL({Check,X})
+                    end;
                true ->
                     ?FAIL({Check,X})
             end;
-        true ->
+       true ->
             ?FAIL({Check,X})
     end;
-check_term1({integer,I}, I, _, _) when is_integer(I) ->
-    ok;
-check_term1({float,F}, F, _, _) when is_float(F) ->
-    ok;
-check_term1({range,Min,Max}=Check, I, _, _) when is_integer(I) ->
-    if I >= Min, I =< Max ->
-            ok;
-       true ->
-            ?FAIL({Check,I})
-    end;
-check_term1({atom,A}, A, _, _) when is_atom(A) ->
-    ok;
-check_term1({{atom,Attrs},A}=Check, A, _, _) when is_atom(A) ->
-    CheckList = check_term_attrlist(atom,Attrs,A),
-    if CheckList =:= [] ->
-            ok;
-       true ->
-            ?FAIL(CheckList)
-    end;
-check_term1({string,?S(S)}=Check, ?S(S), _, _) when is_list(S) ->
-    case is_string(S) of
-        true ->
-            ok;
-        false ->
-            ?FAIL({Check,S})
-    end;
-check_term1({{string,Attrs},?S(S)}=Check, ?S(S), _, _) when is_list(S) ->
-    case is_string(S) of
-        true ->
-            CheckList = check_term_attrlist(string,Attrs,S),
-            if CheckList =:= [] ->
-                    ok;
+check_term({record_ext,Name,Args}=Check, X, Level, Mod) ->
+    if is_tuple(X) ->
+            if length(Args)+1 == size(X) ->
+                    case check_term_seq([{atom,Name}|Args], tuple_to_list(X), Level, Mod) of
+                        true ->
+                            ok;
+                        false ->
+                            ?FAIL({Check,X})
+                    end;
                true ->
-                    ?FAIL(CheckList)
+                    ?FAIL({Check,X})
             end;
-        false ->
-            ?FAIL({Check,S})
-    end;
-check_term1({binary,B}, B, _, _) when is_binary(B) ->
-    ok;
-check_term1({{binary,Attrs},B}=Check, B, _, _) when is_binary(B) ->
-    CheckList = check_term_attrlist(binary,Attrs,B),
-    if CheckList =:= [] ->
-            ok;
        true ->
-            ?FAIL(CheckList)
+            ?FAIL({Check,X})
     end;
-check_term1({proplist,?P(P)}=Check, ?P(P), _, _) when is_list(P) ->
-    case is_proplist(P) of
-        true ->
-            ok;
-        false ->
-            ?FAIL({Check,P})
-    end;
-check_term1({{proplist,Attrs},?P(P)}=Check, ?P(P), _, _) when is_list(P) ->
-    case is_proplist(P) of
-        true ->
-            CheckList = check_term_attrlist(proplist,Attrs,P),
-            if CheckList =:= [] ->
-                    ok;
+%% list
+check_term({list,Min,Max,Args}=Check, X, Level, Mod) ->
+    if is_list(X) ->
+            Len = length(X),
+            if Len < Min orelse (Max /= infinity andalso Len > Max) ->
+                    ?FAIL({Check,X});
                true ->
-                    ?FAIL(CheckList)
+                    case check_term_list(Args, X, Level, Mod) of
+                        true ->
+                            ok;
+                        false ->
+                            ?FAIL({Check,X})
+                    end
             end;
-        false ->
-            ?FAIL({Check,P})
+       true ->
+            ?FAIL({Check,X})
     end;
-check_term1({tuple,T}, T, _, _) when is_tuple(T) ->
-    ok;
-check_term1({tuple,Args}=Check, T, Level, DefTypes) when is_tuple(T) ->
-    if
-        length(Args) == size(T) ->
-            check_term_list(Args, tuple_to_list(T), Level, DefTypes);
-        true ->
-            ?FAIL({Check})
+%% range
+check_term({range, Min, Max}=Check, X, _Level, _Mod) ->
+    if is_integer(X) ->
+            case check_term_range(Min, Max, X) of
+                true ->
+                    ok;
+                false ->
+                    ?FAIL({Check,X})
+            end;
+       true ->
+            ?FAIL({Check,X})
     end;
-check_term1({record,Name,Args}=Check, T, Level, DefTypes) when is_tuple(T) ->
-    if
-        length(Args)+(1-2) == size(T) ->
-            check_term_list([{atom,Name}|tl(tl(Args))], tuple_to_list(T), Level, DefTypes);
-        true ->
-            ?FAIL({Check})
-    end;
-check_term1({record_ext,Name,Args}=Check, T, Level, DefTypes) when is_tuple(T) ->
-    if
-        length(Args)+1 == size(T) ->
-            check_term_list([{atom,Name}|Args], tuple_to_list(T), Level, DefTypes);
-        true ->
-            ?FAIL({Check})
-    end;
-check_term1({term,T}, T, _, _) ->
-    ok;
-check_term1({{term,Attrs},T}=Check, T, _, _) ->
-    CheckList = check_term_attrlist(term,Attrs,T),
-    if CheckList =:= [] ->
+%% atom
+check_term({atom, Y}=Check, X, _Level, _Mod) ->
+    if Y == X andalso is_atom(Y) ->
             ok;
        true ->
-            ?FAIL(CheckList)
+            ?FAIL({Check,X})
     end;
-check_term1({void,V}, V, _, _) ->
-    ok;
-check_term1({list,X}, [H|T], Level, DefTypes) ->
-    case check_term(X, H, Level, DefTypes) of
-        ok -> check_term({list,X}, T, Level, DefTypes);
-        Error -> Error
+%% binary
+check_term({binary, Y}=Check, X, _Level, _Mod) ->
+    if Y == X andalso is_binary(Y) ->
+            ok;
+       true ->
+            ?FAIL({Check,X})
     end;
-check_term1({list,_X}, [], _, _) ->
-    ok;
-check_term1({alt, A, B}, S, Level, DefTypes) ->
-    case check_term(A, S, Level, DefTypes) of
-        ok  -> ok;
-        _   -> check_term(B, S, Level, DefTypes)
+%% float
+check_term({float, Y}=Check, X, _Level, _Mod) ->
+    if Y =:= X andalso is_float(Y) ->
+            ok;
+       true ->
+            ?FAIL({Check,X})
     end;
-check_term1({concat, A, B}=Check, L, Level, DefTypes) when is_list(L) ->
-    case check_term_concatlist(A, 0, B, L, Level, DefTypes) of
-        {ok,[]} -> ok;
-        {ok,_} -> ?FAIL({Check,L});
-        {Error,_} -> Error
+%% integer
+check_term({integer, Y}=Check, X, _Level, _Mod) ->
+    if Y =:= X andalso is_integer(Y) ->
+            ok;
+       true ->
+            ?FAIL({Check,X})
     end;
-check_term1({list_optional,X}=Check, L, Level, DefTypes) when is_list(L) ->
-    if
-        length(L) =:= 0 orelse length(L) =:= 1 ->
-            check_term({list,X}, L, Level, DefTypes);
+%% string
+check_term({string, ?S(Y)}=Check, X, _Level, _Mod) ->
+    if ?S(Y) =:= ?S(X) andalso is_list(Y) ->
+            ok;
+       true ->
+            ?FAIL({Check,X})
+    end;
+%% predef
+check_term({predef, Args}=Check, X, _Level, _Mod) ->
+    case check_term_predef(Args, X) of
         true ->
-            ?FAIL({Check,L})
-    end;
-check_term1({list_nil,X}=Check, L, Level, DefTypes) when is_list(L) ->
-    if
-        length(L) =:= 0 ->
-            check_term({list,X}, L, Level, DefTypes);
-        true ->
-            ?FAIL({Check,L})
-    end;
-check_term1({list_required,X}=Check, L, Level, DefTypes) when is_list(L) ->
-    if
-        length(L) =:= 1 ->
-            check_term({list,X}, L, Level, DefTypes);
-        true ->
-            ?FAIL({Check,L})
-    end;
-check_term1({list_required_and_repeatable,X}=Check, L, Level, DefTypes) when is_list(L) ->
-    if
-        length(L) =/= 0 ->
-            check_term({list,X}, L, Level, DefTypes);
-        true ->
-            ?FAIL({Check,L})
+            ok;
+        false ->
+            ?FAIL({Check,X})
     end;
 %% @TODO ABNF TYPES -- START
-check_term1({seq,_}, Bin, _, _) when is_binary(Bin) ->
-    ok; %% temporarily ok for any binary
-check_term1({repeat,_,_,_}=Check, Bin, _, _) when is_binary(Bin) ->
-    ?FAIL({Check,Bin});
-check_term1({byte_range, Min, Max}=Check, Bin, _, _) when is_binary(Bin) ->
-    case Bin of
-	<<C:8, _/binary>> ->
-	    if Min =< C, C =< Max ->
-		    ok;
-	       true ->
-		    ?FAIL({Check, Bin})
-	    end;
-	<<>> ->
-	    ?FAIL({Check, Bin})
+check_term({seq,_}=Check, X, _Level, _Mod) ->
+    if is_binary(X) ->
+            ok; %% temporarily ok for any binary
+       true ->
+            ?FAIL({Check,X})
     end;
-check_term1({byte_alt, A, B}=Check, Bin, Level, DefTypes) when is_binary(Bin) ->
-    case check_term(A, Bin, Level, DefTypes) of
-        ok  -> ok;
-        _   -> check_term(B, Bin, Level, DefTypes)
+check_term({repeat,_,_,_}=Check, X, _Level, _Mod) ->
+    if is_binary(X) ->
+            ok; %% temporarily ok for any binary
+       true ->
+            ?FAIL({Check,X})
     end;
-check_term1({byte_seq, [Type|Types]}=Check, Bin, Level, DefTypes) when is_binary(Bin) ->
-    case check_term1(Type, Bin, Level, DefTypes) of
-	ok ->
-	    <<_:1/binary, Bin2/binary>> = Bin,
-	    check_term1({byte_seq, Types}, Bin2, Level, DefTypes);
-	_ ->
-	    ?FAIL({Check,Bin})
+check_term({byte_range, Min, Max}=Check, X, _Level, _Mod) ->
+    if is_binary(X) ->
+            case X of
+                <<C:8, _/binary>> ->
+                    if Min =< C andalso C =< Max ->
+                            ok;
+                       true ->
+                            ?FAIL({Check, X})
+                    end;
+                <<>> ->
+                    ?FAIL({Check, X})
+            end;
+       true ->
+            ?FAIL({Check,X})
     end;
-check_term1({byte_seq, []}=Check, <<>>, Level, DefTypes) ->
+check_term({byte_alt, A, B}=Check, X, Level, Mod) ->
+    if is_binary(X) ->
+            case check_term(A, X, Level, Mod) of
+                ok  ->
+                    ok;
+                _   ->
+                    check_term(B, X, Level, Mod)
+            end;
+       true ->
+            ?FAIL({Check,X})
+    end;
+check_term({byte_seq, [Type|Types]}=Check, X, Level, Mod) ->
+    if is_binary(X) ->
+            case check_term(Type, X, Level, Mod) of
+                ok ->
+                    <<_:1/binary, X2/binary>> = X,
+                    check_term({byte_seq, Types}, X2, Level, Mod);
+                _ ->
+                    ?FAIL({Check,X})
+            end;
+       true ->
+            ?FAIL({Check,X})
+    end;
+check_term({byte_seq, []}=_Check, <<>>, _Level, _Mod) ->
     ok;
-check_term1({byte_val, Byte}=Check, Bin, _, _) when is_binary(Bin) ->
-    case Bin of
-	<<C:8, _/binary>> ->
-	    if C == Byte ->
-		    ok;
-	       true ->
-		    ?FAIL({Check, Bin})
-	    end;
-	<<>> ->
-	    ?FAIL({Check, Bin})
+check_term({byte_val, Byte}=Check, X, _Level, _Mod) ->
+    if is_binary(X) ->
+            case X of
+                <<C:8, _/binary>> ->
+                    if C == Byte ->
+                            ok;
+                       true ->
+                            ?FAIL({Check, X})
+                    end;
+                <<>> ->
+                    ?FAIL({Check, X})
+            end;
+       true ->
+            ?FAIL({Check,X})
     end;
 %% @TODO ABNF TYPES -- END
-check_term1(Check, X, _Level, _DefTypes) ->
+check_term(Check, X, _Level, _Mod) ->
     %% io:format("~p isnot ~p~n", [Check, X]),
     %% exit({Y,isNotA, X}).
     ?FAIL({last,Check,X}).
 
-check_term_list([H|T], [H1|T1], Level, DefTypes) ->
-    case check_term(H, H1, Level, DefTypes) of
-        ok ->
-            check_term_list(T, T1, Level, DefTypes);
-        Error ->
-            ?FAIL([Error,{H,H1}])
-    end;
-check_term_list([], [], _, _) ->
-    ok.
 
-check_term_concatlist({concat,A1,A2}, 0, B, L, Level, DefTypes) ->
-    case check_term_concatlist(A1, 0, A2, L, Level, DefTypes) of
-        {ok,Rest} ->
-            check_term_concatlist(B, 0, Rest, Level, DefTypes);
-        {Error,_} ->
-            {Error,L}
-    end;
-check_term_concatlist({AType,_} = A, ACnt, B, [H|T] = L, Level, DefTypes)
-  when AType =:= list orelse AType =:= list_optional ->
-    case check_term(A, [H], Level, DefTypes) of
-        ok ->
-            check_term_concatlist(A, ACnt+1, B, T, Level, DefTypes);
-        _ ->
-            check_term_concatlist(B, 0, L, Level, DefTypes)
-    end;
-check_term_concatlist({list_nil,_} = _A, 0, B, [_H|_T] = L, Level, DefTypes) ->
-    check_term_concatlist(B, 0, L, Level, DefTypes);
-check_term_concatlist({list_required,_} = A, 0, B, [H|T] = L, Level, DefTypes) ->
-    case check_term(A, [H], Level, DefTypes) of
-        ok ->
-            check_term_concatlist(B, 0, T, Level, DefTypes);
-        Error ->
-            {Error,L}
-    end;
-check_term_concatlist({list_required_and_repeatable,_} = A, ACnt, B, [H|T] = L, Level, DefTypes) ->
-    case check_term(A, [H], Level, DefTypes) of
-        ok ->
-            check_term_concatlist(A, ACnt+1, B, T, Level, DefTypes);
-        Error ->
-            if ACnt =/= 0 ->
-                    check_term_concatlist(B, 0, L, Level, DefTypes);
-               true ->
-                    {Error, L}
-            end
-    end;
-check_term_concatlist({AType,_}, _, _, [], _, _)
-  when AType =:= list orelse AType =:= list_optional ->
-    {ok,[]};
-check_term_concatlist({list_nil,_}, 0, _, [], _, _) ->
-    {ok,[]};
-check_term_concatlist({list_required,_}=Check, 0, _, [], _, _) ->
-    {?FAIL(Check),[]};
-check_term_concatlist({list_required_and_repeatable,_}=Check, ACnt, _, [], _, _) ->
-    if ACnt =/= 0 ->
-            {ok,[]};
+%% check_term_prim
+check_term_prim(1, 1, TypeDef, X, Level, Mod) ->
+    ok == check_term(TypeDef, X, Level, Mod);
+check_term_prim(0, 1, TypeDef, X, Level, Mod) ->
+    if X /= undefined ->
+            ok == check_term(TypeDef, X, Level, Mod);
        true ->
-            {?FAIL(Check),[]}
+            true
+    end;
+check_term_prim(0, 0, _TypeDef, X, _Level, _Mod) ->
+    X == undefined.
+
+
+% check_term_seq
+check_term_seq([], [], _Level, _Mod) ->
+    true;
+check_term_seq(_Args, [], _Level, _Mod) ->
+    false;
+check_term_seq([], _L, _Level, _Mod) ->
+    false;
+check_term_seq([H1|T1], [H2|T2], Level, Mod) ->
+    case check_term(H1, H2, Level, Mod) of
+        ok ->
+            check_term_seq(T1, T2, Level, Mod);
+        _ ->
+            false
     end.
 
-check_term_concatlist({concat,B1,B2}, 0, L, Level, DefTypes) ->
-    check_term_concatlist(B1, 0, B2, L, Level, DefTypes);
-check_term_concatlist({BType,_} = B, BCnt, [H|T] = L, Level, DefTypes)
-  when BType =:= list orelse BType =:= list_optional ->
-    case check_term(B, [H], Level, DefTypes) of
+
+%% check_term_list
+check_term_list(_Args, [], _Level, _Mod) ->
+    true;
+check_term_list(Args, [H|T], Level, Mod) ->
+    case check_term(Args, H, Level, Mod) of
         ok ->
-            check_term_concatlist(B, BCnt+1, T, Level, DefTypes);
+            check_term_list(Args, T, Level, Mod);
         _ ->
-            {ok,L}
-    end;
-check_term_concatlist({list_nil,_} = _B, 0, L, _Level, _DefTypes) ->
-    {ok,L};
-check_term_concatlist({list_required,_} = B, 0, [H|T] = L, Level, DefTypes) ->
-    case check_term(B, [H], Level, DefTypes) of
-        ok ->
-            {ok,T};
-        Error ->
-            {Error,L}
-    end;
-check_term_concatlist({list_required_and_repeatable,_} = B, BCnt, [H|T] = L, Level, DefTypes) ->
-    case check_term(B, [H], Level, DefTypes) of
-        ok ->
-            check_term_concatlist(B, BCnt+1, T, Level, DefTypes);
-        Error ->
-            if BCnt =/= 0 ->
-                    {ok,L};
-               true ->
-                    {Error, L}
-            end
-    end;
-check_term_concatlist({BType,_}, _, [], _, _)
-  when BType =:= list orelse BType =:= list_optional ->
-    {ok,[]};
-check_term_concatlist({list_nil,_}, 0, [], _, _) ->
-    {ok,[]};
-check_term_concatlist({list_required,_}=Check, 0, [], _, _) ->
-    {?FAIL(Check),[]};
-check_term_concatlist({list_required_and_repeatable,_}=Check, BCnt, [], _, _) ->
-    if BCnt =/= 0 ->
-            {ok,[]};
-       true ->
-            {?FAIL(Check),[]}
+            false
     end.
 
+
+%% check_term_range
+check_term_range(infinity, Max, X) ->
+    X =< Max;
+check_term_range(Min, infinity, X) ->
+    Min =< X;
+check_term_range(Min, Max, X) ->
+    Min =< X andalso X =< Max.
+
+
+%% check_term_predef
+check_term_predef(atom, X) ->
+    is_atom(X);
+check_term_predef(binary, X) ->
+    is_binary(X);
+check_term_predef(float, X) ->
+    is_float(X);
+check_term_predef(integer, X) ->
+    is_integer(X);
+check_term_predef(list, X) ->
+    is_list(X);
+check_term_predef(proplist, X) ->
+    case X of
+        ?P(Y) when is_list(Y) ->
+            is_proplist(Y);
+        _ ->
+            false
+    end;
+check_term_predef(string, X) ->
+    case X of
+        ?S(Y) when is_list(Y) ->
+            is_string(Y);
+        _ ->
+            false
+    end;
+check_term_predef(term, _X) ->
+    true;
+check_term_predef(tuple, X) ->
+    is_tuple(X);
+check_term_predef(void, _X) ->
+    true;
+check_term_predef({atom,Attrs}, X) ->
+    is_atom(X) andalso check_term_attrlist(atom,Attrs,X);
+check_term_predef({binary,Attrs}, X) ->
+    is_binary(X) andalso check_term_attrlist(binary,Attrs,X);
+check_term_predef({list,Attrs}, X) ->
+    is_list(X) andalso check_term_attrlist(list,Attrs,X);
+check_term_predef({proplist,Attrs}, X) ->
+    case X of
+        ?P(Y) when is_list(Y) ->
+            is_proplist(Y) andalso check_term_attrlist(proplist,Attrs,X);
+        _ ->
+            false
+    end;
+check_term_predef({string,Attrs}, X) ->
+    case X of
+        ?S(Y) when is_list(Y) ->
+            is_string(Y) andalso check_term_attrlist(string,Attrs,X);
+        _ ->
+            false
+    end;
+check_term_predef({term,Attrs}, X) ->
+    check_term_attrlist(term,Attrs,X);
+check_term_predef({tuple,Attrs}, X) ->
+    is_tuple(X) andalso check_term_attrlist(tuple,Attrs,X).
+
+%% check_term_attrlist
 check_term_attrlist(Type, Attrs, Val) ->
-    [ {Type,Attr,Val} || Attr <- Attrs, not check_term_attr(Type,Attr,Val) ].
+    [] == [ {Type,Attr,Val} || Attr <- Attrs, not check_term_attr(Type,Attr,Val) ].
 
+
+%% check_term_attr
 check_term_attr(Type,ascii,Val) ->
     isTypeAttr(Type,ascii) andalso is_ascii(Val);
 check_term_attr(Type,asciiprintable,Val) ->
@@ -470,14 +453,8 @@ check_term_attr(Type,nonundefined,Val) ->
 check_term_attr(_,_,_) ->
     false.
 
-locate(Type, Mod, X) ->
-    case lists:member(Type, contract_parser:preDefinedTypes()) of
-        true ->
-            {Type, X};
-        false ->
-            element(1, Mod:contract_type(Type))
-    end.
 
+%% is_string
 is_string(A) when is_atom(A) ->
     is_string(atom_to_list(A));
 is_string([H|T]) when is_integer(H), H < 256, H > -1 ->
@@ -488,11 +465,15 @@ is_string([]) -> true;
 is_string(<<>>) -> true;
 is_string(_)  -> false.
 
+
+%% is_proplist
 is_proplist([{_,_}|T]) ->
     is_proplist(T);
 is_proplist([]) -> true;
 is_proplist(_)  -> false.
 
+
+%% is_ascii
 is_ascii(A) when is_atom(A) ->
     is_ascii(atom_to_list(A));
 is_ascii([H|T]) when is_integer(H), H < 128, H > -1 ->
@@ -503,6 +484,8 @@ is_ascii([]) -> true;
 is_ascii(<<>>) -> true;
 is_ascii(_)  -> false.
 
+
+%% is_asciiprintable
 is_asciiprintable(A) when is_atom(A) ->
     is_asciiprintable(atom_to_list(A));
 is_asciiprintable([H|T]) when is_integer(H), H < 127, H > 31 ->
@@ -513,20 +496,25 @@ is_asciiprintable([]) -> true;
 is_asciiprintable(<<>>) -> true;
 is_asciiprintable(_)  -> false.
 
+
+%% is_nonempty
 is_nonempty('') -> false;
 is_nonempty([]) -> false;
 is_nonempty(<<>>) -> false;
 is_nonempty({}) -> false;
 is_nonempty(_) -> true.
 
+
+%% is_nonundefined
 is_nonundefined(undefined) -> false;
 is_nonundefined(_) -> true.
 
+
 %% @spec (contract_type_name_atom(), term(), contract_module_name_atom()) ->
 %%       yup | error_hints_term_only_human_readable_sorry()
-%% @doc Given a contract type name, a term to check against that contract
-%%      type, and a contract module name, verify the term against that
-%%      contract's type.
+%% @doc Given a contract type name, a term to check against that
+%% contract type, and a contract module name, verify the term against
+%% that contract's type.
 %%
 %% Example usage from the irc_plugin.con contract:
 %% <ul>
@@ -537,10 +525,11 @@ is_nonundefined(_) -> true.
 %% <li> contracts:checkType(joinEvent, {joins, {'#S', "nck"}, {'#S', foo_atom}}, irc_plugin). </li>
 %% </ul>
 %%
-%% Wow, this is a gawdawful-brute-force-don't-know-what-I'm-doing mess.
-%% But it works, in its brute-force way, as long as you don't try to
-%% have a computer parse the output in error cases.
+%% Wow, this is a gawdawful-brute-force-don't-know-what-I'm-doing
+%% mess.  But it works, in its brute-force way, as long as you don't
+%% try to have a computer parse the output in error cases.
 
+%% @TODO implementation needs updating for new primitives
 checkType(HumanType, Term, Mod) ->
     case (catch Mod:contract_type(HumanType)) of
         {'EXIT', {function_clause, _}} ->
@@ -596,8 +585,8 @@ checkType2({prim, HumanType} = Type, Term, Mod) ->
                     {badType, {type_wanted, Type, Term}}
             end
     end;
-checkType2({tuple, TupleTypes} = Type, Term, Mod)
-  when length(TupleTypes) /= size(Term); not is_tuple(Term) ->
+checkType2({tuple, TupleTypes} = _Type, Term, _Mod)
+  when length(TupleTypes) =/= size(Term); not is_tuple(Term) ->
     {badTupleSize, Term, expected, length(TupleTypes)};
 checkType2({tuple, TupleTypes} = Type, Term, Mod) ->
     case isType(Type, Term, Mod) of
@@ -639,12 +628,7 @@ bool_fudge(L) ->
 %% checkType_investigate_deeper({prim, _} = Type, Term, Mod) ->
 %%     INFINITE LOOP, don't do this....
 %%     checkType2(Type, Term, Mod);
-checkType_investigate_deeper({ListType, Type}, TermL, Mod)
-  when ListType == list_required_and_repeatable;
-       ListType == list;
-       ListType == list_optional;
-       ListType == list_nil;
-       ListType == list_required ->
+checkType_investigate_deeper({list, _Min, _Max, Type}, TermL, Mod) ->
     if is_list(TermL) ->
             bad_zip(lists:duplicate(length(TermL), Type), TermL, Mod);
        true ->

@@ -2,7 +2,12 @@
 # $Id: erl_make.mk 107291 2008-07-14 15:06:21Z norton $
 #
 
+# force /bin/(ba)sh so we can take advantage of the pipefail feature
+export SHELL := /bin/sh -e -o pipefail
+
 ######################################################################
+
+PLUGINS ?=
 
 ASNS ?=
 
@@ -56,8 +61,8 @@ OTPVERSION ?= $(patsubst erlang%,%,$(ERLDIRNAME3))
 
 ifndef USE_SPECS
 # our type specs rely on features / bug fixes in dialyzer that are
-# only available in R12B-3 upwards
-# If we're using R12B, it's at least -5, so don't worry here until R13B is out.
+# only available in R12B-3 upwards.  If we're using R12B, it's at
+# least -5, so don't worry here until R13B is out.
 ifeq ($(findstring R12B, $(OTPVERSION)),)
 USE_SPECS=false
 else
@@ -85,7 +90,7 @@ ERL_FLAGS += -W
 ERL_COMPILE_FLAGS += $(INCLUDE) -pz $(EBIN) $(DEP_EBINS) $(ERL_FLAGS_Top)
 ERL_COMPILE_FLAGS += $(shell if [ "$(USE_SPECS)" = "true" ] ; then echo "-Duse_specs"; fi )
 
-TESTONLY_ERL_COMPILE_FLAGS := $(ERL_COMPILE_FLAGS) -I $(EUNITDIRNAME)/include +warn_obsolete_guard +debug_info
+TESTONLY_ERL_COMPILE_FLAGS := $(ERL_COMPILE_FLAGS) -I $(EUNITDIRNAME)/include +nowarn_unused_import +warn_obsolete_guard +debug_info $(DEBUG) 
 
 ## now add DEBUG after TESTONLY has been constructed
 ERL_COMPILE_FLAGS += $(DEBUG)
@@ -93,6 +98,10 @@ ERL_COMPILE_FLAGS += $(DEBUG)
 EMULATOR = beam
 
 ######################################################################
+
+PLUGIN_FILES = $(PLUGINS:%=%.con) $(PLUGINS:%=%.erl)
+TARGET_PLUGINS = $(PLUGINS:%=$(EBIN)/%.huc)
+
 ASN_FILES = $(ASNS:%=%.asn)
 TARGET_ASNS = $(ASNS:%=$(EBIN)/%.$(EMULATOR))
 
@@ -133,13 +142,16 @@ TARGET_DQUICKTESTS = $(QUICKTESTS:%=$(QUICKTEST_DIR)/%.d)
 
 ###################################
 # EBIN
+$(EBIN)/%.huc: %.erl %.con
+	$(ERLC) $(ERL_FLAGS) $(ERL_FLAGS_SE) $(ERL_COMPILE_FLAGS) -o $(EBIN) $<
+
 $(EBIN)/%.$(EMULATOR): %.asn
 	$(ERLC) $(ERL_FLAGS) $(ERL_FLAGS_SE) $(ERL_COMPILE_FLAGS) -o $(EBIN) $<
 
 $(EBIN)/%.$(EMULATOR): %.erl
 	$(ERLC) $(ERL_FLAGS) $(ERL_FLAGS_SE) $(ERL_COMPILE_FLAGS) -o $(EBIN) $<
 
-$(EBIN)/%.P: %.erl
+$(EBIN)/%.P: %.erl | $(TARGET_PLUGINS)
 	-@set -e; rm -f $@; \
 	($(ERLC) $(ERL_FLAGS) $(ERL_COMPILE_FLAGS) -o $(EBIN) \
 		-W0 -P $< \
@@ -178,7 +190,6 @@ $(TEST_DIR)/%.P: $(TEST_DIR)/%.erl
 	($(ERLC) $(ERL_FLAGS) $(ERL_COMPILE_FLAGS) -pz $(TEST_DIR) -o $(TEST_DIR) \
 		-W0 -P $< \
 		> /dev/null 2>&1 || touch $@)
-	touch $@
 
 $(TEST_DIR)/%.d: $(TEST_DIR)/%.P
 	-@set -e; rm -f $@; \
@@ -221,15 +232,18 @@ $(QUICKTEST_DIR)/%.d: $(QUICKTEST_DIR)/%.P
 		xargs echo $@ $(@:%.d=%.$(EMULATOR)) : > $@ || touch $@)
 
 ######################################################################
-# LD_LIBRARY_PATH
+# LD_LIBRARY_PATH and PATH
 
 LD_LIBRARY_PATH:=$(DEP_LIBS):$(ERLDIRNAME2)/openssl/lib:$(LD_LIBRARY_PATH)
 export LD_LIBRARY_PATH
 
+PATH:=$(ERLDIRNAME2)/bin:$(PATH)
+export PATH
+
 ######################################################################
 # ALL1
 ALL1 =
-ALL1 += $(TARGET_ASNS)
+ALL1 += $(TARGET_PLUGINS) $(TARGET_ASNS)
 
 # ALL2
 ALL2 =

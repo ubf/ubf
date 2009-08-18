@@ -30,61 +30,69 @@ ubf(Name,Mod) ->
 type(Type,Mod) ->
     io_lib:format("\t\t~s\n", [typeref(Type,Mod)]).
 
+%% alt
+typeref({alt,Type1,Type2},Mod) ->
+    io_lib:format("~s | ~s", [typeref(Type1,Mod), typeref(Type2,Mod)]);
+%% concat
+typeref({concat,Type1,Type2},Mod) ->
+    io_lib:format("~s ++ ~s", [typeref(Type1,Mod), typeref(Type2,Mod)]);
+%% prim
+typeref({prim,Min,Max,Tag},Mod) ->
+    case Tag of
+        {predef,_} ->
+            PrimTag = typeref(Tag, Mod),
+            case {Min,Max} of
+                {1,1} ->
+                    io_lib:format("~s", [PrimTag]);
+                {0,1} ->
+                    io_lib:format("~s?", [PrimTag]);
+                {0,0} ->
+                    io_lib:format("~s{0}", [PrimTag])
+            end;
+        _ ->
+            case {Min,Max} of
+                {1,1} ->
+                    io_lib:format("~p()", [Tag]);
+                {0,1} ->
+                    io_lib:format("~p()?", [Tag]);
+                {0,0} ->
+                    io_lib:format("~p(){0}", [Tag])
+            end
+    end;
+%% tuple
 typeref({tuple,Elements},Mod) ->
     io_lib:format("{\"$T\" : [ ~s ]}", [join([typeref(Element,Mod) || Element <- Elements], ", ")]);
+%% record
 typeref({record,RecName,Elements},Mod) when is_atom(RecName) ->
     Values = tl(tl(Elements)),
     RecordKey = {RecName,length(Elements)-2},
     Fields = Mod:contract_record(RecordKey),
     io_lib:format("{\"$R\" : \"~p\", ~s}",
                   [RecName, join([ io_lib:format("\"~p\" : ~s", [Field, typeref(Element,Mod)])
-                                || {Field,Element} <- lists:zip(Fields,Values) ], ", ")]);
+                                   || {Field,Element} <- lists:zip(Fields,Values) ], ", ")]);
 typeref({record_ext,RecName,_,_Elements},_Mod) when is_atom(RecName) ->
     erlang:exit(fatal);
-typeref({prim,integer},_Mod) ->
-    "integer()";
-typeref({prim,float},_Mod) ->
-    "float()";
-typeref({prim,atom},_Mod) ->
-    "atom()";
-typeref({prim,{atom,Attrs}},_Mod) ->
-    io_lib:format("atom(~s)", [join([ atom_to_list(Attr) || Attr <- Attrs ], ",")]);
-typeref({prim,string},_Mod) ->
-    "string()";
-typeref({prim,{string,Attrs}},_Mod) ->
-    io_lib:format("string(~s)", [join([ atom_to_list(Attr) || Attr <- Attrs ], ",")]);
-typeref({prim,proplist},_Mod) ->
-    "proplist()";
-typeref({prim,{proplist,Attrs}},_Mod) ->
-    io_lib:format("proplist(~s)", [join([ atom_to_list(Attr) || Attr <- Attrs ], ",")]);
-typeref({prim,binary},_Mod) ->
-    "binary()";
-typeref({prim,{binary,Attrs}},_Mod) ->
-    io_lib:format("binary(~s)", [join([ atom_to_list(Attr) || Attr <- Attrs ], ",")]);
-typeref({prim,tuple},_Mod) ->
-    "tuple()";
-typeref({prim,{tuple,Attrs}},_Mod) ->
-    io_lib:format("tuple(~s)", [join([ atom_to_list(Attr) || Attr <- Attrs ], ",")]);
-typeref({prim,term},_Mod) ->
-    "term()";
-typeref({prim,{term,Attrs}},_Mod) ->
-    io_lib:format("term(~s)", [join([ atom_to_list(Attr) || Attr <- Attrs ], ",")]);
-typeref({prim,void},_Mod) ->
-    erlang:exit(fatal);
-typeref({prim,Tag},_Mod) ->
-    io_lib:format("~p()", [Tag]);
-typeref({prim_optional,Tag},_Mod) ->
-    io_lib:format("~p()?", [Tag]);
-typeref({prim_nil,Tag},_Mod) ->
-    io_lib:format("~p(){0}", [Tag]);
-typeref({prim_required,Tag},_Mod) ->
-    io_lib:format("~p(){1}", [Tag]);
-typeref({integer,Value},_Mod) ->
-    io_lib:format("~p", [Value]);
-typeref({float,Value},_Mod) ->
-    io_lib:format("~p", [Value]);
+%% list
+typeref({list,0,infinity,Element},Mod) ->
+    io_lib:format("[~s]", [typeref(Element,Mod)]);
+typeref({list,0,1,Element},Mod) ->
+    io_lib:format("[~s]?", [typeref(Element,Mod)]);
+typeref({list,1,infinity,Element},Mod) ->
+    io_lib:format("[~s]+", [typeref(Element,Mod)]);
+typeref({list,M,M,Element},Mod) ->
+    io_lib:format("[~s]{~p}", [typeref(Element,Mod), M]);
+typeref({list,M,infinity,Element},Mod) ->
+    io_lib:format("[~s]{~p,}", [typeref(Element,Mod), M]);
+typeref({list,M,N,Element},Mod) ->
+    io_lib:format("[~s]{~p,~p}", [typeref(Element,Mod), M, N]);
+%% range
+typeref({range,infinity,Hi},_Mod) ->
+    io_lib:format("..~p", [Hi]);
+typeref({range,Lo,infinity},_Mod) ->
+    io_lib:format("~p..", [Lo]);
 typeref({range,Lo,Hi},_Mod) ->
     io_lib:format("~p..~p", [Lo, Hi]);
+%% atom
 typeref({atom,true},_Mod) ->
     "true";
 typeref({atom,false},_Mod) ->
@@ -93,26 +101,55 @@ typeref({atom,undefined},_Mod) ->
     "null";
 typeref({atom,Value},_Mod) ->
     io_lib:format("{\"$A\" : \"~p\"}", [Value]);
-typeref({string,Value},_Mod) ->
-    io_lib:format("{\"$S\" : \"~p\"}", [Value]);
-typeref({proplist,Value},Mod) ->
-    io_lib:format("{\"$P\" : \"~p\"}", [typeref(Value,Mod)]);
+%% binary
 typeref({binary,Value},_Mod) ->
     io_lib:format("\"~p\"", [Value]);
-typeref({alt,Type1,Type2},Mod) ->
-    io_lib:format("~s | ~s", [typeref(Type1,Mod), typeref(Type2,Mod)]);
-typeref({concat,Type1,Type2},Mod) ->
-    io_lib:format("~s++~s", [typeref(Type1,Mod), typeref(Type2,Mod)]);
-typeref({list_optional,Element},Mod) ->
-    io_lib:format("[~s]?", [typeref(Element,Mod)]);
-typeref({list_nil,Element},Mod) ->
-    io_lib:format("[~s]{0}", [typeref(Element,Mod)]);
-typeref({list_required,Element},Mod) ->
-    io_lib:format("[~s]{1}", [typeref(Element,Mod)]);
-typeref({list,Element},Mod) ->
-    io_lib:format("[~s]", [typeref(Element,Mod)]);
-typeref({list_required_and_repeatable,Element},Mod) ->
-    io_lib:format("[~s]+", [typeref(Element,Mod)]);
+%% float
+typeref({float,Value},_Mod) ->
+    io_lib:format("~p", [Value]);
+%% integer
+typeref({integer,Value},_Mod) ->
+    io_lib:format("~p", [Value]);
+%% string
+typeref({string,Value},_Mod) ->
+    io_lib:format("{\"$S\" : \"~p\"}", [Value]);
+%% predef
+typeref({predef,atom},_Mod) ->
+    "atom()";
+typeref({predef,binary},_Mod) ->
+    "binary()";
+typeref({predef,float},_Mod) ->
+    "float()";
+typeref({predef,integer},_Mod) ->
+    "integer()";
+typeref({predef,list},_Mod) ->
+    "list()";
+typeref({predef,proplist},_Mod) ->
+    "proplist()";
+typeref({predef,string},_Mod) ->
+    "string()";
+typeref({predef,term},_Mod) ->
+    "term()";
+typeref({predef,tuple},_Mod) ->
+    "tuple()";
+typeref({predef,void},_Mod) ->
+    erlang:exit(fatal);
+%% predef with attributes
+typeref({predef,{atom,Attrs}},_Mod) ->
+    io_lib:format("atom(~s)", [join([ atom_to_list(Attr) || Attr <- Attrs ], ",")]);
+typeref({predef,{binary,Attrs}},_Mod) ->
+    io_lib:format("binary(~s)", [join([ atom_to_list(Attr) || Attr <- Attrs ], ",")]);
+typeref({predef,{list,Attrs}},_Mod) ->
+    io_lib:format("list(~s)", [join([ atom_to_list(Attr) || Attr <- Attrs ], ",")]);
+typeref({predef,{proplist,Attrs}},_Mod) ->
+    io_lib:format("proplist(~s)", [join([ atom_to_list(Attr) || Attr <- Attrs ], ",")]);
+typeref({predef,{string,Attrs}},_Mod) ->
+    io_lib:format("string(~s)", [join([ atom_to_list(Attr) || Attr <- Attrs ], ",")]);
+typeref({predef,{term,Attrs}},_Mod) ->
+    io_lib:format("term(~s)", [join([ atom_to_list(Attr) || Attr <- Attrs ], ",")]);
+typeref({predef,{tuple,Attrs}},_Mod) ->
+    io_lib:format("tuple(~s)", [join([ atom_to_list(Attr) || Attr <- Attrs ], ",")]);
+%% otherwise
 typeref(Type, _Mod) ->
     io_lib:format("~p()", [Type]).
 
@@ -138,91 +175,116 @@ ubf_contract(Mod) ->
           , "//   - A() means replace with \"A type reference\""
           , "//   - A() | B() means \"A() or B()\""
           , "//   - A()? means \"optional A()\""
-          , "//   - A()++B() means \"list A() concatenate list B()"
+          , "//   - A() ++ B() means \"list A() concatenate list B()"
           , "//   - A(Attrs) means \"A() subject to the comma-delimited type attributes"
           , "//"
-          , ""
-          , "integer()\n\t\tint"
-          , "integer()?\n\t\tint | null"
-          , ""
-          , "float()\n\t\tint frac"
-          , "float()?\n\t\tint frac | null"
-          , ""
-          , "integer()..integer()\n\t\tint"
-          , ""
-          , "atom()\n\t\t{\"$A\" : string }"
-          , "atom()?\n\t\t{\"$A\" : string } | null"
-          , "atom(AtomAttrs)\n\t\t{\"$A\" : string }"
-          , "atom(AtomAttrs)?\n\t\t{\"$A\" : string } | null"
-          , ""
-          , "string()\n\t\t{\"$S\" : string }"
-          , "string()?\n\t\t{\"$S\" : string } | null"
-          , "string(StringAttrs)\n\t\t{\"$S\" : string }"
-          , "string(StringAttrs)?\n\t\t{\"$S\" : string } | null"
-          , ""
-          , "binary()\n\t\tstring"
-          , "binary()?\n\t\tstring | null"
-          , "binary(BinaryAttrs)\n\t\tstring"
-          , "binary(BinaryAttrs)?\n\t\tstring | null"
-          , ""
-          , "proplist()\n\t\tobject"
-          , "proplist()?\n\t\tobject | undefined"
-          , "proplist(PropListAttrs)\n\t\tobject"
-          , "proplist(PropListAttrs)?\n\t\tobject | undefined"
-          , ""
-          , "tuple()\n\t\t{\"$T\" : array }"
-          , "tuple()?\n\t\t{\"$T\" : array } | null"
-          , "tuple(TupleAttrs)\n\t\t{\"$T\" : array }"
-          , "tuple(TupleAttrs)?\n\t\t{\"$T\" : array } | null"
-          , ""
-          , "record()\n\t\t{\"$R\" : string, pair ... }"
-          , "record()?\n\t\t{\"$R\" : string, pair ... } | null"
-          , ""
-          , "list()\n\t\tarray"
-          , "list()?\n\t\tarray | null"
-          , "list(){0}\n\t\t[]"
-          , "list(){1}\n\t\t[ value ]"
-          , "list()+\n\t\t[ elements ]"
-          , "list()++list()\n\t\tarray"
-          , ""
-          , "term()\n\t\tvalue"
-          , "term()?\n\t\tvalue | null"
-          , "term(TermAttrs)\n\t\tvalue"
-          , "term(TermAttrs)?\n\t\tvalue | null"
-          , ""
-          , "void()\n\t\t /* no result is returned */"
-          , "void()?\n\t\t /* no result is returned */ | null"
           , ""
           , "true\n\t\ttrue"
           , "false\n\t\tfalse"
           , "undefined\n\t\tnull"
           , ""
+          , "atom()\n\t\t{\"$A\" : string }"
+          , "atom()?\n\t\t{\"$A\" : string } | null"
+          , ""
+          , "binary()\n\t\tstring"
+          , "binary()?\n\t\tstring | null"
+          , ""
+          , "float()\n\t\tint frac"
+          , "float()?\n\t\tint frac | null"
+          , ""
+          , "integer()\n\t\tint"
+          , "integer()?\n\t\tint | null"
+          , ""
+          , "list()\n\t\tarray"
+          , "list()?\n\t\tarray | null"
+          , ""
+          , "proplist()\n\t\tobject"
+          , "proplist()?\n\t\tobject | undefined"
+          , ""
+          , "string()\n\t\t{\"$S\" : string }"
+          , "string()?\n\t\t{\"$S\" : string } | null"
+          , ""
+          , "term()\n\t\tvalue"
+          , "term()?\n\t\tvalue | null"
+          , ""
+          , "tuple()\n\t\t{\"$T\" : array }"
+          , "tuple()?\n\t\t{\"$T\" : array } | null"
+          , ""
+          , "void()\n\t\t /* no result is returned */"
+          , "void()?\n\t\t /* no result is returned */ | null"
+          , ""
           , "// --------------------"
           , "// type attributes"
           , "//"
+          , ""
+          , "atom(AtomAttrs)\n\t\t{\"$A\" : string }"
+          , "atom(AtomAttrs)?\n\t\t{\"$A\" : string } | null"
+          , ""
+          , "binary(BinaryAttrs)\n\t\tstring"
+          , "binary(BinaryAttrs)?\n\t\tstring | null"
+          , ""
+          , "list(ListAttrs)\n\t\tarray"
+          , "list(ListAttrs)?\n\t\tarray | null"
+          , ""
+          , "proplist(PropListAttrs)\n\t\tobject"
+          , "proplist(PropListAttrs)?\n\t\tobject | undefined"
+          , ""
+          , "string(StringAttrs)\n\t\t{\"$S\" : string }"
+          , "string(StringAttrs)?\n\t\t{\"$S\" : string } | null"
+          , ""
+          , "tuple(TupleAttrs)\n\t\t{\"$T\" : array }"
+          , "tuple(TupleAttrs)?\n\t\t{\"$T\" : array } | null"
+          , ""
+          , "term(TermAttrs)\n\t\tvalue"
+          , "term(TermAttrs)?\n\t\tvalue | null"
           , ""
           , "AtomAttrs"
           , "\t ascii | asciiprintable"
           , "\t nonempty"
           , "\t nonundefined"
           , ""
-          , "StringAttrs"
+          , "BinaryAttrs"
           , "\t ascii | asciiprintable"
           , "\t nonempty"
           , ""
-          , "BinaryAttrs"
-          , "\t ascii | asciiprintable"
+          , "ListAttrs"
           , "\t nonempty"
           , ""
           , "PropListAttrs"
           , "\t nonempty"
           , ""
-          , "TupleAttrs"
+          , "StringAttrs"
+          , "\t ascii | asciiprintable"
           , "\t nonempty"
           , ""
           , "TermAttrs"
           , "\t nonempty"
           , "\t nonundefined"
+          , ""
+          , "TupleAttrs"
+          , "\t nonempty"
+          , ""
+          , "// --------------------"
+          , "// user-defined attributes"
+          , "//"
+          , ""
+          , "{type1() ...}\n\t\t{\"$T\" : array }"
+          , "{type1() ...}?\n\t\t{\"$T\" : array } | null"
+          , ""
+          , "record()\n\t\t{\"$R\" : string, pair ... }"
+          , "record()?\n\t\t{\"$R\" : string, pair ... } | null"
+          , ""
+          , "[type()]\n\t\tarray of type()"
+          , "[type()]?\n\t\tarray of length 0 or length 1 of type()"
+          , "[type()]+\n\t\tarray of length greater than 0 of type()"
+          , "[type()]{0}\n\t\tempty array"
+          , "[type()]{M}\n\t\tarray of length M of type()"
+          , "[type()]{M,}\n\t\tarray of minimum length M of type()"
+          , "[type()]{M,N}\n\t\tarray of minimum length M and maximum length N of type()"
+          , ""
+          , "integer()..integer()\n\t\tint "
+          , "..integer()\n\t\tint"
+          , "integer()..\n\t\tint"
           , ""
           , "// --------------------"
           , "// leaf types"
@@ -243,7 +305,7 @@ ubf_contract(Mod) ->
                    case get_type(Input,true,Mod) of
                        {_Input, {tuple, [{atom, Atom}|Elements1]}, _} ->
                            {Atom
-                            , io_lib:format("[ ~s ]", [join([typeref(E,Mod) || E <- Elements1, E =/= {prim,authinfo}], ", ")])
+                            , io_lib:format("[ ~s ]", [join([typeref(E,Mod) || E <- Elements1, E =/= {prim,1,1,authinfo}], ", ")])
                            };
                        {_Input, {atom, Atom}, _} ->
                            {Atom
@@ -277,7 +339,7 @@ ubf_contract(Mod) ->
                      , " }"
                     ], "\n")
            end
-           || {{prim,Input}, {prim,Output}} <- Mod:contract_anystate() ],
+           || {{prim,1,1,Input}, {prim,1,1,Output}} <- Mod:contract_anystate() ],
 
     X5 = [""
           , ""

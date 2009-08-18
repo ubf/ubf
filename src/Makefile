@@ -108,9 +108,7 @@ ${TESTPLUGINS:%=$(TEST_DIR)/%.$(EMULATOR)}: \
 ${EUNITTESTPLUGINS:%=$(EUNITTEST_DIR)/%.$(EMULATOR)}: \
 	${TESTPLUGINS:%=$(TEST_DIR)/%.con}
 
-${PLUGINS:%=$(EBIN)/%.$(EMULATOR)} \
-${TESTPLUGINS:%=$(TEST_DIR)/%.$(EMULATOR)} \
-${EUNITTESTPLUGINS:%=$(EUNITTEST_DIR)/%.$(EMULATOR)}: \
+$(TARGET_PLUGINS): \
 	$(EBIN)/contracts.$(EMULATOR) \
 	$(EBIN)/contract_parser.$(EMULATOR) \
 	$(EBIN)/contract_lex.$(EMULATOR) \

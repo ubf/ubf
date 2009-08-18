@@ -22,12 +22,12 @@ Rules.
                                     true -> {Atom,YYline};
                                     false -> {atom,YYline,Atom}
                                 end}.
-VSN                :     {token,{vsn, YYline}}.
-TYPES              :     {token,{typeKwd,YYline}}.
-STATE              :     {token,{state,YYline}}.
-ANYSTATE           :     {token,{anystate,YYline}}.
-EVENT              :     {token,{event,YYline}}.
-NAME               :     {token,{name,YYline}}.
+NAME               :     {token,{namekwd,YYline}}.
+VSN                :     {token,{vsnkwd, YYline}}.
+TYPES              :     {token,{typekwd,YYline}}.
+STATE              :     {token,{statekwd,YYline}}.
+ANYSTATE           :     {token,{anystatekwd,YYline}}.
+EVENT              :     {token,{eventkwd,YYline}}.
 <<"[^"]*">>        :     B = list_to_binary(lists:sublist(YYtext, 4, length(YYtext) - 6)),
                          {token,{binary,YYline,B}}.
 "[^"]*"            :     S = lists:sublist(YYtext, 2, length(YYtext) - 2),

@@ -7,7 +7,7 @@
 -include("ubf_impl.hrl").
 
 -export([parse_transform/2,
-         make/0, make_lex/0, make_yecc/0, outfileExtension/0, preDefinedTypes/0, preDefinedTypesWithAttrs/0,
+         make/0, make_lex/0, make_yecc/0, outfileExtension/0, preDefinedTypes/0, preDefinedTypesWithoutAttrs/0, preDefinedTypesWithAttrs/0,
          tags/1, tags/2, file/1,
          parse_transform_contract/2
         ]).
@@ -15,11 +15,11 @@
 -import(lists, [filter/2, map/2, member/2, foldl/3]).
 
 parse_transform(In, Opts) ->
-    %% io:format("In:~p~n   Opts: ~p~n",[In, Opts]),
+    %% DEBUG io:format("In:~p~n   Opts: ~p~n",[In, Opts]),
     Imports = [X||{attribute,_,add_types,X} <- In],
     Out = case [X||{attribute,_,add_contract,X} <- In] of
               [File] ->
-                  %% io:format("Contract: ~p ~p~n", [File, Imports]),
+                  %% DEBUG io:format("Contract: ~p ~p~n", [File, Imports]),
                   case file1(File ++ infileExtension(), Imports) of
                       {ok, Contract, Header} ->
                           HeaderFile =
@@ -36,21 +36,21 @@ parse_transform(In, Opts) ->
 %%%
 \n"]
                               ++ ["-ifndef('", File ++ ".huc", "').\n"]
-                              ++ ["-define('", File ++ ".huc", "', true).\n"]
-                              ++ [Header|"\n"]
-                              ++ ["-endif.\n"],
-                          %% io:format("Contract Header written: ~p~n", [HeaderFile]),
-                          ok = file:write_file(HeaderFile, TermHUC),
-                          %% io:format("Contract added:~n"),
-                          parse_transform_contract(In, Contract);
-                      {error, Why} ->
-                          io:format("Error in contract:~p~n", [Why]),
-                          exit(error)
-                  end;
-              [] ->
-                  In
-          end,
-    Out.
+                               ++ ["-define('", File ++ ".huc", "', true).\n"]
+                               ++ [Header|"\n"]
+                               ++ ["-endif.\n"],
+                          %% DEBUG io:format("Contract Header written: ~p~n", [HeaderFile]),
+                               ok = file:write_file(HeaderFile, TermHUC),
+                          %% DEBUG io:format("Contract added:~n"),
+                               parse_transform_contract(In, Contract);
+                               {error, Why} ->
+                                      io:format("Error in contract:~p~n", [Why]),
+                                      exit(error)
+                              end;
+                               [] ->
+                                      In
+                              end,
+                               Out.
 
 parse_transform_contract(In, Contract) ->
     {Export, Fns} = make_code(Contract),
@@ -161,7 +161,7 @@ outfileHUCExtension() -> ".huc".  %% hrl UBF contract records
 file(F) ->
     case {infileExtension(), filename:extension(F)} of
         {X, X} ->
-            %% io:format("Parsing ~s~n", [F]),
+            %% DEBUG io:format("Parsing ~s~n", [F]),
             case file1(F) of
                 {ok, Contract, _Header} ->
                     %% contract - buc
@@ -254,7 +254,10 @@ tags(P1, Imports) ->
             end
     end.
 
-preDefinedTypes() -> [atom, binary, float, integer, proplist, string, term, tuple, void] ++ preDefinedTypesWithAttrs().
+preDefinedTypes() -> preDefinedTypesWithoutAttrs() ++ preDefinedTypesWithAttrs().
+
+preDefinedTypesWithoutAttrs() ->
+    [atom, binary, float, integer, list, proplist, string, term, tuple, void].
 
 preDefinedTypesWithAttrs() ->
     [
@@ -266,6 +269,8 @@ preDefinedTypesWithAttrs() ->
      %% binary
      , {binary,[ascii]}, {binary,[asciiprintable]}, {binary,[nonempty]}
      , {binary,[ascii,nonempty]}, {binary,[asciiprintable,nonempty]}
+     %% list
+     , {list,[nonempty]}
      %% proplist
      , {proplist,[nonempty]}
      %% string
@@ -325,9 +330,9 @@ pass3(C1, ImportTypes) ->
     _Vsn = C1#contract.vsn,
     AnyState = C1#contract.anystate,
 
-    %% io:format("Types1=~p~n",[Types1]),
-    DefinedTypes1 = map(fun({I,_, _}) -> I end, Types1) ++ preDefinedTypes(),
-    %% io:format("Defined types1=~p~n",[DefinedTypes1]),
+    %% DEBUG io:format("Types1=~p~n",[Types1]),
+    DefinedTypes1 = [ I || {I,_,_} <- Types1 ] ++ [ {predef, I} || I <- preDefinedTypes() ],
+    %% DEBUG io:format("Defined types1=~p~n",[DefinedTypes1]),
     case duplicates(DefinedTypes1, []) of
         [] -> true;
         L1 -> exit({duplicated_types, L1})
@@ -335,32 +340,32 @@ pass3(C1, ImportTypes) ->
 
     C2 = C1#contract{types=lists:usort(Types1 ++ ImportTypes)},
     Types2 = C2#contract.types,
-    %% io:format("Types2=~p~n",[Types2]),
-    DefinedTypes2 = map(fun({I,_, _}) -> I end, Types2) ++ preDefinedTypes(),
-    %% io:format("Defined types2=~p~n",[DefinedTypes2]),
+    %% DEBUG io:format("Types2=~p~n",[Types2]),
+    DefinedTypes2 = [ I || {I,_,_} <- Types2 ] ++ [ {predef, I} || I <- preDefinedTypes() ],
+    %% DEBUG io:format("Defined types2=~p~n",[DefinedTypes2]),
     case duplicates(DefinedTypes2, []) of
         [] -> true;
         L2 -> exit({duplicated_import_types, L2})
     end,
 
-    %% io:format("Transitions=~p~n",[Transitions]),
+    %% DEBUG io:format("Transitions=~p~n",[Transitions]),
     UsedTypes = extract_prims({Types2,Transitions,AnyState}, []),
     MissingTypes = UsedTypes -- DefinedTypes2,
-    %% io:format("Used types=~p~n",[UsedTypes]),
+    %% DEBUG io:format("Used types=~p~n",[UsedTypes]),
     case MissingTypes of
         [] ->
             DefinedStates = [S||{S,_} <- Transitions] ++ [stop],
-            %% io:format("defined states=~p~n",[DefinedStates]),
+            %% DEBUG io:format("defined states=~p~n",[DefinedStates]),
             case duplicates(DefinedStates, []) of
                 [] -> true;
                 L3 -> exit({duplicated_states, L3})
             end,
-            %% io:format("Transitions=~p~n",[Transitions]),
+            %% DEBUG io:format("Transitions=~p~n",[Transitions]),
             UsedStates0 = [S||{_,Rules} <- Transitions,
                               {input,_,Out} <- Rules,
                               {output,_,S} <- Out],
             UsedStates = remove_duplicates(UsedStates0),
-            %% io:format("Used States=~p~n",[UsedStates]),
+            %% DEBUG io:format("Used States=~p~n",[UsedStates]),
             MissingStates = filter(fun(I) ->
                                            not member(I, DefinedStates) end,
                                    UsedStates),
@@ -380,13 +385,13 @@ pass4(C) ->
         [] -> true;
         L1 -> exit({duplicated_records, L1})
     end,
-    %% io:format("Types=~p~nRecords=~p~nRecordExts=~p~n",[Types,Records,RecordExts]),
+    %% DEBUG io:format("Types=~p~nRecords=~p~nRecordExts=~p~n",[Types,Records,RecordExts]),
     {Records,RecordExts}.
 
 pass5(C) ->
     Transitions = C#contract.transitions,
     AnyState = C#contract.anystate,
-    %% io:format("Types=~p~n",[Types]),
+    %% DEBUG io:format("Types=~p~n",[Types]),
     UsedTypes = extract_prims({Transitions,AnyState}, []),
     pass5(C, UsedTypes, []).
 
@@ -403,7 +408,7 @@ pass5(C, [H|T], L) ->
 pass6(C) ->
     Transitions = C#contract.transitions,
     AnyState = C#contract.anystate,
-    %% io:format("Types=~p~n",[Types]),
+    %% DEBUG io:format("Types=~p~n",[Types]),
     RootUsedTypes = extract_prims({Transitions,AnyState}, []),
     pass6(C, RootUsedTypes, RootUsedTypes, []).
 
@@ -427,14 +432,10 @@ duplicates([H|T], L) ->
 duplicates([], L) ->
     L.
 
-extract_prims({P, X}, L)
-  when P =:= prim orelse
-       P =:= prim_optional orelse
-       P =:= prim_nil orelse
-       P =:= prim_required ->
+extract_prims({prim, _Min, _Max, X}, L) ->
     case member(X, L) of
-        true  -> L;
-        false -> [X|L]
+        false -> [X|L];
+        true  -> L
     end;
 extract_prims(T, L) when is_tuple(T) ->
     foldl(fun extract_prims/2, L, tuple_to_list(T));
@@ -483,11 +484,11 @@ handle(Stream, LineNo, L, NErrors) ->
 handle1({ok, Toks, Next}, Stream, L, Nerrs) ->
     case contract_yecc:parse(Toks) of
         {ok, Parse} ->
-            %% io:format("Parse=~p~n",[Parse]),
+            %% DEBUG io:format("Parse=~p~n",[Parse]),
             handle(Stream, Next, [Parse|L], Nerrs);
         {error, {Line, Mod, What}} ->
             Str = apply(Mod, format_error, [What]),
-            %% io:format("Toks=~p~n",[Toks]),
+            %% DEBUG io:format("Toks=~p~n",[Toks]),
             io:format("** ~w ~s~n", [Line, Str]),
             %% handle(Stream, Next, L, Nerrs+1);
             {error, 1};
