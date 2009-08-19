@@ -109,7 +109,7 @@ ${EUNITTESTPLUGINS:%=$(EUNITTEST_DIR)/%.$(EMULATOR)}: \
 	${TESTPLUGINS:%=$(TEST_DIR)/%.con}
 
 $(TARGET_PLUGINS): \
-	$(EBIN)/contracts.$(EMULATOR) \
+	$(PRIV_DIR)/leex.$(EMULATOR) \
 	$(EBIN)/contract_parser.$(EMULATOR) \
 	$(EBIN)/contract_lex.$(EMULATOR) \
 	$(EBIN)/contract_yecc.$(EMULATOR)

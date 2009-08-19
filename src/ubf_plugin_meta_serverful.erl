@@ -14,7 +14,7 @@
 -import(lists, [map/2]).
 
 -compile({parse_transform,contract_parser}).
--add_contract("ubf_plugin_meta_server").
+-add_contract("ubf_plugin_meta_serverful").
 
 -include("ubf.hrl").
 
