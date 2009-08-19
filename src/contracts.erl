@@ -535,9 +535,9 @@ checkType(HumanType, Term, Mod) ->
         {'EXIT', {function_clause, _}} ->
             type_not_in_contract;
         {{record, _, _}, []} ->
-            checkType2({prim, HumanType}, Term, Mod);
+            checkType2({prim, 1, 1, HumanType}, Term, Mod);
         {{tuple, _}, []} ->
-            checkType2({prim, HumanType}, Term, Mod);
+            checkType2({prim, 1, 1, HumanType}, Term, Mod);
         {{alt, TypeA, TypeB}, []} ->
             ResA = checkType2(TypeA, Term, Mod),
             ResB = checkType2(TypeB, Term, Mod),
@@ -557,7 +557,7 @@ checkType(HumanType, Term, Mod) ->
             end
     end.
 
-checkType2({prim, HumanType} = Type, Term, Mod) ->
+checkType2({prim, _, _, HumanType} = Type, Term, Mod) ->
     case (catch Mod:contract_type(HumanType)) of
         {{record, HumanType, Elements}, []} ->
             case isType(Type, Term, Mod) of
