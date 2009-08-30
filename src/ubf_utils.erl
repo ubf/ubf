@@ -317,7 +317,8 @@ ubf_contract(Mod) ->
                     ], "\n")
            end
            || {{prim,1,1,Input}, {prim,1,1,Output}} <- Mod:contract_anystate() ],
-    lists:flatten([ join(L, "\n") || L <- [X0, X1, X2, X3, X4] ]).
+    X5 = ["\n"],
+    lists:flatten([ join(L, "\n") || L <- [X0, X1, X2, X3, X4, X5] ]).
 
 join(L, Sep) ->
     lists:flatten(join2(L, Sep)).
