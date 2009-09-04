@@ -196,7 +196,7 @@ ubf_contract(Mod) ->
           , "proplist()?\n\t\t{'#P',proplist} | undefined"
           , ""
           , "string()\n\t\t{'#S',string}"
-          , "string()?\n\t\t{'#P',string} | undefined"
+          , "string()?\n\t\t{'#S',string} | undefined"
           , ""
           , "term()\n\t\tterm"
           , "term()?\n\t\tterm | undefined"
