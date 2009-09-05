@@ -152,7 +152,6 @@ To do (in short term)
 =====================
 
   - cleanup (or remove) old documentation under priv/doc
-  - add ChangeLog template
   - document new features
     + predefined ubf contract (and contract checker) primitives
       - atom(), binary(), float(), integer(), list(), proplist(),
@@ -201,17 +200,23 @@ To do (in short term)
 To do (in medium term)
 ======================
 
-  - support multiple listeners for a single ubf server
-  - ubf contract generators for QuickCheck
   - ABNF (RFC 5234) support and integration
   - erlang spec (EEP 8) integration
+  - JSON (RFC 4627) RPC listener integration
+
+  
+To do (in long term)
+======================
+
+  - support multiple listeners for a single ubf server
+  - ubf contract generators for QuickCheck
   - asynchronous events from client to server
   - n-bidirectional requests/responses over single tcp/ip connection (similiar to smpp)
   - replace plugin manager and plugin handler with gen_server-based
     implementation
   - enable/disable contract checker by configuration
   - eunit tests
-  - quickcheck tests
+  - quickcheck tests  
 
 
 Credits
