@@ -107,7 +107,7 @@ isType(Type, X, Mod) ->
 %% alt
 check_term({alt, A, B}, X, Level, Mod) ->
     case check_term(A, X, Level, Mod) of
-        ok  ->
+        ok ->
             ok;
         _   ->
             check_term(B, X, Level, Mod)
@@ -255,75 +255,20 @@ check_term({predef, Args}=Check, X, _Level, _Mod) ->
         false ->
             ?FAIL({Check,X})
     end;
-%% @TODO ABNF TYPES -- START
-check_term({seq,_}=Check, X, _Level, _Mod) ->
-    if is_binary(X) ->
-            ok; %% temporarily ok for any binary
-       true ->
-            ?FAIL({Check,X})
-    end;
-check_term({repeat,_,_,_}=Check, X, _Level, _Mod) ->
-    if is_binary(X) ->
-            ok; %% temporarily ok for any binary
-       true ->
-            ?FAIL({Check,X})
-    end;
-check_term({byte_range, Min, Max}=Check, X, _Level, _Mod) ->
-    if is_binary(X) ->
-            case X of
-                <<C:8, _/binary>> ->
-                    if Min =< C andalso C =< Max ->
-                            ok;
-                       true ->
-                            ?FAIL({Check, X})
-                    end;
-                <<>> ->
-                    ?FAIL({Check, X})
-            end;
-       true ->
-            ?FAIL({Check,X})
-    end;
-check_term({byte_alt, A, B}=Check, X, Level, Mod) ->
-    if is_binary(X) ->
-            case check_term(A, X, Level, Mod) of
-                ok  ->
+%% abnf
+check_term(Check, X, Level, Mod) when is_binary(X) ->
+    case check_term_abnf(Check, X, Level, Mod, 0) of
+        Size when is_integer(Size) ->
+            %% check if entire binary has been consumed
+            if Size =:= size(X) ->
                     ok;
-                _   ->
-                    check_term(B, X, Level, Mod)
-            end;
-       true ->
-            ?FAIL({Check,X})
-    end;
-check_term({byte_seq, [Type|Types]}=Check, X, Level, Mod) ->
-    if is_binary(X) ->
-            case check_term(Type, X, Level, Mod) of
-                ok ->
-                    <<_:1/binary, X2/binary>> = X,
-                    check_term({byte_seq, Types}, X2, Level, Mod);
-                _ ->
+               true ->
                     ?FAIL({Check,X})
             end;
-       true ->
+        false ->
             ?FAIL({Check,X})
     end;
-check_term({byte_seq, []}=_Check, <<>>, _Level, _Mod) ->
-    ok;
-check_term({byte_val, Byte}=Check, X, _Level, _Mod) ->
-    if is_binary(X) ->
-            case X of
-                <<C:8, _/binary>> ->
-                    if C == Byte ->
-                            ok;
-                       true ->
-                            ?FAIL({Check, X})
-                    end;
-                <<>> ->
-                    ?FAIL({Check, X})
-            end;
-       true ->
-            ?FAIL({Check,X})
-    end;
-%% @TODO ABNF TYPES -- END
+%% otherwise, fail
 check_term(Check, X, _Level, _Mod) ->
     %% io:format("~p isnot ~p~n", [Check, X]),
     %% exit({Y,isNotA, X}).
@@ -343,7 +288,7 @@ check_term_prim(0, 0, _TypeDef, X, _Level, _Mod) ->
     X == undefined.
 
 
-% check_term_seq
+%% check_term_seq
 check_term_seq([], [], _Level, _Mod) ->
     true;
 check_term_seq(_Args, [], _Level, _Mod) ->
@@ -436,6 +381,7 @@ check_term_predef({term,Attrs}, X) ->
 check_term_predef({tuple,Attrs}, X) ->
     is_tuple(X) andalso check_term_attrlist(tuple,Attrs,X).
 
+
 %% check_term_attrlist
 check_term_attrlist(Type, Attrs, Val) ->
     [] == [ {Type,Attr,Val} || Attr <- Attrs, not check_term_attr(Type,Attr,Val) ].
@@ -452,6 +398,108 @@ check_term_attr(Type,nonundefined,Val) ->
     isTypeAttr(Type,nonundefined) andalso is_nonundefined(Val);
 check_term_attr(_,_,_) ->
     false.
+
+
+%% check_term_abnf
+check_term_abnf({abnf_alt, [Type|Types]}=_Check, X, Level, Mod, Size) ->
+    %% @todo first match is not always desired
+    case check_term_abnf(Type, X, Level, Mod, Size) of
+        NewSize when is_integer(NewSize) ->
+            NewSize;
+        _ ->
+            check_term_abnf({abnf_alt, Types}, X, Level, Mod, Size)
+    end;
+check_term_abnf({abnf_alt, []}=_Check, _X, _Level, _Mod, _Size) ->
+    false;
+check_term_abnf({abnf_seq, [Type|Types]}=_Check, X, Level, Mod, Size) ->
+    case check_term_abnf(Type, X, Level, Mod, Size) of
+        NewSize when is_integer(NewSize) ->
+            DeltaSize = 8*(NewSize - Size),
+            <<_Bytes:DeltaSize, Rest/binary>> = X,
+            check_term_abnf({abnf_seq, Types}, Rest, Level, Mod, NewSize);
+        _ ->
+            false
+    end;
+check_term_abnf({abnf_seq, []}=_Check, _, _Level, _Mod, Size) ->
+    Size;
+check_term_abnf({abnf_repeat,Min,Max,Type}=_Check, X, Level, Mod, Size) ->
+    check_term_abnf_repeat(Min, Max, Type, X, Level, Mod, Size, 0);
+check_term_abnf({abnf_byte_range, Min, Max}=_Check, X, _Level, _Mod, Size) ->
+    case X of
+        <<Byte:8, _/binary>> ->
+            if Min =< Byte andalso Byte =< Max ->
+                    Size+1;
+               true ->
+                    false
+            end;
+        _ ->
+            false
+    end;
+check_term_abnf({abnf_byte_alt, [Type|Types]}=_Check, X, Level, Mod, Size) ->
+    %% @todo first match is not always desired
+    case check_term_abnf(Type, X, Level, Mod, Size) of
+        NewSize when is_integer(NewSize) ->
+            NewSize;
+        _ ->
+            check_term_abnf({abnf_byte_alt, Types}, X, Level, Mod, Size)
+    end;
+check_term_abnf({abnf_byte_alt, []}=_Check, _X, _Level, _Mod, _Size) ->
+    false;
+check_term_abnf({abnf_byte_seq, [Type|Types]}=_Check, X, Level, Mod, Size) ->
+    case check_term_abnf(Type, X, Level, Mod, Size) of
+        NewSize when is_integer(NewSize) ->
+            <<_Byte:8, Rest/binary>> = X,
+            check_term_abnf({abnf_byte_seq, Types}, Rest, Level, Mod, NewSize);
+        _ ->
+            false
+    end;
+check_term_abnf({abnf_byte_seq, []}=_Check, _, _Level, _Mod, Size) ->
+    Size;
+check_term_abnf({abnf_byte_val, Byte}=_Check, X, _Level, _Mod, Size) ->
+    case X of
+        <<Byte:8, _/binary>> ->
+            Size+1;
+        _ ->
+            false
+    end;
+check_term_abnf({prim, 1, 1, Type}=_Check, X, Level, Mod, Size) ->
+    %% NOTE: hard-coded max level of 10010
+    if Level < 10010 ->
+            case Type of
+                {predef,_} ->
+                    false;
+                _ ->
+                    TypeDef = element(1, Mod:contract_type(Type)),
+                    check_term_abnf(TypeDef, X, Level+1, Mod, Size)
+            end;
+       true ->
+            ?FAIL({maxlevel,X})
+    end;
+%% otherwise, fail
+check_term_abnf(_Check, _X, _Level, _Mod, _Size) ->
+    %% io:format("~p isnot ~p~n", [Check, X]),
+    %% exit({Y,isNotA, X}).
+    false.
+
+
+%% check_term_abnf_repeat
+check_term_abnf_repeat(0, 0, _Type, _X, _Level, _Mod, Size, _Matches) ->
+    Size;
+check_term_abnf_repeat(Min, Max, Type, X, Level, Mod, Size, Matches) ->
+    case check_term_abnf(Type, X, Level, Mod, Size) of
+        NewSize when is_integer(NewSize) ->
+            if (Max /= infinity andalso Matches+1 >= Max) ->
+                    NewSize;
+               true ->
+                    DeltaSize = 8*(NewSize - Size),
+                    <<_Byte:DeltaSize, Rest/binary>> = X,
+                    check_term_abnf_repeat(Min, Max, Type, Rest, Level, Mod, NewSize, Matches+1)
+            end;
+        _ when Matches >= Min ->
+            Size;
+        _ ->
+            false
+    end.
 
 
 %% is_string
