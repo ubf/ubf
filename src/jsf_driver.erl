@@ -12,7 +12,7 @@
 %% If one side dies the process dies
 
 start() ->
-    proc_utils:spawn_link_debug(fun() -> start1() end, jsf_client).
+    proc_utils:spawn_link_debug(fun() -> start1() end, jsf_client_driver).
 
 start1() ->
     receive
@@ -26,6 +26,7 @@ loop(Socket, Pid) ->
     loop(Socket, Pid, 16#ffffffff).
 
 loop(Socket, Pid, Timeout) ->
+    put('$ubfsocket', Socket),
     Cont = [],
     loop(Socket, Pid, Timeout, Cont, jsf).
 

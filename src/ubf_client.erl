@@ -207,21 +207,26 @@ stop(Pid) ->
 rpc(Pid, Q) ->
     rpc(Pid, Q, infinity).
 
-%% @spec (pid(), term(), timeout()) -> timeout | term()
+%% @spec (pid(), term(), timeout()) -> timeout | term() | exit(badpid)
 %% @doc Perform a synchronous RPC call.
 
 rpc(Pid, Q, infinity) ->
     rpc(Pid, Q, 16#ffffffff);
 rpc(Pid, Q, Timeout) ->
-    Pid ! {self(), {rpc, Q}},
-    receive
-        {Pid, Reply} ->
-            debug(">>> ubf_client RPC (~p)~n"
-                  "<<< ~p ~n",[Q, Reply]),
-            Reply
-    after Timeout ->
-            Pid ! stop,
-            timeout
+    case is_process_alive(Pid) of
+        false ->
+            erlang:error(badpid);
+        true ->
+            Pid ! {self(), {rpc, Q}},
+            receive
+                {Pid, Reply} ->
+                    debug(">>> ubf_client RPC (~p)~n"
+                          "<<< ~p ~n",[Q, Reply]),
+                    Reply
+            after Timeout ->
+                    Pid ! stop,
+                    timeout
+            end
     end.
 
 %% @spec (pid()) -> ack
