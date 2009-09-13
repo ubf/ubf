@@ -12,6 +12,7 @@ MODULES = \
 	proc_socket_server \
 	proc_utils \
 	contracts \
+	contracts_abnf \
 	contract_manager \
 	ubf \
 	ubf_utils \

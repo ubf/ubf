@@ -1,20 +1,13 @@
 -module(contracts).
 
--compile(export_all).
--import(lists, [any/2]).
-
+%%-compile(export_all).
 -export([checkCallback/3, checkIn/3, checkOut/4, isTypeAttr/2, isType/3, getContract/1]).
 -export([checkType/3]).
 -include("ubf.hrl").
 
-%% DISABLE -define(enable_fail_debug,true).
--ifdef(enable_fail_debug).
--define(FAIL(X), {fail, X}).
--define(FAILMATCH(), {fail, Result}).
--else.
--define(FAIL(_X), fail).
--define(FAILMATCH(), fail).
--endif. %% -ifndef(enable_fail_debug).
+
+-define(FAIL(_X), false).
+
 
 getContract(Mod) ->
     %% io:format("getContract:~p~n",[Mod]),
@@ -58,7 +51,7 @@ checkIn(Msg, State, Mod) ->
 checkOut(MsgOut, StateOut, FSM2, Mod) ->
     %% NOTE: ignore input type since tuple size will always be of size
     %% three
-    any(fun({_,Type,S2}) when S2 == StateOut ->
+    lists:any(fun({_,Type,S2}) when S2 == StateOut ->
                 isType(Type,MsgOut,Mod);
            (_) ->
                 false
@@ -68,7 +61,7 @@ checkCallback(Msg, ThisState, Mod) ->
     T = Mod:contract_state(ThisState),
     Events = [ E ||{event,E} <- T ],
     %% io:format("Events=~p~n",[Events]),
-    any(fun(Type) -> isType(Type, Msg, Mod) end, Events).
+    lists:any(fun(Type) -> isType(Type, Msg, Mod) end, Events).
 
 %%----------------------------------------------------------------------
 %% Check type attribute
@@ -96,10 +89,10 @@ isTypeAttr(_,_) -> false.
 isType(Type, X, Mod) ->
     %% DISABLE io:format("isType(~p,~p,~p)~n",[Type, X, Mod]),
     case check_term(Type, X, 1, Mod) of
-        ok ->
+        true ->
             %% DISABLE io:format("***true~n"),
             true;
-        ?FAILMATCH() ->
+        false ->
             %% DISABLE io:format("***false: ~p~n", [Result]),
             false
     end.
@@ -107,17 +100,17 @@ isType(Type, X, Mod) ->
 %% alt
 check_term({alt, A, B}, X, Level, Mod) ->
     case check_term(A, X, Level, Mod) of
-        ok ->
-            ok;
-        _   ->
+        true ->
+            true;
+        false ->
             check_term(B, X, Level, Mod)
     end;
 %% concat
-check_term({concat, _A, _B}=_Check, X, _Level, _Mod) ->
+check_term({concat, _A, _B}=_Check, _X, _Level, _Mod) ->
     %% @todo not (re-)implemented now
-    ?FAIL({notimplemented,X});
+    ?FAIL({notimplemented,_X});
 %% prim
-check_term({prim, Min, Max, Type}=Check, X, Level, Mod) ->
+check_term({prim, Min, Max, Type}=_Check, X, Level, Mod) ->
     %% NOTE: hard-coded max level of 10010
     if Level < 10010 ->
             TypeDef =
@@ -129,7 +122,7 @@ check_term({prim, Min, Max, Type}=Check, X, Level, Mod) ->
                 end,
             case check_term_prim(Min, Max, TypeDef, X, Level+1, Mod) of
                 true ->
-                    ok;
+                    true;
                 false ->
                     ?FAIL({Check,X})
             end;
@@ -137,12 +130,12 @@ check_term({prim, Min, Max, Type}=Check, X, Level, Mod) ->
             ?FAIL({maxlevel,X})
     end;
 %% tuple
-check_term({tuple,Args}=Check, X, Level, Mod) ->
+check_term({tuple,Args}=_Check, X, Level, Mod) ->
     if is_tuple(X) ->
             if length(Args) == size(X) ->
                     case check_term_seq(Args, tuple_to_list(X), Level, Mod) of
                         true ->
-                            ok;
+                            true;
                         false ->
                             ?FAIL({Check,X})
                     end;
@@ -153,12 +146,12 @@ check_term({tuple,Args}=Check, X, Level, Mod) ->
             ?FAIL({Check,X})
     end;
 %% record
-check_term({record,Name,Args}=Check, X, Level, Mod) ->
+check_term({record,Name,Args}=_Check, X, Level, Mod) ->
     if is_tuple(X) ->
             if length(Args)+(1-2) == size(X) ->
                     case check_term_seq([{atom,Name}|tl(tl(Args))], tuple_to_list(X), Level, Mod) of
                         true ->
-                            ok;
+                            true;
                         false ->
                             ?FAIL({Check,X})
                     end;
@@ -168,12 +161,12 @@ check_term({record,Name,Args}=Check, X, Level, Mod) ->
        true ->
             ?FAIL({Check,X})
     end;
-check_term({record_ext,Name,Args}=Check, X, Level, Mod) ->
+check_term({record_ext,Name,Args}=_Check, X, Level, Mod) ->
     if is_tuple(X) ->
             if length(Args)+1 == size(X) ->
                     case check_term_seq([{atom,Name}|Args], tuple_to_list(X), Level, Mod) of
                         true ->
-                            ok;
+                            true;
                         false ->
                             ?FAIL({Check,X})
                     end;
@@ -184,7 +177,7 @@ check_term({record_ext,Name,Args}=Check, X, Level, Mod) ->
             ?FAIL({Check,X})
     end;
 %% list
-check_term({list,Min,Max,Args}=Check, X, Level, Mod) ->
+check_term({list,Min,Max,Args}=_Check, X, Level, Mod) ->
     if is_list(X) ->
             Len = length(X),
             if Len < Min orelse (Max /= infinity andalso Len > Max) ->
@@ -192,7 +185,7 @@ check_term({list,Min,Max,Args}=Check, X, Level, Mod) ->
                true ->
                     case check_term_list(Args, X, Level, Mod) of
                         true ->
-                            ok;
+                            true;
                         false ->
                             ?FAIL({Check,X})
                     end
@@ -201,11 +194,11 @@ check_term({list,Min,Max,Args}=Check, X, Level, Mod) ->
             ?FAIL({Check,X})
     end;
 %% range
-check_term({range, Min, Max}=Check, X, _Level, _Mod) ->
+check_term({range, Min, Max}=_Check, X, _Level, _Mod) ->
     if is_integer(X) ->
             case check_term_range(Min, Max, X) of
                 true ->
-                    ok;
+                    true;
                 false ->
                     ?FAIL({Check,X})
             end;
@@ -213,55 +206,55 @@ check_term({range, Min, Max}=Check, X, _Level, _Mod) ->
             ?FAIL({Check,X})
     end;
 %% atom
-check_term({atom, Y}=Check, X, _Level, _Mod) ->
+check_term({atom, Y}=_Check, X, _Level, _Mod) ->
     if Y == X andalso is_atom(Y) ->
-            ok;
+            true;
        true ->
             ?FAIL({Check,X})
     end;
 %% binary
-check_term({binary, Y}=Check, X, _Level, _Mod) ->
+check_term({binary, Y}=_Check, X, _Level, _Mod) ->
     if Y == X andalso is_binary(Y) ->
-            ok;
+            true;
        true ->
             ?FAIL({Check,X})
     end;
 %% float
-check_term({float, Y}=Check, X, _Level, _Mod) ->
+check_term({float, Y}=_Check, X, _Level, _Mod) ->
     if Y =:= X andalso is_float(Y) ->
-            ok;
+            true;
        true ->
             ?FAIL({Check,X})
     end;
 %% integer
-check_term({integer, Y}=Check, X, _Level, _Mod) ->
+check_term({integer, Y}=_Check, X, _Level, _Mod) ->
     if Y =:= X andalso is_integer(Y) ->
-            ok;
+            true;
        true ->
             ?FAIL({Check,X})
     end;
 %% string
-check_term({string, ?S(Y)}=Check, X, _Level, _Mod) ->
+check_term({string, ?S(Y)}=_Check, X, _Level, _Mod) ->
     if ?S(Y) =:= ?S(X) andalso is_list(Y) ->
-            ok;
+            true;
        true ->
             ?FAIL({Check,X})
     end;
 %% predef
-check_term({predef, Args}=Check, X, _Level, _Mod) ->
+check_term({predef, Args}=_Check, X, _Level, _Mod) ->
     case check_term_predef(Args, X) of
         true ->
-            ok;
+            true;
         false ->
             ?FAIL({Check,X})
     end;
 %% abnf
 check_term(Check, X, Level, Mod) when is_binary(X) ->
-    case check_term_abnf(Check, X, Level, Mod, 0) of
+    case contracts_abnf:check_binary(Check, X, Level, Mod, 0) of
         Size when is_integer(Size) ->
             %% check if entire binary has been consumed
             if Size =:= size(X) ->
-                    ok;
+                    true;
                true ->
                     ?FAIL({Check,X})
             end;
@@ -269,18 +262,18 @@ check_term(Check, X, Level, Mod) when is_binary(X) ->
             ?FAIL({Check,X})
     end;
 %% otherwise, fail
-check_term(Check, X, _Level, _Mod) ->
+check_term(_Check, _X, _Level, _Mod) ->
     %% io:format("~p isnot ~p~n", [Check, X]),
     %% exit({Y,isNotA, X}).
-    ?FAIL({last,Check,X}).
+    ?FAIL({last,_Check,_X}).
 
 
 %% check_term_prim
 check_term_prim(1, 1, TypeDef, X, Level, Mod) ->
-    ok == check_term(TypeDef, X, Level, Mod);
+    check_term(TypeDef, X, Level, Mod);
 check_term_prim(0, 1, TypeDef, X, Level, Mod) ->
     if X /= undefined ->
-            ok == check_term(TypeDef, X, Level, Mod);
+            check_term(TypeDef, X, Level, Mod);
        true ->
             true
     end;
@@ -297,7 +290,7 @@ check_term_seq([], _L, _Level, _Mod) ->
     false;
 check_term_seq([H1|T1], [H2|T2], Level, Mod) ->
     case check_term(H1, H2, Level, Mod) of
-        ok ->
+        true ->
             check_term_seq(T1, T2, Level, Mod);
         _ ->
             false
@@ -309,7 +302,7 @@ check_term_list(_Args, [], _Level, _Mod) ->
     true;
 check_term_list(Args, [H|T], Level, Mod) ->
     case check_term(Args, H, Level, Mod) of
-        ok ->
+        true ->
             check_term_list(Args, T, Level, Mod);
         _ ->
             false
@@ -398,108 +391,6 @@ check_term_attr(Type,nonundefined,Val) ->
     isTypeAttr(Type,nonundefined) andalso is_nonundefined(Val);
 check_term_attr(_,_,_) ->
     false.
-
-
-%% check_term_abnf
-check_term_abnf({abnf_alt, [Type|Types]}=_Check, X, Level, Mod, Size) ->
-    %% @todo first match is not always desired
-    case check_term_abnf(Type, X, Level, Mod, Size) of
-        NewSize when is_integer(NewSize) ->
-            NewSize;
-        _ ->
-            check_term_abnf({abnf_alt, Types}, X, Level, Mod, Size)
-    end;
-check_term_abnf({abnf_alt, []}=_Check, _X, _Level, _Mod, _Size) ->
-    false;
-check_term_abnf({abnf_seq, [Type|Types]}=_Check, X, Level, Mod, Size) ->
-    case check_term_abnf(Type, X, Level, Mod, Size) of
-        NewSize when is_integer(NewSize) ->
-            DeltaSize = 8*(NewSize - Size),
-            <<_Bytes:DeltaSize, Rest/binary>> = X,
-            check_term_abnf({abnf_seq, Types}, Rest, Level, Mod, NewSize);
-        _ ->
-            false
-    end;
-check_term_abnf({abnf_seq, []}=_Check, _, _Level, _Mod, Size) ->
-    Size;
-check_term_abnf({abnf_repeat,Min,Max,Type}=_Check, X, Level, Mod, Size) ->
-    check_term_abnf_repeat(Min, Max, Type, X, Level, Mod, Size, 0);
-check_term_abnf({abnf_byte_range, Min, Max}=_Check, X, _Level, _Mod, Size) ->
-    case X of
-        <<Byte:8, _/binary>> ->
-            if Min =< Byte andalso Byte =< Max ->
-                    Size+1;
-               true ->
-                    false
-            end;
-        _ ->
-            false
-    end;
-check_term_abnf({abnf_byte_alt, [Type|Types]}=_Check, X, Level, Mod, Size) ->
-    %% @todo first match is not always desired
-    case check_term_abnf(Type, X, Level, Mod, Size) of
-        NewSize when is_integer(NewSize) ->
-            NewSize;
-        _ ->
-            check_term_abnf({abnf_byte_alt, Types}, X, Level, Mod, Size)
-    end;
-check_term_abnf({abnf_byte_alt, []}=_Check, _X, _Level, _Mod, _Size) ->
-    false;
-check_term_abnf({abnf_byte_seq, [Type|Types]}=_Check, X, Level, Mod, Size) ->
-    case check_term_abnf(Type, X, Level, Mod, Size) of
-        NewSize when is_integer(NewSize) ->
-            <<_Byte:8, Rest/binary>> = X,
-            check_term_abnf({abnf_byte_seq, Types}, Rest, Level, Mod, NewSize);
-        _ ->
-            false
-    end;
-check_term_abnf({abnf_byte_seq, []}=_Check, _, _Level, _Mod, Size) ->
-    Size;
-check_term_abnf({abnf_byte_val, Byte}=_Check, X, _Level, _Mod, Size) ->
-    case X of
-        <<Byte:8, _/binary>> ->
-            Size+1;
-        _ ->
-            false
-    end;
-check_term_abnf({prim, 1, 1, Type}=_Check, X, Level, Mod, Size) ->
-    %% NOTE: hard-coded max level of 10010
-    if Level < 10010 ->
-            case Type of
-                {predef,_} ->
-                    false;
-                _ ->
-                    TypeDef = element(1, Mod:contract_type(Type)),
-                    check_term_abnf(TypeDef, X, Level+1, Mod, Size)
-            end;
-       true ->
-            ?FAIL({maxlevel,X})
-    end;
-%% otherwise, fail
-check_term_abnf(_Check, _X, _Level, _Mod, _Size) ->
-    %% io:format("~p isnot ~p~n", [Check, X]),
-    %% exit({Y,isNotA, X}).
-    false.
-
-
-%% check_term_abnf_repeat
-check_term_abnf_repeat(0, 0, _Type, _X, _Level, _Mod, Size, _Matches) ->
-    Size;
-check_term_abnf_repeat(Min, Max, Type, X, Level, Mod, Size, Matches) ->
-    case check_term_abnf(Type, X, Level, Mod, Size) of
-        NewSize when is_integer(NewSize) ->
-            if (Max /= infinity andalso Matches+1 >= Max) ->
-                    NewSize;
-               true ->
-                    DeltaSize = 8*(NewSize - Size),
-                    <<_Byte:DeltaSize, Rest/binary>> = X,
-                    check_term_abnf_repeat(Min, Max, Type, Rest, Level, Mod, NewSize, Matches+1)
-            end;
-        _ when Matches >= Min ->
-            Size;
-        _ ->
-            false
-    end.
 
 
 %% is_string
@@ -662,16 +553,6 @@ bad_zip(TypesList, TermList, Mod) ->
               {badType, WantedType,
                checkType2(WantedType, lists:nth(Pos, TermList), Mod)}
       end, BadItems).
-
-bool_fudge(L) ->
-    lists:map(
-      fun({true, X, Y}) ->
-              {yup, X, Y};
-         ({false, X, Y}) ->
-              {badType, X, Y};
-         (X) ->
-              X
-      end, L).
 
 %% checkType_investigate_deeper({prim, _} = Type, Term, Mod) ->
 %%     INFINITE LOOP, don't do this....
