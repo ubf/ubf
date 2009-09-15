@@ -250,14 +250,9 @@ check_term({predef, Args}=_Check, X, _Level, _Mod) ->
     end;
 %% abnf
 check_term(Check, X, Level, Mod) when is_binary(X) ->
-    case contracts_abnf:check_binary(Check, X, Level, Mod, 0) of
-        Size when is_integer(Size) ->
-            %% check if entire binary has been consumed
-            if Size =:= size(X) ->
-                    true;
-               true ->
-                    ?FAIL({Check,X})
-            end;
+    case contracts_abnf:check_binary(Check, X, Level, Mod) of
+        true ->
+            true;
         false ->
             ?FAIL({Check,X})
     end;

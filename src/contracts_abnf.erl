@@ -1,109 +1,145 @@
 -module(contracts_abnf).
 
 %%-compile(export_all).
--export([check_binary/5]).
+-export([check_binary/4]).
 
 
--define(FAIL(_X), false).
+-record(state,
+        { check       % current contract type
+          , x         % current binary to be checked
+          , level     % current recursive level that has been checked so far
+          , size      % binary size that has been checked so far
+          , maxsize   % binary max size to be checked
+          , mod       % contract
+         }
+       ).
 
 
-%% check_binary
-check_binary({abnf_alt, [Type|Types]}=_Check, X, Level, Mod, Size) ->
-    %% @todo first match is not always desired
-    case check_binary(Type, X, Level, Mod, Size) of
-        NewSize when is_integer(NewSize) ->
-            NewSize;
-        _ ->
-            check_binary({abnf_alt, Types}, X, Level, Mod, Size)
-    end;
-check_binary({abnf_alt, []}=_Check, _X, _Level, _Mod, _Size) ->
-    false;
-check_binary({abnf_seq, [Type|Types]}=_Check, X, Level, Mod, Size) ->
-    case check_binary(Type, X, Level, Mod, Size) of
-        NewSize when is_integer(NewSize) ->
-            DeltaSize = 8*(NewSize - Size),
-            <<_Bytes:DeltaSize, Rest/binary>> = X,
-            check_binary({abnf_seq, Types}, Rest, Level, Mod, NewSize);
-        _ ->
+%%----------------------------------------------------------------------
+%% check_binary/4
+%%
+%% @doc Parse (and validate) the given binary against abnf contract
+%% types.  It is straightforward to extend this implementation to
+%% return the parsed abnf types stack for parsed (and invalid)
+%% binaries.  The abnf types with sub-binary annotations could then be
+%% used by other applications that need the abnf bits.  However, this
+%% feature is beyond the current scope and goals of this package.
+check_binary(Check, X, Level, Mod) ->
+    S = #state{check=Check, x=X, level=Level, mod=Mod, maxsize=size(X), size=0},
+    case check_binary(S) of
+        {ok,_}=_Ok ->
+            true;
+        _Ng ->
             false
-    end;
-check_binary({abnf_seq, []}=_Check, _, _Level, _Mod, Size) ->
-    Size;
-check_binary({abnf_repeat,Min,Max,Type}=_Check, X, Level, Mod, Size) ->
-    check_binary_repeat(Min, Max, Type, X, Level, Mod, Size, 0);
-check_binary({abnf_byte_range, Min, Max}=_Check, X, _Level, _Mod, Size) ->
+    end.
+
+
+%% check_binary/1
+check_binary(S) ->
+    check_binary(S, fun(S1) -> all_checked(S1) end).
+
+all_checked(#state{check=undefined, size=MaxSize, maxsize=MaxSize}=S) ->
+    {ok,S};
+all_checked(S) ->
+    {ng,S}.
+
+
+%%----------------------------------------------------------------------
+%% check_binary/2
+check_binary(#state{check={abnf_alt,Types}}=S, Next) ->
+    Funs = [ fun() -> check_binary(S#state{check=Type}, Next) end || Type <- Types ],
+    alts(Funs);
+check_binary(#state{check={abnf_seq,[Type|Types]}}=S, Next) ->
+    Fun = fun(S1) -> check_binary(S1#state{check={abnf_seq, Types}}, Next) end,
+    check_binary(S#state{check=Type}, Fun);
+check_binary(#state{check={abnf_seq,[]}}=S, Next) ->
+    Next(S#state{check=undefined});
+check_binary(#state{check={abnf_repeat,_Min,_Max,_Type}}=S, Next) ->
+    check_binary_repeat(S, Next, 0);
+check_binary(#state{check={abnf_byte_range,Min,Max},x=X}=S, Next) ->
     case X of
-        <<Byte:8, _/binary>> ->
+        <<Byte:8,Rest/binary>> ->
             if Min =< Byte andalso Byte =< Max ->
-                    Size+1;
+                    Next(S#state{check=undefined,x=Rest,size=S#state.size+1});
                true ->
-                    false
+                    {ng,S}
             end;
         _ ->
-            false
+            {ng,S}
     end;
-check_binary({abnf_byte_alt, [Type|Types]}=_Check, X, Level, Mod, Size) ->
-    %% @todo first match is not always desired
-    case check_binary(Type, X, Level, Mod, Size) of
-        NewSize when is_integer(NewSize) ->
-            NewSize;
-        _ ->
-            check_binary({abnf_byte_alt, Types}, X, Level, Mod, Size)
-    end;
-check_binary({abnf_byte_alt, []}=_Check, _X, _Level, _Mod, _Size) ->
-    false;
-check_binary({abnf_byte_seq, [Type|Types]}=_Check, X, Level, Mod, Size) ->
-    case check_binary(Type, X, Level, Mod, Size) of
-        NewSize when is_integer(NewSize) ->
-            <<_Byte:8, Rest/binary>> = X,
-            check_binary({abnf_byte_seq, Types}, Rest, Level, Mod, NewSize);
-        _ ->
-            false
-    end;
-check_binary({abnf_byte_seq, []}=_Check, _, _Level, _Mod, Size) ->
-    Size;
-check_binary({abnf_byte_val, Byte}=_Check, X, _Level, _Mod, Size) ->
+check_binary(#state{check={abnf_byte_alt,Types}}=S, Next) ->
+    Funs = [ fun() -> check_binary(S#state{check=Type}, Next) end || Type <- Types ],
+    alts(Funs);
+check_binary(#state{check={abnf_byte_seq,[Type|Types]}}=S, Next) ->
+    Fun = fun(S1) -> check_binary(S1#state{check={abnf_byte_seq, Types}}, Next) end,
+    check_binary(S#state{check=Type}, Fun);
+check_binary(#state{check={abnf_byte_seq,[]}}=S, Next) ->
+    Next(S#state{check=undefined});
+check_binary(#state{check={abnf_byte_val,Byte},x=X}=S, Next) ->
     case X of
-        <<Byte:8, _/binary>> ->
-            Size+1;
+        <<Byte:8,Rest/binary>> ->
+            Next(S#state{check=undefined,x=Rest,size=S#state.size+1});
         _ ->
-            false
+            {ng,S}
     end;
-check_binary({prim, 1, 1, Type}=_Check, X, Level, Mod, Size) ->
+check_binary(#state{check={prim,1,1,Type},level=Level,mod=Mod}=S, Next) ->
     %% NOTE: hard-coded max level of 10010
     if Level < 10010 ->
             case Type of
                 {predef,_} ->
-                    false;
+                    {ng,S};
                 _ ->
                     TypeDef = element(1, Mod:contract_type(Type)),
-                    check_binary(TypeDef, X, Level+1, Mod, Size)
+                    check_binary(S#state{check=TypeDef,level=Level+1}, Next)
             end;
        true ->
-            ?FAIL({maxlevel,X})
+            {ng,S}
     end;
-%% otherwise, fail
-check_binary(_Check, _X, _Level, _Mod, _Size) ->
-    %% io:format("~p isnot ~p~n", [Check, X]),
-    %% exit({Y,isNotA, X}).
-    false.
+check_binary(S, _Next) ->
+    {ng,S}.
 
 
+%%----------------------------------------------------------------------
 %% check_binary_repeat
-check_binary_repeat(0, 0, _Type, _X, _Level, _Mod, Size, _Matches) ->
-    Size;
-check_binary_repeat(Min, Max, Type, X, Level, Mod, Size, Matches) ->
-    case check_binary(Type, X, Level, Mod, Size) of
-        NewSize when is_integer(NewSize) ->
-            if (Max /= infinity andalso Matches+1 >= Max) ->
-                    NewSize;
-               true ->
-                    DeltaSize = 8*(NewSize - Size),
-                    <<_Byte:DeltaSize, Rest/binary>> = X,
-                    check_binary_repeat(Min, Max, Type, Rest, Level, Mod, NewSize, Matches+1)
-            end;
-        _ when Matches >= Min ->
-            Size;
-        _ ->
-            false
-    end.
+check_binary_repeat(#state{check={abnf_repeat,Min,_Max,Type}=Check}=S, Next, Matches)
+  when Matches < Min ->
+    Fun = fun(S1) -> check_binary_repeat(S1#state{check=Check}, Next, Matches+1) end,
+    check_binary(S#state{check=Type}, Fun);
+check_binary_repeat(#state{check={abnf_repeat,_Min,Max,Type}=Check}=S, Next, Matches)
+  when Max == infinity orelse Matches =< Max ->
+    Fun1 = fun() -> Next(S#state{check=undefined}) end,
+    Fun2 = fun() -> Fun = fun(S1) -> check_binary_repeat(S1#state{check=Check}, Next, Matches+1) end,
+                    check_binary(S#state{check=Type}, Fun) end,
+    alts([Fun1,Fun2]);
+check_binary_repeat(S, _Next, _Matches) ->
+    {ng,S}.
+
+
+%%----------------------------------------------------------------------
+%% @doc choose between alternatives (with backtracking).
+%% @reference based on ideas presented in <a
+%% href="http://rvirding.blogspot.com/2009/03/backtracking-in-erlang-part-1-control.html">
+%% Robert Virding's blog </a>
+alts([C|Cs]) ->
+    case C() of
+        {ok,_Res}=Ok ->
+            Ok;
+        {ng,_}=Ng ->
+            alts(Cs, Ng);
+        ng ->
+            alts(Cs)
+    end;
+alts([]) ->
+    ng.
+
+alts([C|Cs], Ng) ->
+    case C() of
+        {ok,_Res}=Ok ->
+            Ok;
+        {ng,_} ->
+            alts(Cs, Ng);
+        ng ->
+            alts(Cs, Ng)
+    end;
+alts([], Ng) ->
+    Ng.
