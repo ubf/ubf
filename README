@@ -148,6 +148,14 @@ add the JSON-RPC implementation in the near future ... unless someone
 else implements it first!
 
 
+What about ABNF?
+================
+
+See the ubf-abnf open source repository
+(http://github.com/norton/ubf-abnf) for details.  ubf-abnf is a
+framework for integrating UBF and ABNF.
+
+
 To do (in short term)
 =====================
 
