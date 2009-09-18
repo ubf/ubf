@@ -8,10 +8,10 @@ To build
 ========
 
 1. Get and install an erlang system
-   (http://www.erlang.org)
+   http://www.erlang.org
 
 2. Optionally, get and install erlang-rfc4627
-   (http://www.lshift.net/blog/2007/02/17/json-and-json-rpc-for-erlang)
+   http://www.lshift.net/blog/2007/02/17/json-and-json-rpc-for-erlang
 
 3. Change to the src directory and type make
    $ cd src
@@ -152,7 +152,7 @@ What about ABNF?
 ================
 
 See the ubf-abnf open source repository
-(http://github.com/norton/ubf-abnf) for details.  ubf-abnf is a
+http://github.com/norton/ubf-abnf for details.  ubf-abnf is a
 framework for integrating UBF and ABNF.
 
 
