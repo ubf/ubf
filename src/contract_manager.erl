@@ -81,19 +81,12 @@ loop(Client, Server, State1, Mod, VerboseRPC) ->
             exit({serverContractManager, Why})
     end.
 
-tlogCheckIn() ->
-    now().
-tlogCheckOut(StartTime, Mod, Q, Reply, Status0) ->
-    gmt_tlog_h:tlog_ubf(StartTime, Mod, Q, Reply, Status0).
-
 do_rpc(Client, Server, State1, Mod, Q, VerboseRPC) ->
     %% check contract
-    StartTime = tlogCheckIn(),
     case checkIn(Q, State1, Mod) of
         [] ->
             Expect = Mod:contract_state(State1),
             Client ! {self(), {{clientBrokeContract, Q, Expect}, State1}},
-            tlogCheckOut(StartTime, Mod, Q, undefined, client_broke_contract),
             loop(Client, Server, State1, Mod, VerboseRPC);
         FSM2 ->
             if VerboseRPC ->
@@ -109,17 +102,14 @@ do_rpc(Client, Server, State1, Mod, Q, VerboseRPC) ->
                             case Next of
                                 same ->
                                     Client ! {self(), {Reply, State2}},
-                                    tlogCheckOut(StartTime, Mod, Q, Reply, ok),
                                     loop(Client, Server, State2, Mod, VerboseRPC);
                                 {new, NewMod, State3} ->
                                     Client ! {self(), {Reply, State3}},
-                                    tlogCheckOut(StartTime, Mod, Q, Reply, ok),
                                     loop(Client, Server, State3, NewMod, VerboseRPC)
                             end;
                         false ->
                             Expect = map(fun(I) -> element(2, I) end, FSM2),
                             Client ! {self(), {{serverBrokeContract, {Q, Reply}, Expect}, State1}},
-                            tlogCheckOut(StartTime, Mod, Q, Reply, server_broke_contract),
                             loop(Client, Server, State1, Mod, VerboseRPC)
                     end;
                 stop ->
