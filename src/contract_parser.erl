@@ -183,7 +183,7 @@ file1(F) ->
     file1(F,[]).
 
 file1(F, Imports) ->
-    {ok, Stream} = file:open(F, read),
+    {ok, Stream} = file:open(F, [read]),
     P = handle(Stream, 1, [], 0),
     file:close(Stream),
     case P of
