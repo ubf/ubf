@@ -4,10 +4,10 @@
 -export([spawn_link_debug/2, debug/0, debug/1]).
 
 spawn_link_debug(Fun, Term) ->
-    proc_lib:spawn_link(fun() ->
-                                put('$ubfinfo', Term),
-                                Fun()
-                        end).
+    erlang:spawn_link(fun() ->
+                              put('$ubfinfo', Term),
+                              Fun()
+                      end).
 
 debug() ->
     debug(undefined).

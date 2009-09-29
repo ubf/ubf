@@ -18,7 +18,7 @@
 
 %% Internal imports (used by spawn)
 
--export([cold_start/6, start_child/3]).
+-export([cold_start/7, start_child/3]).
 
 %% Fun = fun(Socket, Binary) -> Fun'
 
@@ -40,8 +40,9 @@ start_raw_server(Name, Port, Fun, Max, PacketType, PacketSize) ->
     %% io:format("start raw server:~p ~p ~p ~p ~p ~n",[Name, Port, Max, PacketType, PacketSize]),
     case whereis(Name) of
         undefined ->
-            Pid = proc_lib:spawn_link(?MODULE, cold_start,
-                                      [Name, Port, Fun, Max, PacketType, PacketSize]),
+            Parent = self(),
+            Pid = erlang:spawn_link(?MODULE, cold_start,
+                                    [Parent, Name, Port, Fun, Max, PacketType, PacketSize]),
             {ok, Pid};
         _Pid ->
             false
@@ -69,7 +70,7 @@ children(Port) when is_integer(Port) ->
 port_name(Port) when is_integer(Port) ->
     list_to_atom("picoSocketServer_" ++ integer_to_list(Port)).
 
-cold_start(Name, Port, Fun, Max, PacketType, PacketSize) ->
+cold_start(Parent, Name, Port, Fun, Max, PacketType, PacketSize) ->
     process_flag(trap_exit, true),
     register(Name, self()),
     %% io:format("Starting a port server on ~p ~p...~n",[Name, Port]),
@@ -89,41 +90,44 @@ cold_start(Name, Port, Fun, Max, PacketType, PacketSize) ->
     {ok, Listen} = gen_tcp:listen(Port, ListenOptions),
     %% io:format("Listener here ~p ~p~n", [Port, ListenOptions]),
     New = start_accept(Listen, Fun),
-    socket_loop(Listen, New, [], Fun, Max).
+    socket_loop(Parent, Listen, New, [], Fun, Max).
 
 %% Don't mess with the following code unless you really know what you're
 %% doing (and Thanks to Magnus for heping me get it right)
 
-socket_loop(Listen, New, Active, Fun, Max) ->
+socket_loop(Parent, Listen, New, Active, Fun, Max) ->
     receive
         {started, New} ->
             Active1 = [New|Active],
-            possibly_start_another(false, Listen, Active1, Fun, Max);
-        {'EXIT', New, _Why} ->
-            possibly_start_another(false, Listen, Active, Fun, Max);
-        {'EXIT', Pid, _Why} ->
+            possibly_start_another(Parent, false, Listen, Active1, Fun, Max);
+        {'EXIT', Parent, Reason} ->
+            exit(Reason);
+        {'EXIT', New, _Reason} ->
+            possibly_start_another(Parent, false, Listen, Active, Fun, Max);
+        {'EXIT', Pid, _Reason} ->
             Active1 = lists:delete(Pid, Active),
-            possibly_start_another(New, Listen, Active1, Fun, Max);
+            possibly_start_another(Parent, New, Listen, Active1, Fun, Max);
         {children, From} ->
             From ! {session_server, Active},
-            socket_loop(Listen, New, Active, Fun, Max);
+            socket_loop(Parent, Listen, New, Active, Fun, Max);
         Other ->
             io:format("Here in loop:~p~n",[Other])
     end.
 
-possibly_start_another(New, Listen, Active, Fun, Max) when is_pid(New) ->
-    socket_loop(Listen, New, Active, Fun, Max);
-possibly_start_another(false, Listen, Active, Fun, Max) ->
+possibly_start_another(Parent, New, Listen, Active, Fun, Max) when is_pid(New) ->
+    socket_loop(Parent, Listen, New, Active, Fun, Max);
+possibly_start_another(Parent, false, Listen, Active, Fun, Max) ->
     case length(Active) of
         N when N < Max ->
             New = start_accept(Listen, Fun),
-            socket_loop(Listen, New, Active, Fun, Max);
+            socket_loop(Parent, Listen, New, Active, Fun, Max);
         _ ->
-            socket_loop(Listen, false, Active, Fun, Max)
+            socket_loop(Parent, Listen, false, Active, Fun, Max)
     end.
 
 start_accept(Listen, Fun) ->
-    proc_lib:spawn_link(?MODULE, start_child, [self(), Listen, Fun]).
+    Parent = self(),
+    erlang:spawn_link(?MODULE, start_child, [Parent, Listen, Fun]).
 
 start_child(Parent, Listen, Fun) ->
     case gen_tcp:accept(Listen) of
