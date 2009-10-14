@@ -1,3 +1,12 @@
+2009-10-24 22:25 JST  norton
+
+        * src/contract_parser.erl, src/contracts.erl: remove unused code
+        and misc. cleanups
+
+2009-10-24 22:25 JST  norton
+
+        * src/contract.xrl: add erlang-based syntaxt for integers
+
 2009-09-22 22:55 JST  norton
 
         * src/contract_parser.erl: Bugfix by Kostis Sagonas: fix dialyzer
