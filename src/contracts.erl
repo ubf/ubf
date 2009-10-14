@@ -1,23 +1,13 @@
 -module(contracts).
 
 %%-compile(export_all).
--export([checkCallback/3, checkIn/3, checkOut/4, isTypeAttr/2, isType/3, getContract/1]).
+-export([checkCallback/3, checkIn/3, checkOut/4, isTypeAttr/2, isType/3]).
 -export([checkType/3]).
 -include("ubf.hrl").
 
 
 -define(FAIL(_X), false).
 
-
-getContract(Mod) ->
-    %% io:format("getContract:~p~n",[Mod]),
-    File = atom_to_list(Mod) ++ contract_parser:outfileExtension(),
-    case file:read_file(File) of
-        {ok, Bin} ->
-            {ok, ubf:ubf2term(binary_to_list(Bin))};
-        E ->
-            E
-    end.
 
 %%----------------------------------------------------------------------
 %% test() ==> test

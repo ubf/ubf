@@ -7,8 +7,8 @@
 -include("ubf_impl.hrl").
 
 -export([parse_transform/2,
-         make/0, make_lex/0, make_yecc/0, outfileExtension/0, preDefinedTypes/0, preDefinedTypesWithoutAttrs/0, preDefinedTypesWithAttrs/0,
-         tags/1, tags/2, file/1,
+         make/0, make_lex/0, make_yecc/0, preDefinedTypes/0, preDefinedTypesWithoutAttrs/0, preDefinedTypesWithAttrs/0,
+         tags/1, tags/2,
          parse_transform_contract/2
         ]).
 
@@ -20,7 +20,7 @@ parse_transform(In, Opts) ->
     Out = case [X||{attribute,_,add_contract,X} <- In] of
               [File] ->
                   %% DEBUG io:format("Contract: ~p ~p~n", [File, Imports]),
-                  case file1(File ++ infileExtension(), Imports) of
+                  case file(File ++ infileExtension(), Imports) of
                       {ok, Contract, Header} ->
                           HeaderFile =
                               filename:join(
@@ -45,7 +45,7 @@ parse_transform(In, Opts) ->
                                parse_transform_contract(In, Contract);
                                {error, Why} ->
                                       io:format("Error in contract:~p~n", [Why]),
-                                      exit(error)
+                                      erlang:error(Why)
                               end;
                                [] ->
                                       In
@@ -78,43 +78,51 @@ make_code(C) ->
     F5 = {function,0,contract_records,0,
           [{clause,0,[],[],[erl_parse:abstract(RecordNames, 0)]}]},
     %% contract states
-    StateNames = if C#contract.transitions =:= [] ->
-                         [];
-                    true ->
-                         map(fun({State,_}) -> State end, C#contract.transitions)
-                 end,
+    StateNames =
+        if C#contract.transitions =:= [] ->
+                [];
+           true ->
+                map(fun({State,_}) -> State end, C#contract.transitions)
+        end,
     F6 = {function,0,contract_states,0,
           [{clause,0,[],[],[erl_parse:abstract(StateNames, 0)]}]},
     %% contract type
-    Type = map(fun({Type,Val,Str}) ->
-                       {clause,1,[{atom,0,Type}],[],
-                        [erl_parse:abstract({Val,Str})]}
-               end, C#contract.types),
+    Type =
+        if C#contract.types =:= [] ->
+                [{clause,1,[{var,0,'_'}],[],[erl_parse:abstract([], 0)]}];
+           true ->
+                map(fun({Type,Val,Str}) ->
+                            {clause,1,[{atom,0,Type}],[],[erl_parse:abstract({Val,Str})]}
+                    end, C#contract.types)
+        end,
     F7 = {function,0,contract_type,1,Type},
     %% contract record
-    Record = if C#contract.records =:= [] ->
-                     [{clause,1,[{var,0,'_'}],[],[erl_parse:abstract([], 0)]}];
-                true ->
-                     map(fun({Record, Val}) ->
-                                 {clause,1,[{atom,0,Record}],[],[erl_parse:abstract(Val)]}
-                         end, C#contract.records)
-             end,
+    Record =
+        if C#contract.records =:= [] ->
+                [{clause,1,[{var,0,'_'}],[],[erl_parse:abstract([], 0)]}];
+           true ->
+                map(fun({Record, Val}) ->
+                            {clause,1,[{atom,0,Record}],[],[erl_parse:abstract(Val)]}
+                    end, C#contract.records)
+        end,
     F8 = {function,0,contract_record,1,Record},
     %% contract state
-    State = if C#contract.transitions =:= [] ->
-                    [{clause,1,[{var,0,'_'}],[],[erl_parse:abstract([], 0)]}];
-               true ->
-                    map(fun({State,Val}) ->
-                                {clause,1,[{atom,0,State}],[],[erl_parse:abstract(Val)]}
-                        end, C#contract.transitions)
-            end,
+    State =
+        if C#contract.transitions =:= [] ->
+                [{clause,1,[{var,0,'_'}],[],[erl_parse:abstract([], 0)]}];
+           true ->
+                map(fun({State,Val}) ->
+                            {clause,1,[{atom,0,State}],[],[erl_parse:abstract(Val)]}
+                    end, C#contract.transitions)
+        end,
     F9 = {function,0,contract_state,1,State},
     %% contract anystate
-    Any = if C#contract.anystate =:= [] ->
-                  [];
-             true ->
-                  C#contract.anystate
-          end,
+    Any =
+        if C#contract.anystate =:= [] ->
+                [];
+           true ->
+                C#contract.anystate
+        end,
     F10 = {function,0,contract_anystate,0,
            [{clause,0,[],[],[erl_parse:abstract(Any, 0)]}]},
     %% exports
@@ -155,34 +163,9 @@ make_lex() -> leex:gen(contract, contract_lex).
 make_yecc() -> yecc:yecc("contract", "contract_yecc", true).
 
 infileExtension()  -> ".con".
-outfileExtension() -> ".buc".  %% binary UBF contract
 outfileHUCExtension() -> ".huc".  %% hrl UBF contract records
 
-file(F) ->
-    case {infileExtension(), filename:extension(F)} of
-        {X, X} ->
-            %% DEBUG io:format("Parsing ~s~n", [F]),
-            case file1(F) of
-                {ok, Contract, _Header} ->
-                    %% contract - buc
-                    Enc = ubf:encode(Contract),
-                    ok = file:write_file(filename:rootname(F) ++
-                                         outfileExtension(),
-                                         Enc),
-                    Size = length(Enc),
-                    Bsize = size(term_to_binary(Contract)),
-                    {ok, {ubfSize,Size,bsize,Bsize}};
-                Error ->
-                    Error
-            end;
-        _ ->
-            {error, bad_extension}
-    end.
-
-file1(F) ->
-    file1(F,[]).
-
-file1(F, Imports) ->
+file(F, Imports) ->
     {ok, Stream} = file:open(F, [read]),
     P = handle(Stream, 1, [], 0),
     file:close(Stream),
@@ -209,7 +192,7 @@ tags(P1, Imports) ->
                             noop;
                         UnusedTypes ->
                             if Contract#contract.transitions =/= [] orelse Contract#contract.anystate =/= [] ->
-                                    exit({unused_types, UnusedTypes});
+                                    erlang:error({unused_types, UnusedTypes});
                                true ->
                                     noop
                             end
@@ -309,7 +292,7 @@ require(Multiplicity, Tag, P) ->
                 _ ->
                     io:format("~p incorrectly defined~n",
                               [Tag]),
-                    exit(parse)
+                    erlang:error(parse)
             end;
         one ->
             case Vals of
@@ -317,7 +300,7 @@ require(Multiplicity, Tag, P) ->
                 _ ->
                     io:format("~p missing or incorrectly defined~n",
                               [Tag]),
-                    exit(parse)
+                    erlang:error(parse)
             end;
         many ->
             Vals
@@ -335,7 +318,7 @@ pass3(C1, ImportTypes) ->
     %% DEBUG io:format("Defined types1=~p~n",[DefinedTypes1]),
     case duplicates(DefinedTypes1, []) of
         [] -> true;
-        L1 -> exit({duplicated_types, L1})
+        L1 -> erlang:error({duplicated_types, L1})
     end,
 
     C2 = C1#contract{types=lists:usort(Types1 ++ ImportTypes)},
@@ -345,7 +328,7 @@ pass3(C1, ImportTypes) ->
     %% DEBUG io:format("Defined types2=~p~n",[DefinedTypes2]),
     case duplicates(DefinedTypes2, []) of
         [] -> true;
-        L2 -> exit({duplicated_import_types, L2})
+        L2 -> erlang:error({duplicated_import_types, L2})
     end,
 
     %% DEBUG io:format("Transitions=~p~n",[Transitions]),
@@ -358,7 +341,7 @@ pass3(C1, ImportTypes) ->
             %% DEBUG io:format("defined states=~p~n",[DefinedStates]),
             case duplicates(DefinedStates, []) of
                 [] -> true;
-                L3 -> exit({duplicated_states, L3})
+                L3 -> erlang:error({duplicated_states, L3})
             end,
             %% DEBUG io:format("Transitions=~p~n",[Transitions]),
             UsedStates0 = [S||{_,Rules} <- Transitions,
@@ -371,10 +354,10 @@ pass3(C1, ImportTypes) ->
                                    UsedStates),
             case MissingStates of
                 [] -> C2;
-                _  -> exit({missing_states, MissingStates})
+                _  -> erlang:error({missing_states, MissingStates})
             end;
         _ ->
-            exit({missing_types, MissingTypes})
+            erlang:error({missing_types, MissingTypes})
     end.
 
 pass4(C) ->
@@ -383,7 +366,7 @@ pass4(C) ->
     RecordExts = extract_record_exts(Types,[]),
     case duplicates(Records++RecordExts, []) of
         [] -> true;
-        L1 -> exit({duplicated_records, L1})
+        L1 -> erlang:error({duplicated_records, L1})
     end,
     %% DEBUG io:format("Types=~p~nRecords=~p~nRecordExts=~p~n",[Types,Records,RecordExts]),
     {Records,RecordExts}.
