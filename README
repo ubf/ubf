@@ -20,12 +20,12 @@ To build
 4. Run the unit test
    $ make check
 
-5. If you have installed erlang-rfc4627, run the unit test for jsf
-   $ make check-jsf
-
-   One quick/kludge method to "install" is to obtain & compile the
-   erlang-rfc4627 code from LShift.  (Optionally, copy its .beam files
-   to a more permanent installation location.)
+   
+**NOTE**
+   
+   Before make, one quick/kludge method to "install" is to obtain and
+   compile the erlang-rfc4627 code from LShift.  (Optionally, copy its
+   .beam files to a more permanent installation location.)
 
    Then edit "src/Makefile" to change the "MY_ERLANG_RFC4627_EBIN"
    variable to point to where the ebin directory that contains
@@ -138,14 +138,12 @@ with the "$R", "$T", and "$A" notation (for records, tuples, and
 atoms) into whatever object is most convenient.
 
 
-Does the package include a JSON-RPC server?
-===========================================
+What about JSON-RPC?
+====================
 
-At this time, no.  Gemini Mobile Technologies has implemented such a
-server (using the Yaws HTTP server) but the source code is not yet
-ready for outside distribution (as of late April 2009).  We hope to
-add the JSON-RPC implementation in the near future ... unless someone
-else implements it first!
+See the ubf-jsonrpc open source repository
+http://github.com/norton/ubf-jsonrpc for details.  ubf-jsonrpc is a
+framework for integrating UBF and JSON-RPC.
 
 
 What about ABNF?
@@ -210,14 +208,7 @@ To do (in short term)
       * ebf - Erlang Binary Format
       * jsf - Java Script Format
       * etf - Erlang Term Format
-    + jsf contract and json rpc helpers
     + ???
-
-
-To do (in medium term)
-======================
-
-  - JSON (RFC 4627) RPC listener integration
 
   
 To do (in long term)

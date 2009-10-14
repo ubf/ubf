@@ -6,14 +6,19 @@
 -import(lists, [foldl/3, reverse/1, map/2, seq/2, sort/1]).
 
 tests() ->
-    test(),
-    test1(),
-    test2(),
-    test9(),
-    test10(),
-    test11(),
-    bug1(),
-    bug2().
+    case code:which(rfc4627) of
+        non_existing ->
+            noop;
+        _ ->
+            test(),
+            test1(),
+            test2(),
+            test9(),
+            test10(),
+            test11(),
+            bug1(),
+            bug2()
+    end.
 
 test() ->
     decode("'person' >p # {p 1479 -22} &"

@@ -2,7 +2,7 @@
 
 -compile(export_all).
 
--define(PRINTRESULT, 
+-define(PRINTRESULT,
     case Out of
         Exp ->
             %%io:format("~p:~p:~p:~p~n  In =~p~n  Out=~p~n", [?MODULE, Tst, Acc, Desc, In, Out]),
@@ -15,10 +15,15 @@
 
 
 tests() ->
-    true = test_json_decode_1(),
-    true = test_json_encode_1(),
-    true = test_jsf_decode_1(),
-    true = test_jsf_encode_1(),
+    case code:which(rfc4627) of
+        non_existing ->
+            noop;
+        _ ->
+            true = test_json_decode_1(),
+            true = test_json_encode_1(),
+            true = test_jsf_decode_1(),
+            true = test_jsf_encode_1()
+    end,
     true.
 
 %% jsf encode: ubf -> json

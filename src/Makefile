@@ -77,6 +77,9 @@ MY_ERLANG_RFC4627_EBIN = ./example-symlink-to-erlang-rfc4627-ebin
 # include erl make
 include ../priv/make/erl_make.mk
 
+ERL_FLAGS += \
+	-pz $(MY_ERLANG_RFC4627_EBIN)
+
 # standard targets
 clean::
 	rm -f contract_lex.erl contract_yecc.erl
@@ -84,23 +87,17 @@ clean::
 
 check: all
 	-rm -f ./*.log
-	$(RUNERL1) -noinput -noshell -pz $(TEST_DIR) -pz $(EUNITTEST_DIR) \
+	$(RUNERL1) -noinput -noshell -pz $(TEST_DIR) -pz $(EUNITTEST_DIR) -pz $(MY_ERLANG_RFC4627_EBIN) \
 		-s ubf_test tests \
+		-s jsf_test2 tests \
+		-s jsf_test tests \
 		-s test_ubf tests \
 		-s test_ebf tests \
 		-s test_etf tests \
+		-s test_jsf tests \
 		-s stateless_plugin_test do_eunit \
 		-s erlang halt \
 		> ./check.log
-
-check-jsf: all
-	$(RUNERL1) -noinput -noshell -pz $(TEST_DIR) \
-		-pz $(MY_ERLANG_RFC4627_EBIN) \
-		-s jsf_test tests \
-		-s jsf_test2 tests \
-		-s test_jsf tests \
-		-s erlang halt \
-		>> ./check.log
 
 # special targets - ubf
 ${TESTPLUGINS:%=$(TEST_DIR)/%.$(EMULATOR)}: \

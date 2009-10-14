@@ -14,9 +14,14 @@ defaultTimeout() -> 10000.
 defaultPort() -> 2002.
 
 tests() ->
-    ss(),
-    test(),
-    application:stop(test),
+    case code:which(rfc4627) of
+        non_existing ->
+            noop;
+        _ ->
+            ss(),
+            test(),
+            application:stop(test)
+    end,
     true.
 
 
