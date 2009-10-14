@@ -156,6 +156,14 @@ http://github.com/norton/ubf-abnf for details.  ubf-abnf is a
 framework for integrating UBF and ABNF.
 
 
+What about EEP8?
+================
+
+See the ubf-eep8 open source repository
+http://github.com/norton/ubf-eep8 for details.  ubf-eep8 is a
+framework for integrating UBF and EEP8.
+
+
 To do (in short term)
 =====================
 
@@ -188,6 +196,7 @@ To do (in short term)
       - atom(), binary(), float(), integer(), and string() constants
       - #record syntax, ##extended_record syntax with automatic erlang record defines
       - integer ranges (min..max, ..max, min..)
+      - erlang-based syntax for integers
       - [type()]? for optional lists
       - [type()]+ for mandatory lists
       - [type()]{N}, [type()]{N,}, [type()]{M,N} for length-constrained lists
@@ -208,8 +217,6 @@ To do (in short term)
 To do (in medium term)
 ======================
 
-  - ABNF (RFC 5234) support and integration
-  - erlang spec (EEP 8) integration
   - JSON (RFC 4627) RPC listener integration
 
   
