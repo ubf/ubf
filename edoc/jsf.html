@@ -13,8 +13,8 @@
 
 
 <h2><a name="index">Function Index</a></h2>
-<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#atom_to_binary-1">atom_to_binary/1*</a></td><td></td></tr>
-<tr><td valign="top"><a href="#binary_to_existing_atom-1">binary_to_existing_atom/1*</a></td><td></td></tr>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#atom_to_binary-1">atom_to_binary/1</a></td><td></td></tr>
+<tr><td valign="top"><a href="#binary_to_existing_atom-1">binary_to_existing_atom/1</a></td><td></td></tr>
 <tr><td valign="top"><a href="#contract_records-0">contract_records/0</a></td><td></td></tr>
 <tr><td valign="top"><a href="#decode-2">decode/2</a></td><td></td></tr>
 <tr><td valign="top"><a href="#decode_atom-1">decode_atom/1*</a></td><td></td></tr>
@@ -26,8 +26,8 @@
 <tr><td valign="top"><a href="#decode_record-5">decode_record/5*</a></td><td></td></tr>
 <tr><td valign="top"><a href="#decode_string-1">decode_string/1*</a></td><td></td></tr>
 <tr><td valign="top"><a href="#decode_tuple-3">decode_tuple/3*</a></td><td></td></tr>
-<tr><td valign="top"><a href="#do_decode-2">do_decode/2*</a></td><td></td></tr>
-<tr><td valign="top"><a href="#do_encode-2">do_encode/2*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#do_decode-2">do_decode/2</a></td><td></td></tr>
+<tr><td valign="top"><a href="#do_encode-2">do_encode/2</a></td><td></td></tr>
 <tr><td valign="top"><a href="#encode-2">encode/2</a></td><td></td></tr>
 <tr><td valign="top"><a href="#encode_atom-1">encode_atom/1*</a></td><td></td></tr>
 <tr><td valign="top"><a href="#encode_list-2">encode_list/2*</a></td><td></td></tr>
@@ -38,26 +38,16 @@
 <tr><td valign="top"><a href="#encode_string-1">encode_string/1*</a></td><td></td></tr>
 <tr><td valign="top"><a href="#encode_tuple-2">encode_tuple/2*</a></td><td></td></tr>
 <tr><td valign="top"><a href="#encode_tuple-4">encode_tuple/4*</a></td><td></td></tr>
-<tr><td valign="top"><a href="#keytake-3">keytake/3*</a></td><td></td></tr>
-<tr><td valign="top"><a href="#keytake-4">keytake/4*</a></td><td></td></tr>
-<tr><td valign="top"><a href="#rpc_v11_req_decode-3">rpc_v11_req_decode/3</a></td><td></td></tr>
-<tr><td valign="top"><a href="#rpc_v11_req_decode_print-3">rpc_v11_req_decode_print/3</a></td><td></td></tr>
-<tr><td valign="top"><a href="#rpc_v11_req_encode-3">rpc_v11_req_encode/3</a></td><td></td></tr>
-<tr><td valign="top"><a href="#rpc_v11_req_encode_print-3">rpc_v11_req_encode_print/3</a></td><td></td></tr>
-<tr><td valign="top"><a href="#rpc_v11_res_decode-2">rpc_v11_res_decode/2</a></td><td></td></tr>
-<tr><td valign="top"><a href="#rpc_v11_res_decode_print-2">rpc_v11_res_decode_print/2</a></td><td></td></tr>
-<tr><td valign="top"><a href="#rpc_v11_res_encode-4">rpc_v11_res_encode/4</a></td><td></td></tr>
-<tr><td valign="top"><a href="#rpc_v11_res_encode_print-4">rpc_v11_res_encode_print/4</a></td><td></td></tr>
 </table>
 
 <h2><a name="functions">Function Details</a></h2>
 
-<h3 class="function"><a name="atom_to_binary-1">atom_to_binary/1 *</a></h3>
+<h3 class="function"><a name="atom_to_binary-1">atom_to_binary/1</a></h3>
 <div class="spec">
 <p><tt>atom_to_binary(X) -&gt; any()</tt></p>
 </div>
 
-<h3 class="function"><a name="binary_to_existing_atom-1">binary_to_existing_atom/1 *</a></h3>
+<h3 class="function"><a name="binary_to_existing_atom-1">binary_to_existing_atom/1</a></h3>
 <div class="spec">
 <p><tt>binary_to_existing_atom(X) -&gt; any()</tt></p>
 </div>
@@ -117,12 +107,12 @@
 <p><tt>decode_tuple(T, Acc, UBFMod) -&gt; any()</tt></p>
 </div>
 
-<h3 class="function"><a name="do_decode-2">do_decode/2 *</a></h3>
+<h3 class="function"><a name="do_decode-2">do_decode/2</a></h3>
 <div class="spec">
 <p><tt>do_decode(X, UBFMod) -&gt; any()</tt></p>
 </div>
 
-<h3 class="function"><a name="do_encode-2">do_encode/2 *</a></h3>
+<h3 class="function"><a name="do_encode-2">do_encode/2</a></h3>
 <div class="spec">
 <p><tt>do_encode(X, UBFMod) -&gt; any()</tt></p>
 </div>
@@ -175,58 +165,6 @@
 <h3 class="function"><a name="encode_tuple-4">encode_tuple/4 *</a></h3>
 <div class="spec">
 <p><tt>encode_tuple(N, X, Acc, UBFMod) -&gt; any()</tt></p>
-</div>
-
-<h3 class="function"><a name="keytake-3">keytake/3 *</a></h3>
-<div class="spec">
-<p><tt>keytake(Key, N, L) -&gt; any()</tt></p>
-</div>
-
-<h3 class="function"><a name="keytake-4">keytake/4 *</a></h3>
-<div class="spec">
-<p><tt>keytake(Key, N, T, L) -&gt; any()</tt></p>
-</div>
-
-<h3 class="function"><a name="rpc_v11_req_decode-3">rpc_v11_req_decode/3</a></h3>
-<div class="spec">
-<p><tt>rpc_v11_req_decode(AuthInfo, X, UBFMod) -&gt; any()</tt></p>
-</div>
-
-<h3 class="function"><a name="rpc_v11_req_decode_print-3">rpc_v11_req_decode_print/3</a></h3>
-<div class="spec">
-<p><tt>rpc_v11_req_decode_print(AuthInfo, X, UBFMod) -&gt; any()</tt></p>
-</div>
-
-<h3 class="function"><a name="rpc_v11_req_encode-3">rpc_v11_req_encode/3</a></h3>
-<div class="spec">
-<p><tt>rpc_v11_req_encode(Method, Id, UBFMod) -&gt; any()</tt></p>
-</div>
-
-<h3 class="function"><a name="rpc_v11_req_encode_print-3">rpc_v11_req_encode_print/3</a></h3>
-<div class="spec">
-<p><tt>rpc_v11_req_encode_print(X, Id, UBFMod) -&gt; any()</tt></p>
-</div>
-<p><b><font color="red">To do</font></b><ul><li><font color="red">- pending reviewing against JSON-RPC 1.1 Specification
-  Working Draft 7 August 2006</font></li></ul></p>
-
-<h3 class="function"><a name="rpc_v11_res_decode-2">rpc_v11_res_decode/2</a></h3>
-<div class="spec">
-<p><tt>rpc_v11_res_decode(X, UBFMod) -&gt; any()</tt></p>
-</div>
-
-<h3 class="function"><a name="rpc_v11_res_decode_print-2">rpc_v11_res_decode_print/2</a></h3>
-<div class="spec">
-<p><tt>rpc_v11_res_decode_print(X, UBFMod) -&gt; any()</tt></p>
-</div>
-
-<h3 class="function"><a name="rpc_v11_res_encode-4">rpc_v11_res_encode/4</a></h3>
-<div class="spec">
-<p><tt>rpc_v11_res_encode(X, Y, Id, UBFMod) -&gt; any()</tt></p>
-</div>
-
-<h3 class="function"><a name="rpc_v11_res_encode_print-4">rpc_v11_res_encode_print/4</a></h3>
-<div class="spec">
-<p><tt>rpc_v11_res_encode_print(X, Y, Id, UBFMod) -&gt; any()</tt></p>
 </div>
 <hr>
 

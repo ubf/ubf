@@ -117,8 +117,8 @@ check_binary_repeat(S, _Next, _Matches) ->
 
 %%----------------------------------------------------------------------
 %% @doc choose between alternatives (with backtracking).
-%% @reference based on ideas presented in <a
-%% href="http://rvirding.blogspot.com/2009/03/backtracking-in-erlang-part-1-control.html">
+%% based on ideas presented in
+%% <a href="http://rvirding.blogspot.com/2009/03/backtracking-in-erlang-part-1-control.html">
 %% Robert Virding's blog </a>
 alts([C|Cs]) ->
     case C() of
