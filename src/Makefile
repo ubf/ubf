@@ -25,7 +25,6 @@ MODULES = \
 	ubf_plugin_meta_serverless
 
 PRIVS = \
-	leex
 
 TESTS = \
 	bug \
@@ -83,7 +82,6 @@ ERL_FLAGS += \
 # standard targets
 clean::
 	rm -f contract_lex.erl contract_yecc.erl
-	rm -f contract_lex.$(EMULATOR) contract_yecc.$(EMULATOR)
 
 check: all
 	-rm -f ./*.log
@@ -107,21 +105,17 @@ ${EUNITTESTPLUGINS:%=$(EUNITTEST_DIR)/%.$(EMULATOR)}: \
 	${TESTPLUGINS:%=$(TEST_DIR)/%.con}
 
 $(TARGET_PLUGINS): \
-	$(PRIV_DIR)/leex.$(EMULATOR) \
 	$(EBIN)/contract_parser.$(EMULATOR) \
 	$(EBIN)/contract_lex.$(EMULATOR) \
 	$(EBIN)/contract_yecc.$(EMULATOR)
 
-.yrl.erl:
-	echo "yecc:yecc($*,$*), halt()." | $(ERL) -noshell
-
-contract_lex.erl: contract.xrl $(EBIN)/contract_parser.$(EMULATOR) $(PRIV_DIR)/leex.$(EMULATOR)
-	$(ERL) -noinput -noshell -pz $(EBIN) -pa $(PRIV_DIR) \
+contract_lex.erl: contract_lex.xrl $(EBIN)/contract_parser.$(EMULATOR)
+	$(ERL) -noinput -noshell -pz $(EBIN) \
 		-s contract_parser make_lex \
 		-s erlang halt
 
-contract_yecc.erl: contract.yrl $(EBIN)/contract_parser.$(EMULATOR)
-	$(ERL) -noinput -noshell -pz $(EBIN) -pa $(PRIV_DIR) \
+contract_yecc.erl: contract_yecc.yrl $(EBIN)/contract_parser.$(EMULATOR)
+	$(ERL) -noinput -noshell -pz $(EBIN) \
 		-s contract_parser make_yecc \
 		-s erlang halt
 

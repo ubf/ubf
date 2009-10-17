@@ -1,3 +1,8 @@
+2009-10-17 23:45 JST  norton
+
+        * src/contract_lex.xrl, src/contract_yecc.yrl, src/contract_parser.erl, src/Makefile:
+        upgrade lex and yecc
+
 2009-10-15 00:45 JST  norton
 
         * src/jsf.erl, src/Makefile: move jsonrpc-specific code to new

@@ -150,17 +150,17 @@ merge_in_code([H|T], Exports, Fns) ->
 merge_in_code([], Exports, Fns) ->
     [Exports|Fns].
 
-%% usage
-%%    oil_parse:file(File)
-%%        Converts File.ebnf -> File.xbin
-
 make() ->
     make_lex(),
     make_yecc().
 
-make_lex() -> leex:gen(contract, contract_lex).
+make_lex() ->
+    {ok,_} = leex:file(contract_lex),
+    ok.
 
-make_yecc() -> yecc:yecc("contract", "contract_yecc", true).
+make_yecc() ->
+    {ok,_} = yecc:file(contract_yecc),
+    ok.
 
 infileExtension()  -> ".con".
 outfileHUCExtension() -> ".huc".  %% hrl UBF contract records
