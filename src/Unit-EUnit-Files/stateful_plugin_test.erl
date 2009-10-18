@@ -40,4 +40,5 @@ all_tests_(Setup,Teardown) ->
                 [] %% TODO: fix failure (stateless_plugin_test:all_actual_tests_("localhost",3002,jsf,false,start))(not_used)
         end
      ++ (stateless_plugin_test:all_actual_tests_(unused,unused,etf,false,start))(not_used)
+     ++ (stateless_plugin_test:all_actual_tests_(unused,unused,lpc,false,start))(not_used)
     }.

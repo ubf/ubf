@@ -14,12 +14,13 @@
 
 <h2><a name="index">Function Index</a></h2>
 <table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#contract-1">contract/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#do_checkCallback-3">do_checkCallback/3</a></td><td></td></tr>
+<tr><td valign="top"><a href="#do_checkIn-3">do_checkIn/3</a></td><td></td></tr>
+<tr><td valign="top"><a href="#do_checkOut-8">do_checkOut/8</a></td><td></td></tr>
 <tr><td valign="top"><a href="#do_rpc-6">do_rpc/6*</a></td><td></td></tr>
 <tr><td valign="top"><a href="#loop-5">loop/5*</a></td><td></td></tr>
 <tr><td valign="top"><a href="#start-0">start/0</a></td><td></td></tr>
 <tr><td valign="top"><a href="#start-1">start/1</a></td><td></td></tr>
-<tr><td valign="top"><a href="#tlogCheckIn-0">tlogCheckIn/0*</a></td><td></td></tr>
-<tr><td valign="top"><a href="#tlogCheckOut-5">tlogCheckOut/5*</a></td><td></td></tr>
 <tr><td valign="top"><a href="#wait-1">wait/1*</a></td><td></td></tr>
 </table>
 
@@ -30,14 +31,29 @@
 <p><tt>contract(Mod) -&gt; any()</tt></p>
 </div>
 
+<h3 class="function"><a name="do_checkCallback-3">do_checkCallback/3</a></h3>
+<div class="spec">
+<p><tt>do_checkCallback(Msg, State, Mod) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="do_checkIn-3">do_checkIn/3</a></h3>
+<div class="spec">
+<p><tt>do_checkIn(Q, State, Mod) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="do_checkOut-8">do_checkOut/8</a></h3>
+<div class="spec">
+<p><tt>do_checkOut(Ref, Q, State, Mod, Reply, ReplyState, NewState, NewMod) -&gt; any()</tt></p>
+</div>
+
 <h3 class="function"><a name="do_rpc-6">do_rpc/6 *</a></h3>
 <div class="spec">
-<p><tt>do_rpc(Client, Server, State1, Mod, Q, VerboseRPC) -&gt; any()</tt></p>
+<p><tt>do_rpc(Client, Server, State, Mod, Q, VerboseRPC) -&gt; any()</tt></p>
 </div>
 
 <h3 class="function"><a name="loop-5">loop/5 *</a></h3>
 <div class="spec">
-<p><tt>loop(Client, Server, State1, Mod, VerboseRPC) -&gt; any()</tt></p>
+<p><tt>loop(Client, Server, State, Mod, VerboseRPC) -&gt; any()</tt></p>
 </div>
 
 <h3 class="function"><a name="start-0">start/0</a></h3>
@@ -48,16 +64,6 @@
 <h3 class="function"><a name="start-1">start/1</a></h3>
 <div class="spec">
 <p><tt>start(VerboseRPC) -&gt; any()</tt></p>
-</div>
-
-<h3 class="function"><a name="tlogCheckIn-0">tlogCheckIn/0 *</a></h3>
-<div class="spec">
-<p><tt>tlogCheckIn() -&gt; any()</tt></p>
-</div>
-
-<h3 class="function"><a name="tlogCheckOut-5">tlogCheckOut/5 *</a></h3>
-<div class="spec">
-<p><tt>tlogCheckOut(StartTime, Mod, Q, Reply, Status0) -&gt; any()</tt></p>
 </div>
 
 <h3 class="function"><a name="wait-1">wait/1 *</a></h3>

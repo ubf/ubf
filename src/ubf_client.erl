@@ -8,8 +8,13 @@
 %%% callback function to handle asynchronous notifications from the
 %%% UBF server to your client process.
 %%%
-%%% See the documentation for the <tt>file_plugin</tt> module for
-%%% extra commentary on writing an UBF server implementation module.
+%%% This module also provides an alternative client-side function for
+%%% calling's UBF contract manager and a UBF contract's implementation
+%%% without any side-effects: lpc() to make a synchronous local
+%%% procedure call to a contract's implementation.
+%%%
+%%% See the documentation for the <tt>TBD</tt> module for extra
+%%% commentary on writing an UBF server implementation module.
 %%%
 
 -module(ubf_client).
@@ -22,6 +27,8 @@
 
 -export([connect/2, connect/3, connect/4, rpc/2, rpc/3, stop/1,
          install_default_handler/1, install_handler/2]).
+
+-export([lpc/2, lpc/3]).
 
 %% @type address() = string() | ip_address(). A DNS hostname or IP address.
 %% @type connect_options() = list({proto, ubf | ebf | jsf}).
@@ -312,4 +319,34 @@ loop(Driver, Fun) ->
         X ->
             io:format("*** YY Client loop dropping:~p~n",[X]),
             loop(Driver, Fun)
+    end.
+
+%% @spec (module(), term()) -> term()
+%% @doc Perform a synchronous LPC (local procedure) call with the
+%% state 'none'.
+%%
+
+lpc(Mod, Q) ->
+    lpc(Mod, Q, none).
+
+%% @spec (module(), term(), atom()) -> term()
+%% @doc Perform a synchronous LPC (local procedure) call with the
+%% specified state.
+%%
+
+lpc(Mod, Q, State) ->
+    %% check contract
+    case contract_manager:do_checkIn(Q, State, Mod) of
+        {error, Reply} ->
+            {reply,Reply,State};
+        {ok, Ref} ->
+            case (catch Mod:handlerRpc(Q)) of
+                {'EXIT', _Why} ->
+                    %% @tbd should this be logged as an exception?
+                    {error, stop};
+                Reply ->
+                    %% check contract
+                    {_, NewReply} = contract_manager:do_checkOut(Ref, Q, State, Mod, Reply, State, State, Mod),
+                    {reply,NewReply,State}
+            end
     end.

@@ -14,6 +14,7 @@ MODULES = \
 	contracts \
 	contracts_abnf \
 	contract_manager \
+	contract_manager_tlog \
 	ubf \
 	ubf_utils \
 	ubf_driver \

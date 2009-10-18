@@ -21,8 +21,13 @@ server, stop() a connection, and install_handler() to add a
 callback function to handle asynchronous notifications from the   
 UBF server to your client process.</p>
   
-   See the documentation for the <tt>file_plugin</tt> module for
-   extra commentary on writing an UBF server implementation module.
+   <p>This module also provides an alternative client-side function for   
+calling's UBF contract manager and a UBF contract's implementation   
+without any side-effects: lpc() to make a synchronous local   
+procedure call to a contract's implementation.</p>
+  
+   See the documentation for the <tt>TBD</tt> module for extra
+   commentary on writing an UBF server implementation module.
   
 <h2><a name="types">Data Types</a></h2>
 
@@ -67,6 +72,10 @@ asynchronous UBF messages.</td></tr>
 <tr><td valign="top"><a href="#install_handler-2">install_handler/2</a></td><td>Install a handler function (callback-style) for asynchronous  
 UBF messages.</td></tr>
 <tr><td valign="top"><a href="#loop-2">loop/2*</a></td><td>Main loop for the UBF client process.</td></tr>
+<tr><td valign="top"><a href="#lpc-2">lpc/2</a></td><td>Perform a synchronous LPC (local procedure) call with the
+  state 'none'.</td></tr>
+<tr><td valign="top"><a href="#lpc-3">lpc/3</a></td><td>Perform a synchronous LPC (local procedure) call with the
+  specified state.</td></tr>
 <tr><td valign="top"><a href="#rpc-2">rpc/2</a></td><td>Perform a synchronous RPC call.</td></tr>
 <tr><td valign="top"><a href="#rpc-3">rpc/3</a></td><td>Perform a synchronous RPC call.</td></tr>
 <tr><td valign="top"><a href="#stop-1">stop/1</a></td><td>Stop a UBF client process.</td></tr>
@@ -144,6 +153,20 @@ called with the UBF message as its single argument.</p>
 <div class="spec">
 <p><tt>loop(Driver, Fun) -&gt; any()</tt></p>
 </div><p>Main loop for the UBF client process.</p>
+
+<h3 class="function"><a name="lpc-2">lpc/2</a></h3>
+<div class="spec">
+<p><tt>lpc(Mod::<a href="#type-module">module()</a>, Q::term()) -&gt; term()</tt></p>
+</div><p>Perform a synchronous LPC (local procedure) call with the
+  state 'none'.
+ </p>
+
+<h3 class="function"><a name="lpc-3">lpc/3</a></h3>
+<div class="spec">
+<p><tt>lpc(Mod::<a href="#type-module">module()</a>, Q::term(), State::atom()) -&gt; term()</tt></p>
+</div><p>Perform a synchronous LPC (local procedure) call with the
+  specified state.
+ </p>
 
 <h3 class="function"><a name="rpc-2">rpc/2</a></h3>
 <div class="spec">

@@ -1,6 +1,8 @@
 -module(contract_manager).
 
 -export([start/0, start/1]).
+-export([do_checkIn/3, do_checkOut/8, do_checkCallback/3]).
+
 -import(contracts, [checkIn/3, checkOut/4, checkCallback/3]).
 -import(lists, [map/2]).
 
@@ -34,9 +36,9 @@
 
 
 %% The protocol manager terminates a protocol
-%% loop(Client, State1, Data, Contract, Manager, Mod)
+%% loop(Client, State, Data, Contract, Manager, Mod)
 %%      Client is the process that sens up messages
-%%      State1 is our state
+%%      State is our state
 %%      Contract is our contract
 %%      Mod is our callback module
 %%      Data is the local state of the handler
@@ -55,25 +57,21 @@ wait(VerboseRPC) ->
             exit({serverContractManager, stop})
     end.
 
-loop(Client, Server, State1, Mod, VerboseRPC) ->
+loop(Client, Server, State, Mod, VerboseRPC) ->
     receive
         {Client, contract} ->
             S = contract(Mod),
             Client ! {self(), {contract, S}},
-            loop(Client, Server, State1, Mod, VerboseRPC);
+            loop(Client, Server, State, Mod, VerboseRPC);
         {Client, Q} ->
-            do_rpc(Client, Server, State1, Mod, Q, VerboseRPC);
+            do_rpc(Client, Server, State, Mod, Q, VerboseRPC);
         {event, Msg} ->
-            case checkCallback(Msg, State1, Mod) of
+            case do_checkCallback(Msg, State, Mod) of
                 true ->
                     Client ! {self(), {event, Msg}},
-                    loop(Client, Server, State1, Mod, VerboseRPC);
+                    loop(Client, Server, State, Mod, VerboseRPC);
                 false ->
-                    io:format("**** ILLEGAL CALLBACK"
-                              "State: ~p"
-                              "msg:~p~n",
-                              [State1, Msg]),
-                    loop(Client, Server, State1,  Mod, VerboseRPC)
+                    loop(Client, Server, State, Mod, VerboseRPC)
             end;
         stop ->
             Server ! stop;
@@ -81,42 +79,65 @@ loop(Client, Server, State1, Mod, VerboseRPC) ->
             exit({serverContractManager, Why})
     end.
 
-do_rpc(Client, Server, State1, Mod, Q, VerboseRPC) ->
+do_rpc(Client, Server, State, Mod, Q, VerboseRPC) ->
     %% check contract
-    case checkIn(Q, State1, Mod) of
-        [] ->
-            Expect = Mod:contract_state(State1),
-            Client ! {self(), {{clientBrokeContract, Q, Expect}, State1}},
-            loop(Client, Server, State1, Mod, VerboseRPC);
-        FSM2 ->
+    case do_checkIn(Q, State, Mod) of
+        {error, Reply} ->
+            Client ! {self(), {Reply, State}},
+            loop(Client, Server, State, Mod, VerboseRPC);
+        {ok, {_TLog, FSM}=TLogRef} ->
             if VerboseRPC ->
-                    Server ! {self(), {rpc, {Q, FSM2}}};
+                    Server ! {self(), {rpc, {Q, FSM}}};
                true ->
                     Server ! {self(), {rpc, Q}}
             end,
             receive
-                {Server, {rpcReply, Reply, State2, Next}} ->
+                {Server, {rpcReply, Reply, ReplyState, same}} ->
                     %% check contract
-                    case checkOut(Reply, State2, FSM2, Mod) of
-                        true ->
-                            case Next of
-                                same ->
-                                    Client ! {self(), {Reply, State2}},
-                                    loop(Client, Server, State2, Mod, VerboseRPC);
-                                {new, NewMod, State3} ->
-                                    Client ! {self(), {Reply, State3}},
-                                    loop(Client, Server, State3, NewMod, VerboseRPC)
-                            end;
-                        false ->
-                            Expect = map(fun(I) -> element(2, I) end, FSM2),
-                            Client ! {self(), {{serverBrokeContract, {Q, Reply}, Expect}, State1}},
-                            loop(Client, Server, State1, Mod, VerboseRPC)
-                    end;
+                    {_, NewReply} = do_checkOut(TLogRef, Q, State, Mod, Reply, ReplyState, ReplyState, Mod),
+                    Client ! {self(), {NewReply, ReplyState}},
+                    loop(Client, Server, ReplyState, Mod, VerboseRPC);
+                {Server, {rpcReply, Reply, ReplyState, {new, NewMod, NewState}}} ->
+                    %% check contract
+                    {_, NewReply} = do_checkOut(TLogRef, Q, State, Mod, Reply, ReplyState, NewState, NewMod),
+                    Client ! {self(), {NewReply, NewState}},
+                    loop(Client, Server, NewState, NewMod, VerboseRPC);
                 stop ->
                     exit(Server, stop)
             end
     end.
 
+do_checkIn(Q, State, Mod) ->
+    TLog = contract_manager_tlog:checkIn(Q, State, Mod),
+    case checkIn(Q, State, Mod) of
+        [] ->
+            contract_manager_tlog:checkOut(TLog, Q, State, Mod, undefined, State, Mod, client_broke_contract),
+            Expect = Mod:contract_state(State),
+            {error, {clientBrokeContract, Q, Expect}};
+        FSM ->
+            {ok, {TLog, FSM}}
+    end.
+
+do_checkOut({TLog, FSM}=_Ref, Q, State, Mod, Reply, ReplyState, NewState, NewMod) ->
+    case checkOut(Reply, ReplyState, FSM, Mod) of
+        true ->
+            contract_manager_tlog:checkOut(TLog, Q, State, Mod, Reply, NewState, NewMod, ok),
+            {ok, Reply};
+        false ->
+            contract_manager_tlog:checkOut(TLog, Q, State, Mod, Reply, NewState, NewMod, server_broke_contract),
+            Expect = map(fun(I) -> element(2, I) end, FSM),
+            {error, {serverBrokeContract, {Q, Reply}, Expect}}
+    end.
+
+do_checkCallback(Msg, State, Mod) ->
+    case checkCallback(Msg, State, Mod) of
+        true ->
+            contract_manager_tlog:checkCallback(Msg, State, Mod, ok),
+            true;
+        false ->
+            contract_manager_tlog:checkCallback(Msg, State, Mod, server_broke_contract),
+            false
+    end.
 
 contract(Mod) ->
     {{name,?S(Mod:contract_name())},
