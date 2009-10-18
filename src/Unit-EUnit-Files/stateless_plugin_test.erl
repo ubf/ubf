@@ -13,6 +13,8 @@ do_eunit() ->
 
 -define(APPLICATION, stateless_plugin).
 
+-record(args, {host, port, proto, stateless, state}).
+
 %%%----------------------------------------------------------------------
 %%% TESTS
 %%%----------------------------------------------------------------------
@@ -30,35 +32,36 @@ all_tests_(Setup,Teardown) ->
     {setup,
      Setup,
      Teardown,
-     (all_actual_tests_("localhost",3000,ubf,true))(not_used)
-     ++ (all_actual_tests_("localhost",3001,ebf,true))(not_used)
+     (all_actual_tests_("localhost",3000,ubf,true,none))(not_used)
+     ++ (all_actual_tests_("localhost",3001,ebf,true,none))(not_used)
      ++ case code:which(rfc4627) of
             non_existing ->
                 [];
             _ ->
-                (all_actual_tests_("localhost",3002,jsf,false))(not_used)
+                (all_actual_tests_("localhost",3002,jsf,true,none))(not_used)
         end
-     ++ (all_actual_tests_(none,none,etf,true))(not_used)
+     ++ (all_actual_tests_(unused,unused,etf,true,none))(not_used)
     }.
 
-all_actual_tests_(Host,Port,Proto,Stateless) ->
+all_actual_tests_(Host,Port,Proto,Stateless,State) ->
     fun (_) ->
-            [?_test(test_001(Host,Port,Proto))
-             , ?_test(test_002(Host,Port,Proto))
-             , ?_test(test_003(Host,Port,Proto,Stateless))
-             , ?_test(test_004(Host,Port,Proto,Stateless))
-             , ?_test(test_005(Host,Port,Proto,Stateless))
-             , ?_test(test_006(Host,Port,Proto,Stateless))
-             , ?_test(test_007(Host,Port,Proto,Stateless))
-             , ?_test(test_008(Host,Port,Proto,Stateless))
-             , ?_test(test_009(Host,Port,Proto,Stateless))
-             , ?_test(test_010(Host,Port,Proto,Stateless))
-             , ?_test(test_011(Host,Port,Proto,Stateless))
-             , ?_test(test_012(Host,Port,Proto,Stateless))
-             , ?_test(test_013(Host,Port,Proto,Stateless))
-             , ?_test(test_015(Host,Port,Proto,Stateless))
-             , ?_test(test_016(Host,Port,Proto,Stateless))
-             , ?_test(test_017(Host,Port,Proto,Stateless))
+            Args = #args{host=Host,port=Port,proto=Proto,stateless=Stateless,state=State},
+            [?_test(test_001(Args))
+             , ?_test(test_002(Args))
+             , ?_test(test_003(Args))
+             , ?_test(test_004(Args))
+             , ?_test(test_005(Args))
+             , ?_test(test_006(Args))
+             , ?_test(test_007(Args))
+             , ?_test(test_008(Args))
+             , ?_test(test_009(Args))
+             , ?_test(test_010(Args))
+             , ?_test(test_011(Args))
+             , ?_test(test_012(Args))
+             , ?_test(test_013(Args))
+             , ?_test(test_015(Args))
+             , ?_test(test_016(Args))
+             , ?_test(test_017(Args))
             ]
     end.
 
@@ -88,320 +91,332 @@ test_teardown(App) ->
     ok.
 
 %% connect -> close
-test_001(_Host,_Port,etf) ->
+test_001(#args{proto=etf}) ->
     ok;
-test_001(Host,Port,Proto) ->
-    assert_process(Proto, 0, 0, 0, 0, 0),
+test_001(#args{host=Host,port=Port}=Args) ->
+    assert_process(Args, 0, 0, 0, 0, 0),
     {ok,Sock} = gen_tcp:connect(Host,Port,[]),
-    assert_process(Proto, 1, 1, 1, 0, 0),
+    assert_process(Args, 1, 1, 1, 0, 0),
     ok = gen_tcp:close(Sock),
-    assert_process(Proto, 0, 0, 0, 0, 0).
+    assert_process(Args, 0, 0, 0, 0, 0).
 
 %% connect -> shutdown(X) -> close
-test_002(_Host,_Port,etf) ->
+test_002(#args{proto=etf}) ->
     ok;
-test_002(Host,Port,Proto) ->
-    test_002(Host,Port,Proto,read),
-    test_002(Host,Port,Proto,write),
-    test_002(Host,Port,Proto,read_write).
+test_002(Args) ->
+    test_002(Args,read),
+    test_002(Args,write),
+    test_002(Args,read_write).
 
-test_002(Host,Port,Proto,How) ->
-    assert_process(Proto, 0, 0, 0, 0, 0),
+test_002(#args{host=Host,port=Port}=Args,How) ->
+    assert_process(Args, 0, 0, 0, 0, 0),
     {ok,Sock} = gen_tcp:connect(Host,Port,[]),
-    assert_process(Proto, 1, 1, 1, 0, 0),
+    assert_process(Args, 1, 1, 1, 0, 0),
     ok = gen_tcp:shutdown(Sock, How),
-    assert_process(Proto, 0, 0, 0, 0, 0),
+    assert_process(Args, 0, 0, 0, 0, 0),
     ok = gen_tcp:close(Sock),
-    assert_process(Proto, 0, 0, 0, 0, 0).
+    assert_process(Args, 0, 0, 0, 0, 0).
 
 %% connect -> close
-test_003(Host,Port,Proto,Stateless) ->
-    assert_process(Proto, 0, 0, 0, 0, 0),
-    {ok,Pid1,?S("test_meta_server")} = test_connect(Host,Port,Proto,Stateless),
-    assert_process(Proto, 1, 1, 1, 1, 1),
+test_003(#args{state=State}=Args) ->
+    assert_process(Args, 0, 0, 0, 0, 0),
+    {ok,Pid1,?S("test_meta_server")} = test_connect(Args),
+    assert_process(Args, 1, 1, 1, 1, 1),
     ubf_client:stop(Pid1),
-    assert_process(Proto, 0, 0, 0, 0, 0),
-    {ok,Pid2,?S("test_meta_server")} = test_connect(Host,Port,Proto,Stateless),
+    assert_process(Args, 0, 0, 0, 0, 0),
+    {ok,Pid2,?S("test_meta_server")} = test_connect(Args),
     ubf_client:stop(Pid1),
-    assert_process(Proto, 1, 1, 1, 1, 1),
-    {reply,{ok,ok},none} = ubf_client:rpc(Pid2,{startSession,?S("test"),[]}),
-    assert_process(Proto, 1, 1, 1, 1, 1),
-    {reply,ok,none} = ubf_client:rpc(Pid2,keepalive),
+    assert_process(Args, 1, 1, 1, 1, 1),
+    {reply,{ok,ok},State} = ubf_client:rpc(Pid2,{startSession,?S("test"),[]}),
+    assert_process(Args, 1, 1, 1, 1, 1),
+    {reply,ok,State} = ubf_client:rpc(Pid2,keepalive),
     ubf_client:stop(Pid2),
-    assert_process(Proto, 0, 0, 0, 0, 0).
+    assert_process(Args, 0, 0, 0, 0, 0).
 
 %% connect -> client breaks -> close
-test_004(Host,Port,Proto,Stateless) ->
-    assert_process(Proto, 0, 0, 0, 0, 0),
-    {ok,Pid,?S("test_meta_server")} = test_connect(Host,Port,Proto,Stateless),
-    assert_process(Proto, 1, 1, 1, 1, 1),
-    {reply,{ok,ok},none} = ubf_client:rpc(Pid,{startSession,?S("test"),[]}),
-    assert_process(Proto, 1, 1, 1, 1, 1),
-    {reply,ok,none} = ubf_client:rpc(Pid,keepalive),
-    assert_process(Proto, 1, 1, 1, 1, 1),
-    {reply,{clientBrokeContract,client_breaks_req01_with_this_request,[]},none}
+test_004(#args{state=State}=Args) ->
+    assert_process(Args, 0, 0, 0, 0, 0),
+    {ok,Pid,?S("test_meta_server")} = test_connect(Args),
+    assert_process(Args, 1, 1, 1, 1, 1),
+    {reply,{ok,ok},State} = ubf_client:rpc(Pid,{startSession,?S("test"),[]}),
+    assert_process(Args, 1, 1, 1, 1, 1),
+    {reply,ok,State} = ubf_client:rpc(Pid,keepalive),
+    assert_process(Args, 1, 1, 1, 1, 1),
+    {reply,{clientBrokeContract,client_breaks_req01_with_this_request,_},State}
         = ubf_client:rpc(Pid,client_breaks_req01_with_this_request),
-    assert_process(Proto, 1, 1, 1, 1, 1),
-    {reply,ok,none} = ubf_client:rpc(Pid,keepalive),
-    assert_process(Proto, 1, 1, 1, 1, 1),
+    assert_process(Args, 1, 1, 1, 1, 1),
+    {reply,ok,State} = ubf_client:rpc(Pid,keepalive),
+    assert_process(Args, 1, 1, 1, 1, 1),
     ubf_client:stop(Pid),
-    assert_process(Proto, 0, 0, 0, 0, 0).
+    assert_process(Args, 0, 0, 0, 0, 0).
 
 %% connect -> client timeout -> close
-test_005(Host,Port,Proto,Stateless) ->
-    assert_process(Proto, 0, 0, 0, 0, 0),
-    {ok,Pid,?S("test_meta_server")} = test_connect(Host,Port,Proto,Stateless),
-    assert_process(Proto, 1, 1, 1, 1, 1),
-    {reply,{ok,ok},none} = ubf_client:rpc(Pid,{startSession,?S("test"),[]}),
-    assert_process(Proto, 1, 1, 1, 1, 1),
-    {reply,ok,none} = ubf_client:rpc(Pid,keepalive),
-    assert_process(Proto, 1, 1, 1, 1, 1),
+test_005(#args{state=State}=Args) ->
+    assert_process(Args, 0, 0, 0, 0, 0),
+    {ok,Pid,?S("test_meta_server")} = test_connect(Args),
+    assert_process(Args, 1, 1, 1, 1, 1),
+    {reply,{ok,ok},State} = ubf_client:rpc(Pid,{startSession,?S("test"),[]}),
+    assert_process(Args, 1, 1, 1, 1, 1),
+    {reply,ok,State} = ubf_client:rpc(Pid,keepalive),
+    assert_process(Args, 1, 1, 1, 1, 1),
     timeout = ubf_client:rpc(Pid,{client_timeout_req03,1000},500),
-    assert_process(Proto, 0, 0, 0, 0, 0),
+    assert_process(Args, 0, 0, 0, 0, 0),
     ubf_client:stop(Pid),
-    assert_process(Proto, 0, 0, 0, 0, 0).
+    assert_process(Args, 0, 0, 0, 0, 0).
 
 %% connect -> server breaks -> close
-test_006(Host,Port,Proto,Stateless) ->
-    assert_process(Proto, 0, 0, 0, 0, 0),
-    {ok,Pid,?S("test_meta_server")} = test_connect(Host,Port,Proto,Stateless),
-    assert_process(Proto, 1, 1, 1, 1, 1),
-    {reply,{ok,ok},none} = ubf_client:rpc(Pid,{startSession,?S("test"),[]}),
-    assert_process(Proto, 1, 1, 1, 1, 1),
-    {reply,ok,none} = ubf_client:rpc(Pid,keepalive),
-    assert_process(Proto, 1, 1, 1, 1, 1),
-    {reply,{serverBrokeContract,{server_breaks_req01,server_breaks_res01_with_this_response},_},none}
+test_006(#args{state=State}=Args) ->
+    assert_process(Args, 0, 0, 0, 0, 0),
+    {ok,Pid,?S("test_meta_server")} = test_connect(Args),
+    assert_process(Args, 1, 1, 1, 1, 1),
+    {reply,{ok,ok},State} = ubf_client:rpc(Pid,{startSession,?S("test"),[]}),
+    assert_process(Args, 1, 1, 1, 1, 1),
+    {reply,ok,State} = ubf_client:rpc(Pid,keepalive),
+    assert_process(Args, 1, 1, 1, 1, 1),
+    {reply,{serverBrokeContract,{server_breaks_req01,server_breaks_res01_with_this_response},_},State}
         = ubf_client:rpc(Pid,server_breaks_req01),
-    assert_process(Proto, 1, 1, 1, 1, 1),
-    {reply,ok,none} = ubf_client:rpc(Pid,keepalive),
-    assert_process(Proto, 1, 1, 1, 1, 1),
+    assert_process(Args, 1, 1, 1, 1, 1),
+    {reply,ok,State} = ubf_client:rpc(Pid,keepalive),
+    assert_process(Args, 1, 1, 1, 1, 1),
     ubf_client:stop(Pid),
-    assert_process(Proto, 0, 0, 0, 0, 0).
+    assert_process(Args, 0, 0, 0, 0, 0).
 
 %% connect -> server timeout -> close
-test_007(Host,Port,Proto,Stateless) ->
-    assert_process(Proto, 0, 0, 0, 0, 0),
-    {ok,Pid,?S("test_meta_server")} = test_connect(Host,Port,Proto,Stateless),
-    assert_process(Proto, 1, 1, 1, 1, 1),
-    {reply,{ok,ok},none} = ubf_client:rpc(Pid,{startSession,?S("test"),[]}),
-    assert_process(Proto, 1, 1, 1, 1, 1),
-    {reply,ok,none} = ubf_client:rpc(Pid,keepalive),
-    assert_process(Proto, 1, 1, 1, 1, 1),
-    {reply,server_timeout_res03,none} = ubf_client:rpc(Pid,{server_timeout_req03,500}),
-    assert_process(Proto, 1, 1, 1, 1, 1),
-    {reply,ok,none} = ubf_client:rpc(Pid,keepalive),
-    assert_process(Proto, 1, 1, 1, 1, 1),
+test_007(#args{state=State}=Args) ->
+    assert_process(Args, 0, 0, 0, 0, 0),
+    {ok,Pid,?S("test_meta_server")} = test_connect(Args),
+    assert_process(Args, 1, 1, 1, 1, 1),
+    {reply,{ok,ok},State} = ubf_client:rpc(Pid,{startSession,?S("test"),[]}),
+    assert_process(Args, 1, 1, 1, 1, 1),
+    {reply,ok,State} = ubf_client:rpc(Pid,keepalive),
+    assert_process(Args, 1, 1, 1, 1, 1),
+    {reply,server_timeout_res03,State} = ubf_client:rpc(Pid,{server_timeout_req03,500}),
+    assert_process(Args, 1, 1, 1, 1, 1),
+    {reply,ok,State} = ubf_client:rpc(Pid,keepalive),
+    assert_process(Args, 1, 1, 1, 1, 1),
     ubf_client:stop(Pid),
-    assert_process(Proto, 0, 0, 0, 0, 0).
+    assert_process(Args, 0, 0, 0, 0, 0).
 
 %% connect -> server crash -> close
-test_008(Host,Port,Proto,Stateless) ->
-    assert_process(Proto, 0, 0, 0, 0, 0),
-    {ok,Pid,?S("test_meta_server")} = test_connect(Host,Port,Proto,Stateless),
-    assert_process(Proto, 1, 1, 1, 1, 1),
-    {reply,{ok,ok},none} = ubf_client:rpc(Pid,{startSession,?S("test"),[]}),
-    assert_process(Proto, 1, 1, 1, 1, 1),
-    {reply,ok,none} = ubf_client:rpc(Pid,keepalive),
-    assert_process(Proto, 1, 1, 1, 1, 1),
+test_008(#args{state=State}=Args) ->
+    assert_process(Args, 0, 0, 0, 0, 0),
+    {ok,Pid,?S("test_meta_server")} = test_connect(Args),
+    assert_process(Args, 1, 1, 1, 1, 1),
+    {reply,{ok,ok},State} = ubf_client:rpc(Pid,{startSession,?S("test"),[]}),
+    assert_process(Args, 1, 1, 1, 1, 1),
+    {reply,ok,State} = ubf_client:rpc(Pid,keepalive),
+    assert_process(Args, 1, 1, 1, 1, 1),
     {error,stop} = ubf_client:rpc(Pid,server_crash_req05,50000),
-    assert_process(Proto, 0, 0, 0, 0, 0),
+    assert_process(Args, 0, 0, 0, 0, 0),
     ubf_client:stop(Pid),
-    assert_process(Proto, 0, 0, 0, 0, 0).
+    assert_process(Args, 0, 0, 0, 0, 0).
 
 %% connect -> client driver is exit(kill) -> close
-test_009(_Host,_Port,etf,_Stateless) ->
+test_009(#args{proto=etf}) ->
     ok;
-test_009(Host,Port,Proto,Stateless) ->
-    assert_process(Proto, 0, 0, 0, 0, 0),
-    {ok,Pid,?S("test_meta_server")} = test_connect(Host,Port,Proto,Stateless),
-    assert_process(Proto, 1, 1, 1, 1, 1),
-    {reply,{ok,ok},none} = ubf_client:rpc(Pid,{startSession,?S("test"),[]}),
-    assert_process(Proto, 1, 1, 1, 1, 1),
-    {reply,ok,none} = ubf_client:rpc(Pid,keepalive),
-    assert_process(Proto, 1, 1, 1, 1, 1),
-    spawn(fun() -> timer:sleep(500), exit_process(Proto,client_driver,kill) end),
+test_009(#args{state=State}=Args) ->
+    assert_process(Args, 0, 0, 0, 0, 0),
+    {ok,Pid,?S("test_meta_server")} = test_connect(Args),
+    assert_process(Args, 1, 1, 1, 1, 1),
+    {reply,{ok,ok},State} = ubf_client:rpc(Pid,{startSession,?S("test"),[]}),
+    assert_process(Args, 1, 1, 1, 1, 1),
+    {reply,ok,State} = ubf_client:rpc(Pid,keepalive),
+    assert_process(Args, 1, 1, 1, 1, 1),
+    spawn(fun() -> timer:sleep(500), exit_process(Args,client_driver,kill) end),
     {error,killed} = ubf_client:rpc(Pid,{server_timeout_req03,5000}),
-    assert_process(Proto, 0, 0, 0, 0, 0),
-    case catch {reply,ok,none} = ubf_client:rpc(Pid,keepalive) of
+    assert_process(Args, 0, 0, 0, 0, 0),
+    case catch {reply,ok,State} = ubf_client:rpc(Pid,keepalive) of
         {'EXIT', _} ->
             ok
     end,
-    assert_process(Proto, 0, 0, 0, 0, 0),
+    assert_process(Args, 0, 0, 0, 0, 0),
     ubf_client:stop(Pid),
-    assert_process(Proto, 0, 0, 0, 0, 0).
+    assert_process(Args, 0, 0, 0, 0, 0).
 
 %% connect -> client driver is exit(socket_closed) -> close
-test_010(_Host,_Port,etf,_Stateless) ->
+test_010(#args{proto=etf}) ->
     ok;
-test_010(Host,Port,Proto,Stateless) ->
-    assert_process(Proto, 0, 0, 0, 0, 0),
-    {ok,Pid,?S("test_meta_server")} = test_connect(Host,Port,Proto,Stateless),
-    assert_process(Proto, 1, 1, 1, 1, 1),
-    {reply,{ok,ok},none} = ubf_client:rpc(Pid,{startSession,?S("test"),[]}),
-    assert_process(Proto, 1, 1, 1, 1, 1),
-    {reply,ok,none} = ubf_client:rpc(Pid,keepalive),
-    assert_process(Proto, 1, 1, 1, 1, 1),
-    spawn(fun() -> timer:sleep(500), exit_process(Proto,client_driver,socket_closed) end),
+test_010(#args{state=State}=Args) ->
+    assert_process(Args, 0, 0, 0, 0, 0),
+    {ok,Pid,?S("test_meta_server")} = test_connect(Args),
+    assert_process(Args, 1, 1, 1, 1, 1),
+    {reply,{ok,ok},State} = ubf_client:rpc(Pid,{startSession,?S("test"),[]}),
+    assert_process(Args, 1, 1, 1, 1, 1),
+    {reply,ok,State} = ubf_client:rpc(Pid,keepalive),
+    assert_process(Args, 1, 1, 1, 1, 1),
+    spawn(fun() -> timer:sleep(500), exit_process(Args,client_driver,socket_closed) end),
     {error,socket_closed} = ubf_client:rpc(Pid,{server_timeout_req03,5000}),
-    assert_process(Proto, 0, 0, 0, 0, 0),
-    case catch {reply,ok,none} = ubf_client:rpc(Pid,keepalive) of
+    assert_process(Args, 0, 0, 0, 0, 0),
+    case catch {reply,ok,State} = ubf_client:rpc(Pid,keepalive) of
         {'EXIT', _} ->
             ok
     end,
-    assert_process(Proto, 0, 0, 0, 0, 0),
+    assert_process(Args, 0, 0, 0, 0, 0),
     ubf_client:stop(Pid),
-    assert_process(Proto, 0, 0, 0, 0, 0).
+    assert_process(Args, 0, 0, 0, 0, 0).
 
 %% connect -> client driver socket is shutdown(read) -> close
-test_011(_Host,_Port,etf,_Stateless) ->
+test_011(#args{proto=etf}) ->
     ok;
-test_011(Host,Port,Proto,Stateless) ->
-    test_shutdown_socket(Host,Port,Proto,Stateless,client_driver,read).
+test_011(Args) ->
+    test_shutdown_socket(Args,client_driver,read).
 
 %% connect -> client driver socket is shutdown(write) -> close
-test_012(_Host,_Port,etf,_Stateless) ->
+test_012(#args{proto=etf}) ->
     ok;
-test_012(Host,Port,Proto,Stateless) ->
-    test_shutdown_socket(Host,Port,Proto,Stateless,client_driver,write).
+test_012(Args) ->
+    test_shutdown_socket(Args,client_driver,write).
 
 %% connect -> client driver socket is shutdown(read_write) -> close
-test_013(_Host,_Port,etf,_Stateless) ->
+test_013(#args{proto=etf}) ->
     ok;
-test_013(Host,Port,Proto,Stateless) ->
-    test_shutdown_socket(Host,Port,Proto,Stateless,client_driver,read_write).
+test_013(Args) ->
+    test_shutdown_socket(Args,client_driver,read_write).
 
 %% connect -> client driver socket is closed() -> close
 %% @note: disable because behavior is unexpected
-test_014(_Host,_Port,etf,_Stateless) ->
+test_014(#args{proto=etf}) ->
     ok;
-test_014(Host,Port,Proto,Stateless) ->
-    test_shutdown_socket(Host,Port,Proto,Stateless,client_driver,close).
+test_014(Args) ->
+    test_shutdown_socket(Args,client_driver,close).
 
 %% connect -> server driver socket is shutdown(read) -> close
-test_015(_Host,_Port,etf,_Stateless) ->
+test_015(#args{proto=etf}) ->
     ok;
-test_015(Host,Port,Proto,Stateless) ->
-    test_shutdown_socket(Host,Port,Proto,Stateless,driver,read).
+test_015(Args) ->
+    test_shutdown_socket(Args,driver,read).
 
 %% connect -> server driver socket is shutdown(write) -> close
-test_016(_Host,_Port,etf,_Stateless) ->
+test_016(#args{proto=etf}) ->
     ok;
-test_016(Host,Port,Proto,Stateless) ->
-    test_shutdown_socket(Host,Port,Proto,Stateless,driver,write).
+test_016(Args) ->
+    test_shutdown_socket(Args,driver,write).
 
 %% connect -> server driver socket is shutdown(read_write) -> close
-test_017(_Host,_Port,etf,_Stateless) ->
+test_017(#args{proto=etf}) ->
     ok;
-test_017(Host,Port,Proto,Stateless) ->
-    test_shutdown_socket(Host,Port,Proto,Stateless,driver,read_write).
+test_017(Args) ->
+    test_shutdown_socket(Args,driver,read_write).
 
 %% connect -> server driver socket is closed() -> close
 %% @note: disable because behavior is unexpected
-test_018(_Host,_Port,etf,_Stateless) ->
+test_018(#args{proto=etf}) ->
     ok;
-test_018(Host,Port,Proto,Stateless) ->
-    test_shutdown_socket(Host,Port,Proto,Stateless,driver,close).
+test_018(Args) ->
+    test_shutdown_socket(Args,driver,close).
 
 %%%----------------------------------------------------------------------
 %%% Helpers
 %%%----------------------------------------------------------------------
 
-test_connect(_Host,_Port,etf,Stateless) ->
+test_connect(#args{proto=etf,stateless=Stateless}) ->
     Plugins = if Stateless -> [stateless_plugin]; true -> [stateful_plugin] end,
     Server = test_ubf,
     Options = [{serverhello, "test_meta_server"},{proto,etf},{statelessrpc,Stateless}],
     ubf_client:connect(Plugins,Server,Options,infinity);
-test_connect(Host,Port,Proto,Stateless) ->
+test_connect(#args{host=Host,port=Port,proto=Proto,stateless=Stateless}) ->
     Options = [{proto,Proto},{statelessrpc,Stateless}],
     ubf_client:connect(Host,Port,Options,infinity).
 
 %% connect -> driver socket is shutdown or closed -> close
-test_shutdown_socket(Host,Port,Proto,Stateless,Who,Reason) ->
-    assert_process(Proto, 0, 0, 0, 0, 0),
-    {ok,Pid,?S("test_meta_server")} = test_connect(Host,Port,Proto,Stateless),
-    assert_process(Proto, 1, 1, 1, 1, 1),
-    {reply,{ok,ok},none} = ubf_client:rpc(Pid,{startSession,?S("test"),[]}),
-    assert_process(Proto, 1, 1, 1, 1, 1),
-    {reply,ok,none} = ubf_client:rpc(Pid,keepalive),
-    assert_process(Proto, 1, 1, 1, 1, 1),
-    spawn_link(fun() -> timer:sleep(500), shutdown_socket(Proto,Who,Reason) end),
+test_shutdown_socket(#args{state=State}=Args,Who,Reason) ->
+    assert_process(Args, 0, 0, 0, 0, 0),
+    {ok,Pid,?S("test_meta_server")} = test_connect(Args),
+    assert_process(Args, 1, 1, 1, 1, 1),
+    {reply,{ok,ok},State} = ubf_client:rpc(Pid,{startSession,?S("test"),[]}),
+    assert_process(Args, 1, 1, 1, 1, 1),
+    {reply,ok,State} = ubf_client:rpc(Pid,keepalive),
+    assert_process(Args, 1, 1, 1, 1, 1),
+    spawn_link(fun() -> timer:sleep(500), shutdown_socket(Args,Who,Reason) end),
     {error,stop} = ubf_client:rpc(Pid,{server_timeout_req03,5000}),
-    assert_process(Proto, 0, 0, 0, 0, 0),
-    case catch {reply,ok,none} = ubf_client:rpc(Pid,keepalive) of
+    assert_process(Args, 0, 0, 0, 0, 0),
+    case catch {reply,ok,State} = ubf_client:rpc(Pid,keepalive) of
         {'EXIT', _} ->
             ok
     end,
-    assert_process(Proto, 0, 0, 0, 0, 0),
+    assert_process(Args, 0, 0, 0, 0, 0),
     ubf_client:stop(Pid),
-    assert_process(Proto, 0, 0, 0, 0, 0).
+    assert_process(Args, 0, 0, 0, 0, 0).
 
-assert_process(ubf, Driver, Contract, Plugin, Client, ClientDriver) ->
-    assert_process(ubf_driver, Driver),
-    assert_process(contract_manager, Contract),
-    assert_process(ubf_plugin_handler, Plugin),
-    assert_process(ubf_client, Client),
-    assert_process(ubf_client_driver, ClientDriver);
-assert_process(ebf, Driver, Contract, Plugin, Client, ClientDriver) ->
-    assert_process(ebf_driver, Driver),
-    assert_process(contract_manager, Contract),
-    assert_process(ubf_plugin_handler, Plugin),
-    assert_process(ubf_client, Client),
-    assert_process(ebf_client_driver, ClientDriver);
-assert_process(jsf, Driver, Contract, Plugin, Client, ClientDriver) ->
-    assert_process(jsf_driver, Driver),
-    assert_process(contract_manager, Contract),
-    assert_process(ubf_plugin_handler, Plugin),
-    assert_process(ubf_client, Client),
-    assert_process(jsf_client_driver, ClientDriver);
-assert_process(etf, _, Contract, Plugin, Client, _) ->
-    assert_process(contract_manager, Contract),
-    assert_process(ubf_plugin_handler, Plugin),
-    assert_process(ubf_client, Client).
-
-
-assert_process(M, CheckNum) ->
-    erlang:yield(),
+assert_process(#args{proto=ubf}=Args, Driver, Contract, Plugin, Client, ClientDriver) ->
     timer:sleep(50),
-    erlang:yield(),
+    assert_process(Args, ubf_driver, Driver),
+    assert_process(Args, contract_manager, Contract),
+    assert_process(Args, ubf_plugin_handler, Plugin),
+    assert_process(Args, ubf_client, Client),
+    assert_process(Args, ubf_client_driver, ClientDriver);
+assert_process(#args{proto=ebf}=Args, Driver, Contract, Plugin, Client, ClientDriver) ->
+    timer:sleep(50),
+    assert_process(Args, ebf_driver, Driver),
+    assert_process(Args, contract_manager, Contract),
+    assert_process(Args, ubf_plugin_handler, Plugin),
+    assert_process(Args, ubf_client, Client),
+    assert_process(Args, ebf_client_driver, ClientDriver);
+assert_process(#args{proto=jsf}=Args, Driver, Contract, Plugin, Client, ClientDriver) ->
+    timer:sleep(50),
+    assert_process(Args, jsf_driver, Driver),
+    assert_process(Args, contract_manager, Contract),
+    assert_process(Args, ubf_plugin_handler, Plugin),
+    assert_process(Args, ubf_client, Client),
+    assert_process(Args, jsf_client_driver, ClientDriver);
+assert_process(#args{proto=etf}=Args, _, Contract, Plugin, Client, _) ->
+    timer:sleep(50),
+    assert_process(Args, contract_manager, Contract),
+    assert_process(Args, ubf_plugin_handler, Plugin),
+    assert_process(Args, ubf_client, Client).
+
+
+assert_process(#args{stateless=false}=Args, ubf_plugin_handler=M, CheckNum) ->
+    assert_process(Args, M, CheckNum, -3); % adjust for manager plugins
+assert_process(Args, M, CheckNum) ->
+    assert_process(Args, M, CheckNum, 0).
+
+
+assert_process(_Args, M, CheckNum, Adjust) ->
     ActualNum = check_process(M),
-    %%?debugVal({CheckNum,ActualNum,M}),
-    ?assert(CheckNum =:= ActualNum).
+    Check = CheckNum =:= ActualNum+Adjust,
+    if not Check ->
+            ?debugVal({Adjust,CheckNum,ActualNum,M});
+       true ->
+            noop
+    end,
+    ?assert(Check).
 
 check_process(M) ->
     length(proc_utils:debug(M)).
 
 
-exit_process(Proto, Process) ->
-    exit_process(Proto, Process, kill).
+exit_process(Args, Process) ->
+    exit_process(Args, Process, kill).
 
-exit_process(ubf, driver, Reason) ->
+exit_process(#args{proto=ubf}, driver, Reason) ->
     do_exit_process(ubf_driver, Reason);
-exit_process(ebf, driver, Reason) ->
+exit_process(#args{proto=ebf}, driver, Reason) ->
     do_exit_process(ebf_driver, Reason);
-exit_process(jsf, driver, Reason) ->
+exit_process(#args{proto=jsf}, driver, Reason) ->
     do_exit_process(jsf_driver, Reason);
-exit_process(ubf, client_driver, Reason) ->
+exit_process(#args{proto=ubf}, client_driver, Reason) ->
     do_exit_process(ubf_client_driver, Reason);
-exit_process(ebf, client_driver, Reason) ->
+exit_process(#args{proto=ebf}, client_driver, Reason) ->
     do_exit_process(ebf_client_driver, Reason);
-exit_process(jsf, client_driver, Reason) ->
+exit_process(#args{proto=jsf}, client_driver, Reason) ->
     do_exit_process(jsf_client_driver, Reason).
 
 
-shutdown_socket(Proto, Process) ->
-    shutdown_socket(Proto, Process, read_write).
+shutdown_socket(Args, Process) ->
+    shutdown_socket(Args, Process, read_write).
 
-shutdown_socket(ubf, driver, Reason) ->
+shutdown_socket(#args{proto=ubf}, driver, Reason) ->
     do_shutdown_socket(ubf_driver, Reason);
-shutdown_socket(ebf, driver, Reason) ->
+shutdown_socket(#args{proto=ebf}, driver, Reason) ->
     do_shutdown_socket(ebf_driver, Reason);
-shutdown_socket(jsf, driver, Reason) ->
+shutdown_socket(#args{proto=jsf}, driver, Reason) ->
     do_shutdown_socket(jsf_driver, Reason);
-shutdown_socket(ubf, client_driver, Reason) ->
+shutdown_socket(#args{proto=ubf}, client_driver, Reason) ->
     do_shutdown_socket(ubf_client_driver, Reason);
-shutdown_socket(ebf, client_driver, Reason) ->
+shutdown_socket(#args{proto=ebf}, client_driver, Reason) ->
     do_shutdown_socket(ebf_client_driver, Reason);
-shutdown_socket(jsf, client_driver, Reason) ->
+shutdown_socket(#args{proto=jsf}, client_driver, Reason) ->
     do_shutdown_socket(jsf_client_driver, Reason).
 
 

@@ -1,3 +1,9 @@
+2009-10-18 21:25 JST  norton
+
+        * src/ubf_plugin_handler.erl, src/Makefile: revert to simpler
+        implementation for stateless plugin handler.  fix and enable
+        stateful plugin eunit tests
+
 2009-10-17 23:45 JST  norton
 
         * src/contract_lex.xrl, src/contract_yecc.yrl, src/contract_parser.erl, src/Makefile:

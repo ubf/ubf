@@ -71,10 +71,10 @@ EUNITTESTPLUGINS = \
 	$(EUNITTEST_DIR)/stateless_plugin \
 	$(EUNITTEST_DIR)/stateful_plugin
 
-MY_ERLANG_RFC4627_EBIN = ./example-symlink-to-erlang-rfc4627-ebin
-
 # include erl make
 include ../priv/make/erl_make.mk
+
+MY_ERLANG_RFC4627_EBIN = ./example-symlink-to-erlang-rfc4627-ebin
 
 ERL_FLAGS += \
 	-pz $(MY_ERLANG_RFC4627_EBIN)
@@ -87,13 +87,14 @@ check: all
 	-rm -f ./*.log
 	$(RUNERL1) -noinput -noshell -pz $(TEST_DIR) -pz $(EUNITTEST_DIR) -pz $(MY_ERLANG_RFC4627_EBIN) \
 		-s ubf_test tests \
-		-s jsf_test2 tests \
 		-s jsf_test tests \
+		-s jsf_test2 tests \
 		-s test_ubf tests \
 		-s test_ebf tests \
-		-s test_etf tests \
 		-s test_jsf tests \
+		-s test_etf tests \
 		-s stateless_plugin_test do_eunit \
+		-s stateful_plugin_test do_eunit \
 		-s erlang halt \
 		> ./check.log
 

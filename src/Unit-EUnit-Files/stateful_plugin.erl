@@ -1,11 +1,15 @@
 -module(stateful_plugin).
 
--export([handlerStart/2, handlerRpc/4, handlerStop/3,
-         managerStart/1, managerRestart/2, managerRpc/2]).
-
--import(ubf_server, [ask_manager/2]).
-
 -include("ubf.hrl").
+
+-export([info/0, description/0, keepalive/0]).
+-export([handlerStart/2, handlerStop/3, handlerRpc/4, handlerRpc/1]).
+
+-export([client_breaks_req01/0, client_timeout_req03/1]).
+-export([server_breaks_req01/0, server_timeout_req03/1, server_crash_req05/0]).
+
+-export([managerStart/1, managerRestart/2, managerRpc/2]).
+-import(ubf_server, [ask_manager/2]).
 
 %% NOTE the following two lines
 -compile({parse_transform,contract_parser}).
@@ -28,19 +32,94 @@
 
 %% records
 
+%% state
+-record(state, {
+         }).
+
 %% managerState
 -record(managerState, {
          }).
 
-%% state
--record(state, {
-         }).
 
 info() ->
     "I am a stateful server".
 
 description() ->
     "An stateful server programmed by UBF".
+
+keepalive() ->
+    ok.
+
+
+%% @spec handlerStart(Args::list(any()), ManagerPid::pid()) ->
+%%          {accept, Reply::any(), StateName::atom(), StateData::term()} | {reject, Reason::any()}
+%% @doc start handler
+handlerStart(_Args,_ManagerPid) ->
+    {accept,ok,start,#state{}}.
+
+%% @spec handlerStop(Pid::pid(), Reason::any(), ManagerStateData::term()) -> NewManagerStateData::term()
+%% @doc stop handler event
+handlerStop(_Pid,_Reason,ManagerStateData)
+  when is_record(ManagerStateData,managerState) ->
+    ManagerStateData.
+
+
+%% @spec handlerRpc(StateName::atom(), Event::any(), StateData::term(), ManagerPid::pid()) ->
+%%          {Reply::any(), NextStateName::atom(), NewStateData::term()}
+%% @doc rpc handler
+handlerRpc(StateName,Event,StateData,_ManagerPid) ->
+    {handlerRpc(Event),StateName,StateData}.
+
+
+%% @spec handlerRpc(Event::any()) ->
+%%          Reply::any()
+%% @doc rpc handler
+handlerRpc(Event)
+  when Event==client_breaks_req01
+       ; Event==server_breaks_req01
+       ; Event==server_crash_req05
+       ->
+    ?MODULE:Event();
+handlerRpc({Event,Timeout})
+  when Event==client_timeout_req03
+       ; Event==server_timeout_req03
+       ->
+    ?MODULE:Event(Timeout);
+handlerRpc(Event)
+  when Event==info; Event==description ->
+    ?S(?MODULE:Event());
+handlerRpc(Event)
+  when Event==keepalive ->
+    ?MODULE:Event();
+handlerRpc(Event) ->
+    {Event, not_implemented}.
+
+
+%%%----------------------------------------------------------------------
+%%% Implementation functions
+%%%----------------------------------------------------------------------
+
+client_breaks_req01() ->
+    exit(client_breaks_req01_should_not_be_called).
+
+client_timeout_req03(Timeout) ->
+    timer:sleep(Timeout),
+    client_timeout_res03.
+
+server_breaks_req01() ->
+    server_breaks_res01_with_this_response.
+
+server_timeout_req03(Timeout) ->
+    timer:sleep(Timeout),
+    server_timeout_res03.
+
+server_crash_req05() ->
+    exit(server_crash_res05_with_this_response).
+
+
+%%%----------------------------------------------------------------------
+%%% Manager functions
+%%%----------------------------------------------------------------------
 
 %% @spec managerStart(Args::list(any())) ->
 %%          {ok, ManagerStateData::term()} | {error, Reason::any()}
@@ -55,18 +134,6 @@ managerStart(_) ->
 managerRestart(Args,ManagerPid) ->
     ask_manager(ManagerPid,{restartManager, Args}).
 
-%% @spec handlerStart(Args::list(any()), ManagerPid::pid()) ->
-%%          {accept, Reply::any(), StateName::atom(), StateData::term()} | {reject, Reason::any()}
-%% @doc start handler
-handlerStart(_Args,_ManagerPid) ->
-    StateData = #state{},
-    {accept,ok,start,StateData}.
-
-%% @spec handlerStop(Pid::pid(), Reason::any(), ManagerStateData::term()) -> NewManagerStateData::term()
-%% @doc stop handler event
-handlerStop(_Pid,_Reason,ManagerStateData)
-  when is_record(ManagerStateData,managerState) ->
-    ManagerStateData.
 
 %% @spec managerRpc(Event::any(), ManagerStateData::term()) ->
 %%          {ok | {ok,term()} | error | {error, Reason::any()}, NewManagerStateData::term()}
@@ -74,23 +141,3 @@ handlerStop(_Pid,_Reason,ManagerStateData)
 managerRpc({restartManager,Args},ManagerStateData)
   when is_record(ManagerStateData,managerState) ->
     managerStart(Args).
-
-%% @spec handlerRpc(StateName::atom(), {Event::any(),FSM::any()}, StateData::term(), ManagerPid::pid()) ->
-%%          {Reply::any(), NextStateName::atom(), NewStateData::term()}
-%% @doc rpc handler
-
-%% any - real
-handlerRpc(AnyStateName,info,StateData,_ManagerPid) ->
-    {?S(info()),AnyStateName,StateData};
-handlerRpc(AnyStateName,description,StateData,_ManagerPid) ->
-    {?S(description()),AnyStateName,StateData};
-handlerRpc(AnyStateName,keepalive,StateData,_ManagerPid) ->
-    {keepalive(),AnyStateName,StateData}.
-
-%% keepalive
-keepalive() ->
-    ok.
-
-%%%----------------------------------------------------------------------
-%%% Internal functions
-%%%----------------------------------------------------------------------

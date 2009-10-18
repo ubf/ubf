@@ -26,8 +26,7 @@ loop(Client, State1, Data, Manager, Mod) ->
                         {Reply, State2, Data2} ->
                             Client ! {self(), {rpcReply, Reply, State2, same}},
                             loop(Client, State2, Data2, Manager, Mod);
-                        {changeContract, Reply, State1,
-                         HandlerMod, State2, Data2, ManPid} ->
+                        {changeContract, Reply, State1, HandlerMod, State2, Data2, ManPid} ->
                             Client ! {self(), {rpcReply, Reply, State1,
                                                {new, HandlerMod, State2}}},
                             loop(Client, State2, Data2, ManPid, HandlerMod);
@@ -35,31 +34,16 @@ loop(Client, State1, Data, Manager, Mod) ->
                             exit({serverPluginHandler, Why})
                     end;
                true ->
-                    DispatchArgs =
-                        if is_tuple(Q) ->
-                                erlang:tuple_to_list(Q);
-                           is_atom(Q) ->
-                                [Q];
-                           true ->
-                                Why1 = {bad_dispatch_args, Q},
-                                exit({serverPluginHandler, Why1})
-                        end,
-                    case (catch Mod:handlerDispatch(hd(DispatchArgs), Data)) of
-                        {DispatchMod, DispatchFun, Data2} ->
-                            case (catch erlang:apply(DispatchMod, DispatchFun, tl(DispatchArgs))) of
-                                {'EXIT', Why2} ->
-                                    exit({serverPluginHandler, Why2});
-                                Reply ->
-                                    Client ! {self(), {rpcReply, Reply, State1, same}},
-                                    loop(Client, State1, Data2, Manager, Mod)
-                            end;
-                        {'EXIT', Why3} ->
-                            exit({serverPluginHandler, Why3});
-                        Data2 ->
-                            %% special case - hard-coded not_implemented reply
-                            Reply = {serverBrokeContract, {Q, not_implemented}, undefined},
-                            Client ! {self(), {rpcReply, Reply, State1, same}},
-                            loop(Client, State1, Data2, Manager, Mod)
+                    case (catch Mod:handlerRpc(State1, Q, Data)) of
+                        {Reply, State2, Data2} ->
+                            Client ! {self(), {rpcReply, Reply, State2, same}},
+                            loop(Client, State2, Data2, Manager, Mod);
+                        {changeContract, Reply, State1, HandlerMod, State2, Data2} ->
+                            Client ! {self(), {rpcReply, Reply, State1,
+                                               {new, HandlerMod, State2}}},
+                            loop(Client, State2, Data2, Manager, HandlerMod);
+                        {'EXIT', Why} ->
+                            exit({serverPluginHandler, Why})
                     end
             end;
         {event, X} ->
