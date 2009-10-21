@@ -1,3 +1,9 @@
+2009-10-21 23:45 JST  norton
+
+        * src/ubf_client.erl, src/ubf_plugin_handler.erl, src/contract_manager.erl, src/contract_manager_tlog.erl:
+        add checkOutError error logging for ubf_client and
+        ubf_plugin_handler, rename Why to Reason
+
 2009-10-19 08:20 JST  norton
 
         * src/ubf_client.erl, src/contract_manager.erl, src/contract_manager_tlog.erl:

@@ -75,7 +75,7 @@ cold_start(Parent, Name, Port, Fun, Max, PacketType, PacketSize) ->
     register(Name, self()),
     %% io:format("Starting a port server on ~p ~p...~n",[Name, Port]),
     DefaultListenOptions =
-        [binary, {nodelay, true}, {active, true}, {reuseaddr, true}, {backlog, 100}],
+        [binary, {nodelay, true}, {active, true}, {reuseaddr, true}, {backlog, 4096}],
     ListenOptions =
         case {PacketType, PacketSize} of
             {0,0} ->
@@ -141,9 +141,9 @@ start_child(Parent, Listen, Fun) ->
                     true;
                 {'EXIT', socket_closed} ->
                     true;
-                {'EXIT', Why} ->
+                {'EXIT', Reason} ->
                     gen_tcp:close(Socket),
-                    exit(Why)
+                    exit(Reason)
             end;
         Other ->
             exit(Other)

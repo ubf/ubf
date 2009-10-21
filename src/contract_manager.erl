@@ -2,6 +2,7 @@
 
 -export([start/0, start/1]).
 -export([do_checkIn/3, do_checkOut/8, do_checkCallback/3]).
+-export([do_checkOutError/4, do_checkOutError/5]).
 
 -import(contracts, [checkIn/3, checkOut/4, checkCallback/3]).
 -import(lists, [map/2]).
@@ -75,8 +76,8 @@ loop(Client, Server, State, Mod, VerboseRPC) ->
             end;
         stop ->
             Server ! stop;
-        Why ->
-            exit({serverContractManager, Why})
+        Reason ->
+            exit({serverContractManager, Reason})
     end.
 
 do_rpc(Client, Server, State, Mod, Q, VerboseRPC) ->
@@ -138,6 +139,12 @@ do_checkCallback(Msg, State, Mod) ->
             contract_manager_tlog:checkCallback(Msg, State, Mod, server_broke_contract),
             false
     end.
+
+do_checkOutError(Q, State, Mod, Error) ->
+    contract_manager_tlog:checkOutError(Q, State, Mod, Error).
+
+do_checkOutError({TLog, _FSM}=_Ref, Q, State, Mod, Error) ->
+    contract_manager_tlog:checkOutError(TLog, Q, State, Mod, Error).
 
 contract(Mod) ->
     {{name,?S(Mod:contract_name())},

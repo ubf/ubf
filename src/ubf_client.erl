@@ -341,8 +341,8 @@ lpc(Mod, Q, State) ->
             {reply,Reply,State};
         {ok, Ref} ->
             case (catch Mod:handlerRpc(Q)) of
-                {'EXIT', _Why} ->
-                    %% @tbd should this be logged as an exception?
+                {'EXIT', Reason} ->
+                    contract_manager:do_checkOutError(Ref, Q, State, Mod, Reason),
                     {error, stop};
                 Reply ->
                     %% check contract

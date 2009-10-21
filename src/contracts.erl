@@ -11,7 +11,7 @@
 
 %%----------------------------------------------------------------------
 %% test() ==> test
-%% parse({contract, types(), fsm()}) => {ok, internal()} | {error, Why}
+%% parse({contract, types(), fsm()}) => {ok, internal()} | {error, Reason}
 %% checkIn(internal(), StateIn, Msg) -> error | {ok, [{S2,M2}]}
 %% checkOut(internal(), [{S2,M2}], S2, M2) -> ok | error.
 

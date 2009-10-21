@@ -74,12 +74,12 @@ Commands:
                                      See http://www.sics.se/~joe/ubf.html
 ".
 
-%% managerStart(Args) -> {ok, State} | {error, Why}
+%% managerStart(Args) -> {ok, State} | {error, Reason}
 %% handlerRpc(Q, State, Data, ManagerPid) -> {Reply, State', Data'}
 
 %% handlerStart(Args, MangerPid) ->
 %%      {accept, State, Data, Reply, NewManagerPid}
-%%    | {reject, Why}.
+%%    | {reject, Reason}.
 
 
 managerStart(_) ->
@@ -140,8 +140,8 @@ handlerRpc(start, {startSession, ?S(Name), Args}, Data, Manager) ->
                     %% io:format("Accepted:~n"),
                     {changeContract, {ok, Reply}, start,
                      Mod, State1, Data1, undefined};
-                {reject, Why} ->
-                    {{error,Why}, start, Data}
+                {reject, Reason} ->
+                    {{error,Reason}, start, Data}
             end;
         error ->
             io:format("returning error nosuch~n"),
@@ -176,8 +176,8 @@ handlerRpc(start, {{startSession, ?S(Name), Args},_}, Data, Manager) ->
                     %% io:format("Accepted:~n"),
                     {changeContract, {ok, Reply}, start,
                      Mod, State1, Data1, undefined};
-                {reject, Why} ->
-                    {{error,Why}, start, Data}
+                {reject, Reason} ->
+                    {{error,Reason}, start, Data}
             end;
         error ->
             io:format("returning error nosuch~n"),

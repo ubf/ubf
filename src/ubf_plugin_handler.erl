@@ -30,8 +30,9 @@ loop(Client, State1, Data, Manager, Mod) ->
                             Client ! {self(), {rpcReply, Reply, State1,
                                                {new, HandlerMod, State2}}},
                             loop(Client, State2, Data2, ManPid, HandlerMod);
-                        {'EXIT', Why} ->
-                            exit({serverPluginHandler, Why})
+                        {'EXIT', Reason} ->
+                            contract_manager_tlog:checkOutError(Q, State1, Mod, Reason),
+                            exit({serverPluginHandler, Reason})
                     end;
                true ->
                     case (catch Mod:handlerRpc(State1, Q, Data)) of
@@ -42,8 +43,9 @@ loop(Client, State1, Data, Manager, Mod) ->
                             Client ! {self(), {rpcReply, Reply, State1,
                                                {new, HandlerMod, State2}}},
                             loop(Client, State2, Data2, Manager, HandlerMod);
-                        {'EXIT', Why} ->
-                            exit({serverPluginHandler, Why})
+                        {'EXIT', Reason} ->
+                            contract_manager_tlog:checkOutError(Q, State1, Mod, Reason),
+                            exit({serverPluginHandler, Reason})
                     end
             end;
         {event, X} ->
@@ -83,8 +85,8 @@ manager_loop(Mod, State) ->
                 {accept, HandlerMod, ModManagerPid, State2} ->
                     From ! {self(), {accept,HandlerMod, ModManagerPid}},
                     manager_loop(Mod, State2);
-                {reject, Why, _State1} ->
-                    From ! {self(), {reject, Why}},
+                {reject, Reason, _State1} ->
+                    From ! {self(), {reject, Reason}},
                     manager_loop(Mod, State)
             end;
         {client_has_stopped, Pid} ->
@@ -95,8 +97,8 @@ manager_loop(Mod, State) ->
                 State1 ->
                     manager_loop(Mod, State1)
             end;
-        {'EXIT', Pid, Why} ->
-            case (catch Mod:handlerStop(Pid, Why, State)) of
+        {'EXIT', Pid, Reason} ->
+            case (catch Mod:handlerStop(Pid, Reason, State)) of
                 {'EXIT', OOps} ->
                     io:format("plug in error:~p~n",[OOps]),
                     manager_loop(Mod, State);

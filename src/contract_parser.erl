@@ -43,9 +43,9 @@ parse_transform(In, Opts) ->
                                ok = file:write_file(HeaderFile, TermHUC),
                           %% DEBUG io:format("Contract added:~n"),
                                parse_transform_contract(In, Contract);
-                               {error, Why} ->
-                                      io:format("Error in contract:~p~n", [Why]),
-                                      erlang:error(Why)
+                               {error, Reason} ->
+                                      io:format("Error in contract:~p~n", [Reason]),
+                                      erlang:error(Reason)
                               end;
                                [] ->
                                       In
