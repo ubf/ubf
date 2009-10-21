@@ -33,7 +33,8 @@ def from_pyjson(value):
             l = [ [k, from_pyjson(v)] for k, v in value.iteritems() ]
             return PropList(dict(l))
         else:
-            raise RuntimeError, 'unknown dict ~s' % repr(value)
+            l = [ [k, from_pyjson(v)] for k, v in value.iteritems() ]
+            return PropList(dict(l))        
     elif isinstance(value, list):
         return [ from_pyjson(v) for v in value ]
     else:
