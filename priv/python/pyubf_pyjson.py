@@ -34,7 +34,7 @@ def from_pyjson(value):
             return PropList(dict(l))
         else:
             l = [ [k, from_pyjson(v)] for k, v in value.iteritems() ]
-            return PropList(dict(l))        
+            return dict(l)        
     elif isinstance(value, list):
         return [ from_pyjson(v) for v in value ]
     else:
