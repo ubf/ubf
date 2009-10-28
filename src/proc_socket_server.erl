@@ -16,6 +16,8 @@
 
 -export([start_raw_server/5, start_raw_server/6, start_server/3, start_server/4, stop_server/1, children/1]).
 
+-export([num_conn/1, num_conn/2]).
+
 %% Internal imports (used by spawn)
 
 -export([cold_start/7, start_child/3]).
@@ -110,6 +112,8 @@ socket_loop(Parent, Listen, New, Active, Fun, Max) ->
         {children, From} ->
             From ! {session_server, Active},
             socket_loop(Parent, Listen, New, Active, Fun, Max);
+        {num_conn, From} ->
+            From ! {length(Active), Max};
         Other ->
             io:format("Here in loop:~p~n",[Other])
     end.
@@ -147,4 +151,17 @@ start_child(Parent, Listen, Fun) ->
             end;
         Other ->
             exit(Other)
+    end.
+
+%% api to check number of connections and max
+num_conn(Server) ->
+    num_conn(Server, infinity).
+
+num_conn(Server, Timeout) ->
+    Server ! {num_conn, self()},
+    receive
+        Reply ->
+            Reply %% should be {Num, Max}
+    after Timeout ->
+            timeout
     end.

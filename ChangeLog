@@ -1,3 +1,8 @@
+2009-10-28 15:25 JST  norton
+
+        * src/proc_socket_server.erl:
+        add api to check number and max connections for socket server
+
 2009-10-21 23:45 JST  norton
 
         * src/ubf_client.erl, src/ubf_plugin_handler.erl, src/contract_manager.erl, src/contract_manager_tlog.erl:
