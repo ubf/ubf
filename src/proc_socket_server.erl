@@ -113,7 +113,8 @@ socket_loop(Parent, Listen, New, Active, Fun, Max) ->
             From ! {session_server, Active},
             socket_loop(Parent, Listen, New, Active, Fun, Max);
         {num_conn, From} ->
-            From ! {length(Active), Max};
+            From ! {length(Active), Max},
+            socket_loop(Parent, Listen, New, Active, Fun, Max);
         Other ->
             io:format("Here in loop:~p~n",[Other])
     end.
