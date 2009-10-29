@@ -62,16 +62,6 @@ PLUGINS = \
 	ubf_plugin_meta_serverful \
 	ubf_plugin_meta_serverless
 
-TESTPLUGINS = \
-	$(TEST_DIR)/file_plugin \
-        $(TEST_DIR)/irc_plugin \
-        $(TEST_DIR)/test_plugin
-
-EUNITTESTPLUGINS = \
-	$(EUNITTEST_DIR)/types_plugin \
-	$(EUNITTEST_DIR)/stateless_plugin \
-	$(EUNITTEST_DIR)/stateful_plugin
-
 # include erl make
 include ../priv/make/erl_make.mk
 
@@ -100,12 +90,6 @@ check: all
 		> ./check.log
 
 # special targets - ubf
-${TESTPLUGINS:%=$(TEST_DIR)/%.$(EMULATOR)}: \
-	${TESTPLUGINS:%=$(TEST_DIR)/%.con}
-
-${EUNITTESTPLUGINS:%=$(EUNITTEST_DIR)/%.$(EMULATOR)}: \
-	${TESTPLUGINS:%=$(TEST_DIR)/%.con}
-
 $(TARGET_PLUGINS): \
 	$(EBIN)/contract_parser.$(EMULATOR) \
 	$(EBIN)/contract_lex.$(EMULATOR) \
