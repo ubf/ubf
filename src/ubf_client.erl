@@ -214,12 +214,12 @@ stop(Pid) ->
 rpc(Pid, Q) ->
     rpc(Pid, Q, infinity).
 
-%% @spec (pid(), term(), timeout()) -> timeout | term() | exit(badpid)
+%% @spec (pid(), term(), timeout()) -> timeout | term() | exit(badpid) | exit(badarg)
 %% @doc Perform a synchronous RPC call.
 
 rpc(Pid, Q, infinity) ->
     rpc(Pid, Q, 16#ffffffff);
-rpc(Pid, Q, Timeout) ->
+rpc(Pid, Q, Timeout) when is_pid(Pid) ->
     case is_process_alive(Pid) of
         false ->
             erlang:error(badpid);
@@ -234,7 +234,9 @@ rpc(Pid, Q, Timeout) ->
                     Pid ! stop,
                     timeout
             end
-    end.
+    end;
+rpc(_Pid, _Q, _Timeout) ->
+    erlang:error(badarg).
 
 %% @spec (pid()) -> ack
 %% @doc Install a default handler function (callback-style) for

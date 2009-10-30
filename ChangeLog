@@ -1,3 +1,8 @@
+2009-10-30 09:30 JST  norton
+
+        * src/ubf_client.erl:
+        distinguish between a dead pid (badpid) and non pid (badarg)
+
 2009-10-28 15:25 JST  norton
 
         * src/proc_socket_server.erl:
