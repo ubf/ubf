@@ -1,3 +1,10 @@
+%% @doc UBF(B) contract parser.
+%%
+%% Parsing a UBF(B) contract is done via a compiler "parse transform" during
+%% the usual compilation of an Erlang source module.
+%%
+%% @todo More documentation required here.
+
 -module(contract_parser).
 
 %% parse contract language

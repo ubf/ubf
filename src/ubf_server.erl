@@ -33,7 +33,9 @@
 %%%      </li>
 %%% </ul>
 %%%
-%%% TO-DO: There is no "stop" function.
+%%% There is no "stop" function.  To stop the server, instead stop the
+%%% TCP service manager that controls it: see the `proc_socket_server'
+%%% module for extra details.
 %%%
 %%% See the documentation for the <tt>file_plugin</tt> module for
 %%% extra commentary on writing an UBF server implementation module.

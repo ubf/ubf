@@ -9,9 +9,22 @@
 <hr>
 
 <h1>Module ubf_plugin_handler</h1>
-<ul class="index"><li><a href="#index">Function Index</a></li><li><a href="#functions">Function Details</a></li></ul>
+<ul class="index"><li><a href="#description">Description</a></li><li><a href="#index">Function Index</a></li><li><a href="#functions">Function Details</a></li></ul>Implement the plugin server, an intermediate process between       
+the contract manager process and the server application.
 
 
+<h2><a name="description">Description</a></h2><p>Implement the plugin server, an intermediate process between       
+the contract manager process and the server application.</p>
+ 
+  <p>The server application may or may not have a separate process (see
+  the diagram below).  The there is no application process(es), then
+  the remote procedure call will be executed by the process executing
+  this module's <code>loop()</code> function.</p>
+ 
+  <p>This module also implements the plugin manager loop.  
+TODO More detail, please.</p>
+ 
+  <img src="../priv/doc/ubf-flow-01.png">
 <h2><a name="index">Function Index</a></h2>
 <table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#loop-5">loop/5*</a></td><td></td></tr>
 <tr><td valign="top"><a href="#manager-2">manager/2</a></td><td></td></tr>

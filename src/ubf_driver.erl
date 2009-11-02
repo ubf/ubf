@@ -1,15 +1,11 @@
+%% @doc Server-side protocol driver process for UBF(A) protocol
+%% sessions.
+%%
+%% <img src="../priv/doc/ubf-flow-01.png"></img>
+
 -module(ubf_driver).
 
 -export([start/0, loop/2, loop/3, relay/2]).
-
-%% A driver sits between a socket and a Pid
-%% Stuff on the socket is send to the Pid
-%% Stuff from the Pid is send to the socket
-%% The cache is cleared after every completed message
-%% When it is called the Socket has been
-%% set to send messages to the driver
-%% and the Pid exists
-%% If one side dies the process dies
 
 start() ->
     proc_utils:spawn_link_debug(fun() -> start1() end, ubf_client_driver).
@@ -26,13 +22,25 @@ loop(Socket, Pid) ->
     loop(Socket, Pid, 16#ffffffff).
 
 loop(Socket, Pid, Timeout) ->
-    put('$ubfsocket', Socket),
+    put('ubf_socket', Socket),
     Cont = ubf:decode_init(),
     loop(Socket, Pid, Timeout, Cont).
 
 relay(Pid, Pid1) ->
-    put('$ubfinfo', ?MODULE),
+    put('ubf_info', ?MODULE),
     Pid ! {relay, self(), Pid1}.
+
+%% @doc Driver main loop.
+%%
+%% <ul>
+%% <li> A driver sits between a socket and a Pid </li>
+%% <li> Stuff on the socket is send to the Pid </li>
+%% <li> Stuff from the Pid is send to the socket </li>
+%% <li> When it is called the Socket has been
+%% set to send messages to the driver
+%% and the Pid exists  </li>
+%% <li> If one side dies the process dies </li>
+%% </ul>
 
 loop(Socket, Pid, Timeout, Cont) ->
     receive

@@ -9,9 +9,116 @@
 <hr>
 
 <h1>Module jsf</h1>
-<ul class="index"><li><a href="#index">Function Index</a></li><li><a href="#functions">Function Details</a></li></ul>
+<ul class="index"><li><a href="#description">Description</a></li><li><a href="#index">Function Index</a></li><li><a href="#functions">Function Details</a></li></ul>Functions for JSON&lt;-&gt;Erlang data conversion.
 
 
+<h2><a name="description">Description</a></h2><p>Functions for JSON&lt;-&gt;Erlang data conversion.</p>
+ 
+  <p>For most purposes, these functions are not called by code outside of
+  this library: Erlang client &amp; Erlang server application code usually  
+have no need to use these functions.</p>
+ 
+  <h3><a name="Links">Links</a></h3>
+ 
+  <ul>
+  <li> http://www.erlang-projects.org/Public/news/ejson/view </li>
+  <li> http://www.erlang.org/eeps/eep-0018.html </li>
+  <li> http://www.erlang.org/ml-archive/erlang-questions/200511/msg00193.html </li>
+  <li> http://www.ietf.org/rfc/rfc4627.txt </li>
+  <li> http://www.json.org/ </li>
+  <li> http://www.lshift.net/blog/2007/02/17/json-and-json-rpc-for-erlang </li>
+  <li> http://www.json.com/json-schema-proposal/ </li>
+  </ul>
+ 
+  <h3><a name="JSON_Basic_Data_Types">JSON Basic Data Types</a></h3>
+  <pre>  object
+            {}
+            { members }
+  members
+            pair
+            pair, members
+  pair
+            string : value
+  array
+           []
+           [ elements ]
+  elements
+           value
+           value, elements
+  value
+           string
+           number
+           object
+           true (atom)
+           false (atom)
+           null (atom)</pre>
+ 
+  <h3><a name="Mapping:_JSON_->_Erlang_Terms,_using_erlang-rfc46267">Mapping: JSON -&gt; Erlang Terms, using erlang-rfc46267</a></h3>
+  <pre>  json::object() = {obj, [json::pair()]}
+ 
+  json::pair() = {string(), json::value()}
+       string() = [byte()]
+       byte() = integer()
+ 
+  json::array() = [json::value()]
+ 
+  json::value() = json::object() | json::array() | json::number() | json::string() | json::true() | json::false() | json::null()
+ 
+  json::number() = integer() | float()
+ 
+  json::string() = binary()
+ 
+  json::true() = true
+  json::false() = false
+  json::null() = null</pre>
+ 
+  <h3><a name="Mapping:_UBF_->_Erlang_Terms">Mapping: UBF -&gt; Erlang Terms</a></h3>
+  <pre>  ubf::tuple() = tuple()
+ 
+  ubf::list() = list()
+ 
+  ubf::number = integer() | float()
+ 
+  ubf::string() = {'$S', [integer()]}
+ 
+  ubf::proplist() = {'$P', [{term(), term()}]}
+ 
+  ubf::binary() = binary()
+ 
+  ubf::true() = true
+  ubf::false() = false
+  ubf::undefined() = undefined
+ 
+  ubf::atom() = atom()
+ 
+  ubf::record() = record()</pre>
+ 
+  <h3><a name="Mapping:_UBF_value_->_JSON_value">Mapping: UBF value -&gt; JSON value</a></h3>
+  <pre>  ubf::tuple() = {obj, [{"$T", ubf::list()}]}
+ 
+  ubf::list() = [value()]
+ 
+  ubf::number() = integer() | float()
+ 
+  ubf::string() = {obj, [{"$S", binary()}]}
+ 
+  ubf::proplist() = {obj, [{binary(), value()}]}
+ 
+  ubf::binary() = binary()
+ 
+  ubf::true() = true
+  ubf::false() = false
+  ubf::undefined() = null
+ 
+  ubf::atom() = {obj, [{"$A", atomname()}]}
+       atomname() = binary()  % a.k.a. list_to_binary(atom_to_list()) for the actual atom
+ 
+  ubf::record() = {obj, [{"$R", recordname()}] ++ [recordpair()]}
+       recordname() = binary()  % a.k.a. list_to_binary(atom_to_list()) for the record's name
+       recordpair() = {recordkey(), value()}
+       recordkey() = binary()  % a.k.a. list_to_binary(atom_to_list()) for the record key's name
+ 
+  value() = ubf::tuple() | ubf::list() | ubf::number() | ubf::string() | ubf::binary() | ubf::true() | ubf::false() | ubf::undefined() | ubf::atom() | ubf::record()</pre>
 <h2><a name="index">Function Index</a></h2>
 <table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#atom_to_binary-1">atom_to_binary/1</a></td><td></td></tr>
 <tr><td valign="top"><a href="#binary_to_existing_atom-1">binary_to_existing_atom/1</a></td><td></td></tr>

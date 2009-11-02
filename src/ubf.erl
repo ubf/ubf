@@ -1,3 +1,34 @@
+%% @doc Low-level functions for encoding and decoding the UBF(A)
+%% protocol.
+%%
+%%   UBF is a family of languages for transporting and describing complex data
+%%   structures across a network.  It has three components.  In terms
+%%   of a protocol stack, UBF(A) is a data transport format, roughly
+%%   equivalent to well-formed XML.
+%%
+%% == Quick Summary ==
+%%
+%%   UBF(A) is the transport format, it was designed to be easy to parse and
+%%   to be easy to write with a text editor. UBF(A) is based on a byte
+%%   encoded virtual machine, 26 byte codes are reserved. Instead of
+%%   allocating the bye codes from 0 we use the printable character codes to
+%%   make the format easy to read.
+%% 
+%% For more information, please see the following:
+%% <ul>
+%% <li> <a href="../priv/doc/doc/site/ubfa.html">Joe Armstrong's UBF(A) summary</a>  </li>
+%% <li> <a href="../priv/doc/doc/site/ubfa_quick.html">Joe Armstrong's UBF(A) quick-reference summary</a>  </li>
+%% </ul>
+%%
+%% == Hint: Decoding rules ==
+%%
+%% <ul>
+%% <li> {'#S', String} -> String </li>
+%% <li> Int            -> Int </li>
+%% <li> [ ]            -> List </li>
+%% <li> {...}          -> Tuple </li>
+%% </ul>
+
 -module(ubf).
 
 -compile(export_all).

@@ -1,6 +1,17 @@
--module(ubf_plugin_handler).
+%% @doc Implement the plugin server, an intermediate process between
+%%      the contract manager process and the server application.
+%%
+%% The server application may or may not have a separate process (see
+%% the diagram below).  The there is no application process(es), then
+%% the remote procedure call will be executed by the process executing
+%% this module's `loop()' function.
+%%
+%% This module also implements the plugin manager loop.
+%% TODO More detail, please.
+%%
+%% <img src="../priv/doc/ubf-flow-01.png"></img>
 
-%% The plugin handler handles request for the instance of the plugin
+-module(ubf_plugin_handler).
 
 -export([start_handler/0, start_manager/2, manager/2]).
 

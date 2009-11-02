@@ -9,9 +9,27 @@
 <hr>
 
 <h1>Module contract_manager</h1>
-<ul class="index"><li><a href="#index">Function Index</a></li><li><a href="#functions">Function Details</a></li></ul>
+<ul class="index"><li><a href="#description">Description</a></li><li><a href="#index">Function Index</a></li><li><a href="#functions">Function Details</a></li></ul>Contract manager server.
 
 
+<h2><a name="description">Description</a></h2><p>Contract manager server</p>
+ 
+  <p>This module implements the contract manager server process, which  
+runs on the Erlang server side, between the UBF driver (or the  
+driver for whatever protocol is being used "over the wire",  
+e.g. JSON-RPC) and the plugin handler server.</p>
+ 
+  <p><img src="../priv/doc/ubf-flow-01.png"></p>
+ 
+  <h3><a name="Message_Passing">Message Passing</a></h3>
+ 
+  <p>In the diagram below, the "Client" is actually the UBF driver  
+(using UBF, EBF, JSON, JSON-RPC, or other transport protocol) that  
+acts on behalf of the remote client.  The "Server" is actually the  
+plugin handler server, which acts as an intermediary between the  
+actual server application.</p>
+ 
+  <img src="../priv/doc/contract_manager-01.png">
 <h2><a name="index">Function Index</a></h2>
 <table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#contract-1">contract/1*</a></td><td></td></tr>
 <tr><td valign="top"><a href="#do_checkCallback-3">do_checkCallback/3</a></td><td></td></tr>
@@ -20,7 +38,7 @@
 <tr><td valign="top"><a href="#do_checkOutError-4">do_checkOutError/4</a></td><td></td></tr>
 <tr><td valign="top"><a href="#do_checkOutError-5">do_checkOutError/5</a></td><td></td></tr>
 <tr><td valign="top"><a href="#do_rpc-6">do_rpc/6*</a></td><td></td></tr>
-<tr><td valign="top"><a href="#loop-5">loop/5*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#loop-5">loop/5*</a></td><td>Main loop for contract manager process.</td></tr>
 <tr><td valign="top"><a href="#start-0">start/0</a></td><td></td></tr>
 <tr><td valign="top"><a href="#start-1">start/1</a></td><td></td></tr>
 <tr><td valign="top"><a href="#wait-1">wait/1*</a></td><td></td></tr>
@@ -66,16 +84,26 @@
 <h3 class="function"><a name="loop-5">loop/5 *</a></h3>
 <div class="spec">
 <p><tt>loop(Client, Server, State, Mod, VerboseRPC) -&gt; any()</tt></p>
-</div>
+</div><p><p>Main loop for contract manager process.</p>
+ 
+  <ul>
+       <li> Client is the process that sens up messages </li>
+       <li> State is our state </li>
+       <li> Contract is our contract </li>
+       <li> Mod is our callback module </li>
+       <li> VerboseRPC is a boolean </li>
+  </ul>
+ 
+  NOTE: The protocol manager terminates a protocol session.</p>
 
 <h3 class="function"><a name="start-0">start/0</a></h3>
 <div class="spec">
-<p><tt>start() -&gt; any()</tt></p>
+<p><tt>start() -&gt; pid()</tt></p>
 </div>
 
 <h3 class="function"><a name="start-1">start/1</a></h3>
 <div class="spec">
-<p><tt>start(VerboseRPC) -&gt; any()</tt></p>
+<p><tt>start(VerboseRPC::bool()) -&gt; pid()</tt></p>
 </div>
 
 <h3 class="function"><a name="wait-1">wait/1 *</a></h3>
