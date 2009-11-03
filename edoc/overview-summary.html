@@ -1,12 +1,209 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
-<title>The ubf__HEAD application</title>
+<title>UBF: Contract Checking for Network Protocols
+</title>
 <link rel="stylesheet" type="text/css" href="stylesheet.css" title="EDoc">
 </head>
 <body bgcolor="white">
 <div class="navbar"><a name="#navbar_top"></a><table width="100%" border="0" cellspacing="0" cellpadding="2" summary="navigation bar"><tr><td><a href="overview-summary.html" target="overviewFrame">Overview</a></td><td><a href="http://www.erlang.org/"><img src="erlang.png" align="right" border="0" alt="erlang logo"></a></td></tr></table></div>
-<h1>The ubf__HEAD application</h1>
+<h1>UBF: Contract Checking for Network Protocols
+</h1>
+<p>Copyright © 2002 Joe Armstrong, see LICENSE file in source distribution.</p>
+<p><b>Authors:</b> Joe Armstrong, Joe Norton, Scott Lystig Fritchie, and others.</p>
+<p>Please see the "<a href="../README">README</a>" file at the top
+of the UBF source distribution for information on the following:</p>
+
+<ul>
+<li> How to build the source  </li>
+<li> Documentation -- Where should I start?  </li>
+<li> What is UBF?  </li>
+<li> What is EBF?  </li>
+<li> What is JSF?  </li>
+<li> What about JSON-RPC?  </li>
+<li> What about ABNF?  </li>
+<li> What about EEP8?  </li>
+<li> To do (in short term)  </li>
+<li> To do (in long term)  </li>
+<li> Credits  </li>
+</ul>
+
+<h3><a name="Process_Structure_Diagram">Process Structure Diagram</a></h3>
+
+<p><img src="../priv/doc/ubf-flow-01.png"></p>
+
+<h3><a name="The_UBF(C)_Meta-Protocol">The UBF(C) Meta-Protocol</a></h3>
+
+<p>UBF(C) allows a single TCP listener socket to provide the services of
+several UBF(B) contracts as a simple "multiplexer".  This feature can
+be very useful in situations where network policy cannot allow
+multiple TCP ports to be opened or exposed to the outside world.</p>
+
+<p>After a UBF client connects to a UBF(B) contract-based server, usually
+the first RPC call sent is the UBF(C) metaprotocol RPC
+<code>startSession()</code>.  In the UBF(C) contract definition (see end of this
+section for link), <code>startSession()</code> is defined as:</p>
+
+<pre>+STATE start
+        startSession() =&gt; ok() &amp; start
+                       |  error() &amp; start.
+
++TYPES
+startSession()   = {startSession, string(), term()};</pre>
+
+<p>The <code>string()</code> item in the 2nd tuple position is the name of the
+contract to use for all subsequent RPC calls.</p>
+
+<p>The <code>term()</code> item in the 3rd tuple position is an arbitrary term that
+will be passed to the server's <code>handlerStart()</code> function (see callback
+function details below).  This term may be used to initialize any
+session-specific state with data that must be provided by the client.</p>
+
+<p>All of the client code examples in the "<a href="../src/Unit-Test-Files">../src/Unit-Test-Files</a> directory
+(source files with a "_client.erl" suffix) use the <code>startSession()</code>
+call, usually immediately after connection to the UBF server via
+<code>ubf_client:connect()</code>.</p>
+
+<p>See the
+"<a href="../src/ubf_plugin_meta_server.con">../src/ubf_plugin_meta_server.con</a>"
+contract file for the format specification of the UBF(C) meta-protocol.</p>
+
+<h3><a name="UBF_Server_Implementation_Callback_Functions">UBF Server Implementation Callback Functions</a></h3>
+
+<p>All UBF server implementations, regardless of the transport protocol
+that is used "over the wire" to communicate with it, must implement
+the following callback functions:</p>
+
+<ul>
+<li> handlerStart/1 or handlerStart/2  </li>
+<li> handlerRpc/4  </li>
+<li> handlerStop/3  </li>
+<li> managerStart/1  </li>
+<li> managerRestart/2  </li>
+<li> managerRpc/2  </li>
+</ul>
+
+<h4><a name="handlerStart/{1,2}">handlerStart/{1,2}</a></h4>
+
+<pre>handlerStart(ManagerProc::pid()) -&gt;
+    {accept, Reply::term(), none, StateData::term()} |
+    {reject, Reply::term()}
+
+handlerStart(Arg_From_UBF_Client::term(), ManagerProc::pid()) -&gt;
+    {accept, Reply::term(), StateName::atom(), StateData::term()} |
+    {reject, Reply::term()}</pre>
+
+<p>The <code>handlerStart/1</code> form is used for "stateless" flavor of UBF
+server.  Armstrong's original UBF implementation was by definition
+stateful, so this form was not present in the original implementation.
+However, not all servers must maintain session state, so a stateless
+type of connection can simplify the contract by omitting all state
+transitions.</p>
+
+<p>The <code>handlerStart/2</code> form is used for the "stateful" flavor of UBF
+server.  Contacts of the stateful type must explicitly define all
+protocol state transitions.</p>
+
+<p><code>Reply</code> is the term sent in reply to the client.  <code>StateName</code> is the
+name of the initial UBF(B) contract state for the contract's state
+machine.  <code>StateData</code> is an term that will be used for this protocol
+session for subsequent callback calls, e.g. handlerRpc/{3,4}.</p>
+
+<p>The callback functions of both "stateless" and "stateful" server types
+have a StateData term associated with them.  This might seem confusing
+at first.  The "less" and "full" in the words "stateless" and
+"stateful" refer to the absense or presence (respectively) of states
+in the UBF contract.  However, both types of servers can maintain any
+per-connection state that they wish, using the <code>StateData</code> term.
+Also, in the "stateful" case, any/all data from the
+<code>Arg_From_UBF_Client</code> term can be added to the <code>StateData</code> term.</p>
+
+<h4><a name="handlerRpc/{3,4}">handlerRpc/{3,4}</a></h4>
+
+<pre>handlerRpc(unused, RpcCall::term(), StateData::term()) -&gt;
+    {Reply::term(), unused, NewStateData::term()}
+
+handlerRpc(StateName::atom(), RpcCall::term(), StateData::term(), Env::term()) -&gt;
+    {Reply::term(), NewStateName::atom(), NewStateData::term()} |
+    {changeContract, Reply::term(), NewStateData::term(), HandlerMod::atom(),
+     State2::term(), Data2::term(), ManagerPid::pid}</pre>
+
+<p>This callback function is called in response to an RPC call by the
+client.  The <code>handlerRpc/3</code> form is used by "stateless" UBF contracts;
+<code>handlerRpc/4</code> form is used by "stateful" UBF contracts.</p>
+
+<p><code>Reply</code> is the term to return to the client.  <code>NewStateName</code> is the
+name of the UBF(B) contract state name to advance to.  <code>NewStateData</code>
+is the new state term for this protocol session for subsequent
+callback calls, e.g. handlerStop/3.</p>
+
+<h4><a name="handlerStop/3">handlerStop/3</a></h4>
+
+<pre>handlerStop(undefined, Reason::term(), StateData::term() -&gt;
+    void()
+
+handlerStop(Env::term(), Reason::term(), StateData::term() -&gt;
+    void()</pre>
+
+<p>Stop this protocol session.  The return value is ignored.</p>
+
+<h4><a name="managerStart/1">managerStart/1</a></h4>
+
+<pre>managerStart(Args::term()) -&gt;
+    {ok, State::term()}</pre>
+
+<p>This callback is not required for UBF(B) "stateless" contracts.</p>
+
+<h4><a name="managerRestart/2">managerRestart/2</a></h4>
+
+<pre>managerRestart(Args::term(), Manager::pid()) -&gt;
+    ok | {error, Reason::term()}</pre>
+
+<p>This callback is not required for UBF(B) "stateless" contracts.</p>
+
+<h4><a name="managerRpc/2">managerRpc/2</a></h4>
+
+<pre>managerRpc(Args::term(), State::term()) -&gt;
+    {Reply::term(), NewState::term()}</pre>
+
+<p>This callback is not required for UBF(B) "stateless" contracts.</p>
+
+<h3><a name="Reference_Documentation">Reference Documentation</a></h3>
+
+<p>Documentation for the UBF source code is an evolving
+work-in-progress.  At the moment, the following source modules have
+the most (and most helpful) documentation, see frame on left side of
+your browser:</p>
+
+<ul>
+<li> contracts, for functions to help figure out
+     why the contract checker believes that your term breaks a contract.   </li>
+<li> jsf, for the rules for mapping one type to another,
+     e.g. Erlang -&gt; JSON.</li>
+<li> ubf, for UBF(A) protocol encoding/decoding.  </li>
+<li> ubf_client, for creating a UBF(A)/EBF/JSF protocol client for an
+     Erlang application   </li>
+<li> ubf_server, for starting a new UBF contract-using server </li>
+</ul>
+
+<p>The original Armstrong code was written without use of the OTP library
+framework.  For eyes that are used to reading code modules based on
+OTP's <code>supervisor</code> and <code>gen_server</code> behaviors, the source may require
+a few extra seconds of study ... which (we hope) will be rewarding in
+the end.</p>
+
+<h3><a name="Credits">Credits</a></h3>
+
+<p>Many, many thanks to Joe Armstrong, UBF's designer and original
+implementor.</p>
+
+<p>Gemini Mobile Technologies, Inc. has approved the release of its
+extensions, improvements, etc. under an MIT license.  Joe Armstrong
+has also given his blessing to Gemini's license choice.</p>
+
+<p>The primary source repository for UBF can be found at:   
+http://github.com/norton/ubf</p>
+
 
 <hr>
 <div class="navbar"><a name="#navbar_bottom"></a><table width="100%" border="0" cellspacing="0" cellpadding="2" summary="navigation bar"><tr><td><a href="overview-summary.html" target="overviewFrame">Overview</a></td><td><a href="http://www.erlang.org/"><img src="erlang.png" align="right" border="0" alt="erlang logo"></a></td></tr></table></div>

@@ -9,9 +9,40 @@
 <hr>
 
 <h1>Module ubf</h1>
-<ul class="index"><li><a href="#index">Function Index</a></li><li><a href="#functions">Function Details</a></li></ul>
+<ul class="index"><li><a href="#description">Description</a></li><li><a href="#index">Function Index</a></li><li><a href="#functions">Function Details</a></li></ul>Low-level functions for encoding and decoding the UBF(A)  
+protocol.
 
 
+<h2><a name="description">Description</a></h2><p>Low-level functions for encoding and decoding the UBF(A)  
+protocol.</p>
+ 
+    <p>UBF is a family of languages for transporting and describing complex data    
+structures across a network.  It has three components.  In terms    
+of a protocol stack, UBF(A) is a data transport format, roughly    
+equivalent to well-formed XML.</p>
+ 
+  <h3><a name="Quick_Summary">Quick Summary</a></h3>
+ 
+    <p>UBF(A) is the transport format, it was designed to be easy to parse and    
+to be easy to write with a text editor. UBF(A) is based on a byte    
+encoded virtual machine, 26 byte codes are reserved. Instead of    
+allocating the bye codes from 0 we use the printable character codes to    
+make the format easy to read.</p>
+ 
+  For more information, please see the following:
+  <ul>
+  <li> <a href="../priv/doc/doc/site/ubfa.html">Joe Armstrong's UBF(A) summary</a>  </li>
+  <li> <a href="../priv/doc/doc/site/ubfa_quick.html">Joe Armstrong's UBF(A) quick-reference summary</a>  </li>
+  </ul>
+ 
+  <h3><a name="Hint:_Decoding_rules">Hint: Decoding rules</a></h3>
+ 
+  <ul>
+  <li> {'#S', String} -&gt; String </li>
+  <li> Int            -&gt; Int </li>
+  <li> [ ]            -&gt; List </li>
+  <li> {...}          -&gt; Tuple </li>
+  </ul>
 <h2><a name="index">Function Index</a></h2>
 <table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#add_string-2">add_string/2*</a></td><td></td></tr>
 <tr><td valign="top"><a href="#analyse-1">analyse/1*</a></td><td></td></tr>

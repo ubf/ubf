@@ -9,14 +9,19 @@
 <hr>
 
 <h1>Module ubf_driver</h1>
-<ul class="index"><li><a href="#index">Function Index</a></li><li><a href="#functions">Function Details</a></li></ul>
+<ul class="index"><li><a href="#description">Description</a></li><li><a href="#index">Function Index</a></li><li><a href="#functions">Function Details</a></li></ul>Server-side protocol driver process for UBF(A) protocol  
+sessions.
 
 
+<h2><a name="description">Description</a></h2><p>Server-side protocol driver process for UBF(A) protocol  
+sessions.</p>
+ 
+  <img src="../priv/doc/ubf-flow-01.png">
 <h2><a name="index">Function Index</a></h2>
 <table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#handle_data-4">handle_data/4*</a></td><td></td></tr>
 <tr><td valign="top"><a href="#loop-2">loop/2</a></td><td></td></tr>
 <tr><td valign="top"><a href="#loop-3">loop/3</a></td><td></td></tr>
-<tr><td valign="top"><a href="#loop-4">loop/4*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#loop-4">loop/4*</a></td><td>Driver main loop.</td></tr>
 <tr><td valign="top"><a href="#relay-2">relay/2</a></td><td></td></tr>
 <tr><td valign="top"><a href="#start-0">start/0</a></td><td></td></tr>
 <tr><td valign="top"><a href="#start1-0">start1/0*</a></td><td></td></tr>
@@ -42,7 +47,17 @@
 <h3 class="function"><a name="loop-4">loop/4 *</a></h3>
 <div class="spec">
 <p><tt>loop(Socket, Pid, Timeout, Cont) -&gt; any()</tt></p>
-</div>
+</div><p><p>Driver main loop.</p>
+ 
+  <ul>
+  <li> A driver sits between a socket and a Pid </li>
+  <li> Stuff on the socket is send to the Pid </li>
+  <li> Stuff from the Pid is send to the socket </li>
+  <li> When it is called the Socket has been
+  set to send messages to the driver
+  and the Pid exists  </li>
+  <li> If one side dies the process dies </li>
+  </ul></p>
 
 <h3 class="function"><a name="relay-2">relay/2</a></h3>
 <div class="spec">

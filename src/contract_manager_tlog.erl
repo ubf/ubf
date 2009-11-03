@@ -1,3 +1,11 @@
+%% @doc Contract manager transaction logging.
+%%
+%% This module can be used by the server to log individual protocol
+%% transactions, if desired.  This simple default module uses the
+%% Erlang/OTP `error_logger' module; we highly recommend that the
+%% `sasl' application be running to take full advantage of OTP's error
+%% and event handling capabilities.
+
 -module(contract_manager_tlog).
 
 -export([checkIn/3, checkOut/8, checkCallback/4]).

@@ -1,38 +1,23 @@
--module(jsf).
-
--include("ubf.hrl").
-
--export([encode_print/2, encode/2, do_encode/2]).
--export([decode_print/2, decode/2, do_decode/2]).
-
--export([atom_to_binary/1]).
--export([binary_to_existing_atom/1]).
-
-
-%% Dummy hack/kludge.
--export([contract_records/0]).
-
-contract_records() ->
-    [].
-
-
+%% @doc Functions for JSON&lt;->Erlang data conversion.
 %%
-%% Links:
-%%   http://www.erlang-projects.org/Public/news/ejson/view
-%%   http://www.erlang.org/eeps/eep-0018.html
-%%   http://www.erlang.org/ml-archive/erlang-questions/200511/msg00193.html
-%%   http://www.ietf.org/rfc/rfc4627.txt
-%%   http://www.json.org/
-%%   http://www.lshift.net/blog/2007/02/17/json-and-json-rpc-for-erlang
+%% For most purposes, these functions are not called by code outside of
+%% this library: Erlang client &amp; Erlang server application code usually
+%% have no need to use these functions.
 %%
-%% Other Links:
-%%   http://www.json.com/json-schema-proposal/
+%% == Links ==
 %%
-
+%% <ul>
+%% <li> http://www.erlang-projects.org/Public/news/ejson/view </li>
+%% <li> http://www.erlang.org/eeps/eep-0018.html </li>
+%% <li> http://www.erlang.org/ml-archive/erlang-questions/200511/msg00193.html </li>
+%% <li> http://www.ietf.org/rfc/rfc4627.txt </li>
+%% <li> http://www.json.org/ </li>
+%% <li> http://www.lshift.net/blog/2007/02/17/json-and-json-rpc-for-erlang </li>
+%% <li> http://www.json.com/json-schema-proposal/ </li>
+%% </ul>
 %%
-%% json
-%%
-
+%% == JSON Basic Data Types ==
+%% ```
 %% object
 %%           {}
 %%           { members }
@@ -54,12 +39,10 @@ contract_records() ->
 %%          true (atom)
 %%          false (atom)
 %%          null (atom)
-
-
+%% '''
 %%
-%% erlang-rfc46267
-%%
-
+%% == Mapping: JSON -> Erlang Terms, using erlang-rfc46267 ==
+%% ```
 %% json::object() = {obj, [json::pair()]}
 %%
 %% json::pair() = {string(), json::value()}
@@ -77,12 +60,10 @@ contract_records() ->
 %% json::true() = true
 %% json::false() = false
 %% json::null() = null
-
-
+%% '''
 %%
-%% ubf
-%%
-
+%% == Mapping: UBF -> Erlang Terms ==
+%% ```
 %% ubf::tuple() = tuple()
 %%
 %% ubf::list() = list()
@@ -102,12 +83,10 @@ contract_records() ->
 %% ubf::atom() = atom()
 %%
 %% ubf::record() = record()
-
-
+%% '''
 %%
-%% encode(ubf::value()) -> json::value()
-%%
-
+%% == Mapping: UBF value -> JSON value ==
+%% ```
 %% ubf::tuple() = {obj, [{"$T", ubf::list()}]}
 %%
 %% ubf::list() = [value()]
@@ -124,15 +103,33 @@ contract_records() ->
 %% ubf::false() = false
 %% ubf::undefined() = null
 %%
-%% ubf::atom() = {obj, [{"$A", atomname()}
+%% ubf::atom() = {obj, [{"$A", atomname()}]}
 %%      atomname() = binary()  % a.k.a. list_to_binary(atom_to_list()) for the actual atom
 %%
 %% ubf::record() = {obj, [{"$R", recordname()}] ++ [recordpair()]}
-%%      recordname = binary()  % a.k.a. list_to_binary(atom_to_list()) for the record's name
+%%      recordname() = binary()  % a.k.a. list_to_binary(atom_to_list()) for the record's name
 %%      recordpair() = {recordkey(), value()}
 %%      recordkey() = binary()  % a.k.a. list_to_binary(atom_to_list()) for the record key's name
 %%
 %% value() = ubf::tuple() | ubf::list() | ubf::number() | ubf::string() | ubf::binary() | ubf::true() | ubf::false() | ubf::undefined() | ubf::atom() | ubf::record()
+%% '''
+
+-module(jsf).
+
+-include("ubf.hrl").
+
+-export([encode_print/2, encode/2, do_encode/2]).
+-export([decode_print/2, decode/2, do_decode/2]).
+
+-export([atom_to_binary/1]).
+-export([binary_to_existing_atom/1]).
+
+
+%% Dummy hack/kludge.
+-export([contract_records/0]).
+
+contract_records() ->
+    [].
 
 
 %%

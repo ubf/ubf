@@ -1,3 +1,8 @@
+%% @doc Contract implementation: compare a term against a contract.
+%%
+%% See the function checkType/3 for assistance on checking if a term
+%% does/does not break a contract.
+
 -module(contracts).
 
 %%-compile(export_all).
@@ -446,14 +451,15 @@ is_nonundefined(_) -> true.
 %% <li> contracts:checkType(bool, true, irc_plugin). </li>
 %% <li> contracts:checkType(nick, {'#S', "foo"}, irc_plugin). </li>
 %% <li> contracts:checkType(joinEvent, {joins, {'#S', "nck"}, {'#S', "grp"}}, irc_plugin). </li>
-%% <li> contracts:checkType(joinEvent, {joins, {'#S', "nck"}, {'#S', foo_atom}}, irc_plugin). </li>
+%% <li> contracts:checkType(joinEvent, {joins, {'#S', "nck"}, {'#S', bad_atom}}, irc_plugin). </li>
 %% </ul>
 %%
-%% Wow, this is a gawdawful-brute-force-don't-know-what-I'm-doing
-%% mess.  But it works, in its brute-force way, as long as you don't
-%% try to have a computer parse the output in error cases.
+%% NOTE: This is a brute-force function, but it works, mostly.  Don't
+%% try to have a computer parse the output in error cases: the failure
+%% output is meant only for human eyes.
 
-%% @TODO implementation needs updating for new primitives
+%% @TODO implementation needs updating for new primitives?
+
 checkType(HumanType, Term, Mod) ->
     case (catch Mod:contract_type(HumanType)) of
         {'EXIT', {function_clause, _}} ->

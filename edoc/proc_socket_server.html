@@ -9,9 +9,21 @@
 <hr>
 
 <h1>Module proc_socket_server</h1>
-<ul class="index"><li><a href="#index">Function Index</a></li><li><a href="#functions">Function Details</a></li></ul>
+<ul class="index"><li><a href="#description">Description</a></li><li><a href="#index">Function Index</a></li><li><a href="#functions">Function Details</a></li></ul>Keeps track of a number of TCP sessions.
 
 
+<h2><a name="description">Description</a></h2><p>Keeps track of a number of TCP sessions.</p>
+ 
+  <p>This module will manage a collection of TCP sessions for the same
+  server.  If a <code>Name</code> is not specified, the server will be named
+  <code>picoSocketServer_</code> ++ the TCP port number that the service listens
+  to, e.g. <code>picoSocketServer_9923</code>.</p>
+ 
+  <p>A managed server can be started, stopped, enumerate child sessions,  
+and limit the maximum number of child sessions.</p>
+ 
+  The conventions used by this module look quite different than
+  OTP-based services, due to its origin.
 <h2><a name="index">Function Index</a></h2>
 <table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#children-1">children/1</a></td><td></td></tr>
 <tr><td valign="top"><a href="#cold_start-7">cold_start/7</a></td><td></td></tr>
@@ -24,7 +36,7 @@
 <tr><td valign="top"><a href="#start_child-3">start_child/3</a></td><td></td></tr>
 <tr><td valign="top"><a href="#start_raw_server-5">start_raw_server/5</a></td><td></td></tr>
 <tr><td valign="top"><a href="#start_raw_server-6">start_raw_server/6</a></td><td></td></tr>
-<tr><td valign="top"><a href="#start_server-3">start_server/3</a></td><td></td></tr>
+<tr><td valign="top"><a href="#start_server-3">start_server/3</a></td><td>Start a new UBF contract-using server.</td></tr>
 <tr><td valign="top"><a href="#start_server-4">start_server/4</a></td><td></td></tr>
 <tr><td valign="top"><a href="#stop_server-1">stop_server/1</a></td><td></td></tr>
 </table>
@@ -89,7 +101,20 @@
 <h3 class="function"><a name="start_server-3">start_server/3</a></h3>
 <div class="spec">
 <p><tt>start_server(Port, Max, Fun) -&gt; any()</tt></p>
-</div>
+</div><p><p>Start a new UBF contract-using server.</p>
+ 
+  <ul>
+    <li> This server accepts up to Max connections on TCP port Port </li>
+    <li> Each time a new connection is made, Fun(Socket) is called. </li>
+  </ul>
+ 
+  <p>Fun = fun(Socket) -&gt; exit(normal) | exit(socket_closed) |                       
+exit({socket_error, Reason}) | exit(timeout).  
+This fun will handle all of the protocol communication for a single  
+TCP session.</p>
+ 
+  A raw server uses packet length 0 (see start_raw_server/5 and
+  start_raw_server/6).</p>
 
 <h3 class="function"><a name="start_server-4">start_server/4</a></h3>
 <div class="spec">

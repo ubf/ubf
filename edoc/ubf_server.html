@@ -46,7 +46,9 @@ implementation of a UBF(B) protocol-checking server:</p>
         </li>
    </ul>
   
-   <p>TO-DO: There is no "stop" function.</p>
+   <p>There is no "stop" function.  To stop the server, instead stop the
+   TCP service manager that controls it: see the <code>proc_socket_server</code>   
+module for extra details.</p>
   
    See the documentation for the <tt>file_plugin</tt> module for
    extra commentary on writing an UBF server implementation module.

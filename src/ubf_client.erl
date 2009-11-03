@@ -2,15 +2,22 @@
 %%% @doc UBF client-side public API.
 %%%
 %%% This module implements most of the commonly-used client-side
-%%% functions required to talk to UBF servers: connect() to a UBF
-%%% server, rpc() to make a synchronous call to a connected UBF
-%%% server, stop() a connection, and install_handler() to add a
-%%% callback function to handle asynchronous notifications from the
-%%% UBF server to your client process.
+%%% functions required to talk to UBF servers:
+%%% <ul>
+%%%   <li> connect() to a UBF server </li>
+%%%   <li> rpc() to make a synchronous call to a connected UBF server </li>
+%%%   <li> stop() a connection </li>
+%%%   <li> install_handler() to add a callback function to handle
+%%%        asynchronous notifications from theUBF server to your
+%%%        client process. </li>
+%%% </ul>
+%%%
+%%% Note that this library can support UBF(A), EBF, and JSF transport.
+%%% See the `connect()' function arguments for details.
 %%%
 %%% This module also provides an alternative client-side function for
 %%% calling's UBF contract manager and a UBF contract's implementation
-%%% without any side-effects: lpc() to make a synchronous local
+%%% without any side-effects: `lpc()' to make a synchronous local
 %%% procedure call to a contract's implementation.
 %%%
 %%% See the documentation for the <tt>TBD</tt> module for extra

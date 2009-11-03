@@ -1,3 +1,5 @@
+%% @doc Contract checking assistants for ABNF.
+
 -module(contracts_abnf).
 
 %%-compile(export_all).

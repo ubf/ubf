@@ -42,8 +42,8 @@ The documentation is in a state of slow improvement.  Contributions
 from the wider world are welcome.  :-)
 
 One of the better places to start is to look in the "edoc" directory.
-The docs for the three modules there represent most of the public API
-for creating UBF/EBF/JSF servers.
+See the "Reference Documentation" section for suggestions on where to
+find greater detail.
 
 The unit tests in the "src/Unit-Test-Files" directory provide small
 examples of how to use all of the public API.  In particular, the
@@ -55,6 +55,11 @@ The eunit tests in the "src/Unit-EUnit-Files" directory perform
 several smoke and error handling uses cases.
 
 The original documentation is in the "priv/doc" directory.
+
+The #1 most frequently asked question is: "My term X fails contract
+Y, but I can't figure out why!  This X is perfectly OK.  What is going
+on?"  See the the EDoc documentation for the contracts:checkType/3
+function.
 
 
 What is UBF?
@@ -71,10 +76,10 @@ really short summary:
      and protocols between clients and servers. UBF(B) is roughly
      equivalent to to Verified XML, XML-schemas, SOAP and WDSL.
 
-   * UBF(C) is a meta-level protocol used between UBF client and
-     servers.
-   
-     
+   * UBF(C) is a meta-level protocol used between a UBF client and a
+     UBF server.
+
+
 What is EBF?
 ============
 

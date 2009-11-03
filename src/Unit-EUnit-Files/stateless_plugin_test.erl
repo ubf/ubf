@@ -492,7 +492,7 @@ do_shutdown_socket(M,Reason) ->
                       undefined ->
                           noop;
                       Dict ->
-                          UBFSocket = proplists:get_value('$ubfsocket', Dict),
+                          UBFSocket = proplists:get_value('ubf_socket', Dict),
                           if Reason == close ->
                                   ok = gen_tcp:close(UBFSocket);
                              true ->

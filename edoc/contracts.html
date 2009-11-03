@@ -9,9 +9,13 @@
 <hr>
 
 <h1>Module contracts</h1>
-<ul class="index"><li><a href="#index">Function Index</a></li><li><a href="#functions">Function Details</a></li></ul>
+<ul class="index"><li><a href="#description">Description</a></li><li><a href="#index">Function Index</a></li><li><a href="#functions">Function Details</a></li></ul>Contract implementation: compare a term against a contract.
 
 
+<h2><a name="description">Description</a></h2><p>Contract implementation: compare a term against a contract.</p>
+ 
+  See the function checkType/3 for assistance on checking if a term
+  does/does not break a contract.
 <h2><a name="index">Function Index</a></h2>
 <table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#bad_zip-3">bad_zip/3*</a></td><td></td></tr>
 <tr><td valign="top"><a href="#checkCallback-3">checkCallback/3</a></td><td></td></tr>
@@ -75,13 +79,13 @@ that contract's type.</p>
   <li> contracts:checkType(bool, true, irc_plugin). </li>
   <li> contracts:checkType(nick, {'#S', "foo"}, irc_plugin). </li>
   <li> contracts:checkType(joinEvent, {joins, {'#S', "nck"}, {'#S', "grp"}}, irc_plugin). </li>
-  <li> contracts:checkType(joinEvent, {joins, {'#S', "nck"}, {'#S', foo_atom}}, irc_plugin). </li>
+  <li> contracts:checkType(joinEvent, {joins, {'#S', "nck"}, {'#S', bad_atom}}, irc_plugin). </li>
   </ul>
  
-  Wow, this is a gawdawful-brute-force-don't-know-what-I'm-doing
-  mess.  But it works, in its brute-force way, as long as you don't
-  try to have a computer parse the output in error cases.</p>
-<p><b><font color="red">To do</font></b><ul><li><font color="red">implementation needs updating for new primitives</font></li></ul></p>
+  NOTE: This is a brute-force function, but it works, mostly.  Don't
+  try to have a computer parse the output in error cases: the failure
+  output is meant only for human eyes.</p>
+<p><b><font color="red">To do</font></b><ul><li><font color="red">implementation needs updating for new primitives?</font></li></ul></p>
 
 <h3 class="function"><a name="checkType2-3">checkType2/3 *</a></h3>
 <div class="spec">

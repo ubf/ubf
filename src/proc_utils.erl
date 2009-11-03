@@ -1,3 +1,4 @@
+%% @doc Low-level utilities for proc_socket_server.
 
 -module(proc_utils).
 
@@ -5,7 +6,7 @@
 
 spawn_link_debug(Fun, Term) ->
     erlang:spawn_link(fun() ->
-                              put('$ubfinfo', Term),
+                              put('ubf_info', Term),
                               Fun()
                       end).
 
@@ -23,7 +24,7 @@ debug(X) ->
                                     undefined ->
                                         A;
                                     Dict ->
-                                        UBFInfo = proplists:get_value('$ubfinfo', Dict),
+                                        UBFInfo = proplists:get_value('ubf_info', Dict),
                                         if UBFInfo /= undefined ->
                                                 if X == undefined ->
                                                         [{I,Info}|A];

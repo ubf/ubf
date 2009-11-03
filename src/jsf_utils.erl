@@ -1,5 +1,5 @@
-%%% $Id$
-%%% Description: utils for jsf
+%%% $Id: jsf_utils.erl 148648 2009-11-02 02:12:05Z norton $
+%%% @doc Low-level utilities for JSF.
 %%%-------------------------------------------------------------------
 
 -module(jsf_utils).
@@ -326,15 +326,15 @@ ubf_contract(Mod) ->
                      , io_lib:format("// ~p", [InputTag])
                      , "//"
                      , "request {"
-                     , io_lib:format("\t\"version\" : \"1.1\"", [])
-                     , io_lib:format("\t\"id\"      : binary()", [])
-                     , io_lib:format("\t\"method\"  : \"~p\"", [InputTag])
+                     , io_lib:format("\t\"version\" : \"1.1\",", [])
+                     , io_lib:format("\t\"id\"      : binary(),", [])
+                     , io_lib:format("\t\"method\"  : \"~p\",", [InputTag])
                      , io_lib:format("\t\"params\"  : ~s", [Params])
                      , " }"
                      , "response {"
-                     , io_lib:format("\t\"version\" : \"1.1\"", [])
-                     , io_lib:format("\t\"id\"      : binary()", [])
-                     , io_lib:format("\t\"result\"  : ~s | null", [Result])
+                     , io_lib:format("\t\"version\" : \"1.1\",", [])
+                     , io_lib:format("\t\"id\"      : binary(),", [])
+                     , io_lib:format("\t\"result\"  : ~s | null,", [Result])
                      , io_lib:format("\t\"error\"   : error()?", [])
                      , " }"
                     ], "\n")

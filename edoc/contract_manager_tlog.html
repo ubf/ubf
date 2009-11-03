@@ -9,9 +9,16 @@
 <hr>
 
 <h1>Module contract_manager_tlog</h1>
-<ul class="index"><li><a href="#index">Function Index</a></li><li><a href="#functions">Function Details</a></li></ul>
+<ul class="index"><li><a href="#description">Description</a></li><li><a href="#index">Function Index</a></li><li><a href="#functions">Function Details</a></li></ul>Contract manager transaction logging.
 
 
+<h2><a name="description">Description</a></h2><p>Contract manager transaction logging.</p>
+ 
+  This module can be used by the server to log individual protocol
+  transactions, if desired.  This simple default module uses the
+  Erlang/OTP <code>error_logger</code> module; we highly recommend that the
+  <code>sasl</code> application be running to take full advantage of OTP's error
+  and event handling capabilities.
 <h2><a name="index">Function Index</a></h2>
 <table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#checkCallback-4">checkCallback/4</a></td><td></td></tr>
 <tr><td valign="top"><a href="#checkIn-3">checkIn/3</a></td><td></td></tr>

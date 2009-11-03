@@ -1,3 +1,22 @@
+%% @doc Contract manager server
+%%
+%% This module implements the contract manager server process, which
+%% runs on the Erlang server side, between the UBF driver (or the
+%% driver for whatever protocol is being used "over the wire",
+%% e.g. JSON-RPC) and the plugin handler server.
+%%
+%% <img src="../priv/doc/ubf-flow-01.png"></img>
+%%
+%% == Message Passing ==
+%%
+%% In the diagram below, the "Client" is actually the UBF driver
+%% (using UBF, EBF, JSON, JSON-RPC, or other transport protocol) that
+%% acts on behalf of the remote client.  The "Server" is actually the
+%% plugin handler server, which acts as an intermediary between the
+%% actual server application.
+%%
+%% <img src="../priv/doc/contract_manager-01.png"></img>
+
 -module(contract_manager).
 
 -export([start/0, start/1]).
@@ -31,21 +50,13 @@
 %%%    +----------<----------------+                            |
 %%%    |                           |                            |
 %%%    |                           |                            |
-%%%
-%%%   start() -> Pid
-%%%   run(Pid, Contract, Client, Server) -> true.
 
-
-%% The protocol manager terminates a protocol
-%% loop(Client, State, Data, Contract, Manager, Mod)
-%%      Client is the process that sens up messages
-%%      State is our state
-%%      Contract is our contract
-%%      Mod is our callback module
-%%      Data is the local state of the handler
+%%%  @spec () -> pid()
 
 start() ->
     start(false).
+
+%%%  @spec (bool()) -> pid()
 
 start(VerboseRPC) ->
     proc_utils:spawn_link_debug(fun() -> wait(VerboseRPC) end, ?MODULE).
@@ -57,6 +68,18 @@ wait(VerboseRPC) ->
         stop ->
             exit({serverContractManager, stop})
     end.
+
+%% @doc Main loop for contract manager process.
+%%
+%% <ul>
+%%      <li> Client is the process that sens up messages </li>
+%%      <li> State is our state </li>
+%%      <li> Contract is our contract </li>
+%%      <li> Mod is our callback module </li>
+%%      <li> VerboseRPC is a boolean </li>
+%% </ul>
+%%
+%% NOTE: The protocol manager terminates a protocol session.
 
 loop(Client, Server, State, Mod, VerboseRPC) ->
     receive

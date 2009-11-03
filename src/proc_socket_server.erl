@@ -1,15 +1,21 @@
+%% @doc Keeps track of a number of TCP sessions.
+%%
+%% This module will manage a collection of TCP sessions for the same
+%% server.  If a `Name' is not specified, the server will be named
+%% `picoSocketServer_' ++ the TCP port number that the service listens
+%% to, e.g. `picoSocketServer_9923'.
+%%
+%% A managed server can be started, stopped, enumerate child sessions,
+%% and limit the maximum number of child sessions.
+%%
+%% The conventions used by this module look quite different than
+%% OTP-based services, due to its origin.
+
 -module(proc_socket_server).
 
 %% Copyright (C) 1999, Bluetail AB
 %% File    : proc_socket_server.erl
 %% Author  : Joe Armstrong (joe@bluetail.com)
-%% Purpose : Keeps track of a number of TCP sessions
-
-
-%% start_server(Port, Fun, Max) | start_server(Name, Port, Fun, Max) -> bool().
-%%   This server accepts up to Max connections on Port
-%%   Each time a new connection is made
-%%   Fun(Socket) is called.
 
 %% stop_server(Port) -> ok.
 %% children(Port) -> [Pids]
@@ -22,9 +28,20 @@
 
 -export([cold_start/7, start_child/3]).
 
-%% Fun = fun(Socket, Binary) -> Fun'
-
-%% raw server uses packet length 0
+%% @doc Start a new UBF contract-using server.
+%%
+%% <ul>
+%%   <li> This server accepts up to Max connections on TCP port Port </li>
+%%   <li> Each time a new connection is made, Fun(Socket) is called. </li>
+%% </ul>
+%%
+%% Fun = fun(Socket) -> exit(normal) | exit(socket_closed) |
+%%                      exit({socket_error, Reason}) | exit(timeout).
+%% This fun will handle all of the protocol communication for a single
+%% TCP session.
+%%
+%% A raw server uses packet length 0 (see start_raw_server/5 and
+%% start_raw_server/6).
 
 start_server(Port, Max, Fun) ->
     start_raw_server(undefined, Port, Fun, Max, 0, 0).
