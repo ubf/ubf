@@ -71,7 +71,10 @@ really short summary:
      and protocols between clients and servers. UBF(B) is roughly
      equivalent to to Verified XML, XML-schemas, SOAP and WDSL.
 
-
+   * UBF(C) is a meta-level protocol used between UBF client and
+     servers.
+   
+     
 What is EBF?
 ============
 
