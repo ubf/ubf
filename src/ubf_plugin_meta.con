@@ -1,0 +1,41 @@
+%%% -*- mode: erlang -*-
+%%% $Id$
+%%%
+
++NAME("meta_server").
+
++VSN("ubf1.0").
+
++TYPES
+
+info()           = info;
+description()    = description;
+services()       = services;
+contract()       = contract;
+serviceList()    = [string()] "Names of the offered services";
+
+help()           = help;
+restartService() = {restartService, string(), term()};
+startSession()   = {startSession, string(), term()};
+ok()             = {ok, term()};
+error()          = {error, term()};
+ok_or_error()    = ok() | error().
+
+
++ANYSTATE
+%% Joe Armstrong's original meta-server contract used a string() type
+%% for help()'s output.  However, the string style requires icky
+%% backslash escaping of double-quotes.  For UBF beginners who are
+%% using "telnet" or "nc"/netcat as their protocol client, the \"
+%% quoting stuff is a big hassle.  So we now use a binary() to make
+%% reading help() output slightly easier ... and give an example of
+%% what a binary looks like to any human eyes that look.  :-)
+
+help()           => binary();
+restartService() => ok_or_error();
+startSession()   => ok_or_error();
+
+info()           => string();
+description()    => string();
+services()       => serviceList();
+contract()       => term().

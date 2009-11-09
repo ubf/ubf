@@ -23,50 +23,50 @@ start_handler() ->
 
 wait() ->
     receive
-        {start, Contract, Server, Mod} ->
-            loop(Contract, start, [], Server, Mod);
+        {start, ContractManager, Manager, Mod} ->
+            loop(ContractManager, start, [], Manager, Mod);
         stop ->
             exit({serverPluginHandler, stop})
     end.
 
-loop(Client, State1, Data, Manager, Mod) ->
+loop(Client, State, Data, Manager, Mod) ->
     receive
         {_Pid, {rpc, Q}} ->
             if Manager /= undefined ->
-                    case (catch Mod:handlerRpc(State1, Q, Data, Manager)) of
-                        {Reply, State2, Data2} ->
-                            Client ! {self(), {rpcReply, Reply, State2, same}},
-                            loop(Client, State2, Data2, Manager, Mod);
-                        {changeContract, Reply, State1, HandlerMod, State2, Data2, ManPid} ->
-                            Client ! {self(), {rpcReply, Reply, State1,
-                                               {new, HandlerMod, State2}}},
-                            loop(Client, State2, Data2, ManPid, HandlerMod);
+                    case (catch Mod:handlerRpc(State, Q, Data, Manager)) of
+                        {Reply, State1, Data1} ->
+                            Client ! {self(), {rpcReply, Reply, State1, same}},
+                            loop(Client, State1, Data1, Manager, Mod);
+                        {changeContract, Reply, Mod1, State1, Data1, Manager1} ->
+                            Client ! {self(), {rpcReply, Reply, State,
+                                               {new, Mod1, State1}}},
+                            loop(Client, State1, Data1, Manager1, Mod1);
                         {'EXIT', Reason} ->
-                            contract_manager_tlog:checkOutError(Q, State1, Mod, Reason),
+                            contract_manager_tlog:checkOutError(Q, State, Mod, Reason),
                             exit({serverPluginHandler, Reason})
                     end;
                true ->
-                    case (catch Mod:handlerRpc(State1, Q, Data)) of
-                        {Reply, State2, Data2} ->
-                            Client ! {self(), {rpcReply, Reply, State2, same}},
-                            loop(Client, State2, Data2, Manager, Mod);
-                        {changeContract, Reply, State1, HandlerMod, State2, Data2} ->
-                            Client ! {self(), {rpcReply, Reply, State1,
-                                               {new, HandlerMod, State2}}},
-                            loop(Client, State2, Data2, Manager, HandlerMod);
+                    case (catch Mod:handlerRpc(Q)) of
+                        {changeContract, Reply, Mod1, State1, Data1} ->
+                            Client ! {self(), {rpcReply, Reply, State,
+                                               {new, Mod1, State1}}},
+                            loop(Client, State1, Data1, Manager, Mod1);
                         {'EXIT', Reason} ->
-                            contract_manager_tlog:checkOutError(Q, State1, Mod, Reason),
-                            exit({serverPluginHandler, Reason})
+                            contract_manager_tlog:checkOutError(Q, State, Mod, Reason),
+                            exit({serverPluginHandler, Reason});
+                        Reply ->
+                            Client ! {self(), {rpcReply, Reply, State, same}},
+                            loop(Client, State, Data, Manager, Mod)
                     end
             end;
         {event, X} ->
             Client ! {event, X},
-            loop(Client, State1, Data, Manager, Mod);
+            loop(Client, State, Data, Manager, Mod);
         stop ->
             if Manager /= undefined ->
                     Manager ! {client_has_stopped, self()};
                true ->
-                    case (catch Mod:handlerStop(undefined, normal, Data)) of
+                    case (catch Mod:handlerStop(self(), normal, Data)) of
                         {'EXIT', OOps} ->
                             io:format("plug in error:~p~n",[OOps]);
                         _ ->
@@ -75,7 +75,7 @@ loop(Client, State1, Data, Manager, Mod) ->
             end;
         Other ->
             io:format("**** OOOPYikes ...~p (Client=~p)~n",[Other,Client]),
-            loop(Client, State1, Data, Manager, Mod)
+            loop(Client, State, Data, Manager, Mod)
     end.
 
 
@@ -93,10 +93,10 @@ manager_loop(Mod, State) ->
     receive
         {From, {startSession, Service}} ->
             case (catch Mod:startSession(Service, State)) of
-                {accept, HandlerMod, ModManagerPid, State2} ->
-                    From ! {self(), {accept,HandlerMod, ModManagerPid}},
-                    manager_loop(Mod, State2);
-                {reject, Reason, _State1} ->
+                {accept, Mod1, ModManagerPid, State1} ->
+                    From ! {self(), {accept, Mod1, ModManagerPid}},
+                    manager_loop(Mod, State1);
+                {reject, Reason, _State} ->
                     From ! {self(), {reject, Reason}},
                     manager_loop(Mod, State)
             end;
@@ -105,16 +105,16 @@ manager_loop(Mod, State) ->
                 {'EXIT', OOps} ->
                     io:format("plug in error:~p~n",[OOps]),
                     manager_loop(Mod, State);
-                State1 ->
-                    manager_loop(Mod, State1)
+                State ->
+                    manager_loop(Mod, State)
             end;
         {'EXIT', Pid, Reason} ->
             case (catch Mod:handlerStop(Pid, Reason, State)) of
                 {'EXIT', OOps} ->
                     io:format("plug in error:~p~n",[OOps]),
                     manager_loop(Mod, State);
-                State1 ->
-                    manager_loop(Mod, State1)
+                State ->
+                    manager_loop(Mod, State)
             end;
         {From, {handler_rpc, Q}} ->
             case (catch Mod:managerRpc(Q, State)) of
@@ -122,9 +122,9 @@ manager_loop(Mod, State) ->
                     io:format("plug in error:~p~n",[OOps]),
                     exit(From, bad_ask_manager),
                     manager_loop(Mod, State);
-                {Reply, State1} ->
+                {Reply, State} ->
                     From ! {handler_rpc_reply, Reply},
-                    manager_loop(Mod, State1)
+                    manager_loop(Mod, State)
             end;
         X ->
             io:format("******Dropping (service manager ~p) self=~p ~p~n",

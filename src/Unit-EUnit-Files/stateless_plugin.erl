@@ -3,7 +3,7 @@
 -include("ubf.hrl").
 
 -export([info/0, description/0, keepalive/0]).
--export([handlerStart/1, handlerStop/3, handlerRpc/3, handlerRpc/1]).
+-export([handlerStart/1, handlerStop/3, handlerRpc/1]).
 
 -export([client_breaks_req01/0, client_timeout_req03/1]).
 -export([server_breaks_req01/0, server_timeout_req03/1, server_crash_req05/0]).
@@ -37,18 +37,10 @@ keepalive() ->
 handlerStart(_Args) ->
     {accept,ok,none,unused}.
 
-%% @spec handlerStop(undefined, Reason::any(), StateData::term()) -> void()
+%% @spec handlerStop(Pid::pid(), Reason::any(), StateData::term()) -> void()
 %% @doc stop handler
-handlerStop(undefined, _Reason, _StateData) ->
+handlerStop(_Pid, _Reason, _StateData) ->
     unused.
-
-
-%% @spec handlerRpc(StateName::atom(), Event::any(), StateData::term()) ->
-%%          {Reply::any(), NextStateName::atom(), NewStateData::term()}
-%% @doc rpc handler
-handlerRpc(StateName,Event,StateData) ->
-    {handlerRpc(Event),StateName,StateData}.
-
 
 %% @spec handlerRpc(Event::any()) ->
 %%          Reply::any()

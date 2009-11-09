@@ -9,69 +9,45 @@
 <hr>
 
 <h1>Module ubf_driver</h1>
-<ul class="index"><li><a href="#description">Description</a></li><li><a href="#index">Function Index</a></li><li><a href="#functions">Function Details</a></li></ul>Server-side protocol driver process for UBF(A) protocol  
-sessions.
+<ul class="index"><li><a href="#description">Description</a></li><li><a href="#index">Function Index</a></li><li><a href="#functions">Function Details</a></li></ul>Protocol driver process for UBF(A) protocol sessions.
 
 
-<h2><a name="description">Description</a></h2><p>Server-side protocol driver process for UBF(A) protocol  
-sessions.</p>
+<h2><a name="description">Description</a></h2><p>Protocol driver process for UBF(A) protocol sessions.</p>
  
   <img src="../priv/doc/ubf-flow-01.png">
 <h2><a name="index">Function Index</a></h2>
-<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#handle_data-4">handle_data/4*</a></td><td></td></tr>
-<tr><td valign="top"><a href="#loop-2">loop/2</a></td><td></td></tr>
-<tr><td valign="top"><a href="#loop-3">loop/3</a></td><td></td></tr>
-<tr><td valign="top"><a href="#loop-4">loop/4*</a></td><td>Driver main loop.</td></tr>
-<tr><td valign="top"><a href="#relay-2">relay/2</a></td><td></td></tr>
-<tr><td valign="top"><a href="#start-0">start/0</a></td><td></td></tr>
-<tr><td valign="top"><a href="#start1-0">start1/0*</a></td><td></td></tr>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#decode-3">decode/3*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#decode-4">decode/4</a></td><td></td></tr>
+<tr><td valign="top"><a href="#encode-2">encode/2</a></td><td></td></tr>
+<tr><td valign="top"><a href="#init-1">init/1</a></td><td></td></tr>
+<tr><td valign="top"><a href="#start-1">start/1</a></td><td></td></tr>
 </table>
 
 <h2><a name="functions">Function Details</a></h2>
 
-<h3 class="function"><a name="handle_data-4">handle_data/4 *</a></h3>
+<h3 class="function"><a name="decode-3">decode/3 *</a></h3>
 <div class="spec">
-<p><tt>handle_data(Socket, Pid, Timeout, Cont1) -&gt; any()</tt></p>
+<p><tt>decode(Contract, Cont, CallBack) -&gt; any()</tt></p>
 </div>
 
-<h3 class="function"><a name="loop-2">loop/2</a></h3>
+<h3 class="function"><a name="decode-4">decode/4</a></h3>
 <div class="spec">
-<p><tt>loop(Socket, Pid) -&gt; any()</tt></p>
+<p><tt>decode(Contract, Cont, Binary, CallBack) -&gt; any()</tt></p>
 </div>
 
-<h3 class="function"><a name="loop-3">loop/3</a></h3>
+<h3 class="function"><a name="encode-2">encode/2</a></h3>
 <div class="spec">
-<p><tt>loop(Socket, Pid, Timeout) -&gt; any()</tt></p>
+<p><tt>encode(Contract, Term) -&gt; any()</tt></p>
 </div>
 
-<h3 class="function"><a name="loop-4">loop/4 *</a></h3>
+<h3 class="function"><a name="init-1">init/1</a></h3>
 <div class="spec">
-<p><tt>loop(Socket, Pid, Timeout, Cont) -&gt; any()</tt></p>
-</div><p><p>Driver main loop.</p>
- 
-  <ul>
-  <li> A driver sits between a socket and a Pid </li>
-  <li> Stuff on the socket is send to the Pid </li>
-  <li> Stuff from the Pid is send to the socket </li>
-  <li> When it is called the Socket has been
-  set to send messages to the driver
-  and the Pid exists  </li>
-  <li> If one side dies the process dies </li>
-  </ul></p>
-
-<h3 class="function"><a name="relay-2">relay/2</a></h3>
-<div class="spec">
-<p><tt>relay(Pid, Pid1) -&gt; any()</tt></p>
+<p><tt>init(Contract) -&gt; any()</tt></p>
 </div>
 
-<h3 class="function"><a name="start-0">start/0</a></h3>
+<h3 class="function"><a name="start-1">start/1</a></h3>
 <div class="spec">
-<p><tt>start() -&gt; any()</tt></p>
-</div>
-
-<h3 class="function"><a name="start1-0">start1/0 *</a></h3>
-<div class="spec">
-<p><tt>start1() -&gt; any()</tt></p>
+<p><tt>start(Contract) -&gt; any()</tt></p>
 </div>
 <hr>
 

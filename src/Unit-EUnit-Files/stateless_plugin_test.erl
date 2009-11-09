@@ -77,8 +77,8 @@ test_setup(App) ->
     %%     user_default:dbgadd(ubf_client),
     %%     user_default:dbgadd(ubf_driver),
     %%     user_default:dbgadd(ubf_plugin_handler),
-    %%     user_default:dbgadd(ubf_plugin_metaserverful),
-    %%     user_default:dbgadd(ubf_plugin_metaserverless),
+    %%     user_default:dbgadd(ubf_plugin_metastateful),
+    %%     user_default:dbgadd(ubf_plugin_metastateless),
     %%     user_default:dbgadd(ubf_server),
     %%     user_default:dbgadd(proc_socket_server),
 
@@ -203,7 +203,7 @@ test_007(#args{state=State}=Args) ->
     assert_process(Args, 0, 0, 0, 0, 0).
 
 %% connect -> server crash -> close
-test_008(#args{state=State}=Args) ->
+test_008(#args{proto=Proto,state=State}=Args) ->
     assert_process(Args, 0, 0, 0, 0, 0),
     {ok,Pid,?S("test_meta_server")} = client_connect(Args),
     assert_process(Args, 1, 1, 1, 1, 1),
@@ -211,7 +211,14 @@ test_008(#args{state=State}=Args) ->
     assert_process(Args, 1, 1, 1, 1, 1),
     {reply,ok,State} = client_rpc(Pid,keepalive),
     assert_process(Args, 1, 1, 1, 1, 1),
-    {error,stop} = client_rpc(Pid,server_crash_req05,infinity),
+    case Proto of
+        etf ->
+            {error,stop} = client_rpc(Pid,server_crash_req05,infinity);
+        lpc ->
+            {error,stop} = client_rpc(Pid,server_crash_req05,infinity);
+        _ ->
+            {error,socket_closed} = client_rpc(Pid,server_crash_req05,infinity)
+    end,
     assert_process(Args, 0, 0, 0, 0, 0),
     client_stop(Pid),
     assert_process(Args, 0, 0, 0, 0, 0).
@@ -344,7 +351,7 @@ test_shutdown_socket(#args{state=State}=Args,Who,Reason) ->
     {reply,ok,State} = client_rpc(Pid,keepalive),
     assert_process(Args, 1, 1, 1, 1, 1),
     spawn_link(fun() -> timer:sleep(500), shutdown_socket(Args,Who,Reason) end),
-    {error,stop} = client_rpc(Pid,{server_timeout_req03,5000}),
+    {error,socket_closed} = client_rpc(Pid,{server_timeout_req03,5000}),
     assert_process(Args, 0, 0, 0, 0, 0),
     case catch {reply,ok,State} = client_rpc(Pid,keepalive) of
         {'EXIT', _} ->

@@ -13,6 +13,7 @@ MODULES = \
 	proc_utils \
 	contracts \
 	contracts_abnf \
+	contract_driver \
 	contract_manager \
 	contract_manager_tlog \
 	ubf \
@@ -22,8 +23,8 @@ MODULES = \
 	jsf_utils \
 	jsf_driver \
 	ebf_driver \
-	ubf_plugin_meta_serverful \
-	ubf_plugin_meta_serverless
+	ubf_plugin_meta_stateful \
+	ubf_plugin_meta_stateless
 
 PRIVS = \
 
@@ -59,8 +60,8 @@ EUNITTESTS = \
 	stateful_plugin_test
 
 PLUGINS = \
-	ubf_plugin_meta_serverful \
-	ubf_plugin_meta_serverless
+	ubf_plugin_meta_stateful \
+	ubf_plugin_meta_stateless
 
 # include erl make
 include ../priv/make/erl_make.mk

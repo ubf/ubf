@@ -44,8 +44,8 @@
 %%       e.g. "127.0.0.1" (IPv4) or "::1" (IPv6), or in tuple form (see
 %%       documentation for Erlang's 'inet' module for details).
 %% @type plugin_module_list() = list(atom()).  A list of plugin module names
-%%       that will be passed to ubf_plugin_meta_serverful:new() or
-%%       ubf_plugin_meta_serverless:new() for client initialization.
+%%       that will be passed to ubf_plugin_meta_stateful:new() or
+%%       ubf_plugin_meta_stateless:new() for client initialization.
 %% @type tcp_port() = integer().  A TCP port number.
 %% @type timeout() = integer() | infinity.  An Erlang-style timeout value.
 
@@ -138,23 +138,23 @@ ubf_client(Parent, Host, Port, Options, Timeout)
     process_flag(trap_exit, true),
     DefaultConnectOptions =
         [binary, {nodelay, true}, {active, false}],
-    {DriverModule, DriverVersion, ConnectOptions} =
+    {DriverModule, DriverContract, DriverVersion, ConnectOptions} =
         case proplists:get_value(proto,Options,ubf) of
             ubf ->
-                {ubf_driver, 'ubf1.0', DefaultConnectOptions};
+                {ubf_driver, undefined, 'ubf1.0', DefaultConnectOptions};
             ebf ->
-                {ebf_driver, 'ebf1.0', DefaultConnectOptions++[{packet,4}]};
+                {ebf_driver, undefined, 'ebf1.0', DefaultConnectOptions++[{packet,4}]};
             jsf ->
-                {jsf_driver, 'jsf1.0', DefaultConnectOptions}
+                {jsf_driver, jsf, 'jsf1.0', DefaultConnectOptions}
         end,
     case gen_tcp:connect(Host, Port, ConnectOptions) of
         {ok, Socket} ->
             %% start a driver
-            Driver = DriverModule:start(),
+            Driver = DriverModule:start(DriverContract),
             %% get the socket to send messages to the driver
             gen_tcp:controlling_process(Socket, Driver),
             %% Kick off the driver
-            Driver ! {start, Socket, self()},       % tell the controller
+            Driver ! {start, self(), Socket},  % tell the controller
             inet:setopts(Socket, [{active, true}
                                   %%, {send_timeout, Timeout}
                                   %%, {send_timeout_close, true}

@@ -143,21 +143,20 @@ init(Name, Parent, PluginModules, Port, Options) ->
 
 start_server(PluginModules, Port, Options) ->
     SortedPluginModules = lists:usort(PluginModules),
-    MetaServerModule =
+    {MetaContract,Server} =
         case proplists:get_value(statelessrpc,Options,false) of
             false ->
-                ubf_plugin_meta_serverful:new(SortedPluginModules);
+                {ubf_plugin_meta_stateful:new(SortedPluginModules), self()};
             true ->
-                ubf_plugin_meta_serverless:new(SortedPluginModules)
+                {ubf_plugin_meta_stateless:new(SortedPluginModules), undefined}
         end,
     %% set up a UBF listener on Port
-    Server = self(),
-    {ok, ListenerPidUBF} = start_ubf_listener(MetaServerModule, Port, Server, Options),
-    ubf_plugin_handler:manager(MetaServerModule, [ListenerPidUBF]).
+    {ok, ListenerPidUBF} = start_ubf_listener(MetaContract, Port, Server, Options),
+    ubf_plugin_handler:manager(MetaContract, [ListenerPidUBF]).
 
-start_ubf_listener(MetaServerModule, Port, Server, Options) ->
+start_ubf_listener(MetaContract, Port, Server, Options) ->
     ServerHello =
-        proplists:get_value(serverhello,Options,MetaServerModule:contract_name()),
+        proplists:get_value(serverhello,Options,MetaContract:contract_name()),
     VerboseRPC =
         proplists:get_value(verboserpc,Options,false),
 
@@ -199,19 +198,26 @@ start_ubf_listener(MetaServerModule, Port, Server, Options) ->
                             contract_manager:start()
                     end,
                 Handler         = ubf_plugin_handler:start_handler(),
-                %% (The next three lines are pretty
-                %% devious but they work !)  send hello
-                %% back to the opening program
+                %% (The next three lines are pretty devious but they
+                %% work !)  send hello back to the opening program
                 self() ! {self(), {DriverVersion, ?S(ServerHello), help()}},
                 %% swap the driver
-                DriverModule:relay(self(), ContractManager),
-                ContractManager ! {start, Driver, Handler,
-                                   start, MetaServerModule},
-                Handler ! {start, ContractManager,
-                           Server, MetaServerModule},
+                contract_driver:relay(DriverModule, self(), ContractManager),
+                ContractManager !
+                    {start, Driver, Handler, start, MetaContract},
+                Handler !
+                    {start, ContractManager, Server, MetaContract},
                 %% and activate the loop that will now
                 %% execute the last two statements :-)
-                DriverModule:loop(Socket, self(), IdleTimer)
+                case (catch contract_driver:loop(DriverModule, MetaContract, self(), Socket, IdleTimer)) of
+                    {'EXIT', normal} ->
+                        exit(normal);
+                    {'EXIT', Reason} ->
+                        %% brute force
+                        exit(Handler, Reason),
+                        exit(ContractManager, Reason),
+                        exit(Reason)
+                end
         end,
     MaxConn =
         proplists:get_value(maxconn,Options,10000),
@@ -223,18 +229,18 @@ start_ubf_listener(MetaServerModule, Port, Server, Options) ->
                      PacketType,
                      0).
 
-start_term_listener(Server, PluginModules, Options) ->
+start_term_listener(Server0, PluginModules, Options) ->
     SortedPluginModules = lists:usort(PluginModules),
-    MetaServerModule =
+    {MetaContract,Server} =
         case proplists:get_value(statelessrpc,Options,false) of
             false ->
-                ubf_plugin_meta_serverful:new(SortedPluginModules);
+                {ubf_plugin_meta_stateful:new(SortedPluginModules), Server0};
             true ->
-                ubf_plugin_meta_serverless:new(SortedPluginModules)
+                {ubf_plugin_meta_stateless:new(SortedPluginModules), undefined}
         end,
 
     ServerHello =
-        proplists:get_value(serverhello,Options,MetaServerModule:contract_name()),
+        proplists:get_value(serverhello,Options,MetaContract:contract_name()),
     VerboseRPC =
         proplists:get_value(verboserpc,Options,false),
 
@@ -250,9 +256,9 @@ start_term_listener(Server, PluginModules, Options) ->
     self() ! {ContractManager, {'etf1.0', ?S(ServerHello), help()}},
 
     ContractManager ! {start, Driver, Handler,
-                       start, MetaServerModule},
+                       start, MetaContract},
     Handler ! {start, ContractManager,
-               Server, MetaServerModule},
+               Server, MetaContract},
 
     ContractManager.
 

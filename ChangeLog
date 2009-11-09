@@ -1,3 +1,10 @@
+2009-11-09 12:15 JST  norton
+
+        * src/*:
+        various refactorings and cleanups for overall socket driver,
+        contract manager, and plugin handler implementation.  one fix for
+        process cleanup when socket driver is exiting.
+
 2009-10-30 09:30 JST  norton
 
         * src/ubf_client.erl:

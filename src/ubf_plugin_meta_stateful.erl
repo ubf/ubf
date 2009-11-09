@@ -1,5 +1,5 @@
 %%% -*- mode: erlang -*-
-%%% $Id: ubf_plugin_meta_serverful.erl 148658 2009-11-02 03:18:24Z fritchie $
+%%% $Id$
 %%% @doc Implement the UBF(C) meta-protocol for UBF(B) "stateful" contracts.
 %%%
 %%% The metaprotocol is used at the beginning of a UBF session to
@@ -21,21 +21,19 @@
 %%% directory for several examples (see files with "_plugin.erl" suffix).
 %%%
 
--module(ubf_plugin_meta_serverful, [MODULES]).
+-module(ubf_plugin_meta_stateful, [MODULES]).
 
 -import(ubf_server, [ask_manager/2]).
 
 %% Required callback API for all UBF contract implementations.
 
--export([handlerStart/2, handlerRpc/4, handlerStop/3,
-         managerStart/1, managerRestart/2, managerRpc/2]).
+-export([handlerStart/2, handlerStop/3, handlerRpc/4]).
+-export([managerStart/1, managerRestart/2, managerRpc/2]).
 
 -export([info/0, description/0]).
 
--import(lists, [map/2]).
-
 -compile({parse_transform,contract_parser}).
--add_contract("ubf_plugin_meta_serverful").
+-add_contract("ubf_plugin_meta_stateful").
 
 -include("ubf.hrl").
 
@@ -48,24 +46,29 @@
 services() -> [ Module:contract_name()
                 || Module <- MODULES ].
 
+%% @doc Enumerate the UBF modules and services of this server.
+
+modules() ->  [ {Module:contract_name(), {Module, undefined}}
+                || Module <- MODULES ].
+
 %% @doc Emit an info string.
 
 info() -> "I am a meta server -
 
     type 'help'$
 
-    ... to find out what I can do".
+              ... to find out what I can do".
 
 %% @doc Emit a help string.
 
 help() ->
-    <<"\n\n
+               <<"\n\n
 This server speaks Universal Binary Format 1.0
 
-    See http://www.sics.se/~joe/ubf.html
-    See http://github.com/norton/ubf/tree/master for some
-    source code extensions available as part of the larger
-    OSS community.
+                See http://www.sics.se/~joe/ubf.html
+                See http://github.com/norton/ubf/tree/master for some
+                source code extensions available as part of the larger
+                OSS community.
 
 UBF servers are introspective - which means the servers can describe
 themselves. The following commands are always available:
@@ -81,8 +84,8 @@ To start a service:
 
 {'startSession', \"Name\", Arg}  Name should be one of the names in the
                                  services list.  Arg is an initial
-    argument for the Name service and is specific to that service; use
-    'foo' or # (the empty list) if the service ignores this argument.
+argument for the Name service and is specific to that service; use
+'foo' or # (the empty list) if the service ignores this argument.
 
 Warning: Without reading the documentation you might find the output
 from some of these commands difficult to understand :-)
@@ -93,14 +96,14 @@ from some of these commands difficult to understand :-)
 
 description() -> "
 Commands:
-    'services'$                   -- List services.
-    {'startSession', Name, Arg}$  -- Start a service.
-                                  -- Reminder: Service names are strings
-                                  -- and therefore must be double-quoted.
-    'info'$                       -- Provide information.
-    'description'$                -- This information.
-    'contract'$                   -- Show the contract.
-                                     See http://www.sics.se/~joe/ubf.html
+                     'services'$                   -- List services.
+{'startSession', Name, Arg}$  -- Start a service.
+-- Reminder: Service names are strings
+-- and therefore must be double-quoted.
+'info'$                       -- Provide information.
+'description'$                -- This information.
+'contract'$                   -- Show the contract.
+See http://www.sics.se/~joe/ubf.html
 ".
 
 %% @spec (Args::term()) ->
@@ -109,8 +112,8 @@ Commands:
 %%      process(es).
 
 managerStart(Args) ->
-    {ok, lists:zip(services(), [ {M, ubf_plugin_handler:start_manager(M, Args)}
-                                 || M <- MODULES ])}.
+    {ok, [ {Service, {Module, ubf_plugin_handler:start_manager(Module, Args)}}
+           || {Service, {Module, undefined}} <- modules() ]}.
 
 %% @spec (Args::term(), Manager::pid()) ->
 %%       ok | {error, Reason::term()}
@@ -126,8 +129,8 @@ managerRestart(Args,Manager) ->
 %%      function.
 
 managerRpc({service,Service}, S) ->
-    case lists:keysearch(Service,1,S) of
-        {value, {Service, X}} ->
+    case lists:keyfind(Service,1,S) of
+        {Service, X} ->
             {{ok, X}, S};
         false ->
             {error, S}
@@ -151,15 +154,38 @@ handlerStart(_, _) ->
 %%      handler process.
 
 handlerStop(_Pid, _Reason, State) ->
-    %% io:format("Client stopped:~p ~p~n",[Pid, Reason]),
     State.
 
-%% @spec (StateName::atom(), RpcCall::term(), StateData::term(), Env::term()) ->
+%% @spec (StateName::atom(), RpcCall::term(), StateData::term(), ManagerPid::pid()) ->
 %%    {Reply::term(), NewStateName::atom(), NewStateData::term()} |
 %%    {changeContract, Reply::term(), NewStateData::term(), HandlerMod::atom(),
-%%     State2::term(), Data2::term(), ManagerPid::pid}
+%%     State1::term(), Data1::term(), ManagerPid::pid()}
 %% @doc Required UBF contract implementation callback: call an RPC function.
 
+handlerRpc(start=State, {startSession, ?S(Name), Args}, Data, Manager) ->
+    case ask_manager(Manager, {service, Name}) of
+        {ok, {Mod, Pid}} ->
+            case (catch Mod:handlerStart(Args, Pid)) of
+                {accept, Reply, State1, Data1} ->
+                    {changeContract, {ok, Reply}, Mod, State1, Data1, Pid};
+                {reject, Reason} ->
+                    {{error,Reason}, State, Data}
+            end;
+        error ->
+            {{error,noSuchService}, State, Data}
+    end;
+handlerRpc(start=State, {restartService, ?S(Name), Args}, Data, Manager) ->
+    case ask_manager(Manager, {service, Name}) of
+        {ok, {Mod, Pid}} ->
+            case (catch Mod:managerRestart(Args, Pid)) of
+                ok ->
+                    {{ok,ok}, State, Data};
+                {error, Reason} ->
+                    {{error,Reason}, State, Data}
+            end;
+        error ->
+            {{error,noSuchService}, State, Data}
+    end;
 handlerRpc(Any, info, State, _Manager) ->
     {?S(info()), Any, State};
 handlerRpc(Any, description, State, _Manager) ->
@@ -167,76 +193,8 @@ handlerRpc(Any, description, State, _Manager) ->
 handlerRpc(Any, help, State, _Manager) ->
     {help(), Any, State};
 handlerRpc(Any, services, State, _Manager) ->
-    Ss = map(fun(I) -> ?S(I) end, services()),
-    {Ss, Any, State};
-handlerRpc(start, {restartService, ?S(Name), Args}, Data, Manager) ->
-    case ask_manager(Manager, {service, Name}) of
-        {ok, {Mod, Pid}} ->
-            %% io:format("Server_plugin calling:~p~n",[Mod]),
-            case (catch Mod:managerRestart(Args, Pid)) of
-                ok ->
-                    {{ok,ok}, start, Data};
-                {error, Reason} ->
-                    {{error,Reason}, start, Data}
-            end;
-        error ->
-            io:format("returning error nosuch~n"),
-            {{error,noSuchService}, start, Data}
-    end;
-handlerRpc(start, {startSession, ?S(Name), Args}, Data, Manager) ->
-    case ask_manager(Manager, {service, Name}) of
-        {ok, {Mod, Pid}} ->
-            %% io:format("Server_plugin calling:~p~n",[Mod]),
-            case (catch Mod:handlerStart(Args, Pid)) of
-                {accept, Reply, State1, Data1} ->
-                    %% io:format("Accepted:~n"),
-                    {changeContract, {ok, Reply}, start,
-                     Mod, State1, Data1, Pid};
-                {reject, Reason} ->
-                    {{error,Reason}, start, Data}
-            end;
-        error ->
-            io:format("returning error nosuch~n"),
-            {{error,noSuchService}, start, Data}
-    end;
+    {lists:map(fun(I) -> ?S(I) end, services()), Any, State};
 
 %% verbose rpc
-handlerRpc(Any, {info,_}, State, _Manager) ->
-    {?S(info()), Any, State};
-handlerRpc(Any, {description,_}, State, _Manager) ->
-    {?S(description()), Any, State};
-handlerRpc(Any, {help,_}, State, _Manager) ->
-    {help(), Any, State};
-handlerRpc(Any, {services,_}, State, _Manager) ->
-    Ss = map(fun(I) -> ?S(I) end, services()),
-    {Ss, Any, State};
-handlerRpc(start, {{restartService, ?S(Name), Args},_}, Data, Manager) ->
-    case ask_manager(Manager, {service, Name}) of
-        {ok, {Mod, Pid}} ->
-            %% io:format("Server_plugin calling:~p~n",[Mod]),
-            case (catch Mod:managerRestart(Args, Pid)) of
-                ok ->
-                    {{ok,ok}, start, Data};
-                {error, Reason} ->
-                    {{error,Reason}, start, Data}
-            end;
-        error ->
-            io:format("returning error nosuch~n"),
-            {{error,noSuchService}, start, Data}
-    end;
-handlerRpc(start, {{startSession, ?S(Name), Args},_}, Data, Manager) ->
-    case ask_manager(Manager, {service, Name}) of
-        {ok, {Mod, Pid}} ->
-            %% io:format("Server_plugin calling:~p~n",[Mod]),
-            case (catch Mod:handlerStart(Args, Pid)) of
-                {accept, Reply, State1, Data1} ->
-                    %% io:format("Accepted:~n"),
-                    {changeContract, {ok, Reply}, start,
-                     Mod, State1, Data1, Pid};
-                {reject, Reason} ->
-                    {{error,Reason}, start, Data}
-            end;
-        error ->
-            io:format("returning error nosuch~n"),
-            {{error,noSuchService}, start, Data}
-    end.
+handlerRpc(Any, {Event,_}, State, Manager) ->
+    handlerRpc(Any, Event, State, Manager).
