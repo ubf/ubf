@@ -175,7 +175,6 @@ ubf_client(Parent, Host, Port, Options, Timeout)
         {error, _E} ->
             Parent ! {self(), {error, socket}}
     end;
-
 ubf_client(Parent, Plugins, Name, Options, Timeout)
   when is_atom(Name) ->
     case whereis(Name) of

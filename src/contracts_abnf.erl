@@ -58,11 +58,11 @@ check_binary(#state{check={abnf_seq,[]}}=S, Next) ->
     Next(S#state{check=undefined});
 check_binary(#state{check={abnf_repeat,_Min,_Max,_Type}}=S, Next) ->
     check_binary_repeat(S, Next, 0);
-check_binary(#state{check={abnf_byte_range,Min,Max},x=X}=S, Next) ->
+check_binary(#state{check={abnf_byte_range,Min,Max},x=X,size=Size}=S, Next) ->
     case X of
         <<Byte:8,Rest/binary>> ->
             if Min =< Byte andalso Byte =< Max ->
-                    Next(S#state{check=undefined,x=Rest,size=S#state.size+1});
+                    Next(S#state{check=undefined,x=Rest,size=Size+1});
                true ->
                     {ng,S}
             end;
@@ -77,10 +77,10 @@ check_binary(#state{check={abnf_byte_seq,[Type|Types]}}=S, Next) ->
     check_binary(S#state{check=Type}, Fun);
 check_binary(#state{check={abnf_byte_seq,[]}}=S, Next) ->
     Next(S#state{check=undefined});
-check_binary(#state{check={abnf_byte_val,Byte},x=X}=S, Next) ->
+check_binary(#state{check={abnf_byte_val,Byte},x=X,size=Size}=S, Next) ->
     case X of
         <<Byte:8,Rest/binary>> ->
-            Next(S#state{check=undefined,x=Rest,size=S#state.size+1});
+            Next(S#state{check=undefined,x=Rest,size=Size+1});
         _ ->
             {ng,S}
     end;

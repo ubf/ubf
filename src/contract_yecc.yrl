@@ -150,9 +150,9 @@ unwraprecfields(L) ->
        true ->
             noop
     end,
-    if length(Keys) =:= 0 ->
-            {atom,undefined};
-       true ->
+    case Keys of
+	[] -> {atom,undefined};
+        _ ->
             eor({atom,undefined}, {tuple,[{atom,K} || {K,_} <- L]})
     end.
 

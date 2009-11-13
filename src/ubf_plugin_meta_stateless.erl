@@ -186,8 +186,7 @@ handlerRpc(description) ->
 handlerRpc(help) ->
     help();
 handlerRpc(services) ->
-    lists:map(fun(I) -> ?S(I) end, services());
-
+    [?S(I) || I <- services()];
 %% verbose rpc
 handlerRpc({Event,_}) ->
     handlerRpc(Event).

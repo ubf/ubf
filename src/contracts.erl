@@ -33,11 +33,11 @@ checkIn(Msg, State, Mod) ->
     Outs = [ [ erlang:setelement(1,O,Type) || O <- Out ]
              || {input,Type,Out} <- T, isType(Type,Msg,Mod) ],
     FSM2 =
-        if length(Outs) =:= 0 ->
-                Outs1 = [ {InType,OutType,State}
-                          || {InType,OutType} <- T1, isType(InType,Msg,Mod) ],
-                lists:append(Outs) ++ Outs1;
-           true ->
+        case Outs of
+	    [] ->
+                [ {InType,OutType,State}
+		  || {InType,OutType} <- T1, isType(InType,Msg,Mod) ];
+           _ ->
                 lists:append(Outs)
         end,
     %% io:format("FSM2=~p~n",[FSM2]),
@@ -126,48 +126,36 @@ check_term({prim, Min, Max, Type}=_Check, X, Level, Mod) ->
     end;
 %% tuple
 check_term({tuple,Args}=_Check, X, Level, Mod) ->
-    if is_tuple(X) ->
-            if length(Args) == size(X) ->
-                    case check_term_seq(Args, tuple_to_list(X), Level, Mod) of
-                        true ->
-                            true;
-                        false ->
-                            ?FAIL({Check,X})
-                    end;
-               true ->
-                    ?FAIL({Check,X})
-            end;
+    if length(Args) =:= tuple_size(X) ->
+	    case check_term_seq(Args, tuple_to_list(X), Level, Mod) of
+		true ->
+		    true;
+		false ->
+		    ?FAIL({Check,X})
+	    end;
        true ->
             ?FAIL({Check,X})
     end;
 %% record
 check_term({record,Name,Args}=_Check, X, Level, Mod) ->
-    if is_tuple(X) ->
-            if length(Args)+(1-2) == size(X) ->
-                    case check_term_seq([{atom,Name}|tl(tl(Args))], tuple_to_list(X), Level, Mod) of
-                        true ->
-                            true;
-                        false ->
-                            ?FAIL({Check,X})
-                    end;
-               true ->
-                    ?FAIL({Check,X})
-            end;
+    if length(Args)+(1-2) =:= tuple_size(X) ->
+	    case check_term_seq([{atom,Name}|tl(tl(Args))], tuple_to_list(X), Level, Mod) of
+		true ->
+		    true;
+		false ->
+		    ?FAIL({Check,X})
+	    end;
        true ->
             ?FAIL({Check,X})
     end;
 check_term({record_ext,Name,Args}=_Check, X, Level, Mod) ->
-    if is_tuple(X) ->
-            if length(Args)+1 == size(X) ->
-                    case check_term_seq([{atom,Name}|Args], tuple_to_list(X), Level, Mod) of
-                        true ->
-                            true;
-                        false ->
-                            ?FAIL({Check,X})
-                    end;
-               true ->
-                    ?FAIL({Check,X})
-            end;
+    if length(Args)+1 =:= tuple_size(X) ->
+	    case check_term_seq([{atom,Name}|Args], tuple_to_list(X), Level, Mod) of
+		true ->
+		    true;
+		false ->
+		    ?FAIL({Check,X})
+	    end;
        true ->
             ?FAIL({Check,X})
     end;
@@ -175,7 +163,7 @@ check_term({record_ext,Name,Args}=_Check, X, Level, Mod) ->
 check_term({list,Min,Max,Args}=_Check, X, Level, Mod) ->
     if is_list(X) ->
             Len = length(X),
-            if Len < Min orelse (Max /= infinity andalso Len > Max) ->
+            if Len < Min orelse (Max =/= infinity andalso Len > Max) ->
                     ?FAIL({Check,X});
                true ->
                     case check_term_list(Args, X, Level, Mod) of
@@ -202,14 +190,14 @@ check_term({range, Min, Max}=_Check, X, _Level, _Mod) ->
     end;
 %% atom
 check_term({atom, Y}=_Check, X, _Level, _Mod) ->
-    if Y == X andalso is_atom(Y) ->
+    if Y =:= X andalso is_atom(Y) ->
             true;
        true ->
             ?FAIL({Check,X})
     end;
 %% binary
 check_term({binary, Y}=_Check, X, _Level, _Mod) ->
-    if Y == X andalso is_binary(Y) ->
+    if Y =:= X andalso is_binary(Y) ->
             true;
        true ->
             ?FAIL({Check,X})
@@ -535,22 +523,18 @@ checkType2(Type, Term, Mod) ->
 
 bad_zip(TypesList, TermList, Mod) ->
     TpsTrm = lists:zip3(TypesList, TermList, lists:seq(1, length(TermList))),
-
     Items = [{isType(Type, Part, Mod), Type, _Pos} ||
                 {Type, Part, _Pos} <- TpsTrm],
-    BadItems = [{WantedType, Pos} || {false, WantedType, Pos} <- Items],
-    lists:map(
-      fun({WantedType, Pos}) ->
-              {badType, WantedType,
-               checkType2(WantedType, lists:nth(Pos, TermList), Mod)}
-      end, BadItems).
+    [{badType, WantedType,
+      checkType2(WantedType, lists:nth(Pos, TermList), Mod)} ||
+	{false, WantedType, Pos} <- Items].
 
 %% checkType_investigate_deeper({prim, _} = Type, Term, Mod) ->
 %%     INFINITE LOOP, don't do this....
 %%     checkType2(Type, Term, Mod);
 checkType_investigate_deeper({list, _Min, _Max, Type}, TermL, Mod) ->
     if is_list(TermL) ->
-            bad_zip(lists:duplicate(length(TermL), Type), TermL, Mod);
+            bad_zip([Type || _ <- TermL], TermL, Mod);
        true ->
             {expecting_list_but_got, TermL}
     end;

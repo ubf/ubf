@@ -193,8 +193,7 @@ handlerRpc(Any, description, State, _Manager) ->
 handlerRpc(Any, help, State, _Manager) ->
     {help(), Any, State};
 handlerRpc(Any, services, State, _Manager) ->
-    {lists:map(fun(I) -> ?S(I) end, services()), Any, State};
-
+    {[?S(I) || I <- services()], Any, State};
 %% verbose rpc
 handlerRpc(Any, {Event,_}, State, Manager) ->
     handlerRpc(Any, Event, State, Manager).

@@ -185,7 +185,7 @@ encode_tuple(X, UBFMod) when not is_atom(element(1, X)) ->
     {obj, [{"$T", encode_tuple(1, X, [], UBFMod)}]};
 encode_tuple(X, UBFMod) ->
     RecName = element(1, X),
-    Y = {RecName, size(X)-1},
+    Y = {RecName, tuple_size(X)-1},
     case lists:member(Y, UBFMod:contract_records()) of
         false ->
             {obj, [{"$T", encode_tuple(1, X, [], UBFMod)}]};
@@ -195,13 +195,13 @@ encode_tuple(X, UBFMod) ->
             {obj, [{"$R", atom_to_binary(RecName)}|encode_record(2, X, Keys, [], UBFMod)]}
     end.
 
-encode_tuple(N, X, Acc, _UBFMod) when is_integer(N), N > size(X) ->
+encode_tuple(N, X, Acc, _UBFMod) when is_integer(N), N > tuple_size(X) ->
     lists:reverse(Acc);
 encode_tuple(N, X, Acc, UBFMod) ->
     NewAcc = [do_encode(element(N, X), UBFMod)|Acc],
     encode_tuple(N+1, X, NewAcc, UBFMod).
 
-encode_record(N, X, _Keys, Acc, _UBFMod) when is_integer(N), N > size(X) ->
+encode_record(N, X, _Keys, Acc, _UBFMod) when is_integer(N), N > tuple_size(X) ->
     Acc;
 encode_record(N, X, Keys, Acc, UBFMod) ->
     NewAcc = [{atom_to_binary(element(N-1, Keys)), do_encode(element(N, X), UBFMod)}|Acc],

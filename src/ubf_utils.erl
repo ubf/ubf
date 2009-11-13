@@ -295,11 +295,8 @@ ubf_contract(Mod) ->
           , ""
          ],
     X4 = [ begin
-               Params =
-                   case get_type(Input,true,Mod) of
-                       {Input, InputType, _} ->
-                           typeref(InputType,Mod)
-                   end,
+	       {Input, InputType, _} = get_type(Input,true,Mod),
+	       Params = typeref(InputType,Mod),
                Result =
                    case get_type(Output,false,Mod) of
                        {Output, OutputType, _} ->
