@@ -89,10 +89,10 @@ loop(Client, Server, State, Mod, VerboseRPC) ->
             loop(Client, Server, State, Mod, VerboseRPC);
         {Client, Q} ->
             do_rpc(Client, Server, State, Mod, Q, VerboseRPC);
-        {event, Msg} ->
+        {event, Msg} = Event ->
             case do_checkCallback(Msg, State, Mod) of
                 true ->
-                    Client ! {self(), {event, Msg}},
+                    Client ! {self(), Event},
                     loop(Client, Server, State, Mod, VerboseRPC);
                 false ->
                     loop(Client, Server, State, Mod, VerboseRPC)

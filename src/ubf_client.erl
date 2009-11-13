@@ -302,8 +302,8 @@ loop(Driver, Fun) ->
                 {Driver, {R, S}} ->
                     From ! {self(), {reply, R, S}},
                     loop(Driver, Fun);
-                {Driver, {error, X}} ->
-                    From ! {self(), {error, X}};
+                {Driver, {error, _} = Error} ->
+                    From ! {self(), Error};
                 {Driver, Other} ->
                     From ! {self(), {error, Other}};
                 {'EXIT', Driver, Reason} ->

@@ -94,12 +94,7 @@ isType(Type, X, Mod) ->
 
 %% alt
 check_term({alt, A, B}, X, Level, Mod) ->
-    case check_term(A, X, Level, Mod) of
-        true ->
-            true;
-        false ->
-            check_term(B, X, Level, Mod)
-    end;
+    check_term(A, X, Level, Mod) orelse check_term(B, X, Level, Mod);
 %% concat
 check_term({concat, _A, _B}=_Check, _X, _Level, _Mod) ->
     %% @todo not (re-)implemented now
@@ -250,13 +245,13 @@ check_term(_Check, _X, _Level, _Mod) ->
 check_term_prim(1, 1, TypeDef, X, Level, Mod) ->
     check_term(TypeDef, X, Level, Mod);
 check_term_prim(0, 1, TypeDef, X, Level, Mod) ->
-    if X /= undefined ->
+    if X =/= undefined ->
             check_term(TypeDef, X, Level, Mod);
        true ->
             true
     end;
 check_term_prim(0, 0, _TypeDef, X, _Level, _Mod) ->
-    X == undefined.
+    X =:= undefined.
 
 
 %% check_term_seq
@@ -267,24 +262,12 @@ check_term_seq(_Args, [], _Level, _Mod) ->
 check_term_seq([], _L, _Level, _Mod) ->
     false;
 check_term_seq([H1|T1], [H2|T2], Level, Mod) ->
-    case check_term(H1, H2, Level, Mod) of
-        true ->
-            check_term_seq(T1, T2, Level, Mod);
-        _ ->
-            false
-    end.
+    check_term(H1, H2, Level, Mod) andalso check_term_seq(T1, T2, Level, Mod).
 
 
 %% check_term_list
-check_term_list(_Args, [], _Level, _Mod) ->
-    true;
-check_term_list(Args, [H|T], Level, Mod) ->
-    case check_term(Args, H, Level, Mod) of
-        true ->
-            check_term_list(Args, T, Level, Mod);
-        _ ->
-            false
-    end.
+check_term_list(Args, List, Level, Mod) ->
+    lists:all(fun (X) -> check_term(Args, X, Level, Mod) end, List).
 
 
 %% check_term_range

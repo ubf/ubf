@@ -180,8 +180,8 @@ handlerRpc(start=State, {restartService, ?S(Name), Args}, Data, Manager) ->
             case (catch Mod:managerRestart(Args, Pid)) of
                 ok ->
                     {{ok,ok}, State, Data};
-                {error, Reason} ->
-                    {{error,Reason}, State, Data}
+                {error, _Reason} = Error ->
+                    {Error, State, Data}
             end;
         error ->
             {{error,noSuchService}, State, Data}

@@ -59,11 +59,11 @@ loop(Client, State, Data, Manager, Mod) ->
                             loop(Client, State, Data, Manager, Mod)
                     end
             end;
-        {event, X} ->
-            Client ! {event, X},
+        {event, _} = Event ->
+            Client ! Event,
             loop(Client, State, Data, Manager, Mod);
         stop ->
-            if Manager /= undefined ->
+            if Manager =/= undefined ->
                     Manager ! {client_has_stopped, self()};
                true ->
                     case (catch Mod:handlerStop(self(), normal, Data)) of
