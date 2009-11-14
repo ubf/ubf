@@ -291,7 +291,7 @@ loop(Driver, Fun) ->
             true;
         {'EXIT', Driver, Reason} ->
             exit(Reason);
-        {Driver, {event, Event}} ->
+        {Driver, {event_out, Event}} ->
             %% asynchronous event handler
             Fun1 = Fun(Event),
             loop(Driver, Fun1);
@@ -318,7 +318,7 @@ loop(Driver, Fun) ->
                     Driver ! stop,
                     true
             end;
-        {Driver, {event, Msg, State}} ->
+        {Driver, {event_out, Msg, State}} ->
             Fun1 = Fun(Msg, State),
             loop(Driver, Fun1);
         {From, {install, Fun1}} ->
@@ -344,17 +344,17 @@ lpc(Mod, Q) ->
 
 lpc(Mod, Q, State) ->
     %% check contract
-    case contract_manager:do_checkIn(Q, State, Mod) of
+    case contract_manager:do_checkRPCIn(Q, State, Mod) of
         {error, Reply} ->
             {reply,Reply,State};
         {ok, Ref} ->
             case (catch Mod:handlerRpc(Q)) of
                 {'EXIT', Reason} ->
-                    contract_manager:do_checkOutError(Ref, Q, State, Mod, Reason),
+                    contract_manager:do_checkRPCOutError(Ref, Q, State, Mod, Reason),
                     {error, stop};
                 Reply ->
                     %% check contract
-                    {_, NewReply} = contract_manager:do_checkOut(Ref, Q, State, Mod, Reply, State, State, Mod),
+                    {_, NewReply} = contract_manager:do_checkRPCOut(Ref, Q, State, Mod, Reply, State, State, Mod),
                     {reply,NewReply,State}
             end
     end.

@@ -1,3 +1,8 @@
+2009-11-14 11:00 JST  norton
+
+        * src/*: rename async event to event_out and rename contract_manager's
+	check methods
+
 2009-11-14 03:25 JST  norton
 
         * src/*: "tidier" patch by Kostis Sagonas

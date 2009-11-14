@@ -122,16 +122,16 @@ loop(S, Dict, Pid, L1, E1, E2) ->
             loop(S, Dict, Pid, L1, E1, E2);
         {gs,_Obj,keypress,_G,_} ->
             loop(S, Dict, Pid, L1, E1, E2);
-        {event, {leaves, Who, Group}} ->
+        {event_out, {leaves, Who, Group}} ->
             display(Group, Dict, Who  ++ " leaves the group\n"),
             loop(S, Dict, Pid, L1, E1, E2);
-        {event, {joins, Who, Group}} ->
+        {event_out, {joins, Who, Group}} ->
             display(Group, Dict, Who  ++ " joins the group\n"),
             loop(S, Dict, Pid, L1, E1, E2);
-        {event, {changesName, Old, New, Group}} ->
+        {event_out, {changesName, Old, New, Group}} ->
             display(Group, Dict, Old ++ " changes name to " ++ New ++ "\n"),
             loop(S, Dict, Pid, L1, E1, E2);
-        {event, {msg, From, Group, Msg}} ->
+        {event_out, {msg, From, Group, Msg}} ->
             display(Group, Dict, From ++ " > " ++ Msg),
             loop(S, Dict, Pid, L1, E1, E2);
         X ->
@@ -164,7 +164,7 @@ new_group(S, Name) ->
     {W, T1}.
 
 send_self(Msg, Pid) ->
-    Pid ! {event, ubf:deabstract(Msg)},
+    Pid ! {event_out, ubf:deabstract(Msg)},
     fun(I) -> send_self(I, Pid) end.
 
 

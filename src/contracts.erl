@@ -6,7 +6,7 @@
 -module(contracts).
 
 %%-compile(export_all).
--export([checkCallback/3, checkIn/3, checkOut/4, isTypeAttr/2, isType/3]).
+-export([checkEventOut/3, checkRPCIn/3, checkRPCOut/4, isTypeAttr/2, isType/3]).
 -export([checkType/3]).
 -include("ubf.hrl").
 
@@ -17,10 +17,10 @@
 %%----------------------------------------------------------------------
 %% test() ==> test
 %% parse({contract, types(), fsm()}) => {ok, internal()} | {error, Reason}
-%% checkIn(internal(), StateIn, Msg) -> error | {ok, [{S2,M2}]}
-%% checkOut(internal(), [{S2,M2}], S2, M2) -> ok | error.
+%% checkRPCIn(internal(), StateIn, Msg) -> error | {ok, [{S2,M2}]}
+%% checkRPCOut(internal(), [{S2,M2}], S2, M2) -> ok | error.
 
-checkIn(Msg, State, Mod) ->
+checkRPCIn(Msg, State, Mod) ->
     %% Check that the Msg is in the set of
     %% incoming states
     %% io:format("check: Msg=~p, State=~p, plugin=~p~n",[Msg,State,Mod]),
@@ -43,7 +43,7 @@ checkIn(Msg, State, Mod) ->
     %% io:format("FSM2=~p~n",[FSM2]),
     FSM2.
 
-checkOut(MsgOut, StateOut, FSM2, Mod) ->
+checkRPCOut(MsgOut, StateOut, FSM2, Mod) ->
     %% NOTE: ignore input type since tuple size will always be of size
     %% three
     lists:any(fun({_,Type,S2}) when S2 == StateOut ->
@@ -52,9 +52,9 @@ checkOut(MsgOut, StateOut, FSM2, Mod) ->
                 false
         end, FSM2).
 
-checkCallback(Msg, ThisState, Mod) ->
+checkEventOut(Msg, ThisState, Mod) ->
     T = Mod:contract_state(ThisState),
-    Events = [ E ||{event,E} <- T ],
+    Events = [ E || {event_out,E} <- T ],
     %% io:format("Events=~p~n",[Events]),
     lists:any(fun(Type) -> isType(Type, Msg, Mod) end, Events).
 

@@ -42,7 +42,7 @@ loop(Client, State, Data, Manager, Mod) ->
                                                {new, Mod1, State1}}},
                             loop(Client, State1, Data1, Manager1, Mod1);
                         {'EXIT', Reason} ->
-                            contract_manager_tlog:checkOutError(Q, State, Mod, Reason),
+                            contract_manager_tlog:checkRPCOutError(Q, State, Mod, Reason),
                             exit({serverPluginHandler, Reason})
                     end;
                true ->
@@ -52,14 +52,14 @@ loop(Client, State, Data, Manager, Mod) ->
                                                {new, Mod1, State1}}},
                             loop(Client, State1, Data1, Manager, Mod1);
                         {'EXIT', Reason} ->
-                            contract_manager_tlog:checkOutError(Q, State, Mod, Reason),
+                            contract_manager_tlog:checkRPCOutError(Q, State, Mod, Reason),
                             exit({serverPluginHandler, Reason});
                         Reply ->
                             Client ! {self(), {rpcReply, Reply, State, same}},
                             loop(Client, State, Data, Manager, Mod)
                     end
             end;
-        {event, _} = Event ->
+        {event_out, _} = Event ->
             Client ! Event,
             loop(Client, State, Data, Manager, Mod);
         stop ->

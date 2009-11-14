@@ -269,7 +269,7 @@ help() ->
        " Type 'info'$ for information\n\n").
 
 sendEvent(Pid, Msg) ->
-    Pid ! {event, Msg}.
+    Pid ! {event_out, Msg}.
 
 ask_manager(Manager, Q) ->
     Manager ! {self(), {handler_rpc, Q}},

@@ -20,36 +20,44 @@
 -module(contract_manager).
 
 -export([start/0, start/1]).
--export([do_checkIn/3, do_checkOut/8, do_checkCallback/3]).
--export([do_checkOutError/4, do_checkOutError/5]).
+-export([do_checkRPCIn/3, do_checkRPCOut/8, do_checkEventOut/3]).
+-export([do_checkRPCOutError/4, do_checkRPCOutError/5]).
 
--import(contracts, [checkIn/3, checkOut/4, checkCallback/3]).
+-import(contracts, [checkRPCIn/3, checkRPCOut/4, checkEventOut/3]).
 -import(lists, [map/2]).
 
 -include("ubf.hrl").
 
 
-%%%  Client                     Contract                     Server
-%%%    |                           |                            |
-%%%    |                           |                            |
-%%%    |                           |                            |
-%%%    |  {Driver, {rpc,Q}}        |                            |
-%%%    +---------->----------------+    {Contract, Q}           |
-%%%    |                           +------------->--------------+
-%%%    |                           |                            |
-%%%    |                           |                            |
-%%%    |                           |      {reply,R,S2}          |
-%%%    |                           +-------------<--------------+
-%%%    | {Contract, {reply,Q,S2}}  |                            |
-%%%    +----------<----------------+                            |
-%%%  ..............................................................
-%%%    |                           |                            |
-%%%    |                           |       {event,M}            |
-%%%    |                           +-------------<--------------+
-%%%    | {Contract, {event,M}}     |                            |
-%%%    +----------<----------------+                            |
-%%%    |                           |                            |
-%%%    |                           |                            |
+%%%  Client                     Contract                    Server
+%%%    |                           |                          |
+%%%    |                           |                          |
+%%%    |                           |                          |
+%%%    |  {Driver, {rpc,Q}}        |                          |
+%%%    +---------->----------------+    {Contract, Q}         |
+%%%    |                           +------------->------------+
+%%%    |                           |                          |
+%%%    |                           |                          |
+%%%    |                           |      {reply,R,S1}        |
+%%%    |                           +-------------<------------+
+%%%    | {Contract, {reply,R,S1}}  |                          |
+%%%    +----------<----------------+                          |
+%%%    |                           |                          |
+%%%  ............................................................
+%%%    |                           |                          |
+%%%    |                           |      {event_out,M}       |
+%%%    |                           +-------------<------------+
+%%%    | {Contract, {event_out,M}} |                          |
+%%%    +----------<----------------+                          |
+%%%    |                           |                          |
+%%%  ............................................................
+%%%    |                           |                          |
+%%%    | {Contract, {event_in,M}}  |                          |
+%%%    +---------->----------------+                          |
+%%%    |                           |      {event_in,M}        |
+%%%    |                           +------------->------------+
+%%%    |                           |                          |
+
 
 %%%  @spec () -> pid()
 
@@ -89,8 +97,8 @@ loop(Client, Server, State, Mod, VerboseRPC) ->
             loop(Client, Server, State, Mod, VerboseRPC);
         {Client, Q} ->
             do_rpc(Client, Server, State, Mod, Q, VerboseRPC);
-        {event, Msg} = Event ->
-            case do_checkCallback(Msg, State, Mod) of
+        {event_out, Msg} = Event ->
+            case do_checkEventOut(Msg, State, Mod) of
                 true ->
                     Client ! {self(), Event},
                     loop(Client, Server, State, Mod, VerboseRPC);
@@ -105,7 +113,7 @@ loop(Client, Server, State, Mod, VerboseRPC) ->
 
 do_rpc(Client, Server, State, Mod, Q, VerboseRPC) ->
     %% check contract
-    case do_checkIn(Q, State, Mod) of
+    case do_checkRPCIn(Q, State, Mod) of
         {error, Reply} ->
             Client ! {self(), {Reply, State}},
             loop(Client, Server, State, Mod, VerboseRPC);
@@ -118,12 +126,12 @@ do_rpc(Client, Server, State, Mod, Q, VerboseRPC) ->
             receive
                 {Server, {rpcReply, Reply, ReplyState, same}} ->
                     %% check contract
-                    {_, NewReply} = do_checkOut(TLogRef, Q, State, Mod, Reply, ReplyState, ReplyState, Mod),
+                    {_, NewReply} = do_checkRPCOut(TLogRef, Q, State, Mod, Reply, ReplyState, ReplyState, Mod),
                     Client ! {self(), {NewReply, ReplyState}},
                     loop(Client, Server, ReplyState, Mod, VerboseRPC);
                 {Server, {rpcReply, Reply, ReplyState, {new, NewMod, NewState}}} ->
                     %% check contract
-                    {_, NewReply} = do_checkOut(TLogRef, Q, State, Mod, Reply, ReplyState, NewState, NewMod),
+                    {_, NewReply} = do_checkRPCOut(TLogRef, Q, State, Mod, Reply, ReplyState, NewState, NewMod),
                     Client ! {self(), {NewReply, NewState}},
                     loop(Client, Server, NewState, NewMod, VerboseRPC);
                 stop ->
@@ -131,43 +139,43 @@ do_rpc(Client, Server, State, Mod, Q, VerboseRPC) ->
             end
     end.
 
-do_checkIn(Q, State, Mod) ->
-    TLog = contract_manager_tlog:checkIn(Q, State, Mod),
-    case checkIn(Q, State, Mod) of
+do_checkRPCIn(Q, State, Mod) ->
+    TLog = contract_manager_tlog:checkRPCIn(Q, State, Mod),
+    case checkRPCIn(Q, State, Mod) of
         [] ->
-            contract_manager_tlog:checkOut(TLog, Q, State, Mod, undefined, State, Mod, client_broke_contract),
+            contract_manager_tlog:checkRPCOut(TLog, Q, State, Mod, undefined, State, Mod, client_broke_contract),
             Expect = Mod:contract_state(State),
             {error, {clientBrokeContract, Q, Expect}};
         FSM ->
             {ok, {TLog, FSM}}
     end.
 
-do_checkOut({TLog, FSM}=_Ref, Q, State, Mod, Reply, ReplyState, NewState, NewMod) ->
-    case checkOut(Reply, ReplyState, FSM, Mod) of
+do_checkRPCOut({TLog, FSM}=_Ref, Q, State, Mod, Reply, ReplyState, NewState, NewMod) ->
+    case checkRPCOut(Reply, ReplyState, FSM, Mod) of
         true ->
-            contract_manager_tlog:checkOut(TLog, Q, State, Mod, Reply, NewState, NewMod, ok),
+            contract_manager_tlog:checkRPCOut(TLog, Q, State, Mod, Reply, NewState, NewMod, ok),
             {ok, Reply};
         false ->
-            contract_manager_tlog:checkOut(TLog, Q, State, Mod, Reply, NewState, NewMod, server_broke_contract),
+            contract_manager_tlog:checkRPCOut(TLog, Q, State, Mod, Reply, NewState, NewMod, server_broke_contract),
             Expect = map(fun(I) -> element(2, I) end, FSM),
             {error, {serverBrokeContract, {Q, Reply}, Expect}}
     end.
 
-do_checkCallback(Msg, State, Mod) ->
-    case checkCallback(Msg, State, Mod) of
+do_checkEventOut(Msg, State, Mod) ->
+    case checkEventOut(Msg, State, Mod) of
         true ->
-            contract_manager_tlog:checkCallback(Msg, State, Mod, ok),
+            contract_manager_tlog:checkEventOut(Msg, State, Mod, ok),
             true;
         false ->
-            contract_manager_tlog:checkCallback(Msg, State, Mod, server_broke_contract),
+            contract_manager_tlog:checkEventOut(Msg, State, Mod, server_broke_contract),
             false
     end.
 
-do_checkOutError(Q, State, Mod, Error) ->
-    contract_manager_tlog:checkOutError(Q, State, Mod, Error).
+do_checkRPCOutError(Q, State, Mod, Error) ->
+    contract_manager_tlog:checkRPCOutError(Q, State, Mod, Error).
 
-do_checkOutError({TLog, _FSM}=_Ref, Q, State, Mod, Error) ->
-    contract_manager_tlog:checkOutError(TLog, Q, State, Mod, Error).
+do_checkRPCOutError({TLog, _FSM}=_Ref, Q, State, Mod, Error) ->
+    contract_manager_tlog:checkRPCOutError(TLog, Q, State, Mod, Error).
 
 contract(Mod) ->
     {{name,?S(Mod:contract_name())},

@@ -82,7 +82,7 @@ transitions -> transition ';' transitions   : ['$1'|'$3'].
 transitions -> transition                   : ['$1'].
 
 transition -> typeRef '=>' outputs          : {input, '$1', '$3'}.
-transition -> eventkwd '=>' typeRef         : {event, '$3'}.
+transition -> eventkwd '=>' typeRef         : {event_out, '$3'}.
 
 outputs -> responseAndState '|' outputs     : ['$1'|'$3'].
 outputs -> responseAndState                 : ['$1'].
