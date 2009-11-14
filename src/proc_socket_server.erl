@@ -1,9 +1,10 @@
 %% @doc Keeps track of a number of TCP sessions.
 %%
 %% This module will manage a collection of TCP sessions for the same
-%% server.  If a `Name' is not specified, the server will be named
-%% `picoSocketServer_' ++ the TCP port number that the service listens
-%% to, e.g. `picoSocketServer_9923'.
+%% server.  If `Port' is 0, the underlying OS assigns an available
+%% port number.  If a `Name' is not specified, the server will be
+%% named `picoSocketServer_' ++ the TCP port number that the service
+%% listens to, e.g. `picoSocketServer_9923'.
 %%
 %% A managed server can be started, stopped, enumerate child sessions,
 %% and limit the maximum number of child sessions.
@@ -17,12 +18,9 @@
 %% File    : proc_socket_server.erl
 %% Author  : Joe Armstrong (joe@bluetail.com)
 
-%% stop_server(Port) -> ok.
-%% children(Port) -> [Pids]
+-export([start_raw_server/5, start_raw_server/6, start_server/3, start_server/4, stop_server/1]).
 
--export([start_raw_server/5, start_raw_server/6, start_server/3, start_server/4, stop_server/1, children/1]).
-
--export([num_conn/1, num_conn/2]).
+-export([server_port/1, server_port/2, server_status/1, server_status/2, server_children/1, server_children/2]).
 
 %% Internal imports (used by spawn)
 
@@ -44,29 +42,31 @@
 %% start_raw_server/6).
 
 start_server(Port, Max, Fun) ->
-    start_raw_server(undefined, Port, Fun, Max, 0, 0).
+    start_raw_server(undefined, Port, Max, Fun, 0, 0).
 
 start_server(Name, Port, Max, Fun) ->
-    start_raw_server(Name, Port, Fun, Max, 0, 0).
+    start_raw_server(Name, Port, Max, Fun, 0, 0).
 
-start_raw_server(Port, Fun, Max, PacketType, PacketSize) ->
-    start_raw_server(undefined, Port, Fun, Max, PacketType, PacketSize).
+start_raw_server(Port, Max, Fun, PacketType, PacketSize) ->
+    start_raw_server(undefined, Port, Max, Fun, PacketType, PacketSize).
 
-start_raw_server(undefined, Port, Fun, Max, PacketType, PacketSize) ->
+start_raw_server(undefined, Port, Max, Fun, PacketType, PacketSize) when Port =/= 0 ->
     Name = port_name(Port),
-    start_raw_server(Name, Port, Fun, Max, PacketType, PacketSize);
-start_raw_server(Name, Port, Fun, Max, PacketType, PacketSize) ->
-    %% io:format("start raw server:~p ~p ~p ~p ~p ~n",[Name, Port, Max, PacketType, PacketSize]),
+    start_raw_server(Name, Port, Max, Fun, PacketType, PacketSize);
+start_raw_server(Name, Port, Max, Fun, PacketType, PacketSize) ->
     case whereis(Name) of
         undefined ->
             Parent = self(),
             Pid = erlang:spawn_link(?MODULE, cold_start,
-                                    [Parent, Name, Port, Fun, Max, PacketType, PacketSize]),
+                                    [Parent, Name, Port, Max, Fun, PacketType, PacketSize]),
             {ok, Pid};
         _Pid ->
             false
     end.
 
+stop_server(Pid) when is_pid(Pid) ->
+    exit(Pid, kill),
+    ok;
 stop_server(Port) when is_integer(Port) ->
     Name = port_name(Port),
     stop_server(Name);
@@ -75,24 +75,83 @@ stop_server(Name) ->
         undefined ->
             ok;
         Pid ->
-            exit(Pid, kill),
+	    ok = stop_server(Pid),
             (catch unregister(Name)),
             ok
     end.
 
-children(Port) when is_integer(Port) ->
-    port_name(Port) ! {children, self()},
+
+server_port(Name) ->
+    server_port(Name, 16#ffffffff).
+
+server_port(Pid, Timeout) when is_pid(Pid) ->
+    Pid ! {port, self()},
     receive
-        {session_server, Reply} -> Reply
+	{Pid, Reply} ->
+	    Reply
+    after Timeout ->
+	    timeout
+    end;
+server_port(Port, Timeout) when is_integer(Port) ->
+    Name = port_name(Port),
+    server_port(Name, Timeout);
+server_port(Name, Timeout) ->
+    case whereis(Name) of
+	undefined ->
+	    retrylater;
+	Pid ->
+	    server_port(Pid, Timeout)
     end.
 
-port_name(Port) when is_integer(Port) ->
-    list_to_atom("picoSocketServer_" ++ integer_to_list(Port)).
 
-cold_start(Parent, Name, Port, Fun, Max, PacketType, PacketSize) ->
+server_status(Name) ->
+    server_status(Name, 16#ffffffff).
+
+server_status(Pid, Timeout) when is_pid(Pid) ->
+    Pid ! {status, self()},
+    receive
+	{Pid, Reply} ->
+	    Reply
+    after Timeout ->
+	    timeout
+    end;
+server_status(Port, Timeout) when is_integer(Port) ->
+    Name = port_name(Port),
+    server_status(Name, Timeout);
+server_status(Name, Timeout) ->
+    case whereis(Name) of
+	undefined ->
+	    retrylater;
+	Pid ->
+	    server_status(Pid, Timeout)
+    end.
+
+
+server_children(Name) ->
+    server_children(Name, 16#ffffffff).
+
+server_children(Pid, Timeout) when is_pid(Pid) ->
+    Pid ! {children, self()},
+    receive
+	{Pid, Reply} ->
+	    Reply
+    after Timeout ->
+	    timeout
+    end;
+server_children(Port, Timeout) when is_integer(Port) ->
+    Name = port_name(Port),
+    server_children(Name, Timeout);
+server_children(Name, Timeout) ->
+    case whereis(Name) of
+	undefined ->
+	    retrylater;
+	Pid ->
+	    server_children(Pid, Timeout)
+    end.
+
+
+cold_start(Parent, Name, Port, Max, Fun, PacketType, PacketSize) ->
     process_flag(trap_exit, true),
-    register(Name, self()),
-    %% io:format("Starting a port server on ~p ~p...~n",[Name, Port]),
     DefaultListenOptions =
         [binary, {nodelay, true}, {active, true}, {reuseaddr, true}, {backlog, 4096}],
     ListenOptions =
@@ -107,49 +166,68 @@ cold_start(Parent, Name, Port, Fun, Max, PacketType, PacketSize) ->
                 DefaultListenOptions++[{packet,T}, {packet_size,S}]
         end,
     {ok, Listen} = gen_tcp:listen(Port, ListenOptions),
-    %% io:format("Listener here ~p ~p~n", [Port, ListenOptions]),
+    RegisterName = 
+	if Name =/= undefined ->
+		Name;
+	   true ->
+		{ok, RealPort} = inet:port(Listen),
+		port_name(RealPort)
+	end,
+    register(RegisterName, self()),
     New = start_accept(Listen, Fun),
-    socket_loop(Parent, Listen, New, [], Fun, Max).
+    socket_loop(Parent, Listen, New, [], 0, Max, Fun).
 
-%% Don't mess with the following code unless you really know what you're
-%% doing (and Thanks to Magnus for heping me get it right)
 
-socket_loop(Parent, Listen, New, Active, Fun, Max) ->
+port_name(Port) when is_integer(Port) ->
+    list_to_atom("picoSocketServer_" ++ integer_to_list(Port)).
+
+
+%% Don't mess with the following code unless you really know what
+%% you're doing (and Thanks to Magnus for heping me get it right)
+
+socket_loop(Parent, Listen, New, Active, Num, Max, Fun) ->
     receive
         {started, New} ->
             Active1 = [New|Active],
-            possibly_start_another(Parent, false, Listen, Active1, Fun, Max);
+            possibly_start_another(Parent, false, Listen, Active1, Num+1, Max, Fun);
         {'EXIT', Parent, Reason} ->
             exit(Reason);
         {'EXIT', New, _Reason} ->
-            possibly_start_another(Parent, false, Listen, Active, Fun, Max);
+            possibly_start_another(Parent, false, Listen, Active, Num, Max, Fun);
         {'EXIT', Pid, _Reason} ->
             Active1 = lists:delete(Pid, Active),
-            possibly_start_another(Parent, New, Listen, Active1, Fun, Max);
+            possibly_start_another(Parent, New, Listen, Active1, length(Active1), Max, Fun);
+        {port, From} ->
+	    {ok, Port} = inet:port(Listen),
+            From ! {self(), Port},
+            socket_loop(Parent, Listen, New, Active, Num, Max, Fun);
+        {status, From} ->
+            From ! {self(), {Num, Max}},
+            socket_loop(Parent, Listen, New, Active, Num, Max, Fun);
         {children, From} ->
-            From ! {session_server, Active},
-            socket_loop(Parent, Listen, New, Active, Fun, Max);
-        {num_conn, From} ->
-            From ! {length(Active), Max},
-            socket_loop(Parent, Listen, New, Active, Fun, Max);
+            From ! {self(), Active},
+            socket_loop(Parent, Listen, New, Active, Num, Max, Fun);
         Other ->
-            io:format("Here in loop:~p~n",[Other])
+	    io:format("*** YY Socket loop dropping:~p~n", [Other]),
+	    socket_loop(Parent, Listen, New, Active, Num, Max, Fun)
     end.
 
-possibly_start_another(Parent, New, Listen, Active, Fun, Max) when is_pid(New) ->
-    socket_loop(Parent, Listen, New, Active, Fun, Max);
-possibly_start_another(Parent, false, Listen, Active, Fun, Max) ->
-    case length(Active) of
-        N when N < Max ->
+
+possibly_start_another(Parent, New, Listen, Active, Num, Max, Fun) when is_pid(New) ->
+    socket_loop(Parent, Listen, New, Active, Num, Max, Fun);
+possibly_start_another(Parent, false, Listen, Active, Num, Max, Fun) ->
+    if Num < Max ->
             New = start_accept(Listen, Fun),
-            socket_loop(Parent, Listen, New, Active, Fun, Max);
-        _ ->
-            socket_loop(Parent, Listen, false, Active, Fun, Max)
+            socket_loop(Parent, Listen, New, Active, Num, Max, Fun);
+       true ->
+            socket_loop(Parent, Listen, false, Active, Num, Max, Fun)
     end.
+
 
 start_accept(Listen, Fun) ->
     Parent = self(),
     erlang:spawn_link(?MODULE, start_child, [Parent, Listen, Fun]).
+
 
 start_child(Parent, Listen, Fun) ->
     case gen_tcp:accept(Listen) of
@@ -157,7 +235,6 @@ start_child(Parent, Listen, Fun) ->
             Parent ! {started, self()},             % tell the controller
             inet:setopts(Socket, [{active, true}]), % before we activate socket
             %% Start the child
-            %% io:format("Starting a child on:~p~n",[Socket]),
             case (catch Fun(Socket)) of
                 {'EXIT', normal} ->
                     true;
@@ -171,15 +248,3 @@ start_child(Parent, Listen, Fun) ->
             exit(Other)
     end.
 
-%% api to check number of connections and max
-num_conn(Server) ->
-    num_conn(Server, infinity).
-
-num_conn(Server, Timeout) ->
-    Server ! {num_conn, self()},
-    receive
-        Reply ->
-            Reply %% should be {Num, Max}
-    after Timeout ->
-            timeout
-    end.

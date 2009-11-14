@@ -31,14 +31,14 @@ all_tests_(Setup,Teardown) ->
     {setup,
      Setup,
      Teardown,
-     (stateless_plugin_test:all_actual_tests_("localhost",3000,ubf,false,start))(not_used)
-     ++ (stateless_plugin_test:all_actual_tests_("localhost",3001,ebf,false,start))(not_used)
+     (stateless_plugin_test:all_actual_tests_(ubf,false,start))(not_used)
+     ++ (stateless_plugin_test:all_actual_tests_(ebf,false,start))(not_used)
      ++ case code:which(rfc4627) of
             non_existing ->
                 [];
             _ ->
-                [] %% TODO: fix failure (stateless_plugin_test:all_actual_tests_("localhost",3002,jsf,false,start))(not_used)
+                [] %% TODO: fix failure (stateless_plugin_test:all_actual_tests_(jsf,false,start))(not_used)
         end
-     ++ (stateless_plugin_test:all_actual_tests_(unused,unused,etf,false,start))(not_used)
-     ++ (stateless_plugin_test:all_actual_tests_(unused,unused,lpc,false,start))(not_used)
+     ++ (stateless_plugin_test:all_actual_tests_(etf,false,start))(not_used)
+     ++ (stateless_plugin_test:all_actual_tests_(lpc,false,start))(not_used)
     }.

@@ -11,7 +11,16 @@ defaultPlugins() -> [test_plugin, irc_plugin, file_plugin].
 defaultOptions() -> [{plugins, defaultPlugins()}].
 defaultTimeout() -> 10000.
 
-defaultPort() -> 2001.
+defaultPort() -> server_port(test_ebf_tcp_port).
+
+server_port(Name) ->
+    case proc_socket_server:server_port(Name) of
+	Port when is_integer(Port) ->
+	    Port;
+	_ ->
+	    timer:sleep(10),
+	    server_port(Name)
+    end.
 
 tests() ->
     ss(),

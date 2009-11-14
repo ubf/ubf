@@ -44,8 +44,8 @@ init(Args) ->
     DefaultTimeout = 60000,
     DefaultPlugins = proplists:get_value(plugins, Args, [stateless_plugin]),
 
-    CUBF = case proplists:get_value(test_ubf_tcp_port, Args, 3000) of
-               0 ->
+    CUBF = case proplists:get_value(test_ubf_tcp_port, Args, 0) of
+               undefined ->
                    [];
                UBFPort ->
                    UBFMaxConn = proplists:get_value(test_ubf_maxconn, Args, DefaultMaxConn),
@@ -64,8 +64,8 @@ init(Args) ->
                    [UBFServer]
            end,
 
-    CEBF = case proplists:get_value(test_ebf_tcp_port, Args, 3001) of
-               0 ->
+    CEBF = case proplists:get_value(test_ebf_tcp_port, Args, 0) of
+               undefined ->
                    [];
                EBFPort ->
                    EBFMaxConn = proplists:get_value(test_ebf_maxconn, Args, DefaultMaxConn),
@@ -84,8 +84,8 @@ init(Args) ->
                    [EBFServer]
            end,
 
-    CJSF = case proplists:get_value(test_jsf_tcp_port, Args, 3002) of
-               0 ->
+    CJSF = case proplists:get_value(test_jsf_tcp_port, Args, 0) of
+               undefined ->
                    [];
                JSFPort ->
                    JSFMaxConn = proplists:get_value(test_jsf_maxconn, Args, DefaultMaxConn),

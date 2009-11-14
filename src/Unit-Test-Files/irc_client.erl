@@ -44,7 +44,7 @@ start(Nick) ->
         {reply, false, _} ->
             ubf_client:stop(Pid);
         {reply, true, active} ->
-            {reply,_,_}   = rpc(Pid, {join, ?S("erlang")}),
+            {reply,_,_} = rpc(Pid, {join, ?S("erlang")}),
             loop(Pid, "erlang", ["erlang"], Nick)
     end,
     io:format("client stops~n").
@@ -77,12 +77,12 @@ loop(Pid, Group, Gs, Nick) ->
                 ["quit"] ->
                     ubf_client:stop(Pid),
                     true;
-            _ ->
+		_ ->
                     %% io:format("OOPs:~p~n",[X]),
                     banner(),
                     loop(Pid, Group, Gs, Nick)
 
-             end;
+	    end;
         Msg ->
             case rpc(Pid, {msg, ?S(Group), ?S(Msg)}) of
                 {reply, _R,_} ->

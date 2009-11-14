@@ -224,8 +224,8 @@ start_ubf_listener(MetaContract, Port, Server, Options) ->
 
     start_raw_server(proplists:get_value(registeredname,Options),
                      Port,
-                     ServerFun,
                      MaxConn,
+                     ServerFun,
                      PacketType,
                      0).
 

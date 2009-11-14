@@ -44,8 +44,8 @@ init(Args) ->
     DefaultTimeout = 60000,
     DefaultPlugins = proplists:get_value(plugins, Args, [file_plugin, irc_plugin, irc_plugin, test_plugin]),
 
-    CUBF = case proplists:get_value(test_ubf_tcp_port, Args, 2000) of
-               0 ->
+    CUBF = case proplists:get_value(test_ubf_tcp_port, Args, 0) of
+               undefined ->
                    [];
                UBFPort ->
                    UBFMaxConn = proplists:get_value(test_ubf_maxconn, Args, DefaultMaxConn),
@@ -55,6 +55,7 @@ init(Args) ->
                                  , {proto,ubf}
                                  , {maxconn,UBFMaxConn}
                                  , {idletimer,UBFIdleTimer}
+                                 , {registeredname,test_ubf_tcp_port}
                                 ],
                    UBFServer =
                        {ubf_server, {ubf_server, start_link, [undefined, DefaultPlugins, UBFPort, UBFOptions]},
@@ -63,8 +64,8 @@ init(Args) ->
                    [UBFServer]
            end,
 
-    CEBF = case proplists:get_value(test_ebf_tcp_port, Args, 2001) of
-               0 ->
+    CEBF = case proplists:get_value(test_ebf_tcp_port, Args, 0) of
+               undefined ->
                    [];
                EBFPort ->
                    EBFMaxConn = proplists:get_value(test_ebf_maxconn, Args, DefaultMaxConn),
@@ -74,6 +75,7 @@ init(Args) ->
                                  , {proto,ebf}
                                  , {maxconn,EBFMaxConn}
                                  , {idletimer,EBFIdleTimer}
+                                 , {registeredname,test_ebf_tcp_port}
                                 ],
                    EBFServer =
                        {ebf_server, {ubf_server, start_link, [undefined, DefaultPlugins, EBFPort, EBFOptions]},
@@ -82,8 +84,8 @@ init(Args) ->
                    [EBFServer]
            end,
 
-    CJSF = case proplists:get_value(test_jsf_tcp_port, Args, 2002) of
-               0 ->
+    CJSF = case proplists:get_value(test_jsf_tcp_port, Args, 0) of
+               undefined ->
                    [];
                JSFPort ->
                    JSFMaxConn = proplists:get_value(test_jsf_maxconn, Args, DefaultMaxConn),
@@ -93,6 +95,7 @@ init(Args) ->
                                  , {proto,jsf}
                                  , {maxconn,JSFMaxConn}
                                  , {idletimer,JSFIdleTimer}
+                                 , {registeredname,test_jsf_tcp_port}
                                 ],
                    JSFServer =
                        {jsf_server, {ubf_server, start_link, [undefined, DefaultPlugins, JSFPort, JSFOptions]},

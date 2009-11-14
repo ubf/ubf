@@ -12,8 +12,12 @@ do_eunit() ->
 
 
 -define(APPLICATION, stateless_plugin).
+-define(UBF_PORT, server_port(test_ubf_tcp_port)).
+-define(EBF_PORT, server_port(test_ebf_tcp_port)).
+-define(JSF_PORT, server_port(test_jsf_tcp_port)).
 
 -record(args, {host, port, proto, stateless, state}).
+
 
 %%%----------------------------------------------------------------------
 %%% TESTS
@@ -32,38 +36,46 @@ all_tests_(Setup,Teardown) ->
     {setup,
      Setup,
      Teardown,
-     (all_actual_tests_("localhost",3000,ubf,true,none))(not_used)
-     ++ (all_actual_tests_("localhost",3001,ebf,true,none))(not_used)
+     (all_actual_tests_(ubf,true,none))(not_used)
+     ++ (all_actual_tests_(ebf,true,none))(not_used)
      ++ case code:which(rfc4627) of
             non_existing ->
                 [];
             _ ->
-                (all_actual_tests_("localhost",3002,jsf,true,none))(not_used)
+                (all_actual_tests_(jsf,true,none))(not_used)
         end
-     ++ (all_actual_tests_(unused,unused,etf,true,none))(not_used)
-     ++ (all_actual_tests_(unused,unused,lpc,true,none))(not_used)
+     ++ (all_actual_tests_(etf,true,none))(not_used)
+     ++ (all_actual_tests_(lpc,true,none))(not_used)
     }.
 
+all_actual_tests_(ubf=Proto,Stateless,State) ->
+    all_actual_tests_("localhost",fun() -> ?UBF_PORT end,Proto,Stateless,State);
+all_actual_tests_(ebf=Proto,Stateless,State) ->
+    all_actual_tests_("localhost",fun() -> ?EBF_PORT end,Proto,Stateless,State);
+all_actual_tests_(jsf=Proto,Stateless,State) ->
+    all_actual_tests_("localhost",fun() -> ?JSF_PORT end,Proto,Stateless,State);
+all_actual_tests_(Proto,Stateless,State) ->
+    all_actual_tests_(undefined,fun() -> undefined end,Proto,Stateless,State).
+
 all_actual_tests_(Host,Port,Proto,Stateless,State) ->
-    fun (_) ->
-            Args = #args{host=Host,port=Port,proto=Proto,stateless=Stateless,state=State},
-            [?_test(test_001(Args))
-             , ?_test(test_002(Args))
-             , ?_test(test_003(Args))
-             , ?_test(test_004(Args))
-             , ?_test(test_005(Args))
-             , ?_test(test_006(Args))
-             , ?_test(test_007(Args))
-             , ?_test(test_008(Args))
-             , ?_test(test_009(Args))
-             , ?_test(test_010(Args))
-             , ?_test(test_011(Args))
-             , ?_test(test_012(Args))
-             , ?_test(test_013(Args))
-             , ?_test(test_015(Args))
-             , ?_test(test_016(Args))
-             , ?_test(test_017(Args))
-            ]
+    fun(_) ->
+	    [?_test(test_001(#args{host=Host,port=Port(),proto=Proto,stateless=Stateless,state=State}))
+	     , ?_test(test_002(#args{host=Host,port=Port(),proto=Proto,stateless=Stateless,state=State}))
+	     , ?_test(test_003(#args{host=Host,port=Port(),proto=Proto,stateless=Stateless,state=State}))
+	     , ?_test(test_004(#args{host=Host,port=Port(),proto=Proto,stateless=Stateless,state=State}))
+	     , ?_test(test_005(#args{host=Host,port=Port(),proto=Proto,stateless=Stateless,state=State}))
+	     , ?_test(test_006(#args{host=Host,port=Port(),proto=Proto,stateless=Stateless,state=State}))
+	     , ?_test(test_007(#args{host=Host,port=Port(),proto=Proto,stateless=Stateless,state=State}))
+	     , ?_test(test_008(#args{host=Host,port=Port(),proto=Proto,stateless=Stateless,state=State}))
+	     , ?_test(test_009(#args{host=Host,port=Port(),proto=Proto,stateless=Stateless,state=State}))
+	     , ?_test(test_010(#args{host=Host,port=Port(),proto=Proto,stateless=Stateless,state=State}))
+	     , ?_test(test_011(#args{host=Host,port=Port(),proto=Proto,stateless=Stateless,state=State}))
+	     , ?_test(test_012(#args{host=Host,port=Port(),proto=Proto,stateless=Stateless,state=State}))
+	     , ?_test(test_013(#args{host=Host,port=Port(),proto=Proto,stateless=Stateless,state=State}))
+	     , ?_test(test_015(#args{host=Host,port=Port(),proto=Proto,stateless=Stateless,state=State}))
+	     , ?_test(test_016(#args{host=Host,port=Port(),proto=Proto,stateless=Stateless,state=State}))
+	     , ?_test(test_017(#args{host=Host,port=Port(),proto=Proto,stateless=Stateless,state=State}))
+	    ]
     end.
 
 %%%----------------------------------------------------------------------
@@ -340,6 +352,15 @@ test_018(Args) ->
 %%%----------------------------------------------------------------------
 %%% Helpers
 %%%----------------------------------------------------------------------
+
+server_port(Name) ->
+    case proc_socket_server:server_port(Name) of
+	Port when is_integer(Port) ->
+	    Port;
+	_ ->
+	    timer:sleep(10),
+	    server_port(Name)
+    end.
 
 %% connect -> driver socket is shutdown or closed -> close
 test_shutdown_socket(#args{state=State}=Args,Who,Reason) ->
