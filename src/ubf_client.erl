@@ -318,9 +318,6 @@ loop(Driver, Fun) ->
                     Driver ! stop,
                     true
             end;
-        {Driver, {event_out, Msg, State}} ->
-            Fun1 = Fun(Msg, State),
-            loop(Driver, Fun1);
         {From, {install, Fun1}} ->
             From ! {self(), ack},
             loop(Driver, Fun1);
