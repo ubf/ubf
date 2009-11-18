@@ -163,7 +163,7 @@ ubf_client(Parent, Host, Port, Options, Timeout)
             receive
                 {Driver, {DriverVersion, Service, _}} ->
                     Parent ! {self(), {ok, Service}},
-                    ubf_client_loop(Driver);
+                    ubf_client_loop(Parent, Driver);
                 {'EXIT', Driver, Reason} ->
                     Parent ! {self(), {error, Reason}};
                 {'EXIT', Parent, Reason} ->
@@ -191,7 +191,7 @@ ubf_client(Parent, Plugins, Server, Options, Timeout)
     receive
         {Driver, {'etf1.0', Service, _}} ->
             Parent ! {self(), {ok, Service}},
-            ubf_client_loop(Driver);
+            ubf_client_loop(Parent, Driver);
         {'EXIT', Driver, Reason} ->
             Parent ! {self(), {error, Reason}};
         {'EXIT', Parent, Reason} ->
@@ -279,40 +279,48 @@ install_handler(Pid, Fun) ->
 
 %% @doc Entry function for the UBF client process.
 
-ubf_client_loop(Driver) ->
-    loop(Driver, fun drop_fun/1).
+ubf_client_loop(Parent, Driver) ->
+    loop(Parent, Driver, fun drop_fun/1).
 
 %% @doc Main loop for the UBF client process.
 
-loop(Driver, Fun) ->
+loop(Parent, Driver, Fun) ->
     receive
         stop ->
             Driver ! stop,
             true;
         {'EXIT', Driver, Reason} ->
             exit(Reason);
+        {'EXIT', Parent, Reason} ->
+            Driver ! stop,
+            exit(Reason);
         {Driver, {event_out, Event}} ->
             %% asynchronous event handler
             Fun1 = Fun(Event),
-            loop(Driver, Fun1);
+            loop(Parent, Driver, Fun1);
         {From, {rpc, Q}} ->
             %% rpc
             Driver ! {self(), Q},
             receive
                 {Driver, {R, S}} ->
                     From ! {self(), {reply, R, S}},
-                    loop(Driver, Fun);
+                    loop(Parent, Driver, Fun);
                 {Driver, {error, _} = Error} ->
                     From ! {self(), Error};
                 {Driver, Other} ->
                     From ! {self(), {error, Other}};
                 {'EXIT', Driver, Reason} ->
                     From ! {self(), {error, Reason}};
-                {'EXIT', _, _Reason} ->
-                    %% TBD corner case for etf client
+                {'EXIT', Parent, Reason} ->
                     From ! {self(), {error, stop}},
                     Driver ! stop,
-                    true;
+                    exit(Reason);
+                %% {'EXIT', From, Reason} ->
+                %%     %% TBD corner case for etf client
+                %%     io:format("*** Client loop exiting:~p ~p~n", [From, Reason]),
+                %%     From ! {self(), {error, stop}},
+                %%     Driver ! stop,
+                %%     true;
                 stop ->
                     From ! {self(), {error, stop}},
                     Driver ! stop,
@@ -320,10 +328,10 @@ loop(Driver, Fun) ->
             end;
         {From, {install, Fun1}} ->
             From ! {self(), ack},
-            loop(Driver, Fun1);
+            loop(Parent, Driver, Fun1);
         X ->
-            io:format("*** YY Client loop dropping:~p~n",[X]),
-            loop(Driver, Fun)
+            io:format("*** Client loop dropping:~p~n",[X]),
+            loop(Parent, Driver, Fun)
     end.
 
 %% @spec (module(), term()) -> term()

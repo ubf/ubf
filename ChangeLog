@@ -1,14 +1,19 @@
+2009-11-18 22:20 JST  norton
+
+        * src/ubf_client.erl: fix ubf client to handle condition when it's
+        parent process dies
+
 2009-11-15 03:45 JST  norton
 
         * src/proc_socket_server.erl, src/ubf_server.erl: enhance
-	proc_socket_server to accept a port value of 0. rework
-	server_port, server_status, and server_children implementations.
-	modify unit tests to set port value to 0
+        proc_socket_server to accept a port value of 0. rework
+        server_port, server_status, and server_children implementations.
+        modify unit tests to set port value to 0
 
 2009-11-14 11:00 JST  norton
 
         * src/*: rename async event to event_out and rename contract_manager's
-	check methods
+        check methods
 
 2009-11-14 03:25 JST  norton
 
