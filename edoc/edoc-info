@@ -1,4 +1,4 @@
-{application,ubf__HEAD}.
+{application,ubf}.
 {packages,[]}.
 {modules,[contract_driver,contract_lex,contract_manager,contract_manager_tlog,
           contract_parser,contract_yecc,contracts,contracts_abnf,ebf_driver,

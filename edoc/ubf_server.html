@@ -55,7 +55,6 @@ module for extra details.</p>
   
 <h2><a name="index">Function Index</a></h2>
 <table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#ask_manager-2">ask_manager/2</a></td><td></td></tr>
-<tr><td valign="top"><a href="#help-0">help/0*</a></td><td></td></tr>
 <tr><td valign="top"><a href="#init-5">init/5</a></td><td></td></tr>
 <tr><td valign="top"><a href="#sendEvent-2">sendEvent/2</a></td><td></td></tr>
 <tr><td valign="top"><a href="#start-2">start/2</a></td><td>Start a server and a TCP listener on port Port and register  
@@ -70,11 +69,7 @@ implementation modules in the PluginModules list.</td></tr>
 <tr><td valign="top"><a href="#start_link-2">start_link/2</a></td><td>See start/2, but also link the server processs to the caller.</td></tr>
 <tr><td valign="top"><a href="#start_link-3">start_link/3</a></td><td>See start/3, but also link the server processs to the caller.</td></tr>
 <tr><td valign="top"><a href="#start_link-4">start_link/4</a></td><td>See start/4, but also link the server processs to the caller.</td></tr>
-<tr><td valign="top"><a href="#start_proc-3">start_proc/3*</a></td><td></td></tr>
-<tr><td valign="top"><a href="#start_registered-2">start_registered/2*</a></td><td></td></tr>
-<tr><td valign="top"><a href="#start_server-3">start_server/3*</a></td><td></td></tr>
 <tr><td valign="top"><a href="#start_term_listener-3">start_term_listener/3</a></td><td></td></tr>
-<tr><td valign="top"><a href="#start_ubf_listener-4">start_ubf_listener/4*</a></td><td></td></tr>
 </table>
 
 <h2><a name="functions">Function Details</a></h2>
@@ -82,11 +77,6 @@ implementation modules in the PluginModules list.</td></tr>
 <h3 class="function"><a name="ask_manager-2">ask_manager/2</a></h3>
 <div class="spec">
 <p><tt>ask_manager(Manager, Q) -&gt; any()</tt></p>
-</div>
-
-<h3 class="function"><a name="help-0">help/0 *</a></h3>
-<div class="spec">
-<p><tt>help() -&gt; any()</tt></p>
 </div>
 
 <h3 class="function"><a name="init-5">init/5</a></h3>
@@ -174,29 +164,9 @@ undefined, the server is not registered</p>
 <p><tt>start_link(Name::atom(), PluginModules::list(atom()), Port::integer(), Options::<a href="#type-proplist">proplist()</a>) -&gt; true</tt></p>
 </div><p>See start/4, but also link the server processs to the caller.</p>
 
-<h3 class="function"><a name="start_proc-3">start_proc/3 *</a></h3>
-<div class="spec">
-<p><tt>start_proc(Parent, Name, F) -&gt; any()</tt></p>
-</div>
-
-<h3 class="function"><a name="start_registered-2">start_registered/2 *</a></h3>
-<div class="spec">
-<p><tt>start_registered(Name, F) -&gt; any()</tt></p>
-</div>
-
-<h3 class="function"><a name="start_server-3">start_server/3 *</a></h3>
-<div class="spec">
-<p><tt>start_server(PluginModules, Port, Options) -&gt; any()</tt></p>
-</div>
-
 <h3 class="function"><a name="start_term_listener-3">start_term_listener/3</a></h3>
 <div class="spec">
 <p><tt>start_term_listener(Server0, PluginModules, Options) -&gt; any()</tt></p>
-</div>
-
-<h3 class="function"><a name="start_ubf_listener-4">start_ubf_listener/4 *</a></h3>
-<div class="spec">
-<p><tt>start_ubf_listener(MetaContract, Port, Server, Options) -&gt; any()</tt></p>
 </div>
 <hr>
 

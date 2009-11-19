@@ -39,7 +39,6 @@ in the Process Structure Diagram in the Overview.</p>
        handler process.</td></tr>
 <tr><td valign="top"><a href="#handlerStop-3">handlerStop/3</a></td><td>Required UBF contract implementation callback: stop a session
        handler process.</td></tr>
-<tr><td valign="top"><a href="#help-0">help/0*</a></td><td>Emit a help string.</td></tr>
 <tr><td valign="top"><a href="#info-0">info/0</a></td><td>Emit an info string.</td></tr>
 <tr><td valign="top"><a href="#managerRestart-2">managerRestart/2</a></td><td>Required UBF contract implementation callback: restart a manager
        process.</td></tr>
@@ -47,8 +46,6 @@ in the Process Structure Diagram in the Overview.</p>
        function.</td></tr>
 <tr><td valign="top"><a href="#managerStart-1">managerStart/1</a></td><td>Required UBF contract implementation callback: start manager
        process(es).</td></tr>
-<tr><td valign="top"><a href="#modules-0">modules/0*</a></td><td>Enumerate the UBF modules and services of this server.</td></tr>
-<tr><td valign="top"><a href="#services-0">services/0*</a></td><td>Enumerate the UBF services of this server.</td></tr>
 </table>
 
 <h2><a name="functions">Function Details</a></h2>
@@ -75,11 +72,6 @@ in the Process Structure Diagram in the Overview.</p>
 </div><p>Required UBF contract implementation callback: stop a session
        handler process.</p>
 
-<h3 class="function"><a name="help-0">help/0 *</a></h3>
-<div class="spec">
-<p><tt>help() -&gt; any()</tt></p>
-</div><p>Emit a help string.</p>
-
 <h3 class="function"><a name="info-0">info/0</a></h3>
 <div class="spec">
 <p><tt>info() -&gt; any()</tt></p>
@@ -102,16 +94,6 @@ in the Process Structure Diagram in the Overview.</p>
 <p><tt>managerStart(Args::term()) -&gt; {ok, State::term()}</tt></p>
 </div><p>Required UBF contract implementation callback: start manager
        process(es).</p>
-
-<h3 class="function"><a name="modules-0">modules/0 *</a></h3>
-<div class="spec">
-<p><tt>modules() -&gt; any()</tt></p>
-</div><p>Enumerate the UBF modules and services of this server.</p>
-
-<h3 class="function"><a name="services-0">services/0 *</a></h3>
-<div class="spec">
-<p><tt>services() -&gt; any()</tt></p>
-</div><p>Enumerate the UBF services of this server.</p>
 <hr>
 
 <div class="navbar"><a name="#navbar_bottom"></a><table width="100%" border="0" cellspacing="0" cellpadding="2" summary="navigation bar"><tr><td><a href="overview-summary.html" target="overviewFrame">Overview</a></td><td><a href="http://www.erlang.org/"><img src="erlang.png" align="right" border="0" alt="erlang logo"></a></td></tr></table></div>

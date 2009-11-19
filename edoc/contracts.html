@@ -17,53 +17,31 @@
   See the function checkType/3 for assistance on checking if a term
   does/does not break a contract.
 <h2><a name="index">Function Index</a></h2>
-<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#bad_zip-3">bad_zip/3*</a></td><td></td></tr>
-<tr><td valign="top"><a href="#checkCallback-3">checkCallback/3</a></td><td></td></tr>
-<tr><td valign="top"><a href="#checkIn-3">checkIn/3</a></td><td></td></tr>
-<tr><td valign="top"><a href="#checkOut-4">checkOut/4</a></td><td></td></tr>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#checkEventOut-3">checkEventOut/3</a></td><td></td></tr>
+<tr><td valign="top"><a href="#checkRPCIn-3">checkRPCIn/3</a></td><td></td></tr>
+<tr><td valign="top"><a href="#checkRPCOut-4">checkRPCOut/4</a></td><td></td></tr>
 <tr><td valign="top"><a href="#checkType-3">checkType/3</a></td><td>Given a contract type name, a term to check against that  
 contract type, and a contract module name, verify the term against  
 that contract's type.</td></tr>
-<tr><td valign="top"><a href="#checkType2-3">checkType2/3*</a></td><td></td></tr>
-<tr><td valign="top"><a href="#checkType_investigate_deeper-3">checkType_investigate_deeper/3*</a></td><td></td></tr>
-<tr><td valign="top"><a href="#check_term-4">check_term/4*</a></td><td></td></tr>
-<tr><td valign="top"><a href="#check_term_attr-3">check_term_attr/3*</a></td><td></td></tr>
-<tr><td valign="top"><a href="#check_term_attrlist-3">check_term_attrlist/3*</a></td><td></td></tr>
-<tr><td valign="top"><a href="#check_term_list-4">check_term_list/4*</a></td><td></td></tr>
-<tr><td valign="top"><a href="#check_term_predef-2">check_term_predef/2*</a></td><td></td></tr>
-<tr><td valign="top"><a href="#check_term_prim-6">check_term_prim/6*</a></td><td></td></tr>
-<tr><td valign="top"><a href="#check_term_range-3">check_term_range/3*</a></td><td></td></tr>
-<tr><td valign="top"><a href="#check_term_seq-4">check_term_seq/4*</a></td><td></td></tr>
 <tr><td valign="top"><a href="#isType-3">isType/3</a></td><td></td></tr>
 <tr><td valign="top"><a href="#isTypeAttr-2">isTypeAttr/2</a></td><td></td></tr>
-<tr><td valign="top"><a href="#is_ascii-1">is_ascii/1*</a></td><td></td></tr>
-<tr><td valign="top"><a href="#is_asciiprintable-1">is_asciiprintable/1*</a></td><td></td></tr>
-<tr><td valign="top"><a href="#is_nonempty-1">is_nonempty/1*</a></td><td></td></tr>
-<tr><td valign="top"><a href="#is_nonundefined-1">is_nonundefined/1*</a></td><td></td></tr>
-<tr><td valign="top"><a href="#is_proplist-1">is_proplist/1*</a></td><td></td></tr>
-<tr><td valign="top"><a href="#is_string-1">is_string/1*</a></td><td></td></tr>
 </table>
 
 <h2><a name="functions">Function Details</a></h2>
 
-<h3 class="function"><a name="bad_zip-3">bad_zip/3 *</a></h3>
+<h3 class="function"><a name="checkEventOut-3">checkEventOut/3</a></h3>
 <div class="spec">
-<p><tt>bad_zip(TypesList, TermList, Mod) -&gt; any()</tt></p>
+<p><tt>checkEventOut(Msg, ThisState, Mod) -&gt; any()</tt></p>
 </div>
 
-<h3 class="function"><a name="checkCallback-3">checkCallback/3</a></h3>
+<h3 class="function"><a name="checkRPCIn-3">checkRPCIn/3</a></h3>
 <div class="spec">
-<p><tt>checkCallback(Msg, ThisState, Mod) -&gt; any()</tt></p>
+<p><tt>checkRPCIn(Msg, State, Mod) -&gt; any()</tt></p>
 </div>
 
-<h3 class="function"><a name="checkIn-3">checkIn/3</a></h3>
+<h3 class="function"><a name="checkRPCOut-4">checkRPCOut/4</a></h3>
 <div class="spec">
-<p><tt>checkIn(Msg, State, Mod) -&gt; any()</tt></p>
-</div>
-
-<h3 class="function"><a name="checkOut-4">checkOut/4</a></h3>
-<div class="spec">
-<p><tt>checkOut(MsgOut, StateOut, FSM2, Mod) -&gt; any()</tt></p>
+<p><tt>checkRPCOut(MsgOut, StateOut, FSM2, Mod) -&gt; any()</tt></p>
 </div>
 
 <h3 class="function"><a name="checkType-3">checkType/3</a></h3>
@@ -85,57 +63,6 @@ that contract's type.</p>
   NOTE: This is a brute-force function, but it works, mostly.  Don't
   try to have a computer parse the output in error cases: the failure
   output is meant only for human eyes.</p>
-<p><b><font color="red">To do</font></b><ul><li><font color="red">implementation needs updating for new primitives?</font></li></ul></p>
-
-<h3 class="function"><a name="checkType2-3">checkType2/3 *</a></h3>
-<div class="spec">
-<p><tt>checkType2(Type, Term, Mod) -&gt; any()</tt></p>
-</div>
-
-<h3 class="function"><a name="checkType_investigate_deeper-3">checkType_investigate_deeper/3 *</a></h3>
-<div class="spec">
-<p><tt>checkType_investigate_deeper(Type, TermL, Mod) -&gt; any()</tt></p>
-</div>
-
-<h3 class="function"><a name="check_term-4">check_term/4 *</a></h3>
-<div class="spec">
-<p><tt>check_term(Check, X, Level, Mod) -&gt; any()</tt></p>
-</div>
-
-<h3 class="function"><a name="check_term_attr-3">check_term_attr/3 *</a></h3>
-<div class="spec">
-<p><tt>check_term_attr(Type, X2, Val) -&gt; any()</tt></p>
-</div>
-
-<h3 class="function"><a name="check_term_attrlist-3">check_term_attrlist/3 *</a></h3>
-<div class="spec">
-<p><tt>check_term_attrlist(Type, Attrs, Val) -&gt; any()</tt></p>
-</div>
-
-<h3 class="function"><a name="check_term_list-4">check_term_list/4 *</a></h3>
-<div class="spec">
-<p><tt>check_term_list(Args, T, Level, Mod) -&gt; any()</tt></p>
-</div>
-
-<h3 class="function"><a name="check_term_predef-2">check_term_predef/2 *</a></h3>
-<div class="spec">
-<p><tt>check_term_predef(X1, X) -&gt; any()</tt></p>
-</div>
-
-<h3 class="function"><a name="check_term_prim-6">check_term_prim/6 *</a></h3>
-<div class="spec">
-<p><tt>check_term_prim(X1, X2, TypeDef, X, Level, Mod) -&gt; any()</tt></p>
-</div>
-
-<h3 class="function"><a name="check_term_range-3">check_term_range/3 *</a></h3>
-<div class="spec">
-<p><tt>check_term_range(Min, Max, X) -&gt; any()</tt></p>
-</div>
-
-<h3 class="function"><a name="check_term_seq-4">check_term_seq/4 *</a></h3>
-<div class="spec">
-<p><tt>check_term_seq(Args, L, Level, Mod) -&gt; any()</tt></p>
-</div>
 
 <h3 class="function"><a name="isType-3">isType/3</a></h3>
 <div class="spec">
@@ -145,36 +72,6 @@ that contract's type.</p>
 <h3 class="function"><a name="isTypeAttr-2">isTypeAttr/2</a></h3>
 <div class="spec">
 <p><tt>isTypeAttr(X1, X2) -&gt; any()</tt></p>
-</div>
-
-<h3 class="function"><a name="is_ascii-1">is_ascii/1 *</a></h3>
-<div class="spec">
-<p><tt>is_ascii(A) -&gt; any()</tt></p>
-</div>
-
-<h3 class="function"><a name="is_asciiprintable-1">is_asciiprintable/1 *</a></h3>
-<div class="spec">
-<p><tt>is_asciiprintable(A) -&gt; any()</tt></p>
-</div>
-
-<h3 class="function"><a name="is_nonempty-1">is_nonempty/1 *</a></h3>
-<div class="spec">
-<p><tt>is_nonempty(X1) -&gt; any()</tt></p>
-</div>
-
-<h3 class="function"><a name="is_nonundefined-1">is_nonundefined/1 *</a></h3>
-<div class="spec">
-<p><tt>is_nonundefined(X1) -&gt; any()</tt></p>
-</div>
-
-<h3 class="function"><a name="is_proplist-1">is_proplist/1 *</a></h3>
-<div class="spec">
-<p><tt>is_proplist(T) -&gt; any()</tt></p>
-</div>
-
-<h3 class="function"><a name="is_string-1">is_string/1 *</a></h3>
-<div class="spec">
-<p><tt>is_string(A) -&gt; any()</tt></p>
 </div>
 <hr>
 

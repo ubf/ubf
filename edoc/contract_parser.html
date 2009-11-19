@@ -11,7 +11,6 @@
 <h1>Module contract_parser</h1>
 <ul class="index"><li><a href="#description">Description</a></li><li><a href="#index">Function Index</a></li><li><a href="#functions">Function Details</a></li></ul>UBF(B) contract parser.
 
-<p><b><font color="red">To do</font></b><ul><li><font color="red">More documentation required here.</font></li></ul></p>
 
 <h2><a name="description">Description</a></h2><p>UBF(B) contract parser.</p>
  
@@ -19,106 +18,23 @@
   the usual compilation of an Erlang source module.
  
 <h2><a name="index">Function Index</a></h2>
-<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#duplicates-2">duplicates/2*</a></td><td></td></tr>
-<tr><td valign="top"><a href="#extract_fields-1">extract_fields/1*</a></td><td></td></tr>
-<tr><td valign="top"><a href="#extract_prims-2">extract_prims/2*</a></td><td></td></tr>
-<tr><td valign="top"><a href="#extract_record_exts-2">extract_record_exts/2*</a></td><td></td></tr>
-<tr><td valign="top"><a href="#extract_records-2">extract_records/2*</a></td><td></td></tr>
-<tr><td valign="top"><a href="#file-2">file/2*</a></td><td></td></tr>
-<tr><td valign="top"><a href="#handle-4">handle/4*</a></td><td></td></tr>
-<tr><td valign="top"><a href="#handle1-4">handle1/4*</a></td><td></td></tr>
-<tr><td valign="top"><a href="#infileExtension-0">infileExtension/0*</a></td><td></td></tr>
-<tr><td valign="top"><a href="#join-2">join/2*</a></td><td></td></tr>
-<tr><td valign="top"><a href="#join2-2">join2/2*</a></td><td></td></tr>
-<tr><td valign="top"><a href="#make-0">make/0</a></td><td></td></tr>
-<tr><td valign="top"><a href="#make_code-1">make_code/1*</a></td><td></td></tr>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#make-0">make/0</a></td><td></td></tr>
 <tr><td valign="top"><a href="#make_lex-0">make_lex/0</a></td><td></td></tr>
 <tr><td valign="top"><a href="#make_yecc-0">make_yecc/0</a></td><td></td></tr>
-<tr><td valign="top"><a href="#merge_in_code-3">merge_in_code/3*</a></td><td></td></tr>
-<tr><td valign="top"><a href="#outfileHUCExtension-0">outfileHUCExtension/0*</a></td><td></td></tr>
 <tr><td valign="top"><a href="#parse_transform-2">parse_transform/2</a></td><td></td></tr>
 <tr><td valign="top"><a href="#parse_transform_contract-2">parse_transform_contract/2</a></td><td></td></tr>
-<tr><td valign="top"><a href="#pass2-2">pass2/2*</a></td><td></td></tr>
-<tr><td valign="top"><a href="#pass3-2">pass3/2*</a></td><td></td></tr>
-<tr><td valign="top"><a href="#pass4-1">pass4/1*</a></td><td></td></tr>
-<tr><td valign="top"><a href="#pass5-1">pass5/1*</a></td><td></td></tr>
-<tr><td valign="top"><a href="#pass5-3">pass5/3*</a></td><td></td></tr>
-<tr><td valign="top"><a href="#pass6-1">pass6/1*</a></td><td></td></tr>
-<tr><td valign="top"><a href="#pass6-4">pass6/4*</a></td><td></td></tr>
 <tr><td valign="top"><a href="#preDefinedTypes-0">preDefinedTypes/0</a></td><td></td></tr>
 <tr><td valign="top"><a href="#preDefinedTypesWithAttrs-0">preDefinedTypesWithAttrs/0</a></td><td></td></tr>
 <tr><td valign="top"><a href="#preDefinedTypesWithoutAttrs-0">preDefinedTypesWithoutAttrs/0</a></td><td></td></tr>
-<tr><td valign="top"><a href="#remove_duplicates-1">remove_duplicates/1*</a></td><td></td></tr>
-<tr><td valign="top"><a href="#require-3">require/3*</a></td><td></td></tr>
 <tr><td valign="top"><a href="#tags-1">tags/1</a></td><td></td></tr>
 <tr><td valign="top"><a href="#tags-2">tags/2</a></td><td></td></tr>
 </table>
 
 <h2><a name="functions">Function Details</a></h2>
 
-<h3 class="function"><a name="duplicates-2">duplicates/2 *</a></h3>
-<div class="spec">
-<p><tt>duplicates(T, L) -&gt; any()</tt></p>
-</div>
-
-<h3 class="function"><a name="extract_fields-1">extract_fields/1 *</a></h3>
-<div class="spec">
-<p><tt>extract_fields(X1) -&gt; any()</tt></p>
-</div>
-
-<h3 class="function"><a name="extract_prims-2">extract_prims/2 *</a></h3>
-<div class="spec">
-<p><tt>extract_prims(T, L) -&gt; any()</tt></p>
-</div>
-
-<h3 class="function"><a name="extract_record_exts-2">extract_record_exts/2 *</a></h3>
-<div class="spec">
-<p><tt>extract_record_exts(T, L) -&gt; any()</tt></p>
-</div>
-
-<h3 class="function"><a name="extract_records-2">extract_records/2 *</a></h3>
-<div class="spec">
-<p><tt>extract_records(T, L) -&gt; any()</tt></p>
-</div>
-
-<h3 class="function"><a name="file-2">file/2 *</a></h3>
-<div class="spec">
-<p><tt>file(F, Imports) -&gt; any()</tt></p>
-</div>
-
-<h3 class="function"><a name="handle-4">handle/4 *</a></h3>
-<div class="spec">
-<p><tt>handle(Stream, LineNo, L, NErrors) -&gt; any()</tt></p>
-</div>
-
-<h3 class="function"><a name="handle1-4">handle1/4 *</a></h3>
-<div class="spec">
-<p><tt>handle1(What, Stream, L, Nerrs) -&gt; any()</tt></p>
-</div>
-
-<h3 class="function"><a name="infileExtension-0">infileExtension/0 *</a></h3>
-<div class="spec">
-<p><tt>infileExtension() -&gt; any()</tt></p>
-</div>
-
-<h3 class="function"><a name="join-2">join/2 *</a></h3>
-<div class="spec">
-<p><tt>join(L, Sep) -&gt; any()</tt></p>
-</div>
-
-<h3 class="function"><a name="join2-2">join2/2 *</a></h3>
-<div class="spec">
-<p><tt>join2(Rest, Sep) -&gt; any()</tt></p>
-</div>
-
 <h3 class="function"><a name="make-0">make/0</a></h3>
 <div class="spec">
 <p><tt>make() -&gt; any()</tt></p>
-</div>
-
-<h3 class="function"><a name="make_code-1">make_code/1 *</a></h3>
-<div class="spec">
-<p><tt>make_code(C) -&gt; any()</tt></p>
 </div>
 
 <h3 class="function"><a name="make_lex-0">make_lex/0</a></h3>
@@ -131,16 +47,6 @@
 <p><tt>make_yecc() -&gt; any()</tt></p>
 </div>
 
-<h3 class="function"><a name="merge_in_code-3">merge_in_code/3 *</a></h3>
-<div class="spec">
-<p><tt>merge_in_code(T, Exports, Fns) -&gt; any()</tt></p>
-</div>
-
-<h3 class="function"><a name="outfileHUCExtension-0">outfileHUCExtension/0 *</a></h3>
-<div class="spec">
-<p><tt>outfileHUCExtension() -&gt; any()</tt></p>
-</div>
-
 <h3 class="function"><a name="parse_transform-2">parse_transform/2</a></h3>
 <div class="spec">
 <p><tt>parse_transform(In, Opts) -&gt; any()</tt></p>
@@ -149,41 +55,6 @@
 <h3 class="function"><a name="parse_transform_contract-2">parse_transform_contract/2</a></h3>
 <div class="spec">
 <p><tt>parse_transform_contract(In, Contract) -&gt; any()</tt></p>
-</div>
-
-<h3 class="function"><a name="pass2-2">pass2/2 *</a></h3>
-<div class="spec">
-<p><tt>pass2(P, Imports) -&gt; any()</tt></p>
-</div>
-
-<h3 class="function"><a name="pass3-2">pass3/2 *</a></h3>
-<div class="spec">
-<p><tt>pass3(C1, ImportTypes) -&gt; any()</tt></p>
-</div>
-
-<h3 class="function"><a name="pass4-1">pass4/1 *</a></h3>
-<div class="spec">
-<p><tt>pass4(C) -&gt; any()</tt></p>
-</div>
-
-<h3 class="function"><a name="pass5-1">pass5/1 *</a></h3>
-<div class="spec">
-<p><tt>pass5(C) -&gt; any()</tt></p>
-</div>
-
-<h3 class="function"><a name="pass5-3">pass5/3 *</a></h3>
-<div class="spec">
-<p><tt>pass5(C, T, L) -&gt; any()</tt></p>
-</div>
-
-<h3 class="function"><a name="pass6-1">pass6/1 *</a></h3>
-<div class="spec">
-<p><tt>pass6(C) -&gt; any()</tt></p>
-</div>
-
-<h3 class="function"><a name="pass6-4">pass6/4 *</a></h3>
-<div class="spec">
-<p><tt>pass6(C, RootUsedTypes, T, L) -&gt; any()</tt></p>
 </div>
 
 <h3 class="function"><a name="preDefinedTypes-0">preDefinedTypes/0</a></h3>
@@ -199,16 +70,6 @@
 <h3 class="function"><a name="preDefinedTypesWithoutAttrs-0">preDefinedTypesWithoutAttrs/0</a></h3>
 <div class="spec">
 <p><tt>preDefinedTypesWithoutAttrs() -&gt; any()</tt></p>
-</div>
-
-<h3 class="function"><a name="remove_duplicates-1">remove_duplicates/1 *</a></h3>
-<div class="spec">
-<p><tt>remove_duplicates(T) -&gt; any()</tt></p>
-</div>
-
-<h3 class="function"><a name="require-3">require/3 *</a></h3>
-<div class="spec">
-<p><tt>require(Multiplicity, Tag, P) -&gt; any()</tt></p>
 </div>
 
 <h3 class="function"><a name="tags-1">tags/1</a></h3>
