@@ -1,3 +1,9 @@
+2009-12-26 14:30 JST  norton
+
+        * src/contract_manager.erl, src/contract_manager_tlog.erl,
+	ubf_client.erl, ubf_plugin_handler.erl: rework contract manager
+	and txn log interfaces
+
 2009-11-18 22:20 JST  norton
 
         * src/ubf_client.erl: fix ubf client to handle condition when it's

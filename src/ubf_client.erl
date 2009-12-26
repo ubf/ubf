@@ -37,6 +37,8 @@
 
 -export([lpc/2, lpc/3]).
 
+-import(contract_manager, [do_lpcIn/3, do_lpcOut/8, do_lpcOutError/5]).
+
 %% @type address() = string() | ip_address(). A DNS hostname or IP address.
 %% @type connect_options() = list({proto, ubf | ebf | jsf}).
 %%       An OTP-style property list, see 'proplists' module for details.
@@ -349,17 +351,17 @@ lpc(Mod, Q) ->
 
 lpc(Mod, Q, State) ->
     %% check contract
-    case contract_manager:do_checkRPCIn(Q, State, Mod) of
+    case do_lpcIn(Q, State, Mod) of
         {error, Reply} ->
             {reply,Reply,State};
         {ok, Ref} ->
             case (catch Mod:handlerRpc(Q)) of
                 {'EXIT', Reason} ->
-                    contract_manager:do_checkRPCOutError(Ref, Q, State, Mod, Reason),
+                    do_lpcOutError(Ref, Q, State, Mod, Reason),
                     {error, stop};
                 Reply ->
                     %% check contract
-                    {_, NewReply} = contract_manager:do_checkRPCOut(Ref, Q, State, Mod, Reply, State, State, Mod),
+                    {_, NewReply} = do_lpcOut(Ref, Q, State, Mod, Reply, State, State, Mod),
                     {reply,NewReply,State}
             end
     end.

@@ -20,38 +20,62 @@
   <code>sasl</code> application be running to take full advantage of OTP's error
   and event handling capabilities.
 <h2><a name="index">Function Index</a></h2>
-<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#checkEventOut-4">checkEventOut/4</a></td><td></td></tr>
-<tr><td valign="top"><a href="#checkRPCIn-3">checkRPCIn/3</a></td><td></td></tr>
-<tr><td valign="top"><a href="#checkRPCOut-8">checkRPCOut/8</a></td><td></td></tr>
-<tr><td valign="top"><a href="#checkRPCOutError-4">checkRPCOutError/4</a></td><td></td></tr>
-<tr><td valign="top"><a href="#checkRPCOutError-5">checkRPCOutError/5</a></td><td></td></tr>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#eventOut-4">eventOut/4</a></td><td></td></tr>
+<tr><td valign="top"><a href="#lpcIn-3">lpcIn/3</a></td><td></td></tr>
+<tr><td valign="top"><a href="#lpcOut-8">lpcOut/8</a></td><td></td></tr>
+<tr><td valign="top"><a href="#lpcOutError-5">lpcOutError/5</a></td><td></td></tr>
+<tr><td valign="top"><a href="#rpcFinish-1">rpcFinish/1</a></td><td></td></tr>
+<tr><td valign="top"><a href="#rpcIn-3">rpcIn/3</a></td><td></td></tr>
+<tr><td valign="top"><a href="#rpcOut-8">rpcOut/8</a></td><td></td></tr>
+<tr><td valign="top"><a href="#rpcOutError-4">rpcOutError/4</a></td><td></td></tr>
+<tr><td valign="top"><a href="#rpcOutError-5">rpcOutError/5</a></td><td></td></tr>
 </table>
 
 <h2><a name="functions">Function Details</a></h2>
 
-<h3 class="function"><a name="checkEventOut-4">checkEventOut/4</a></h3>
+<h3 class="function"><a name="eventOut-4">eventOut/4</a></h3>
 <div class="spec">
-<p><tt>checkEventOut(Msg, State, Mod, Status) -&gt; any()</tt></p>
+<p><tt>eventOut(Msg, State, Mod, Status) -&gt; any()</tt></p>
 </div>
 
-<h3 class="function"><a name="checkRPCIn-3">checkRPCIn/3</a></h3>
+<h3 class="function"><a name="lpcIn-3">lpcIn/3</a></h3>
 <div class="spec">
-<p><tt>checkRPCIn(Q, State, Mod) -&gt; any()</tt></p>
+<p><tt>lpcIn(Q, State, Mod) -&gt; any()</tt></p>
 </div>
 
-<h3 class="function"><a name="checkRPCOut-8">checkRPCOut/8</a></h3>
+<h3 class="function"><a name="lpcOut-8">lpcOut/8</a></h3>
 <div class="spec">
-<p><tt>checkRPCOut(StartTime, Q, State, Mod, Reply, NewState, NewMod, Status) -&gt; any()</tt></p>
+<p><tt>lpcOut(StartTime, Q, State, Mod, Reply, NewState, NewMod, Status) -&gt; any()</tt></p>
 </div>
 
-<h3 class="function"><a name="checkRPCOutError-4">checkRPCOutError/4</a></h3>
+<h3 class="function"><a name="lpcOutError-5">lpcOutError/5</a></h3>
 <div class="spec">
-<p><tt>checkRPCOutError(Q, State, Mod, Error) -&gt; any()</tt></p>
+<p><tt>lpcOutError(StartTime, Q, State, Mod, Error) -&gt; any()</tt></p>
 </div>
 
-<h3 class="function"><a name="checkRPCOutError-5">checkRPCOutError/5</a></h3>
+<h3 class="function"><a name="rpcFinish-1">rpcFinish/1</a></h3>
 <div class="spec">
-<p><tt>checkRPCOutError(StartTime, Q, State, Mod, Error) -&gt; any()</tt></p>
+<p><tt>rpcFinish(TLog) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="rpcIn-3">rpcIn/3</a></h3>
+<div class="spec">
+<p><tt>rpcIn(Q, State, Mod) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="rpcOut-8">rpcOut/8</a></h3>
+<div class="spec">
+<p><tt>rpcOut(StartTime, Q, State, Mod, Reply, NewState, NewMod, Status) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="rpcOutError-4">rpcOutError/4</a></h3>
+<div class="spec">
+<p><tt>rpcOutError(Q, State, Mod, Error) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="rpcOutError-5">rpcOutError/5</a></h3>
+<div class="spec">
+<p><tt>rpcOutError(StartTime, Q, State, Mod, Error) -&gt; any()</tt></p>
 </div>
 <hr>
 

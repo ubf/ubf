@@ -8,27 +8,58 @@
 
 -module(contract_manager_tlog).
 
--export([checkRPCIn/3, checkRPCOut/8, checkEventOut/4]).
--export([checkRPCOutError/4, checkRPCOutError/5]).
+-export([rpcIn/3, rpcOut/8, eventOut/4]).
+-export([rpcOutError/4, rpcOutError/5]).
+-export([rpcFinish/1]).
 
-checkRPCIn(_Q, _State, _Mod) ->
+-export([lpcIn/3, lpcOut/8]).
+-export([lpcOutError/5]).
+
+rpcIn(_Q, _State, _Mod) ->
     erlang:now().
 
-checkRPCOut(_StartTime, _Q, _State, _Mod, timeout, _NewState, _NewMod, _Status) ->
-    ok; % @tbd do not log timeouts
-checkRPCOut(StartTime, Q, _State, Mod, Reply, _NewState, _NewMod, Status) ->
-    %% DISABLE gmt_tlog_h:tlog_ubf(StartTime, Mod, Q, Reply, Status),
+rpcOut(_StartTime, Q, State, Mod, Reply, _NewState, _NewMod, Status) ->
+    fun() ->
+            if Status =:= server_broke_contract ->
+                    error_logger:warning_msg("rpc server error: ~p:~p(~p): ~p\n", [Mod, State, Q, Reply]);
+               true ->
+                    noop
+            end,
+            ok
+    end.
+
+eventOut(_Msg, _State, _Mod, _Status) ->
+    %% not supported
     ok.
 
-checkEventOut(_Msg, _State, _Mod, _Status) ->
+rpcOutError(Q, State, Mod, Error) ->
+    fun() ->
+            error_logger:warning_msg("rpc error: ~p:~p(~p): ~p\n", [Mod, State, Q, Error]),
+            ok
+    end.
+
+rpcOutError(_StartTime, Q, State, Mod, Error) ->
+    fun() ->
+            error_logger:warning_msg("rpc error: ~p:~p(~p): ~p\n", [Mod, State, Q, Error]),
+            ok
+    end.
+
+rpcFinish(TLog) when is_function(TLog) ->
+    TLog();
+rpcFinish(TLog) ->
+    TLog.
+
+lpcIn(_Q, _State, _Mod) ->
+    erlang:now().
+
+lpcOut(_StartTime, Q, State, Mod, Reply, _NewState, _NewMod, Status) ->
+    if Status =:= server_broke_contract ->
+            error_logger:warning_msg("lpc server error: ~p:~p(~p): ~p\n", [Mod, State, Q, Reply]);
+       true ->
+            noop
+    end,
     ok.
 
-checkRPCOutError(Q, State, Mod, Error) ->
-    error_logger:warning_msg("rpc error: ~p:~p(~p): ~p\n", [Mod, State, Q, Error]),
-    %% DISABLE gmt_tlog_h:tlog_ubf(undefined, Mod, Q, Error, error),
-    ok.
-
-checkRPCOutError(StartTime, Q, State, Mod, Error) ->
-    error_logger:warning_msg("rpc error: ~p:~p(~p): ~p\n", [Mod, State, Q, Error]),
-    %% DISABLE gmt_tlog_h:tlog_ubf(StartTime, Mod, Q, Error, error),
+lpcOutError(_StartTime, Q, State, Mod, Error) ->
+    error_logger:warning_msg("lpc error: ~p:~p(~p): ~p\n", [Mod, State, Q, Error]),
     ok.
