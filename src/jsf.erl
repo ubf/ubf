@@ -119,7 +119,7 @@
 -include("ubf.hrl").
 
 -export([encode_print/2, encode/2, do_encode/2]).
--export([decode_print/2, decode/2, do_decode/2]).
+-export([decode_print/2, decode_init/0, decode/2, decode/3, do_decode/2]).
 
 -export([atom_to_binary/1]).
 -export([binary_to_existing_atom/1]).
@@ -214,12 +214,22 @@ encode_record(N, X, Keys, Acc, UBFMod) ->
 decode_print(X, UBFMod) ->
     io:format("~s~n", [decode(X, UBFMod)]).
 
+decode_init() -> {more, []}.
+
 decode(X, UBFMod) ->
-    case rfc4627:decode(X) of
+    decode(X, UBFMod, decode_init()).
+
+decode(X, UBFMod, {more, Old}) ->
+    decode(X, UBFMod, Old);
+decode(X, UBFMod, Old) ->
+    New = Old ++ X,
+    case rfc4627:decode(New) of
         {ok, JSON, Remainder} ->
             {ok, do_decode(JSON, UBFMod), Remainder};
-        Else ->
-            Else
+        {error, unexpected_end_of_input} ->
+            {more, New};
+        {error, _}=Err ->
+            Err
     end.
 
 do_decode(X, _UBFMod) when is_binary(X); is_integer(X); is_float(X) ->

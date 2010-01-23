@@ -1,3 +1,8 @@
+2010-01-23 23:35 JST  norton
+
+        * src/jsf.erl, src/jsf_driver.erl, src/ubf.erl,
+	src/ubf_driver.erl: fix jsf driver to support partial inputs
+
 2009-12-26 14:30 JST  norton
 
         * src/contract_manager.erl, src/contract_manager_tlog.erl,

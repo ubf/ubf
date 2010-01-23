@@ -22,7 +22,7 @@ decode(Contract, Cont, Binary, CallBack) ->
 
 decode(_Contract, {more, _}=Cont, _CallBack) ->
     Cont;
-decode(Contract, {done, Term, List}=_Cont, CallBack) ->
+decode(Contract, {ok, Term, List}=_Cont, CallBack) ->
     CallBack(Term),
     Cont1 = ubf:decode(List),
     decode(Contract, Cont1, CallBack).

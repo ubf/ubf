@@ -49,14 +49,14 @@ bug() ->
 %% {...}          -> Tuple
 
 %% decode_init() -> Cont
-%% decode(Str, Cont) -> {more, Cont'} | {done, Term, Str}
+%% decode(Str, Cont) -> {more, Cont'} | {ok, Term, Str}
 %% encode(Str) -> Bytes
 
 %% intro() -> single line terminated with \n
 
 
 ubf2term(Str) ->
-    {done, Term, _} = decode(Str),
+    {ok, Term, _} = decode(Str),
     Term.
 
 decode_init() -> {more, fun(I) -> decode(I, [[]], dict:new()) end}.
@@ -98,7 +98,7 @@ decode([$&|T], [ [H1,H2|T1] | Stack], Dict) ->
 decode([$#|T], Stack, Dict) ->
     decode1(T, push([], Stack), Dict);
 decode([$$|T], [[X]], _Dict) ->
-    {done, X, T};
+    {ok, X, T};
 decode([$>,Key|T], [[Val|R]|Stack], Dict) ->
     decode1(T, [R|Stack], dict:store(Key,Val,Dict));
 decode([H|T], Stack, Dict) ->

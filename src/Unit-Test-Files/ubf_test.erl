@@ -66,7 +66,7 @@ test_ubf(T) ->
     io:format("ubf size =~p~n",[length(L)]),
     Val = decode(L),
     case Val of
-        {done, T, _} ->
+        {ok, T, _} ->
             io:format("Identical~n");
         X ->
             io:format("Differences (~p)~n", [X]),
