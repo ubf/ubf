@@ -13,7 +13,7 @@
 
 -module(ubf_plugin_handler).
 
--export([start_handler/0, start_manager/2, manager/2]).
+-export([start_handler/0, start_manager/2, manager/3]).
 
 %%----------------------------------------------------------------------
 %% Handler stuff
@@ -82,52 +82,54 @@ loop(Client, State, Data, Manager, Mod) ->
 %%----------------------------------------------------------------------
 
 start_manager(Mod, Args) ->
-    proc_utils:spawn_link_debug(fun() -> manager(Mod, Args) end, ?MODULE).
+    proc_utils:spawn_link_debug(fun() -> manager(self(), Mod, Args) end, ?MODULE).
 
-manager(Mod, Args) ->
+manager(ExitPid, Mod, Args) ->
     process_flag(trap_exit, true),
     {ok, State} = Mod:managerStart(Args),
-    manager_loop(Mod, State).
+    manager_loop(ExitPid, Mod, State).
 
-manager_loop(Mod, State) ->
+manager_loop(ExitPid, Mod, State) ->
     receive
         {From, {startSession, Service}} ->
             case (catch Mod:startSession(Service, State)) of
                 {accept, Mod1, ModManagerPid, State1} ->
                     From ! {self(), {accept, Mod1, ModManagerPid}},
-                    manager_loop(Mod, State1);
+                    manager_loop(ExitPid, Mod, State1);
                 {reject, Reason, _State} ->
                     From ! {self(), {reject, Reason}},
-                    manager_loop(Mod, State)
+                    manager_loop(ExitPid, Mod, State)
             end;
         {client_has_stopped, Pid} ->
             case (catch Mod:handlerStop(Pid, normal, State)) of
                 {'EXIT', OOps} ->
                     io:format("plug in error:~p~n",[OOps]),
-                    manager_loop(Mod, State);
+                    manager_loop(ExitPid, Mod, State);
                 State ->
-                    manager_loop(Mod, State)
+                    manager_loop(ExitPid, Mod, State)
             end;
+        {'EXIT', ExitPid, Reason} ->
+            exit(Reason);
         {'EXIT', Pid, Reason} ->
             case (catch Mod:handlerStop(Pid, Reason, State)) of
                 {'EXIT', OOps} ->
                     io:format("plug in error:~p~n",[OOps]),
-                    manager_loop(Mod, State);
+                    manager_loop(ExitPid, Mod, State);
                 State ->
-                    manager_loop(Mod, State)
+                    manager_loop(ExitPid, Mod, State)
             end;
         {From, {handler_rpc, Q}} ->
             case (catch Mod:managerRpc(Q, State)) of
                 {'EXIT', OOps} ->
                     io:format("plug in error:~p~n",[OOps]),
                     exit(From, bad_ask_manager),
-                    manager_loop(Mod, State);
+                    manager_loop(ExitPid, Mod, State);
                 {Reply, State} ->
                     From ! {handler_rpc_reply, Reply},
-                    manager_loop(Mod, State)
+                    manager_loop(ExitPid, Mod, State)
             end;
         X ->
             io:format("******Dropping (service manager ~p) self=~p ~p~n",
-                      [Mod,self(), X]),
-            manager_loop(Mod, State)
+                      [Mod,self(),X]),
+            manager_loop(ExitPid, Mod, State)
     end.

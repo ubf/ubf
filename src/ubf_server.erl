@@ -151,8 +151,8 @@ start_server(PluginModules, Port, Options) ->
                 {ubf_plugin_meta_stateless:new(SortedPluginModules), undefined}
         end,
     %% set up a UBF listener on Port
-    {ok, ListenerPidUBF} = start_ubf_listener(MetaContract, Port, Server, Options),
-    ubf_plugin_handler:manager(MetaContract, [ListenerPidUBF]).
+    {ok, ListenerPid} = start_ubf_listener(MetaContract, Port, Server, Options),
+    ubf_plugin_handler:manager(ListenerPid, MetaContract, [ListenerPid]).
 
 start_ubf_listener(MetaContract, Port, Server, Options) ->
     ServerHello =
