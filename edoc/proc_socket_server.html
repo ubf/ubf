@@ -35,7 +35,7 @@ and limit the maximum number of child sessions.</p>
 <tr><td valign="top"><a href="#server_status-2">server_status/2</a></td><td></td></tr>
 <tr><td valign="top"><a href="#start_child-3">start_child/3</a></td><td></td></tr>
 <tr><td valign="top"><a href="#start_raw_server-5">start_raw_server/5</a></td><td></td></tr>
-<tr><td valign="top"><a href="#start_raw_server-6">start_raw_server/6</a></td><td></td></tr>
+<tr><td valign="top"><a href="#start_raw_server-7">start_raw_server/7</a></td><td></td></tr>
 <tr><td valign="top"><a href="#start_server-3">start_server/3</a></td><td>Start a new UBF contract-using server.</td></tr>
 <tr><td valign="top"><a href="#start_server-4">start_server/4</a></td><td></td></tr>
 <tr><td valign="top"><a href="#stop_server-1">stop_server/1</a></td><td></td></tr>
@@ -88,9 +88,9 @@ and limit the maximum number of child sessions.</p>
 <p><tt>start_raw_server(Port, Max, Fun, PacketType, PacketSize) -&gt; any()</tt></p>
 </div>
 
-<h3 class="function"><a name="start_raw_server-6">start_raw_server/6</a></h3>
+<h3 class="function"><a name="start_raw_server-7">start_raw_server/7</a></h3>
 <div class="spec">
-<p><tt>start_raw_server(Name, Port, Max, Fun, PacketType, PacketSize) -&gt; any()</tt></p>
+<p><tt>start_raw_server(Name, Port, Max, SpawnOpts, Fun, PacketType, PacketSize) -&gt; any()</tt></p>
 </div>
 
 <h3 class="function"><a name="start_server-3">start_server/3</a></h3>
@@ -100,6 +100,7 @@ and limit the maximum number of child sessions.</p>
  
   <ul>
     <li> This server accepts up to Max connections on TCP port Port </li>
+    <li> SpawnOpts are the erlang garbage collection options for the spawned process.</li>
     <li> Each time a new connection is made, Fun(Socket) is called. </li>
   </ul>
  
@@ -109,7 +110,7 @@ This fun will handle all of the protocol communication for a single
 TCP session.</p>
  
   A raw server uses packet length 0 (see start_raw_server/5 and
-  start_raw_server/6).</p>
+  start_raw_server/7).</p>
 
 <h3 class="function"><a name="start_server-4">start_server/4</a></h3>
 <div class="spec">

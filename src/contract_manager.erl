@@ -64,12 +64,12 @@
 %%%    |                           |                          |
 
 
-%%%  @spec () -> pid()
+%%%  @spec (list()) -> pid()
 
 start(SpawnOpts) when is_list(SpawnOpts) ->
     start(false, SpawnOpts).
 
-%%%  @spec (bool()) -> pid()
+%%%  @spec (bool(), list()) -> pid()
 
 start(VerboseRPC, SpawnOpts) ->
     proc_utils:spawn_link_opt_debug(fun() -> wait(VerboseRPC) end, SpawnOpts, ?MODULE).

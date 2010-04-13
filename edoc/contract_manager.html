@@ -40,8 +40,8 @@ actual server application.</p>
 <tr><td valign="top"><a href="#do_rpcOutError-4">do_rpcOutError/4</a></td><td></td></tr>
 <tr><td valign="top"><a href="#do_rpcOutError-5">do_rpcOutError/5</a></td><td></td></tr>
 <tr><td valign="top"><a href="#do_txlog-1">do_txlog/1</a></td><td></td></tr>
-<tr><td valign="top"><a href="#start-0">start/0</a></td><td></td></tr>
 <tr><td valign="top"><a href="#start-1">start/1</a></td><td></td></tr>
+<tr><td valign="top"><a href="#start-2">start/2</a></td><td></td></tr>
 </table>
 
 <h2><a name="functions">Function Details</a></h2>
@@ -91,14 +91,14 @@ actual server application.</p>
 <p><tt>do_txlog(TLog) -&gt; any()</tt></p>
 </div>
 
-<h3 class="function"><a name="start-0">start/0</a></h3>
-<div class="spec">
-<p><tt>start() -&gt; pid()</tt></p>
-</div>
-
 <h3 class="function"><a name="start-1">start/1</a></h3>
 <div class="spec">
-<p><tt>start(VerboseRPC::bool()) -&gt; pid()</tt></p>
+<p><tt>start(SpawnOpts::list()) -&gt; pid()</tt></p>
+</div>
+
+<h3 class="function"><a name="start-2">start/2</a></h3>
+<div class="spec">
+<p><tt>start(VerboseRPC::bool(), SpawnOpts::list()) -&gt; pid()</tt></p>
 </div>
 <hr>
 
