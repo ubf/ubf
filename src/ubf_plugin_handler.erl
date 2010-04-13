@@ -13,13 +13,13 @@
 
 -module(ubf_plugin_handler).
 
--export([start_handler/0, start_manager/2, manager/3]).
+-export([start_handler/1, start_manager/2, manager/3]).
 
 %%----------------------------------------------------------------------
 %% Handler stuff
 
-start_handler() ->
-    proc_utils:spawn_link_debug(fun() -> wait() end, ?MODULE).
+start_handler(SpawnOpts) ->
+    proc_utils:spawn_link_opt_debug(fun() -> wait() end, SpawnOpts, ?MODULE).
 
 wait() ->
     receive
@@ -36,13 +36,14 @@ loop(Client, State, Data, Manager, Mod) ->
                     case (catch Mod:handlerRpc(State, Q, Data, Manager)) of
                         {Reply, State1, Data1} ->
                             Client ! {self(), {rpcReply, Reply, State1, same}},
+                            erlang:garbage_collect(),
                             loop(Client, State1, Data1, Manager, Mod);
                         {changeContract, Reply, Mod1, State1, Data1, Manager1} ->
                             Client ! {self(), {rpcReply, Reply, State,
                                                {new, Mod1, State1}}},
                             loop(Client, State1, Data1, Manager1, Mod1);
                         {'EXIT', Reason} ->
-                            contract_manager_tlog:rpcOutError(Q, State, Mod, Reason),
+                            contract_manager:do_rpcOutError(Q, State, Mod, Reason),
                             exit({serverPluginHandler, Reason})
                     end;
                true ->
@@ -52,15 +53,17 @@ loop(Client, State, Data, Manager, Mod) ->
                                                {new, Mod1, State1}}},
                             loop(Client, State1, Data1, Manager, Mod1);
                         {'EXIT', Reason} ->
-                            contract_manager_tlog:rpcOutError(Q, State, Mod, Reason),
+                            contract_manager:do_rpcOutError(Q, State, Mod, Reason),
                             exit({serverPluginHandler, Reason});
                         Reply ->
                             Client ! {self(), {rpcReply, Reply, State, same}},
+                            erlang:garbage_collect(),
                             loop(Client, State, Data, Manager, Mod)
                     end
             end;
         {event_out, _} = Event ->
             Client ! Event,
+            erlang:garbage_collect(),
             loop(Client, State, Data, Manager, Mod);
         stop ->
             if Manager =/= undefined ->

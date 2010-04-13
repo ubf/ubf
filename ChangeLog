@@ -1,7 +1,14 @@
+2010-04-13 23:30 JST  norton
+	* src/contract_manager.erl, src/proc_socket_server.erl,
+	src/proc_utils.erl,src/ubf_client.erl, src/ubf_plugin_handler.erl,
+	src/ubf_server.erl: fix txn logging for rpcOutError, add
+	manual calls for garbage collection, add configuration for spawn
+	options
+
 2010-02-05 14:00 JST  norton
 	* src/ubf_plugin_handler.erl, src/ubf_server.erl: detect if a
 	ubf/ebf/jsf listener process exits and then exit the manager
- 
+
 2010-01-23 23:35 JST  norton
 
         * src/jsf.erl, src/jsf_driver.erl, src/ubf.erl,

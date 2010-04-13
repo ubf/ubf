@@ -19,7 +19,7 @@
 
 -module(contract_manager).
 
--export([start/0, start/1]).
+-export([start/1, start/2]).
 
 -export([do_rpcIn/3, do_rpcOut/8, do_eventOut/3]).
 -export([do_rpcOutError/4, do_rpcOutError/5]).
@@ -66,13 +66,13 @@
 
 %%%  @spec () -> pid()
 
-start() ->
-    start(false).
+start(SpawnOpts) when is_list(SpawnOpts) ->
+    start(false, SpawnOpts).
 
 %%%  @spec (bool()) -> pid()
 
-start(VerboseRPC) ->
-    proc_utils:spawn_link_debug(fun() -> wait(VerboseRPC) end, ?MODULE).
+start(VerboseRPC, SpawnOpts) ->
+    proc_utils:spawn_link_opt_debug(fun() -> wait(VerboseRPC) end, SpawnOpts, ?MODULE).
 
 wait(VerboseRPC) ->
     receive
@@ -182,10 +182,12 @@ do_eventOut(Msg, State, Mod) ->
     end.
 
 do_rpcOutError(Q, State, Mod, Error) ->
-    contract_manager_tlog:rpcOutError(Q, State, Mod, Error).
+    TLog = contract_manager_tlog:rpcOutError(Q, State, Mod, Error),
+    do_txlog(TLog).
 
 do_rpcOutError({TLog, _FSM}=_Ref, Q, State, Mod, Error) ->
-    contract_manager_tlog:rpcOutError(TLog, Q, State, Mod, Error).
+    TLog = contract_manager_tlog:rpcOutError(TLog, Q, State, Mod, Error),
+    do_txlog(TLog).
 
 do_txlog(TLog) ->
     ok = contract_manager_tlog:rpcFinish(TLog).

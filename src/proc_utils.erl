@@ -2,13 +2,21 @@
 
 -module(proc_utils).
 
--export([spawn_link_debug/2, debug/0, debug/1]).
+-export([spawn_link_debug/2, spawn_link_opt_debug/3, debug/0, debug/1]).
 
 spawn_link_debug(Fun, Term) ->
     erlang:spawn_link(fun() ->
                               put('ubf_info', Term),
                               Fun()
                       end).
+
+%% SpawnOpts should be an empty list or a list containing
+%% options fullsweep_after and/or min_heap_size.
+spawn_link_opt_debug(Fun, SpawnOpts, Term) ->
+    erlang:spawn_opt(fun() ->
+                              put('ubf_info', Term),
+                              Fun()
+                      end, [link | SpawnOpts]).
 
 debug() ->
     debug(undefined).

@@ -49,7 +49,7 @@
 
 -include("ubf.hrl").
 
--import(proc_socket_server, [start_raw_server/6]).
+-import(proc_socket_server, [start_raw_server/7]).
 
 %% @spec (list(atom()), integer()) -> true
 %% @doc Start a server and a TCP listener on port Port and register
@@ -159,6 +159,7 @@ start_ubf_listener(MetaContract, Port, Server, Options) ->
         proplists:get_value(serverhello,Options,MetaContract:contract_name()),
     VerboseRPC =
         proplists:get_value(verboserpc,Options,false),
+    ProcessOptions = proplists:get_value(process_options, Options, []),
 
     {DriverModule, DriverVersion, PacketType} =
         case proplists:get_value(proto,Options,ubf) of
@@ -193,11 +194,11 @@ start_ubf_listener(MetaContract, Port, Server, Options) ->
                 Driver          = self(),
                 ContractManager =
                     if VerboseRPC ->
-                            contract_manager:start(true);
+                            contract_manager:start(true, ProcessOptions);
                        true ->
-                            contract_manager:start()
+                            contract_manager:start(ProcessOptions)
                     end,
-                Handler         = ubf_plugin_handler:start_handler(),
+                Handler         = ubf_plugin_handler:start_handler(ProcessOptions),
                 %% (The next three lines are pretty devious but they
                 %% work !)  send hello back to the opening program
                 self() ! {self(), {DriverVersion, ?S(ServerHello), help()}},
@@ -225,6 +226,7 @@ start_ubf_listener(MetaContract, Port, Server, Options) ->
     start_raw_server(proplists:get_value(registeredname,Options),
                      Port,
                      MaxConn,
+                     ProcessOptions,
                      ServerFun,
                      PacketType,
                      0).
@@ -243,15 +245,16 @@ start_term_listener(Server0, PluginModules, Options) ->
         proplists:get_value(serverhello,Options,MetaContract:contract_name()),
     VerboseRPC =
         proplists:get_value(verboserpc,Options,false),
+    ProcessOptions = proplists:get_value(process_options, Options, []),
 
     Driver = self(),
     ContractManager =
         if VerboseRPC ->
-                contract_manager:start(true);
+                contract_manager:start(true, ProcessOptions);
            true ->
-                contract_manager:start()
+                contract_manager:start(ProcessOptions)
         end,
-    Handler = ubf_plugin_handler:start_handler(),
+    Handler = ubf_plugin_handler:start_handler(ProcessOptions),
 
     self() ! {ContractManager, {'etf1.0', ?S(ServerHello), help()}},
 

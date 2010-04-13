@@ -362,6 +362,7 @@ lpc(Mod, Q, State) ->
                 Reply ->
                     %% check contract
                     {_, NewReply} = do_lpcOut(Ref, Q, State, Mod, Reply, State, State, Mod),
+                    erlang:garbage_collect(),
                     {reply,NewReply,State}
             end
     end.

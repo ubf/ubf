@@ -18,7 +18,7 @@
 %% File    : proc_socket_server.erl
 %% Author  : Joe Armstrong (joe@bluetail.com)
 
--export([start_raw_server/5, start_raw_server/6, start_server/3, start_server/4, stop_server/1]).
+-export([start_raw_server/5, start_raw_server/7, start_server/3, start_server/4, stop_server/1]).
 
 -export([server_port/1, server_port/2, server_status/1, server_status/2, server_children/1, server_children/2]).
 
@@ -30,6 +30,7 @@
 %%
 %% <ul>
 %%   <li> This server accepts up to Max connections on TCP port Port </li>
+%%   <li> SpawnOpts are the erlang garbage collection options for the spawned process.</li>
 %%   <li> Each time a new connection is made, Fun(Socket) is called. </li>
 %% </ul>
 %%
@@ -39,26 +40,27 @@
 %% TCP session.
 %%
 %% A raw server uses packet length 0 (see start_raw_server/5 and
-%% start_raw_server/6).
+%% start_raw_server/7).
 
 start_server(Port, Max, Fun) ->
-    start_raw_server(undefined, Port, Max, Fun, 0, 0).
+    start_raw_server(undefined, Port, Max, [], Fun, 0, 0).
 
 start_server(Name, Port, Max, Fun) ->
-    start_raw_server(Name, Port, Max, Fun, 0, 0).
+    start_raw_server(Name, Port, Max, [], Fun, 0, 0).
 
 start_raw_server(Port, Max, Fun, PacketType, PacketSize) ->
-    start_raw_server(undefined, Port, Max, Fun, PacketType, PacketSize).
+    start_raw_server(undefined, Port, Max, [], Fun, PacketType, PacketSize).
 
-start_raw_server(undefined, Port, Max, Fun, PacketType, PacketSize) when Port =/= 0 ->
+start_raw_server(undefined, Port, Max, SpawnOpts, Fun, PacketType, PacketSize) when Port =/= 0 ->
     Name = port_name(Port),
-    start_raw_server(Name, Port, Max, Fun, PacketType, PacketSize);
-start_raw_server(Name, Port, Max, Fun, PacketType, PacketSize) ->
+    start_raw_server(Name, Port, Max, SpawnOpts, Fun, PacketType, PacketSize);
+start_raw_server(Name, Port, Max, SpawnOpts, Fun, PacketType, PacketSize) ->
     case whereis(Name) of
         undefined ->
             Parent = self(),
-            Pid = erlang:spawn_link(?MODULE, cold_start,
-                                    [Parent, Name, Port, Max, Fun, PacketType, PacketSize]),
+            Pid = erlang:spawn_opt(?MODULE, cold_start,
+                                    [Parent, Name, Port, Max, Fun, PacketType, PacketSize],
+                                    [link | SpawnOpts]),
             {ok, Pid};
         _Pid ->
             false
