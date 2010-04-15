@@ -23,6 +23,8 @@ MODULES = \
 	jsf_utils \
 	jsf_driver \
 	ebf_driver \
+	tbf \
+	tbf_driver \
 	ubf_plugin_meta_stateful \
 	ubf_plugin_meta_stateless
 
