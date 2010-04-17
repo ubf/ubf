@@ -218,6 +218,22 @@ To do (in short term)
       * etf - Erlang Term Format
     + ???
 
+
+To do (in medium term)
+======================
+  - add Thrift (http://incubator.apache.org/thrift/) support
+    * Binary Format
+    * Compact Format (TBD)
+  - add Avro (http://hadoop.apache.org/avro/) support
+  - add Google's Protocol Buffers (http://code.google.com/apis/protocolbuffers/) support
+  - add Bert-RPC (http://bert-rpc.org/) support
+    * BERT-RPC is UBF/EBF with a specialized contract and plugin
+      handler implementation for BERT-RPC. UBF/EBF already supports all
+      of the BERT data types.
+    * UBF is the text-based wire protocol.  EBF is the binary-based
+      wire protocol (based on Erlang's binary serialization format).
+  - ???
+
   
 To do (in long term)
 ======================
