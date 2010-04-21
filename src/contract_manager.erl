@@ -21,12 +21,12 @@
 
 -export([start/1, start/2]).
 
--export([do_rpcIn/3, do_rpcOut/8, do_eventOut/3]).
--export([do_rpcOutError/4, do_rpcOutError/5]).
+-export([do_rpcIn/4, do_rpcOut/9, do_eventOut/4]).
+-export([do_rpcOutError/5, do_rpcOutError/6]).
 -export([do_txlog/1]).
 
--export([do_lpcIn/3, do_lpcOut/8]).
--export([do_lpcOutError/5]).
+-export([do_lpcIn/4, do_lpcOut/9]).
+-export([do_lpcOutError/6]).
 
 -import(contracts, [checkRPCIn/3, checkRPCOut/4, checkEventOut/3]).
 -import(lists, [map/2]).
@@ -76,8 +76,8 @@ start(VerboseRPC, SpawnOpts) ->
 
 wait(VerboseRPC) ->
     receive
-        {start, Client, Server, State, Mod} ->
-            loop(Client, Server, State, Mod, VerboseRPC);
+        {start, Client, Server, State, Mod, TLogMod} ->
+            loop(Client, Server, State, Mod, VerboseRPC, TLogMod);
         stop ->
             exit({serverContractManager, stop})
     end.
@@ -94,23 +94,23 @@ wait(VerboseRPC) ->
 %%
 %% NOTE: The protocol manager terminates a protocol session.
 
-loop(Client, Server, State, Mod, VerboseRPC) ->
+loop(Client, Server, State, Mod, VerboseRPC, TLogMod) ->
     receive
         {Client, contract} ->
             S = contract(Mod),
             Client ! {self(), {contract, S}},
-            loop(Client, Server, State, Mod, VerboseRPC);
+            loop(Client, Server, State, Mod, VerboseRPC, TLogMod);
         {Client, Q} ->
-            do_rpc(Client, Server, State, Mod, Q, VerboseRPC);
+            do_rpc(Client, Server, State, Mod, Q, VerboseRPC, TLogMod);
         {event_out, Msg} = Event ->
-            case do_eventOut(Msg, State, Mod) of
+            case do_eventOut(Msg, State, Mod, TLogMod) of
                 {true,TLog} ->
                     Client ! {self(), Event},
                     do_txlog(TLog),
-                    loop(Client, Server, State, Mod, VerboseRPC);
+                    loop(Client, Server, State, Mod, VerboseRPC, TLogMod);
                 {false,TLog} ->
                     do_txlog(TLog),
-                    loop(Client, Server, State, Mod, VerboseRPC)
+                    loop(Client, Server, State, Mod, VerboseRPC, TLogMod)
             end;
         stop ->
             Server ! stop;
@@ -118,13 +118,13 @@ loop(Client, Server, State, Mod, VerboseRPC) ->
             exit({serverContractManager, Reason})
     end.
 
-do_rpc(Client, Server, State, Mod, Q, VerboseRPC) ->
+do_rpc(Client, Server, State, Mod, Q, VerboseRPC, TLogMod) ->
     %% check contract
-    case do_rpcIn(Q, State, Mod) of
+    case do_rpcIn(Q, State, Mod, TLogMod) of
         {error, Reply, TLog} ->
             Client ! {self(), {Reply, State}},
             do_txlog(TLog),
-            loop(Client, Server, State, Mod, VerboseRPC);
+            loop(Client, Server, State, Mod, VerboseRPC, TLogMod);
         {ok, {_TLog, FSM}=TLogRef} ->
             if VerboseRPC ->
                     Server ! {self(), {rpc, {Q, FSM}}};
@@ -134,88 +134,89 @@ do_rpc(Client, Server, State, Mod, Q, VerboseRPC) ->
             receive
                 {Server, {rpcReply, Reply, ReplyState, same}} ->
                     %% check contract
-                    {_, NewReply, TLog} = do_rpcOut(TLogRef, Q, State, Mod, Reply, ReplyState, ReplyState, Mod),
+                    {_, NewReply, TLog} = do_rpcOut(TLogRef, Q, State, Mod, Reply, ReplyState, ReplyState, Mod, TLogMod),
                     Client ! {self(), {NewReply, ReplyState}},
                     do_txlog(TLog),
-                    loop(Client, Server, ReplyState, Mod, VerboseRPC);
+                    loop(Client, Server, ReplyState, Mod, VerboseRPC, TLogMod);
                 {Server, {rpcReply, Reply, ReplyState, {new, NewMod, NewState}}} ->
                     %% check contract
-                    {_, NewReply, TLog} = do_rpcOut(TLogRef, Q, State, Mod, Reply, ReplyState, NewState, NewMod),
+                    {_, NewReply, TLog} = do_rpcOut(TLogRef, Q, State, Mod, Reply, ReplyState, NewState, NewMod, TLogMod),
                     Client ! {self(), {NewReply, NewState}},
                     do_txlog(TLog),
-                    loop(Client, Server, NewState, NewMod, VerboseRPC);
+                    loop(Client, Server, NewState, NewMod, VerboseRPC, TLogMod);
                 stop ->
                     exit(Server, stop)
             end
     end.
 
-do_rpcIn(Q, State, Mod) ->
-    TLog = contract_manager_tlog:rpcIn(Q, State, Mod),
+do_rpcIn(Q, State, Mod, TLogMod) ->
+    TLog = contract_manager_tlog:rpcIn(TLogMod, Q, State, Mod),
     case checkRPCIn(Q, State, Mod) of
         [] ->
-            TLog1 = contract_manager_tlog:rpcOut(TLog, Q, State, Mod, undefined, State, Mod, client_broke_contract),
+            TLog1 = contract_manager_tlog:rpcOut(TLogMod, TLog, Q, State, Mod, undefined, State, Mod, client_broke_contract),
             Expect = Mod:contract_state(State),
             {error, {clientBrokeContract, Q, Expect}, TLog1};
         FSM ->
             {ok, {TLog, FSM}}
     end.
 
-do_rpcOut({TLog, FSM}=_Ref, Q, State, Mod, Reply, ReplyState, NewState, NewMod) ->
+do_rpcOut({TLog, FSM}=_Ref, Q, State, Mod, Reply, ReplyState, NewState, NewMod, TLogMod) ->
     case checkRPCOut(Reply, ReplyState, FSM, Mod) of
         true ->
-            TLog1 = contract_manager_tlog:rpcOut(TLog, Q, State, Mod, Reply, NewState, NewMod, ok),
+            TLog1 = contract_manager_tlog:rpcOut(TLogMod, TLog, Q, State, Mod, Reply, NewState, NewMod, ok),
             {ok, Reply, TLog1};
         false ->
-            TLog1 = contract_manager_tlog:rpcOut(TLog, Q, State, Mod, Reply, NewState, NewMod, server_broke_contract),
+            TLog1 = contract_manager_tlog:rpcOut(TLogMod, TLog, Q, State, Mod, Reply, NewState, NewMod, server_broke_contract),
             Expect = map(fun(I) -> element(2, I) end, FSM),
             {error, {serverBrokeContract, {Q, Reply}, Expect}, TLog1}
     end.
 
-do_eventOut(Msg, State, Mod) ->
+do_eventOut(Msg, State, Mod, TLogMod) ->
     case checkEventOut(Msg, State, Mod) of
         true ->
-            TLog = contract_manager_tlog:eventOut(Msg, State, Mod, ok),
+            TLog = contract_manager_tlog:eventOut(TLogMod, Msg, State, Mod, ok),
             {true, TLog};
         false ->
-            TLog = contract_manager_tlog:eventOut(Msg, State, Mod, server_broke_contract),
+            TLog = contract_manager_tlog:eventOut(TLogMod, Msg, State, Mod,
+                                                  server_broke_contract),
             {false, TLog}
     end.
 
-do_rpcOutError(Q, State, Mod, Error) ->
-    TLog = contract_manager_tlog:rpcOutError(Q, State, Mod, Error),
+do_rpcOutError(Q, State, Mod, Error, TLogMod) ->
+    TLog = contract_manager_tlog:rpcOutError(TLogMod, Q, State, Mod, Error),
     do_txlog(TLog).
 
-do_rpcOutError({TLog, _FSM}=_Ref, Q, State, Mod, Error) ->
-    TLog = contract_manager_tlog:rpcOutError(TLog, Q, State, Mod, Error),
+do_rpcOutError({TLog, _FSM}=_Ref, Q, State, Mod, Error, TLogMod) ->
+    TLog = contract_manager_tlog:rpcOutError(TLogMod, TLog, Q, State, Mod, Error),
     do_txlog(TLog).
 
 do_txlog(TLog) ->
     ok = contract_manager_tlog:rpcFinish(TLog).
 
-do_lpcIn(Q, State, Mod) ->
-    TLog = contract_manager_tlog:lpcIn(Q, State, Mod),
+do_lpcIn(Q, State, Mod, TLogMod) ->
+    TLog = contract_manager_tlog:lpcIn(TLogMod, Q, State, Mod),
     case checkRPCIn(Q, State, Mod) of
         [] ->
-            contract_manager_tlog:lpcOut(TLog, Q, State, Mod, undefined, State, Mod, client_broke_contract),
+            contract_manager_tlog:lpcOut(TLogMod, TLog, Q, State, Mod, undefined, State, Mod, client_broke_contract),
             Expect = Mod:contract_state(State),
             {error, {clientBrokeContract, Q, Expect}};
         FSM ->
             {ok, {TLog, FSM}}
     end.
 
-do_lpcOut({TLog, FSM}=_Ref, Q, State, Mod, Reply, ReplyState, NewState, NewMod) ->
+do_lpcOut({TLog, FSM}=_Ref, Q, State, Mod, Reply, ReplyState, NewState, NewMod, TLogMod) ->
     case checkRPCOut(Reply, ReplyState, FSM, Mod) of
         true ->
-            contract_manager_tlog:lpcOut(TLog, Q, State, Mod, Reply, NewState, NewMod, ok),
+            contract_manager_tlog:lpcOut(TLogMod, TLog, Q, State, Mod, Reply, NewState, NewMod, ok),
             {ok, Reply};
         false ->
-            contract_manager_tlog:lpcOut(TLog, Q, State, Mod, Reply, NewState, NewMod, server_broke_contract),
+            contract_manager_tlog:lpcOut(TLogMod, TLog, Q, State, Mod, Reply, NewState, NewMod, server_broke_contract),
             Expect = map(fun(I) -> element(2, I) end, FSM),
             {error, {serverBrokeContract, {Q, Reply}, Expect}}
     end.
 
-do_lpcOutError({TLog, _FSM}=_Ref, Q, State, Mod, Error) ->
-    contract_manager_tlog:lpcOutError(TLog, Q, State, Mod, Error).
+do_lpcOutError({TLog, _FSM}=_Ref, Q, State, Mod, Error, TLogMod) ->
+    contract_manager_tlog:lpcOutError(TLogMod, TLog, Q, State, Mod, Error).
 
 contract(Mod) ->
     {{name,?S(Mod:contract_name())},

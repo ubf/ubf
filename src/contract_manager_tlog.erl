@@ -8,40 +8,69 @@
 
 -module(contract_manager_tlog).
 
--export([rpcIn/3, rpcOut/8, eventOut/4]).
--export([rpcOutError/4, rpcOutError/5]).
+-export([rpcIn/4, rpcOut/9, eventOut/5]).
+-export([rpcOutError/5, rpcOutError/6]).
 -export([rpcFinish/1]).
 
--export([lpcIn/3, lpcOut/8]).
--export([lpcOutError/5]).
+-export([lpcIn/4, lpcOut/9]).
+-export([lpcOutError/6]).
 
-rpcIn(_Q, _State, _Mod) ->
+rpcIn(_TLogMod_x, _Q, _State, _Mod) ->
     erlang:now().
 
-rpcOut(_StartTime, Q, State, Mod, Reply, _NewState, _NewMod, Status) ->
+rpcOut(TLogMod_x, StartTime, Q, State, Mod, Reply, _NewState, _NewMod, Status) ->
+    rpcOut2(tlm(TLogMod_x), StartTime, Q, State, Mod, Reply, _NewState, _NewMod, Status).
+
+rpcOut2({TLogMod, ErrLogP}, StartTime, Q, State, Mod, Reply, _NewState, _NewMod, Status) ->
     fun() ->
-            if Status =:= server_broke_contract ->
+            if ErrLogP, Status =:= server_broke_contract ->
                     error_logger:warning_msg("rpc server error: ~p:~p(~p): ~p\n", [Mod, State, Q, Reply]);
                true ->
                     noop
             end,
-            ok
+            if TLogMod == undefined ->
+                    ok;
+               true ->
+                    TLogMod:tlog(rpc, StartTime, Mod, Q, Reply, Status)
+            end
     end.
 
-eventOut(_Msg, _State, _Mod, _Status) ->
+eventOut(_TLogMod_x, _Msg, _State, _Mod, _Status) ->
     %% not supported
     ok.
 
-rpcOutError(Q, State, Mod, Error) ->
+rpcOutError(TLogMod_x, Q, State, Mod, Error) ->
+    rpcOutError2(tlm(TLogMod_x), Q, State, Mod, Error).
+
+rpcOutError2({TLogMod, ErrLogP}, Q, State, Mod, Error) ->
     fun() ->
-            error_logger:warning_msg("rpc error: ~p:~p(~p): ~p\n", [Mod, State, Q, Error]),
-            ok
+            if ErrLogP ->
+                    error_logger:warning_msg("rpc error: ~p:~p(~p): ~p\n", [Mod, State, Q, Error]);
+               true ->
+                    noop
+            end,
+            if TLogMod == undefined ->
+                    ok;
+               true ->
+                    TLogMod:tlog(rpc, undefined, Mod, Q, Error, error)
+            end
     end.
 
-rpcOutError(_StartTime, Q, State, Mod, Error) ->
+rpcOutError(TLogMod_x, StartTime, Q, State, Mod, Error) ->
+    rpcOutError2(tlm(TLogMod_x), StartTime, Q, State, Mod, Error).
+
+rpcOutError2({TLogMod, ErrLogP}, StartTime, Q, State, Mod, Error) ->
     fun() ->
-            error_logger:warning_msg("rpc error: ~p:~p(~p): ~p\n", [Mod, State, Q, Error]),
-            ok
+            if ErrLogP ->
+                    error_logger:warning_msg("rpc error: ~p:~p(~p): ~p\n", [Mod, State, Q, Error]);
+               true ->
+                    noop
+            end,
+            if TLogMod == undefined ->
+                    ok;
+               true ->
+                    TLogMod:tlog(rpc, StartTime, Mod, Q, Error, error)
+            end
     end.
 
 rpcFinish(TLog) when is_function(TLog) ->
@@ -49,17 +78,54 @@ rpcFinish(TLog) when is_function(TLog) ->
 rpcFinish(TLog) ->
     TLog.
 
-lpcIn(_Q, _State, _Mod) ->
+lpcIn(_TLogMod_x, _Q, _State, _Mod) ->
     erlang:now().
 
-lpcOut(_StartTime, Q, State, Mod, Reply, _NewState, _NewMod, Status) ->
-    if Status =:= server_broke_contract ->
+lpcOut(TLogMod_x, StartTime, Q, State, Mod, Reply, _NewState, _NewMod, Status) ->
+    lpcOut2(tlm(TLogMod_x), StartTime, Q, State, Mod, Reply, _NewState, _NewMod, Status).
+
+lpcOut2({TLogMod, ErrLogP}, StartTime, Q, State, Mod, Reply, _NewState, _NewMod, Status) ->
+    if ErrLogP, Status =:= server_broke_contract ->
             error_logger:warning_msg("lpc server error: ~p:~p(~p): ~p\n", [Mod, State, Q, Reply]);
        true ->
             noop
     end,
-    ok.
+    if TLogMod == undefined ->
+            ok;
+       true ->
+            TLogMod:tlog(lpc, StartTime, Mod, Q, Reply, Status)
+    end.
 
-lpcOutError(_StartTime, Q, State, Mod, Error) ->
-    error_logger:warning_msg("lpc error: ~p:~p(~p): ~p\n", [Mod, State, Q, Error]),
-    ok.
+lpcOutError(TLogMod_x, StartTime, Q, State, Mod, Error) ->
+    lpcOutError2(tlm(TLogMod_x), StartTime, Q, State, Mod, Error).
+
+lpcOutError2({TLogMod, ErrLogP}, StartTime, Q, State, Mod, Error) ->
+    if ErrLogP ->
+            error_logger:warning_msg("lpc error: ~p:~p(~p): ~p\n", [Mod, State, Q, Error]);
+       true ->
+            noop
+    end,
+    if TLogMod == undefined ->
+            ok;
+       true ->
+            TLogMod:tlog(lpc, StartTime, Mod, Q, Error, error)
+    end.
+
+%% @doc The TLogMod_x thingie coming in is either:
+%%
+%%  * an atom, specifying the txn log module name, and also assume the
+%%  caller wants 'error_logger' calls
+%%
+%%  * a tuple, {atom(), boolean()}, where the atom() is the txn log
+%%  module name, and the boolean() is whether or not the caller wants
+%%  'error_logger' calls.
+%%
+%% The other design option would be to strip out all 'error_logger'
+%% calls from this module and force the TLogMod callback module to do
+%% it.  However, it's probably "nice" to provide a default that casual
+%% users don't need to fuss with?
+
+tlm({_, _} = X) ->
+    X;
+tlm(TLogMod) when is_atom(TLogMod) ->
+    {TLogMod, true}.

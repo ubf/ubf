@@ -35,9 +35,11 @@
 -export([connect/2, connect/3, connect/4, rpc/2, rpc/3, stop/1,
          install_default_handler/1, install_handler/2]).
 
--export([lpc/2, lpc/3]).
+-export([lpc/2, lpc/3, lpc/4]).
 
--import(contract_manager, [do_lpcIn/3, do_lpcOut/8, do_lpcOutError/5]).
+-include("ubf_impl.hrl").
+
+-import(contract_manager, [do_lpcIn/4, do_lpcOut/9, do_lpcOutError/6]).
 
 %% @type address() = string() | ip_address(). A DNS hostname or IP address.
 %% @type connect_options() = list({proto, ubf | ebf | jsf}).
@@ -342,7 +344,7 @@ loop(Parent, Driver, Fun) ->
 %%
 
 lpc(Mod, Q) ->
-    lpc(Mod, Q, none).
+    lpc(Mod, Q, none, undefined).
 
 %% @spec (module(), term(), atom()) -> term()
 %% @doc Perform a synchronous LPC (local procedure) call with the
@@ -350,18 +352,21 @@ lpc(Mod, Q) ->
 %%
 
 lpc(Mod, Q, State) ->
+    lpc(Mod, Q, State, ?UBF_TLOG_MODULE_DEFAULT).
+
+lpc(Mod, Q, State, TLogMod) ->
     %% check contract
-    case do_lpcIn(Q, State, Mod) of
+    case do_lpcIn(Q, State, Mod, TLogMod) of
         {error, Reply} ->
             {reply,Reply,State};
         {ok, Ref} ->
             case (catch Mod:handlerRpc(Q)) of
                 {'EXIT', Reason} ->
-                    do_lpcOutError(Ref, Q, State, Mod, Reason),
+                    do_lpcOutError(Ref, Q, State, Mod, Reason, TLogMod),
                     {error, stop};
                 Reply ->
                     %% check contract
-                    {_, NewReply} = do_lpcOut(Ref, Q, State, Mod, Reply, State, State, Mod),
+                    {_, NewReply} = do_lpcOut(Ref, Q, State, Mod, Reply, State, State, Mod, TLogMod),
                     erlang:garbage_collect(),
                     {reply,NewReply,State}
             end

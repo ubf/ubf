@@ -128,6 +128,10 @@ undefined, the server is not registered</p>
   <li> {proto, {ubf | ebf | jsf}} ... Enable the UBF, EBF, or JSF version
        of the protocol's wire format.
        Default: ubf. </li>
+  <li> {registeredname, atom()} ... Set the name to be registered for
+       the TCP listener.  If undefined, a default name is automatically
+       registered.
+       Default: undefined. </li>
   <li> {serverhello, string()} ... Meta contract greeting string, sent
        when a client first connects to the server.
        Default: "meta_server" </li>
@@ -136,15 +140,14 @@ undefined, the server is not registered</p>
        Joe Armstrong's original UBF server implementation.
        Default: false.
        TO-DO: JoeNorton, add more? </li>
-  <li> {proto, {ubf | ebf | jsf}} ... Enable the UBF, EBF, or JSF version
-       of the protocol's wire format.
-       Default: ubf. </li>
+  <li> {tlog_module, atom() | {atom(), boolean()}} ... Set the transaction
+       log callback module and optionally control the built-in calls
+       by 'contract_manager_tlog' to the 'error_logger' module.
+       If the 2-tuple representation is used and the boolean() member is
+       false, then calls to 'error_logger' will not be attempted.
+       Default: undefined. </li>
   <li> {verboserpc, true | false} ... Set the verbose RPC mode.
        Default: false. </li>
-  <li> {registeredname, atom()} ... Set the name to be registered for
-       the TCP listener.  If undefined, a default name is automatically
-       registered.
-       Default: undefined. </li>
  
   <li> TO-DO: JoeNorton, add more? </li>
   </ul></p>

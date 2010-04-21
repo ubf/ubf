@@ -1,3 +1,10 @@
+2010-04-21 12:45 JST  norton
+        * include/ubf_impl.hrl, src/contract_manager.erl,
+	src/contract_manager_tlog.erl, src/ubf_client.erl,
+	src/ubf_plugin_handler.erl, src/ubf_server.erl: rework txn logging
+	for ubf_server and ubf_client to permit a configurable module for
+	the txn logger.
+
 2010-04-13 23:30 JST  norton
 	* src/contract_manager.erl, src/proc_socket_server.erl,
 	src/proc_utils.erl,src/ubf_client.erl, src/ubf_plugin_handler.erl,

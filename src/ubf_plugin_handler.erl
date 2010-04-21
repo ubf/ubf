@@ -23,13 +23,13 @@ start_handler(SpawnOpts) ->
 
 wait() ->
     receive
-        {start, ContractManager, Manager, Mod} ->
-            loop(ContractManager, start, [], Manager, Mod);
+        {start, ContractManager, Manager, Mod, TLogMod} ->
+            loop(ContractManager, start, [], Manager, Mod, TLogMod);
         stop ->
             exit({serverPluginHandler, stop})
     end.
 
-loop(Client, State, Data, Manager, Mod) ->
+loop(Client, State, Data, Manager, Mod, TLogMod) ->
     receive
         {_Pid, {rpc, Q}} ->
             if Manager /= undefined ->
@@ -37,13 +37,14 @@ loop(Client, State, Data, Manager, Mod) ->
                         {Reply, State1, Data1} ->
                             Client ! {self(), {rpcReply, Reply, State1, same}},
                             erlang:garbage_collect(),
-                            loop(Client, State1, Data1, Manager, Mod);
+                            loop(Client, State1, Data1, Manager, Mod, TLogMod);
                         {changeContract, Reply, Mod1, State1, Data1, Manager1} ->
                             Client ! {self(), {rpcReply, Reply, State,
                                                {new, Mod1, State1}}},
-                            loop(Client, State1, Data1, Manager1, Mod1);
+                            loop(Client, State1, Data1, Manager1, Mod1, TLogMod);
                         {'EXIT', Reason} ->
-                            contract_manager:do_rpcOutError(Q, State, Mod, Reason),
+                            contract_manager:do_rpcOutError(
+                              Q, State, Mod, Reason, TLogMod),
                             exit({serverPluginHandler, Reason})
                     end;
                true ->
@@ -51,20 +52,21 @@ loop(Client, State, Data, Manager, Mod) ->
                         {changeContract, Reply, Mod1, State1, Data1} ->
                             Client ! {self(), {rpcReply, Reply, State,
                                                {new, Mod1, State1}}},
-                            loop(Client, State1, Data1, Manager, Mod1);
+                            loop(Client, State1, Data1, Manager, Mod1, TLogMod);
                         {'EXIT', Reason} ->
-                            contract_manager:do_rpcOutError(Q, State, Mod, Reason),
+                            contract_manager:do_rpcOutError(
+                              Q, State, Mod, Reason, TLogMod),
                             exit({serverPluginHandler, Reason});
                         Reply ->
                             Client ! {self(), {rpcReply, Reply, State, same}},
                             erlang:garbage_collect(),
-                            loop(Client, State, Data, Manager, Mod)
+                            loop(Client, State, Data, Manager, Mod, TLogMod)
                     end
             end;
         {event_out, _} = Event ->
             Client ! Event,
             erlang:garbage_collect(),
-            loop(Client, State, Data, Manager, Mod);
+            loop(Client, State, Data, Manager, Mod, TLogMod);
         stop ->
             if Manager =/= undefined ->
                     Manager ! {client_has_stopped, self()};
@@ -78,7 +80,7 @@ loop(Client, State, Data, Manager, Mod) ->
             end;
         Other ->
             io:format("**** OOOPYikes ...~p (Client=~p)~n",[Other,Client]),
-            loop(Client, State, Data, Manager, Mod)
+            loop(Client, State, Data, Manager, Mod, TLogMod)
     end.
 
 

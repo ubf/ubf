@@ -48,6 +48,7 @@
 -export([start_term_listener/3]).
 
 -include("ubf.hrl").
+-include("ubf_impl.hrl").
 
 -import(proc_socket_server, [start_raw_server/7]).
 
@@ -90,6 +91,10 @@ start(Name, PluginModules, Port) ->
 %% <li> {proto, {ubf | ebf | jsf}} ... Enable the UBF, EBF, or JSF version
 %%      of the protocol's wire format.
 %%      Default: ubf. </li>
+%% <li> {registeredname, atom()} ... Set the name to be registered for
+%%      the TCP listener.  If undefined, a default name is automatically
+%%      registered.
+%%      Default: undefined. </li>
 %% <li> {serverhello, string()} ... Meta contract greeting string, sent
 %%      when a client first connects to the server.
 %%      Default: "meta_server" </li>
@@ -98,15 +103,14 @@ start(Name, PluginModules, Port) ->
 %%      Joe Armstrong's original UBF server implementation.
 %%      Default: false.
 %%      TO-DO: JoeNorton, add more? </li>
-%% <li> {proto, {ubf | ebf | jsf}} ... Enable the UBF, EBF, or JSF version
-%%      of the protocol's wire format.
-%%      Default: ubf. </li>
+%% <li> {tlog_module, atom() | {atom(), boolean()}} ... Set the transaction
+%%      log callback module and optionally control the built-in calls
+%%      by 'contract_manager_tlog' to the 'error_logger' module.
+%%      If the 2-tuple representation is used and the boolean() member is
+%%      false, then calls to 'error_logger' will not be attempted.
+%%      Default: undefined. </li>
 %% <li> {verboserpc, true | false} ... Set the verbose RPC mode.
 %%      Default: false. </li>
-%% <li> {registeredname, atom()} ... Set the name to be registered for
-%%      the TCP listener.  If undefined, a default name is automatically
-%%      registered.
-%%      Default: undefined. </li>
 %%
 %% <li> TO-DO: JoeNorton, add more? </li>
 %% </ul>
@@ -155,11 +159,8 @@ start_server(PluginModules, Port, Options) ->
     ubf_plugin_handler:manager(ListenerPid, MetaContract, [ListenerPid]).
 
 start_ubf_listener(MetaContract, Port, Server, Options) ->
-    ServerHello =
-        proplists:get_value(serverhello,Options,MetaContract:contract_name()),
-    VerboseRPC =
-        proplists:get_value(verboserpc,Options,false),
-    ProcessOptions = proplists:get_value(process_options, Options, []),
+    {ServerHello, VerboseRPC, TLogModule, ProcessOptions} =
+        basic_listener_options(MetaContract, Options),
 
     {DriverModule, DriverVersion, PacketType} =
         case proplists:get_value(proto,Options,ubf) of
@@ -205,9 +206,9 @@ start_ubf_listener(MetaContract, Port, Server, Options) ->
                 %% swap the driver
                 contract_driver:relay(DriverModule, self(), ContractManager),
                 ContractManager !
-                    {start, Driver, Handler, start, MetaContract},
+                    {start, Driver, Handler, start, MetaContract, TLogModule},
                 Handler !
-                    {start, ContractManager, Server, MetaContract},
+                    {start, ContractManager, Server, MetaContract, TLogModule},
                 %% and activate the loop that will now
                 %% execute the last two statements :-)
                 case (catch contract_driver:loop(DriverModule, MetaContract, self(), Socket, IdleTimer)) of
@@ -241,11 +242,8 @@ start_term_listener(Server0, PluginModules, Options) ->
                 {ubf_plugin_meta_stateless:new(SortedPluginModules), undefined}
         end,
 
-    ServerHello =
-        proplists:get_value(serverhello,Options,MetaContract:contract_name()),
-    VerboseRPC =
-        proplists:get_value(verboserpc,Options,false),
-    ProcessOptions = proplists:get_value(process_options, Options, []),
+    {ServerHello, VerboseRPC, TLogModule, ProcessOptions} =
+        basic_listener_options(MetaContract, Options),
 
     Driver = self(),
     ContractManager =
@@ -259,9 +257,9 @@ start_term_listener(Server0, PluginModules, Options) ->
     self() ! {ContractManager, {'etf1.0', ?S(ServerHello), help()}},
 
     ContractManager ! {start, Driver, Handler,
-                       start, MetaContract},
+                       start, MetaContract, TLogModule},
     Handler ! {start, ContractManager,
-               Server, MetaContract},
+               Server, MetaContract, TLogModule},
 
     ContractManager.
 
@@ -309,3 +307,10 @@ start_proc(Parent, Name, F) ->
             Parent ! {self(), ack},
             F()
     end.
+
+basic_listener_options(MetaContract, Options) ->
+    {proplists:get_value(serverhello, Options, MetaContract:contract_name()),
+     proplists:get_value(verboserpc, Options, false),
+     proplists:get_value(tlog_module, Options, ?UBF_TLOG_MODULE_DEFAULT),
+     proplists:get_value(process_options, Options, [])}.
+

@@ -31,14 +31,14 @@ actual server application.</p>
  
   <img src="../priv/doc/contract_manager-01.png">
 <h2><a name="index">Function Index</a></h2>
-<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#do_eventOut-3">do_eventOut/3</a></td><td></td></tr>
-<tr><td valign="top"><a href="#do_lpcIn-3">do_lpcIn/3</a></td><td></td></tr>
-<tr><td valign="top"><a href="#do_lpcOut-8">do_lpcOut/8</a></td><td></td></tr>
-<tr><td valign="top"><a href="#do_lpcOutError-5">do_lpcOutError/5</a></td><td></td></tr>
-<tr><td valign="top"><a href="#do_rpcIn-3">do_rpcIn/3</a></td><td></td></tr>
-<tr><td valign="top"><a href="#do_rpcOut-8">do_rpcOut/8</a></td><td></td></tr>
-<tr><td valign="top"><a href="#do_rpcOutError-4">do_rpcOutError/4</a></td><td></td></tr>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#do_eventOut-4">do_eventOut/4</a></td><td></td></tr>
+<tr><td valign="top"><a href="#do_lpcIn-4">do_lpcIn/4</a></td><td></td></tr>
+<tr><td valign="top"><a href="#do_lpcOut-9">do_lpcOut/9</a></td><td></td></tr>
+<tr><td valign="top"><a href="#do_lpcOutError-6">do_lpcOutError/6</a></td><td></td></tr>
+<tr><td valign="top"><a href="#do_rpcIn-4">do_rpcIn/4</a></td><td></td></tr>
+<tr><td valign="top"><a href="#do_rpcOut-9">do_rpcOut/9</a></td><td></td></tr>
 <tr><td valign="top"><a href="#do_rpcOutError-5">do_rpcOutError/5</a></td><td></td></tr>
+<tr><td valign="top"><a href="#do_rpcOutError-6">do_rpcOutError/6</a></td><td></td></tr>
 <tr><td valign="top"><a href="#do_txlog-1">do_txlog/1</a></td><td></td></tr>
 <tr><td valign="top"><a href="#start-1">start/1</a></td><td></td></tr>
 <tr><td valign="top"><a href="#start-2">start/2</a></td><td></td></tr>
@@ -46,44 +46,44 @@ actual server application.</p>
 
 <h2><a name="functions">Function Details</a></h2>
 
-<h3 class="function"><a name="do_eventOut-3">do_eventOut/3</a></h3>
+<h3 class="function"><a name="do_eventOut-4">do_eventOut/4</a></h3>
 <div class="spec">
-<p><tt>do_eventOut(Msg, State, Mod) -&gt; any()</tt></p>
+<p><tt>do_eventOut(Msg, State, Mod, TLogMod) -&gt; any()</tt></p>
 </div>
 
-<h3 class="function"><a name="do_lpcIn-3">do_lpcIn/3</a></h3>
+<h3 class="function"><a name="do_lpcIn-4">do_lpcIn/4</a></h3>
 <div class="spec">
-<p><tt>do_lpcIn(Q, State, Mod) -&gt; any()</tt></p>
+<p><tt>do_lpcIn(Q, State, Mod, TLogMod) -&gt; any()</tt></p>
 </div>
 
-<h3 class="function"><a name="do_lpcOut-8">do_lpcOut/8</a></h3>
+<h3 class="function"><a name="do_lpcOut-9">do_lpcOut/9</a></h3>
 <div class="spec">
-<p><tt>do_lpcOut(Ref, Q, State, Mod, Reply, ReplyState, NewState, NewMod) -&gt; any()</tt></p>
+<p><tt>do_lpcOut(Ref, Q, State, Mod, Reply, ReplyState, NewState, NewMod, TLogMod) -&gt; any()</tt></p>
 </div>
 
-<h3 class="function"><a name="do_lpcOutError-5">do_lpcOutError/5</a></h3>
+<h3 class="function"><a name="do_lpcOutError-6">do_lpcOutError/6</a></h3>
 <div class="spec">
-<p><tt>do_lpcOutError(Ref, Q, State, Mod, Error) -&gt; any()</tt></p>
+<p><tt>do_lpcOutError(Ref, Q, State, Mod, Error, TLogMod) -&gt; any()</tt></p>
 </div>
 
-<h3 class="function"><a name="do_rpcIn-3">do_rpcIn/3</a></h3>
+<h3 class="function"><a name="do_rpcIn-4">do_rpcIn/4</a></h3>
 <div class="spec">
-<p><tt>do_rpcIn(Q, State, Mod) -&gt; any()</tt></p>
+<p><tt>do_rpcIn(Q, State, Mod, TLogMod) -&gt; any()</tt></p>
 </div>
 
-<h3 class="function"><a name="do_rpcOut-8">do_rpcOut/8</a></h3>
+<h3 class="function"><a name="do_rpcOut-9">do_rpcOut/9</a></h3>
 <div class="spec">
-<p><tt>do_rpcOut(Ref, Q, State, Mod, Reply, ReplyState, NewState, NewMod) -&gt; any()</tt></p>
-</div>
-
-<h3 class="function"><a name="do_rpcOutError-4">do_rpcOutError/4</a></h3>
-<div class="spec">
-<p><tt>do_rpcOutError(Q, State, Mod, Error) -&gt; any()</tt></p>
+<p><tt>do_rpcOut(Ref, Q, State, Mod, Reply, ReplyState, NewState, NewMod, TLogMod) -&gt; any()</tt></p>
 </div>
 
 <h3 class="function"><a name="do_rpcOutError-5">do_rpcOutError/5</a></h3>
 <div class="spec">
-<p><tt>do_rpcOutError(Ref, Q, State, Mod, Error) -&gt; any()</tt></p>
+<p><tt>do_rpcOutError(Q, State, Mod, Error, TLogMod) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="do_rpcOutError-6">do_rpcOutError/6</a></h3>
+<div class="spec">
+<p><tt>do_rpcOutError(Ref, Q, State, Mod, Error, TLogMod) -&gt; any()</tt></p>
 </div>
 
 <h3 class="function"><a name="do_txlog-1">do_txlog/1</a></h3>
