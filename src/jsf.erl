@@ -135,25 +135,24 @@ contract_records() ->
 %%
 %%---------------------------------------------------------------------
 %%
+encode_print(X, Mod) ->
+    io:format("~s~n", [encode(X, Mod)]).
 
-encode_print(X, UBFMod) ->
-    io:format("~s~n", [encode(X, UBFMod)]).
+encode(X, Mod) ->
+    rfc4627:encode(do_encode(X, Mod)).
 
-encode(X, UBFMod) ->
-    rfc4627:encode(do_encode(X, UBFMod)).
-
-do_encode(X, _UBFMod) when is_binary(X); is_integer(X); is_float(X) ->
+do_encode(X, _Mod) when is_binary(X); is_integer(X); is_float(X) ->
     X;
-do_encode(X, _UBFMod) when is_atom(X) ->
+do_encode(X, _Mod) when is_atom(X) ->
     encode_atom(X);
-do_encode(X, UBFMod) when is_list(X) ->
-    encode_list(X, UBFMod);
-do_encode(?S(X), _UBFMod) ->
+do_encode(X, Mod) when is_list(X) ->
+    encode_list(X, Mod);
+do_encode(?S(X), _Mod) ->
     encode_string(X);
-do_encode(?P(X), UBFMod) ->
-    encode_proplist(X, UBFMod);
-do_encode(X, UBFMod) when is_tuple(X) ->
-    encode_tuple(X, UBFMod).
+do_encode(?P(X), Mod) ->
+    encode_proplist(X, Mod);
+do_encode(X, Mod) when is_tuple(X) ->
+    encode_tuple(X, Mod).
 
 encode_atom(true) ->
     true;
@@ -164,92 +163,92 @@ encode_atom(undefined) ->
 encode_atom(X) ->
     {obj, [{"$A", atom_to_binary(X)}]}.
 
-encode_list(L, UBFMod) ->
-    encode_list(L, [], UBFMod).
+encode_list(X, Mod) ->
+    encode_list(X, [], Mod).
 
-encode_list([], Acc, _UBFMod) ->
+encode_list([], Acc, _Mod) ->
     lists:reverse(Acc);
-encode_list([H|T], Acc, UBFMod) ->
-    NewAcc = [do_encode(H, UBFMod)|Acc],
-    encode_list(T, NewAcc, UBFMod).
+encode_list([H|T], Acc, Mod) ->
+    NewAcc = [do_encode(H, Mod)|Acc],
+    encode_list(T, NewAcc, Mod).
 
 encode_string(X) when is_list(X) ->
     {obj, [{"$S", list_to_binary(X)}]}.
 
-encode_proplist(X, UBFMod) when is_list(X) ->
-    {obj, [ {K, do_encode(V, UBFMod)} || {K, V} <- X ]}.
+encode_proplist(X, Mod) when is_list(X) ->
+    {obj, [ {K, do_encode(V, Mod)} || {K, V} <- X ]}.
 
-encode_tuple({}, _UBFMod) ->
+encode_tuple({}, _Mod) ->
     {obj, [{"$T", []}]};
-encode_tuple(X, UBFMod) when not is_atom(element(1, X)) ->
-    {obj, [{"$T", encode_tuple(1, X, [], UBFMod)}]};
-encode_tuple(X, UBFMod) ->
+encode_tuple(X, Mod) when not is_atom(element(1, X)) ->
+    {obj, [{"$T", encode_tuple(1, X, [], Mod)}]};
+encode_tuple(X, Mod) ->
     RecName = element(1, X),
     Y = {RecName, tuple_size(X)-1},
-    case lists:member(Y, UBFMod:contract_records()) of
+    case lists:member(Y, Mod:contract_records()) of
         false ->
-            {obj, [{"$T", encode_tuple(1, X, [], UBFMod)}]};
+            {obj, [{"$T", encode_tuple(1, X, [], Mod)}]};
         true ->
-            %% @todo optimize this code
-            Keys = list_to_tuple(UBFMod:contract_record(Y)),
-            {obj, [{"$R", atom_to_binary(RecName)}|encode_record(2, X, Keys, [], UBFMod)]}
+            %% @TODO optimize this code
+            Keys = list_to_tuple(Mod:contract_record(Y)),
+            {obj, [{"$R", atom_to_binary(RecName)}|encode_record(2, X, Keys, [], Mod)]}
     end.
 
-encode_tuple(N, X, Acc, _UBFMod) when is_integer(N), N > tuple_size(X) ->
+encode_tuple(N, X, Acc, _Mod) when is_integer(N), N > tuple_size(X) ->
     lists:reverse(Acc);
-encode_tuple(N, X, Acc, UBFMod) ->
-    NewAcc = [do_encode(element(N, X), UBFMod)|Acc],
-    encode_tuple(N+1, X, NewAcc, UBFMod).
+encode_tuple(N, X, Acc, Mod) ->
+    NewAcc = [do_encode(element(N, X), Mod)|Acc],
+    encode_tuple(N+1, X, NewAcc, Mod).
 
-encode_record(N, X, _Keys, Acc, _UBFMod) when is_integer(N), N > tuple_size(X) ->
+encode_record(N, X, _Keys, Acc, _Mod) when is_integer(N), N > tuple_size(X) ->
     Acc;
-encode_record(N, X, Keys, Acc, UBFMod) ->
-    NewAcc = [{atom_to_binary(element(N-1, Keys)), do_encode(element(N, X), UBFMod)}|Acc],
-    encode_record(N+1, X, Keys, NewAcc, UBFMod).
+encode_record(N, X, Keys, Acc, Mod) ->
+    NewAcc = [{atom_to_binary(element(N-1, Keys)), do_encode(element(N, X), Mod)}|Acc],
+    encode_record(N+1, X, Keys, NewAcc, Mod).
 
 
 %%
 %%---------------------------------------------------------------------
 %%
-decode_print(X, UBFMod) ->
-    io:format("~s~n", [decode(X, UBFMod)]).
+decode_print(X, Mod) ->
+    io:format("~s~n", [decode(X, Mod)]).
 
 decode_init() -> {more, []}.
 
-decode(X, UBFMod) ->
-    decode(X, UBFMod, decode_init()).
+decode(X, Mod) ->
+    decode(X, Mod, decode_init()).
 
-decode(X, UBFMod, {more, Old}) ->
-    decode(X, UBFMod, Old);
-decode(X, UBFMod, Old) ->
+decode(X, Mod, {more, Old}) ->
+    decode(X, Mod, Old);
+decode(X, Mod, Old) ->
     New = Old ++ X,
     case rfc4627:decode(New) of
         {ok, JSON, Remainder} ->
-            {ok, do_decode(JSON, UBFMod), Remainder};
+            {ok, do_decode(JSON, Mod), Remainder};
         {error, unexpected_end_of_input} ->
             {more, New};
         {error, _}=Err ->
             Err
     end.
 
-do_decode(X, _UBFMod) when is_binary(X); is_integer(X); is_float(X) ->
+do_decode(X, _Mod) when is_binary(X); is_integer(X); is_float(X) ->
     X;
-do_decode(X, _UBFMod) when is_atom(X) ->
+do_decode(X, _Mod) when is_atom(X) ->
     decode_atom(X);
-do_decode(X, UBFMod) when is_list(X) ->
-    decode_list(X, UBFMod);
-do_decode({obj, [{"$A", X}]}, _UBFMod) ->
+do_decode(X, Mod) when is_list(X) ->
+    decode_list(X, Mod);
+do_decode({obj, [{"$A", X}]}, _Mod) ->
     decode_atom(X);
-do_decode({obj, [{"$S", X}]}, _UBFMod) ->
+do_decode({obj, [{"$S", X}]}, _Mod) ->
     decode_string(X);
-do_decode({obj, [{"$T", X}]}, UBFMod) ->
-    decode_tuple(X, [], UBFMod);
-do_decode({obj, X}, UBFMod) ->
+do_decode({obj, [{"$T", X}]}, Mod) ->
+    decode_tuple(X, Mod);
+do_decode({obj, X}, Mod) ->
     case lists:keytake("$R", 1, X) of
         {value, {"$R", RecName}, Y} ->
-            decode_record(RecName, Y, UBFMod);
+            decode_record(RecName, Y, Mod);
         false ->
-            decode_proplist(X, UBFMod)
+            decode_proplist(X, Mod)
     end.
 
 decode_atom(true) ->
@@ -261,41 +260,44 @@ decode_atom(null) ->
 decode_atom(X) when is_binary(X) ->
     binary_to_existing_atom(X).
 
-decode_list(L, UBFMod) ->
-    decode_list(L, [], UBFMod).
+decode_list(X, Mod) ->
+    decode_list(X, [], Mod).
 
-decode_list([], Acc, _UBFMod) ->
+decode_list([], Acc, _Mod) ->
     lists:reverse(Acc);
-decode_list([H|T], Acc, UBFMod) ->
-    NewAcc = [do_decode(H, UBFMod)|Acc],
-    decode_list(T, NewAcc, UBFMod).
+decode_list([H|T], Acc, Mod) ->
+    NewAcc = [do_decode(H, Mod)|Acc],
+    decode_list(T, NewAcc, Mod).
 
 decode_string(X) when is_binary(X) ->
     ?S(binary_to_list(X)).
 
-decode_proplist(X, UBFMod) when is_list(X) ->
-    ?P([ {list_to_binary(K), do_decode(V, UBFMod)} || {K, V} <- X ]).
+decode_proplist(X, Mod) when is_list(X) ->
+    ?P([ {list_to_binary(K), do_decode(V, Mod)} || {K, V} <- X ]).
 
-decode_tuple([], Acc, _UBFMod) ->
+decode_tuple(L, Mod) ->
+    decode_tuple(L, [], Mod).
+
+decode_tuple([], Acc, _Mod) ->
     list_to_tuple(lists:reverse(Acc));
-decode_tuple([H|T], Acc, UBFMod) ->
-    NewAcc = [do_decode(H, UBFMod)|Acc],
-    decode_tuple(T, NewAcc, UBFMod).
+decode_tuple([H|T], Acc, Mod) ->
+    NewAcc = [do_decode(H, Mod)|Acc],
+    decode_tuple(T, NewAcc, Mod).
 
-decode_record(RecNameStr, X, UBFMod) ->
+decode_record(RecNameStr, X, Mod) ->
     RecName = binary_to_existing_atom(RecNameStr),
     Y = {RecName, length(X)},
-    Keys = UBFMod:contract_record(Y),
-    decode_record(RecName, Keys, X, [], UBFMod).
+    Keys = Mod:contract_record(Y),
+    decode_record(RecName, Keys, X, [], Mod).
 
-decode_record(RecName, [], [], Acc, _UBFMod) ->
+decode_record(RecName, [], [], Acc, _Mod) ->
     list_to_tuple([RecName|lists:reverse(Acc)]);
-decode_record(RecName, [H|T], X, Acc, UBFMod) ->
+decode_record(RecName, [H|T], X, Acc, Mod) ->
     K = atom_to_list(H),
     case lists:keytake(K, 1, X) of
         {value, {K, V}, NewX} ->
-            NewAcc = [do_decode(V, UBFMod)|Acc],
-            decode_record(RecName, T, NewX, NewAcc, UBFMod);
+            NewAcc = [do_decode(V, Mod)|Acc],
+            decode_record(RecName, T, NewX, NewAcc, Mod);
         false ->
             exit({badrecord, RecName})
     end.
@@ -304,7 +306,6 @@ decode_record(RecName, [H|T], X, Acc, UBFMod) ->
 %%
 %%---------------------------------------------------------------------
 %%
-
 atom_to_binary(X) ->
     list_to_binary(atom_to_list(X)).
 

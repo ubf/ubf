@@ -34,9 +34,9 @@ checkRPCIn(Msg, State, Mod) ->
              || {input,Type,Out} <- T, isType(Type,Msg,Mod) ],
     FSM2 =
         case Outs of
-	    [] ->
+            [] ->
                 [ {InType,OutType,State}
-		  || {InType,OutType} <- T1, isType(InType,Msg,Mod) ];
+                  || {InType,OutType} <- T1, isType(InType,Msg,Mod) ];
            _ ->
                 lists:append(Outs)
         end,
@@ -97,7 +97,7 @@ check_term({alt, A, B}, X, Level, Mod) ->
     check_term(A, X, Level, Mod) orelse check_term(B, X, Level, Mod);
 %% concat
 check_term({concat, _A, _B}=_Check, _X, _Level, _Mod) ->
-    %% @todo not (re-)implemented now
+    %% @TODO not (re-)implemented now
     ?FAIL({notimplemented,_X});
 %% prim
 check_term({prim, Min, Max, Type}=_Check, X, Level, Mod) ->
@@ -122,35 +122,35 @@ check_term({prim, Min, Max, Type}=_Check, X, Level, Mod) ->
 %% tuple
 check_term({tuple,Args}=_Check, X, Level, Mod) ->
     if length(Args) =:= tuple_size(X) ->
-	    case check_term_seq(Args, tuple_to_list(X), Level, Mod) of
-		true ->
-		    true;
-		false ->
-		    ?FAIL({Check,X})
-	    end;
+            case check_term_seq(Args, tuple_to_list(X), Level, Mod) of
+                true ->
+                    true;
+                false ->
+                    ?FAIL({Check,X})
+            end;
        true ->
             ?FAIL({Check,X})
     end;
 %% record
 check_term({record,Name,Args}=_Check, X, Level, Mod) ->
     if length(Args)+(1-2) =:= tuple_size(X) ->
-	    case check_term_seq([{atom,Name}|tl(tl(Args))], tuple_to_list(X), Level, Mod) of
-		true ->
-		    true;
-		false ->
-		    ?FAIL({Check,X})
-	    end;
+            case check_term_seq([{atom,Name}|tl(tl(Args))], tuple_to_list(X), Level, Mod) of
+                true ->
+                    true;
+                false ->
+                    ?FAIL({Check,X})
+            end;
        true ->
             ?FAIL({Check,X})
     end;
 check_term({record_ext,Name,Args}=_Check, X, Level, Mod) ->
     if length(Args)+1 =:= tuple_size(X) ->
-	    case check_term_seq([{atom,Name}|Args], tuple_to_list(X), Level, Mod) of
-		true ->
-		    true;
-		false ->
-		    ?FAIL({Check,X})
-	    end;
+            case check_term_seq([{atom,Name}|Args], tuple_to_list(X), Level, Mod) of
+                true ->
+                    true;
+                false ->
+                    ?FAIL({Check,X})
+            end;
        true ->
             ?FAIL({Check,X})
     end;
@@ -510,7 +510,7 @@ bad_zip(TypesList, TermList, Mod) ->
                 {Type, Part, _Pos} <- TpsTrm],
     [{badType, WantedType,
       checkType2(WantedType, lists:nth(Pos, TermList), Mod)} ||
-	{false, WantedType, Pos} <- Items].
+        {false, WantedType, Pos} <- Items].
 
 %% checkType_investigate_deeper({prim, _} = Type, Term, Mod) ->
 %%     INFINITE LOOP, don't do this....

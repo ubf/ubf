@@ -38,7 +38,7 @@ check_binary(Check, X, Level, Mod) ->
 
 %% check_binary/1
 check_binary(S) ->
-    check_binary(S, fun(S1) -> all_checked(S1) end).
+    check_binary(S, fun all_checked/1).
 
 all_checked(#state{check=undefined, size=MaxSize, maxsize=MaxSize}=S) ->
     {ok,S};
