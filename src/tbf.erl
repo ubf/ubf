@@ -110,20 +110,21 @@
 %%                   | 'T-I08' | 'T-I16' | 'T-I32' | 'T-U64' | 'T-I64' | 'T-DOUBLE'
 %%                   | 'T-BINARY' | 'T-STRUCT' | 'T-MAP' | 'T-SET' | 'T-LIST'.
 %% tbf::field_id() = integer().
-%% tbf::field_data() = tbf::void() | tbf::boolean() | integer() | double() | binary() | binary() |
-%%                   | tbf::struct() | tbf::map() | tbf::set() | tbf::list().
+%% tbf::field_data() = tbf::void() | tbf::boolean() | integer()
+%%                   | integer() | float()
+%%                   | binary() | tbf::struct() | tbf::map() | tbf::set() | tbf::list().
 %%
 %% tbf::map() = {'map', tbf::map_type(), [tbf::map_data()]}.
 %% tbf::map_type() = {tbf::field_type(), tbf::field_type()}.
 %% tbf::map_data() = {tbf::field_data(), tbf::field_data()}.
 %%
-%% tbf::list() = {'list', tbf::list_type(), [tbf::list_data()]}.
-%% tbf::list_type() = tbf::field_type().
-%% tbf::list_data() = tbf::field_data().
-%%
 %% tbf::set() = {'set', tbf::set_type(), [tbf::set_data()]}.
 %% tbf::set_type() = tbf::field_type().
 %% tbf::set_data() = tbf::field_data().
+%%
+%% tbf::list() = {'list', tbf::list_type(), [tbf::list_data()]}.
+%% tbf::list_type() = tbf::field_type().
+%% tbf::list_data() = tbf::field_data().
 %%
 %% tbf::void() = 'undefined'.
 %% tbf::boolean() = 'true' | 'false'.
@@ -283,7 +284,7 @@ contract_records() ->
 -type error() :: {error, Reason::term()}.
 -type cont() :: {more, fun()}.
 
--spec decode_init() -> fun().
+-spec decode_init() -> cont().
 -spec decode(Input::binary()) -> ok() | error() | cont().
 -spec decode(Input::binary(), module()) -> ok() | error() | cont().
 -spec decode(Input::binary(), module(), cont()) -> ok() | error() | cont().
@@ -350,11 +351,21 @@ encode(X, Mod) when is_tuple(X) ->
         'list' ->
             encode_list(X, Mod);
         _ ->
-            exit(badarg)
+            try_encode_ubf(X, Mod)
     end;
-encode(_, _) ->
-    exit(badarg).
+encode(X, Mod) ->
+    try_encode_ubf(X, Mod).
 
+try_encode_ubf(X, Mod) ->
+    %% automagically try to encode from native ubf
+    case get('ubf_info') of
+        tbf_client_driver ->
+            encode_message({'message', <<"$UBF">>, 'T-CALL', 0, X}, Mod);
+        tbf_driver ->
+            encode_message({'message', <<"$UBF">>, 'T-REPLY', 0, X}, Mod);
+        _ ->
+            exit(badarg)
+    end.
 
 %%
 %%---------------------------------------------------------------------
@@ -369,43 +380,39 @@ decode(X) ->
     decode(X, ?MODULE).
 
 decode(X, Mod) ->
-    decode_message(#state{x=X,mod=Mod}, decode_init()).
+    decode(X, Mod, decode_init()).
 
 decode(X, Mod, {more, Fun}) ->
     Fun(#state{x=X,mod=Mod}).
 
 decode_init() ->
-    fun decode_done/1.
+    {more, fun decode_start/1}.
 
-decode_done(#state{x=X,stack=Term}) ->
-    {ok, Term, X}.
+decode_start(S) ->
+    decode_message(S, fun decode_finish/1).
 
-decode_done('field', #state{stack=[[H,T,[T1|T2]|T3]|Stack]}=S, Cont) ->
-    H1 = list_to_tuple(lists:reverse([H|T])),
-    H2 = [[H1|T1]|T2],
-    Cont(S#state{stack=[[H2|T3]|Stack]});
-decode_done('field-data', #state{stack=[[H,[T|T1]|T2]|Stack]}=S, Cont) ->
-    H1 = [[H|T]|T1],
-    Cont(S#state{stack=[[H1|T2]|Stack]});
-decode_done('field-datum', #state{stack=[[H,T,[T1|T2]|T3]|Stack]}=S, Cont) ->
-    H1 = [[{T,H}|T1]|T2],
-    Cont(S#state{stack=[[H1|T3]|Stack]});
-decode_done(Type, #state{stack=[[[H|T]|T1]|Stack]}=S, Cont)
-  when Type =:= 'struct';
-       Type =:= 'map';
-       Type =:= 'set';
-       Type =:= 'list' ->
-    H1 = list_to_tuple(lists:reverse([lists:reverse(H)|T])),
-    Cont(S#state{stack=[[H1|T1]|Stack]});
-decode_done('message', #state{stack=[H|[[]]],mod=Mod}=S, Cont) ->
-    H1 = list_to_tuple(lists:reverse(H)),
-    case H1 of
-        {'message',<<"$UBF">>,_Type,_SeqId,Struct} ->
-            %% special treatment for UBF-native messages
-            UBF = decode_ubf(Struct, Mod),
-            Cont(S#state{stack=setelement(5,H1,UBF)});
+decode_finish(#state{x=X,stack=Term}) ->
+    {ok, try_decode_ubf(Term), X}.
+
+try_decode_ubf(X) ->
+    %% automagically try to decode to native ubf
+    case get('ubf_info') of
+        tbf_client_driver ->
+            case X of
+                {'message', <<"$UBF">>, 'T-REPLY', 0, Y} ->
+                    Y;
+                _ ->
+                    exit(badarg)
+            end;
+        tbf_driver ->
+            case X of
+                {'message', <<"$UBF">>, 'T-CALL', 0, Y} ->
+                    Y;
+                _ ->
+                    exit(badarg)
+            end;
         _ ->
-            Cont(S#state{stack=H1})
+            X
     end.
 
 decode_pause(#state{x=X}=S, Cont, Resume) ->
@@ -575,6 +582,34 @@ encode_type(_, _, _)          -> exit(badarg).
 %%
 %%---------------------------------------------------------------------
 %%
+decode_finish('field', #state{stack=[[H,T,[T1|T2]|T3]|Stack]}=S, Cont) ->
+    H1 = list_to_tuple(lists:reverse([H|T])),
+    H2 = [[H1|T1]|T2],
+    Cont(S#state{stack=[[H2|T3]|Stack]});
+decode_finish('field-data', #state{stack=[[H,[T|T1]|T2]|Stack]}=S, Cont) ->
+    H1 = [[H|T]|T1],
+    Cont(S#state{stack=[[H1|T2]|Stack]});
+decode_finish('field-datum', #state{stack=[[H,T,[T1|T2]|T3]|Stack]}=S, Cont) ->
+    H1 = [[{T,H}|T1]|T2],
+    Cont(S#state{stack=[[H1|T3]|Stack]});
+decode_finish(Type, #state{stack=[[[H|T]|T1]|Stack]}=S, Cont)
+  when Type =:= 'struct';
+       Type =:= 'map';
+       Type =:= 'set';
+       Type =:= 'list' ->
+    H1 = list_to_tuple(lists:reverse([lists:reverse(H)|T])),
+    Cont(S#state{stack=[[H1|T1]|Stack]});
+decode_finish('message', #state{stack=[H|[[]]],mod=Mod}=S, Cont) ->
+    H1 = list_to_tuple(lists:reverse(H)),
+    case H1 of
+        {'message',<<"$UBF">>,_Type,_SeqId,Struct} ->
+            %% special treatment for UBF-native messages
+            UBF = decode_ubf(Struct, Mod),
+            Cont(S#state{stack=setelement(5,H1,UBF)});
+        _ ->
+            Cont(S#state{stack=H1})
+    end.
+
 decode_message(#state{x=X,stack=undefined}=S, Cont) ->
     case X of
         <<Len:32/signed,X1/binary>> when Len >= 0 ->
@@ -585,7 +620,7 @@ decode_message(#state{x=X,stack=undefined}=S, Cont) ->
                             decode_error('message', 'message-type', Type, S);
                         DecodedType ->
                             Stack1 = [[Id, DecodedType, Name, 'message'], []],
-                            Cont1 = fun(S1) -> decode_done('message', S1, Cont) end,
+                            Cont1 = fun(S1) -> decode_finish('message', S1, Cont) end,
                             decode_struct(S#state{x=X2,stack=Stack1}, Cont1)
                     end;
                 _ ->
@@ -631,7 +666,7 @@ decode_map(#state{x=X,stack=Stack}=S, Cont) ->
                         DecodedValueType ->
                             Type = {KeyType,ValueType},
                             Stack1 = push([[], DecodedValueType, DecodedKeyType, 'map'], Stack),
-                            Cont1 = fun(S1) -> decode_done('map', S1, Cont) end,
+                            Cont1 = fun(S1) -> decode_finish('map', S1, Cont) end,
                             decode_field_datum(S#state{x=X1,stack=Stack1,type=Type,size=Size}, Cont1)
                     end
             end;
@@ -649,7 +684,7 @@ decode_set(#state{x=X,stack=Stack}=S, Cont) ->
                     decode_error('set', 'set-type', Type, S);
                 DecodedType ->
                     Stack1 = push([[], DecodedType, 'set'], Stack),
-                    Cont1 = fun(S1) -> decode_done('set', S1, Cont) end,
+                    Cont1 = fun(S1) -> decode_finish('set', S1, Cont) end,
                     decode_field_data(S#state{x=X1,stack=Stack1,type=Type,size=Size}, Cont1)
             end;
         <<_Type:8/signed,Size:32/signed>> when Size < 0 ->
@@ -666,7 +701,7 @@ decode_list(#state{x=X,stack=Stack}=S, Cont) ->
                     decode_error('list', 'list-type', Type, S);
                 DecodedType ->
                     Stack1 = push([[], DecodedType, 'list'], Stack),
-                    Cont1 = fun(S1) -> decode_done('list', S1, Cont) end,
+                    Cont1 = fun(S1) -> decode_finish('list', S1, Cont) end,
                     decode_field_data(S#state{x=X1,stack=Stack1,type=Type,size=Size}, Cont1)
             end;
         <<_Type:8/signed,Size:32/signed>> when Size < 0 ->
@@ -678,7 +713,7 @@ decode_list(#state{x=X,stack=Stack}=S, Cont) ->
 decode_fields(#state{x=X,stack=Stack}=S, Cont) ->
     case X of
         <<?STOP:8/signed,X1/binary>> ->
-            decode_done('struct', S#state{x=X1}, Cont);
+            decode_finish('struct', S#state{x=X1}, Cont);
         <<Type:8/signed,Id:16/signed,X2/binary>> ->
             case decode_field_type(Type) of
                 undefined ->
@@ -687,7 +722,7 @@ decode_fields(#state{x=X,stack=Stack}=S, Cont) ->
                     Name = <<>>,
                     Stack1 = push([Id, DecodedType, Name, 'field'], Stack),
                     Cont2 = fun(S2) -> decode_fields(S2, Cont) end,
-                    Cont1 = fun(S1) -> decode_done('field', S1, Cont2) end,
+                    Cont1 = fun(S1) -> decode_finish('field', S1, Cont2) end,
                     decode_type(Type, S#state{x=X2,stack=Stack1}, Cont1)
             end;
         _ ->
@@ -698,14 +733,14 @@ decode_field_data(#state{size=0}=S, Cont) ->
     Cont(S#state{type=undefined,size=undefined});
 decode_field_data(#state{type=Type,size=Size}=S, Cont) ->
     Cont2 = fun(S2) -> decode_field_data(S2#state{type=Type,size=Size-1}, Cont) end,
-    Cont1 = fun(S1) -> decode_done('field-data', S1, Cont2) end,
+    Cont1 = fun(S1) -> decode_finish('field-data', S1, Cont2) end,
     decode_type(Type, S, Cont1).
 
 decode_field_datum(#state{size=0}=S, Cont) ->
     Cont(S#state{type=undefined,size=undefined});
 decode_field_datum(#state{type={KeyType,ValueType}=Type,size=Size}=S, Cont) ->
     Cont3 = fun(S3) -> decode_field_datum(S3#state{type=Type,size=Size-1}, Cont) end,
-    Cont2 = fun(S2) -> decode_done('field-datum', S2, Cont3) end,
+    Cont2 = fun(S2) -> decode_finish('field-datum', S2, Cont3) end,
     Cont1 = fun(S1) -> decode_type(ValueType, S1, Cont2) end,
     decode_type(KeyType, S, Cont1).
 

@@ -10,11 +10,15 @@ do_eunit() ->
         _ -> erlang:halt(1)
     end.
 
-
 -define(APPLICATION, stateless_plugin).
 -define(UBF_PORT, server_port(test_ubf_tcp_port)).
 -define(EBF_PORT, server_port(test_ebf_tcp_port)).
 -define(JSF_PORT, server_port(test_jsf_tcp_port)).
+-define(TBF_PORT, server_port(test_tbf_tcp_port)).
+-define(PBF_PORT, server_port(test_pbf_tcp_port)).
+-define(ABF_PORT, server_port(test_abf_tcp_port)).
+
+-define(SLEEP, 25).
 
 -record(args, {host, port, proto, stateless, state}).
 
@@ -44,6 +48,9 @@ all_tests_(Setup,Teardown) ->
             _ ->
                 (all_actual_tests_(jsf,true,none))(not_used)
         end
+     ++ (all_actual_tests_(tbf,true,none))(not_used)
+     %% @TODO ++ (all_actual_tests_(pbf,true,none))(not_used)
+     %% @TODO ++ (all_actual_tests_(abf,true,none))(not_used)
      ++ (all_actual_tests_(etf,true,none))(not_used)
      ++ (all_actual_tests_(lpc,true,none))(not_used)
     }.
@@ -54,6 +61,12 @@ all_actual_tests_(ebf=Proto,Stateless,State) ->
     all_actual_tests_("localhost",fun() -> ?EBF_PORT end,Proto,Stateless,State);
 all_actual_tests_(jsf=Proto,Stateless,State) ->
     all_actual_tests_("localhost",fun() -> ?JSF_PORT end,Proto,Stateless,State);
+all_actual_tests_(tbf=Proto,Stateless,State) ->
+    all_actual_tests_("localhost",fun() -> ?TBF_PORT end,Proto,Stateless,State);
+all_actual_tests_(pbf=Proto,Stateless,State) ->
+    all_actual_tests_("localhost",fun() -> ?PBF_PORT end,Proto,Stateless,State);
+all_actual_tests_(abf=Proto,Stateless,State) ->
+    all_actual_tests_("localhost",fun() -> ?ABF_PORT end,Proto,Stateless,State);
 all_actual_tests_(Proto,Stateless,State) ->
     all_actual_tests_(undefined,fun() -> undefined end,Proto,Stateless,State).
 
@@ -137,14 +150,12 @@ test_002(#args{host=Host,port=Port}=Args,How) ->
 %% connect -> close
 test_003(#args{state=State}=Args) ->
     assert_process(Args, 0, 0, 0, 0, 0),
-    {ok,Pid1,?S("test_meta_server")} = client_connect(Args),
+    {ok,Pid1} = client_connect(Args),
     assert_process(Args, 1, 1, 1, 1, 1),
     client_stop(Pid1),
     assert_process(Args, 0, 0, 0, 0, 0),
-    {ok,Pid2,?S("test_meta_server")} = client_connect(Args),
+    {ok,Pid2} = client_connect(Args),
     client_stop(Pid1),
-    assert_process(Args, 1, 1, 1, 1, 1),
-    {reply,{ok,ok},State} = client_rpc(Pid2,{startSession,?S("test"),[]}),
     assert_process(Args, 1, 1, 1, 1, 1),
     {reply,ok,State} = client_rpc(Pid2,keepalive),
     client_stop(Pid2),
@@ -153,9 +164,7 @@ test_003(#args{state=State}=Args) ->
 %% connect -> client breaks -> close
 test_004(#args{state=State}=Args) ->
     assert_process(Args, 0, 0, 0, 0, 0),
-    {ok,Pid,?S("test_meta_server")} = client_connect(Args),
-    assert_process(Args, 1, 1, 1, 1, 1),
-    {reply,{ok,ok},State} = client_rpc(Pid,{startSession,?S("test"),[]}),
+    {ok,Pid} = client_connect(Args),
     assert_process(Args, 1, 1, 1, 1, 1),
     {reply,ok,State} = client_rpc(Pid,keepalive),
     assert_process(Args, 1, 1, 1, 1, 1),
@@ -170,9 +179,7 @@ test_004(#args{state=State}=Args) ->
 %% connect -> client timeout -> close
 test_005(#args{state=State}=Args) ->
     assert_process(Args, 0, 0, 0, 0, 0),
-    {ok,Pid,?S("test_meta_server")} = client_connect(Args),
-    assert_process(Args, 1, 1, 1, 1, 1),
-    {reply,{ok,ok},State} = client_rpc(Pid,{startSession,?S("test"),[]}),
+    {ok,Pid} = client_connect(Args),
     assert_process(Args, 1, 1, 1, 1, 1),
     {reply,ok,State} = client_rpc(Pid,keepalive),
     assert_process(Args, 1, 1, 1, 1, 1),
@@ -184,9 +191,7 @@ test_005(#args{state=State}=Args) ->
 %% connect -> server breaks -> close
 test_006(#args{state=State}=Args) ->
     assert_process(Args, 0, 0, 0, 0, 0),
-    {ok,Pid,?S("test_meta_server")} = client_connect(Args),
-    assert_process(Args, 1, 1, 1, 1, 1),
-    {reply,{ok,ok},State} = client_rpc(Pid,{startSession,?S("test"),[]}),
+    {ok,Pid} = client_connect(Args),
     assert_process(Args, 1, 1, 1, 1, 1),
     {reply,ok,State} = client_rpc(Pid,keepalive),
     assert_process(Args, 1, 1, 1, 1, 1),
@@ -201,9 +206,7 @@ test_006(#args{state=State}=Args) ->
 %% connect -> server timeout -> close
 test_007(#args{state=State}=Args) ->
     assert_process(Args, 0, 0, 0, 0, 0),
-    {ok,Pid,?S("test_meta_server")} = client_connect(Args),
-    assert_process(Args, 1, 1, 1, 1, 1),
-    {reply,{ok,ok},State} = client_rpc(Pid,{startSession,?S("test"),[]}),
+    {ok,Pid} = client_connect(Args),
     assert_process(Args, 1, 1, 1, 1, 1),
     {reply,ok,State} = client_rpc(Pid,keepalive),
     assert_process(Args, 1, 1, 1, 1, 1),
@@ -217,9 +220,7 @@ test_007(#args{state=State}=Args) ->
 %% connect -> server crash -> close
 test_008(#args{proto=Proto,state=State}=Args) ->
     assert_process(Args, 0, 0, 0, 0, 0),
-    {ok,Pid,?S("test_meta_server")} = client_connect(Args),
-    assert_process(Args, 1, 1, 1, 1, 1),
-    {reply,{ok,ok},State} = client_rpc(Pid,{startSession,?S("test"),[]}),
+    {ok,Pid} = client_connect(Args),
     assert_process(Args, 1, 1, 1, 1, 1),
     {reply,ok,State} = client_rpc(Pid,keepalive),
     assert_process(Args, 1, 1, 1, 1, 1),
@@ -244,9 +245,7 @@ test_009(#args{proto=Proto})
     ok;
 test_009(#args{state=State}=Args) ->
     assert_process(Args, 0, 0, 0, 0, 0),
-    {ok,Pid,?S("test_meta_server")} = client_connect(Args),
-    assert_process(Args, 1, 1, 1, 1, 1),
-    {reply,{ok,ok},State} = client_rpc(Pid,{startSession,?S("test"),[]}),
+    {ok,Pid} = client_connect(Args),
     assert_process(Args, 1, 1, 1, 1, 1),
     {reply,ok,State} = client_rpc(Pid,keepalive),
     assert_process(Args, 1, 1, 1, 1, 1),
@@ -268,9 +267,7 @@ test_010(#args{proto=Proto})
     ok;
 test_010(#args{state=State}=Args) ->
     assert_process(Args, 0, 0, 0, 0, 0),
-    {ok,Pid,?S("test_meta_server")} = client_connect(Args),
-    assert_process(Args, 1, 1, 1, 1, 1),
-    {reply,{ok,ok},State} = client_rpc(Pid,{startSession,?S("test"),[]}),
+    {ok,Pid} = client_connect(Args),
     assert_process(Args, 1, 1, 1, 1, 1),
     {reply,ok,State} = client_rpc(Pid,keepalive),
     assert_process(Args, 1, 1, 1, 1, 1),
@@ -367,9 +364,7 @@ server_port(Name) ->
 %% connect -> driver socket is shutdown or closed -> close
 test_shutdown_socket(#args{state=State}=Args,Who,Reason) ->
     assert_process(Args, 0, 0, 0, 0, 0),
-    {ok,Pid,?S("test_meta_server")} = client_connect(Args),
-    assert_process(Args, 1, 1, 1, 1, 1),
-    {reply,{ok,ok},State} = client_rpc(Pid,{startSession,?S("test"),[]}),
+    {ok,Pid} = client_connect(Args),
     assert_process(Args, 1, 1, 1, 1, 1),
     {reply,ok,State} = client_rpc(Pid,keepalive),
     assert_process(Args, 1, 1, 1, 1, 1),
@@ -387,15 +382,25 @@ test_shutdown_socket(#args{state=State}=Args,Who,Reason) ->
 
 client_connect(#args{proto=lpc,stateless=Stateless,state=State}) ->
     Mod = if Stateless -> stateless_plugin; true -> stateful_plugin end,
-    {ok,{Mod,State},?S("test_meta_server")};
-client_connect(#args{proto=etf,stateless=Stateless}) ->
+    {ok,{Mod,State}};
+client_connect(#args{proto=etf,stateless=Stateless,state=State}) ->
     Plugins = if Stateless -> [stateless_plugin]; true -> [stateful_plugin] end,
     Server = test_ubf,
     Options = [{serverhello, "test_meta_server"},{proto,etf},{statelessrpc,Stateless}],
-    ubf_client:connect(Plugins,Server,Options,infinity);
-client_connect(#args{host=Host,port=Port,proto=Proto,stateless=Stateless}) ->
+    {ok,Pid,?S("test_meta_server")} = ubf_client:connect(Plugins,Server,Options,infinity),
+    {reply,{ok,ok},State} = client_rpc(Pid,{startSession,?S("test"),[]}),
+    {ok,Pid};
+client_connect(#args{host=Host,port=Port,proto=Proto,stateless=Stateless,state=State})
+  when Proto =:= tbf; Proto =:= pbf; Proto =:= abf ->
+    Options = [{proto,Proto},{statelessrpc,Stateless},{serverhello,undefined}],
+    {ok,Pid,undefined} = ubf_client:connect(Host,Port,Options,infinity),
+    {reply,{ok,ok},State} = client_rpc(Pid,{startSession,?S("test"),[]}), %% @TODO remove this line
+    {ok,Pid};
+client_connect(#args{host=Host,port=Port,proto=Proto,stateless=Stateless,state=State}) ->
     Options = [{proto,Proto},{statelessrpc,Stateless}],
-    ubf_client:connect(Host,Port,Options,infinity).
+    {ok,Pid,?S("test_meta_server")} = ubf_client:connect(Host,Port,Options,infinity),
+    {reply,{ok,ok},State} = client_rpc(Pid,{startSession,?S("test"),[]}),
+    {ok,Pid}.
 
 
 client_rpc(X,Y) ->
@@ -419,28 +424,49 @@ client_stop(Pid) ->
 
 
 assert_process(#args{proto=ubf}=Args, Driver, Contract, Plugin, Client, ClientDriver) ->
-    timer:sleep(50),
+    timer:sleep(?SLEEP),
     assert_process(Args, ubf_driver, Driver),
     assert_process(Args, contract_manager, Contract),
     assert_process(Args, ubf_plugin_handler, Plugin),
     assert_process(Args, ubf_client, Client),
     assert_process(Args, ubf_client_driver, ClientDriver);
 assert_process(#args{proto=ebf}=Args, Driver, Contract, Plugin, Client, ClientDriver) ->
-    timer:sleep(50),
+    timer:sleep(?SLEEP),
     assert_process(Args, ebf_driver, Driver),
     assert_process(Args, contract_manager, Contract),
     assert_process(Args, ubf_plugin_handler, Plugin),
     assert_process(Args, ubf_client, Client),
     assert_process(Args, ebf_client_driver, ClientDriver);
 assert_process(#args{proto=jsf}=Args, Driver, Contract, Plugin, Client, ClientDriver) ->
-    timer:sleep(50),
+    timer:sleep(?SLEEP),
     assert_process(Args, jsf_driver, Driver),
     assert_process(Args, contract_manager, Contract),
     assert_process(Args, ubf_plugin_handler, Plugin),
     assert_process(Args, ubf_client, Client),
     assert_process(Args, jsf_client_driver, ClientDriver);
+assert_process(#args{proto=tbf}=Args, Driver, Contract, Plugin, Client, ClientDriver) ->
+    timer:sleep(?SLEEP),
+    assert_process(Args, tbf_driver, Driver),
+    assert_process(Args, contract_manager, Contract),
+    assert_process(Args, ubf_plugin_handler, Plugin),
+    assert_process(Args, ubf_client, Client),
+    assert_process(Args, tbf_client_driver, ClientDriver);
+assert_process(#args{proto=pbf}=Args, Driver, Contract, Plugin, Client, ClientDriver) ->
+    timer:sleep(?SLEEP),
+    assert_process(Args, pbf_driver, Driver),
+    assert_process(Args, contract_manager, Contract),
+    assert_process(Args, ubf_plugin_handler, Plugin),
+    assert_process(Args, ubf_client, Client),
+    assert_process(Args, pbf_client_driver, ClientDriver);
+assert_process(#args{proto=abf}=Args, Driver, Contract, Plugin, Client, ClientDriver) ->
+    timer:sleep(?SLEEP),
+    assert_process(Args, abf_driver, Driver),
+    assert_process(Args, contract_manager, Contract),
+    assert_process(Args, ubf_plugin_handler, Plugin),
+    assert_process(Args, ubf_client, Client),
+    assert_process(Args, abf_client_driver, ClientDriver);
 assert_process(#args{proto=etf}=Args, _, Contract, Plugin, Client, _) ->
-    timer:sleep(50),
+    timer:sleep(?SLEEP),
     assert_process(Args, contract_manager, Contract),
     assert_process(Args, ubf_plugin_handler, Plugin),
     assert_process(Args, ubf_client, Client);
@@ -449,7 +475,7 @@ assert_process(#args{proto=lpc}=_Args, _, _Contract, _Plugin, _Client, _) ->
 
 
 assert_process(#args{stateless=false}=Args, ubf_plugin_handler=M, CheckNum) ->
-    assert_process(Args, M, CheckNum, -3); % adjust for manager plugins
+    assert_process(Args, M, CheckNum, -6); % adjust for manager plugins
 assert_process(Args, M, CheckNum) ->
     assert_process(Args, M, CheckNum, 0).
 
@@ -477,12 +503,20 @@ exit_process(#args{proto=ebf}, driver, Reason) ->
     do_exit_process(ebf_driver, Reason);
 exit_process(#args{proto=jsf}, driver, Reason) ->
     do_exit_process(jsf_driver, Reason);
+exit_process(#args{proto=tbf}, driver, Reason) ->
+    do_exit_process(tbf_driver, Reason);
 exit_process(#args{proto=ubf}, client_driver, Reason) ->
     do_exit_process(ubf_client_driver, Reason);
 exit_process(#args{proto=ebf}, client_driver, Reason) ->
     do_exit_process(ebf_client_driver, Reason);
 exit_process(#args{proto=jsf}, client_driver, Reason) ->
-    do_exit_process(jsf_client_driver, Reason).
+    do_exit_process(jsf_client_driver, Reason);
+exit_process(#args{proto=tbf}, client_driver, Reason) ->
+    do_exit_process(tbf_client_driver, Reason);
+exit_process(#args{proto=pbf}, client_driver, Reason) ->
+    do_exit_process(pbf_client_driver, Reason);
+exit_process(#args{proto=abf}, client_driver, Reason) ->
+    do_exit_process(abf_client_driver, Reason).
 
 
 shutdown_socket(Args, Process) ->
@@ -494,12 +528,24 @@ shutdown_socket(#args{proto=ebf}, driver, Reason) ->
     do_shutdown_socket(ebf_driver, Reason);
 shutdown_socket(#args{proto=jsf}, driver, Reason) ->
     do_shutdown_socket(jsf_driver, Reason);
+shutdown_socket(#args{proto=tbf}, driver, Reason) ->
+    do_shutdown_socket(tbf_driver, Reason);
+shutdown_socket(#args{proto=pbf}, driver, Reason) ->
+    do_shutdown_socket(pbf_driver, Reason);
+shutdown_socket(#args{proto=abf}, driver, Reason) ->
+    do_shutdown_socket(abf_driver, Reason);
 shutdown_socket(#args{proto=ubf}, client_driver, Reason) ->
     do_shutdown_socket(ubf_client_driver, Reason);
 shutdown_socket(#args{proto=ebf}, client_driver, Reason) ->
     do_shutdown_socket(ebf_client_driver, Reason);
 shutdown_socket(#args{proto=jsf}, client_driver, Reason) ->
-    do_shutdown_socket(jsf_client_driver, Reason).
+    do_shutdown_socket(jsf_client_driver, Reason);
+shutdown_socket(#args{proto=tbf}, client_driver, Reason) ->
+    do_shutdown_socket(tbf_client_driver, Reason);
+shutdown_socket(#args{proto=pbf}, client_driver, Reason) ->
+    do_shutdown_socket(bbf_client_driver, Reason);
+shutdown_socket(#args{proto=abf}, client_driver, Reason) ->
+    do_shutdown_socket(abf_client_driver, Reason).
 
 
 do_exit_process(M) ->

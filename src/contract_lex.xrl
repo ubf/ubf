@@ -34,6 +34,7 @@ EVENT              :     {token,{eventkwd,TokenLine}}.
 "[^"]*"            :     S = lists:sublist(TokenChars, 2, length(TokenChars) - 2),
                          {token,{string,TokenLine,S}}.
 =>                 :     {token,{'=>',TokenLine}}.
+<=                 :     {token,{'<=',TokenLine}}.
 \+\+               :     {token,{'++',TokenLine}}.
 \.\.               :     {token,{'..',TokenLine}}.
 \#\#               :     {token,{'##',TokenLine}}.

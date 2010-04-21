@@ -5,7 +5,7 @@ form type typeDef typeRef primType typeAttr typeSeq typeRec.
 
 Terminals
 namekwd vsnkwd typekwd statekwd anystatekwd eventkwd atom binary float integer string
- '+' '|'  '=' '#' '{' '}' '&' ';' ',' '[]' '[' ']' '(' ')' ']?' ']{0}' ']{1}' ']+' ')?' '){0}' '){1}' '++' '..' '##' '=>' dot.
+ '+' '|'  '=' '#' '{' '}' '&' ';' ',' '[]' '[' ']' '(' ')' ']?' ']{0}' ']{1}' ']+' ')?' '){0}' '){1}' '++' '..' '##' '=>' '<=' dot.
 
 
 Rootsymbol form.
@@ -83,6 +83,7 @@ transitions -> transition                   : ['$1'].
 
 transition -> typeRef '=>' outputs          : {input, '$1', '$3'}.
 transition -> eventkwd '=>' typeRef         : {event_out, '$3'}.
+transition -> eventkwd '<=' typeRef         : {event_in, '$3'}.
 
 outputs -> responseAndState '|' outputs     : ['$1'|'$3'].
 outputs -> responseAndState                 : ['$1'].
@@ -93,6 +94,8 @@ anyrules -> anyrule ';' anyrules            : ['$1'|'$3'].
 anyrules -> anyrule                         : ['$1'].
 
 anyrule -> typeRef '=>' typeRef             : {'$1', '$3'}.
+anyrule -> eventkwd '=>' typeRef            : {event_out, '$3'}.
+anyrule -> eventkwd '<=' typeRef            : {event_in, '$3'}.
 
 Erlang code.
 

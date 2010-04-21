@@ -25,6 +25,10 @@ MODULES = \
 	ebf_driver \
 	tbf \
 	tbf_driver \
+	pbf \
+	pbf_driver \
+	abf \
+	abf_driver \
 	ubf_plugin_meta_stateful \
 	ubf_plugin_meta_stateless
 

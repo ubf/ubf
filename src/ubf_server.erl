@@ -24,13 +24,19 @@
 %%%      terms between a UBF(B) contract checking server and a client
 %%%      that does not support the UBF(A) wire format but does support
 %%%      Erlang's native wire formats. </li>
-%%% <li> JSF, a.k.a the JSON Server Format.  Similar to EBF, except
+%%% <li> JSF, a.k.a the JSon Format.  Similar to EBF, except
 %%%      that JavaScript's JSON encoding is used for the wire protocol
-%%%      instead of UBF(A) or Erlang's native wire formats.
-%%%      NOTE: This server is currently incomplete.  Source code from
-%%%            Gemini Mobile Technologies, Inc. is not yet available to
-%%%            help glue JSF-style encoding to a full HTTP/JSON-RPC service.
-%%%      </li>
+%%%      instead of UBF(A) or Erlang's native wire formats.</li>
+%%% <li> TBF, a.k.a the Thrift Binary Format.  Similar to EBF, except
+%%%      that Thrift's binary encoding is used for the wire protocol
+%%%      instead of UBF(A) or Erlang's native wire formats.</li>
+%%% <li> PBF, a.k.a the Google's Protocol Buffers Format.  Similar to
+%%%      EBF, except that Google's Protocol Buffers binary encoding is used
+%%%      for the wire protocol instead of UBF(A) or Erlang's native wire
+%%%      formats.</li>
+%%% <li> ABF, a.k.a the Avro Binary Format.  Similar to EBF, except
+%%%      that Avro's binary encoding is used for the wire protocol
+%%%      instead of UBF(A) or Erlang's native wire formats.</li>
 %%% </ul>
 %%%
 %%% There is no "stop" function.  To stop the server, instead stop the
@@ -88,15 +94,17 @@ start(Name, PluginModules, Port) ->
 %% <li> {maxconn, integer()} ... Maximum number of simultaneous TCP
 %%      connections allowed.
 %%      Default: 10,000. </li>
-%% <li> {proto, {ubf | ebf | jsf}} ... Enable the UBF, EBF, or JSF version
-%%      of the protocol's wire format.
+%% <li> {proto, {ubf | ebf | jsf | tbf | pbf | abf}} ... Enable the
+%%      UBF, EBF, JSF, TBF, PBF or ABF version of the protocol's wire
+%%      format.
 %%      Default: ubf. </li>
 %% <li> {registeredname, atom()} ... Set the name to be registered for
 %%      the TCP listener.  If undefined, a default name is automatically
 %%      registered.
 %%      Default: undefined. </li>
-%% <li> {serverhello, string()} ... Meta contract greeting string, sent
-%%      when a client first connects to the server.
+%% <li> {serverhello, string() | undefined} ... Meta contract greeting
+%%      string, sent when a client first connects to the server.  If
+%%      undefined, server hello is not sent to the client.
 %%      Default: "meta_server" </li>
 %% <li> {statelessrpc, true | false} ... run the stateless variety of
 %%      a UBF(B) contract.  A stateless contract is an extension of
@@ -169,7 +177,13 @@ start_ubf_listener(MetaContract, Port, Server, Options) ->
             ebf ->
                 {ebf_driver, 'ebf1.0', 4};
             jsf ->
-                {jsf_driver, 'jsf1.0', 0}
+                {jsf_driver, 'jsf1.0', 0};
+            tbf ->
+                {tbf_driver, 'tbf1.0', 0};
+            pbf ->
+                {pbf_driver, 'pbf1.0', 0};
+            abf -> %% @TODO ubf_driver -> abf_driver
+                {ubf_driver, 'abf1.0', 0}
         end,
     IdleTimer =
         case proplists:get_value(idletimer,Options,16#ffffffff) of
@@ -200,9 +214,13 @@ start_ubf_listener(MetaContract, Port, Server, Options) ->
                             contract_manager:start(ProcessOptions)
                     end,
                 Handler         = ubf_plugin_handler:start_handler(ProcessOptions),
-                %% (The next three lines are pretty devious but they
-                %% work !)  send hello back to the opening program
-                self() ! {self(), {DriverVersion, ?S(ServerHello), help()}},
+                %% Next few lines are pretty devious but they work!
+                if ServerHello =/= undefined ->
+                        %% send hello back to the opening program
+                        self() ! {self(), {DriverVersion, ?S(ServerHello), help()}};
+                   true ->
+                        noop
+                end,
                 %% swap the driver
                 contract_driver:relay(DriverModule, self(), ContractManager),
                 ContractManager !

@@ -25,8 +25,9 @@
           client process. </li>
    </ul>
   
-   <p>Note that this library can support UBF(A), EBF, and JSF transport.
-   See the <code>connect()</code> function arguments for details.</p>
+   <p>Note that this library can support UBF(A), EBF, JSF, TBF, PBF, and
+   ABF transport.  See the <code>connect()</code> function arguments for   
+details.</p>
   
    <p>This module also provides an alternative client-side function for
    calling's UBF contract manager and a UBF contract's implementation
@@ -43,7 +44,7 @@ procedure call to a contract's implementation.</p>
 <p>A DNS hostname or IP address.</p>
 
 <h3 class="typedecl"><a name="type-connect_options">connect_options()</a></h3>
-<p><tt>connect_options() = list({proto, ubf | ebf | jsf})</tt></p>
+<p><tt>connect_options() = list({proto, ubf | ebf | jsf | tbf | pbf | abf})</tt></p>
 <p>An OTP-style property list, see 'proplists' module for details.</p>
 
 <h3 class="typedecl"><a name="type-ip_address">ip_address()</a></h3>

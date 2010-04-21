@@ -12,8 +12,9 @@
 %%%        client process. </li>
 %%% </ul>
 %%%
-%%% Note that this library can support UBF(A), EBF, and JSF transport.
-%%% See the `connect()' function arguments for details.
+%%% Note that this library can support UBF(A), EBF, JSF, TBF, PBF, and
+%%% ABF transport.  See the `connect()' function arguments for
+%%% details.
 %%%
 %%% This module also provides an alternative client-side function for
 %%% calling's UBF contract manager and a UBF contract's implementation
@@ -42,7 +43,7 @@
 -import(contract_manager, [do_lpcIn/4, do_lpcOut/9, do_lpcOutError/6]).
 
 %% @type address() = string() | ip_address(). A DNS hostname or IP address.
-%% @type connect_options() = list({proto, ubf | ebf | jsf}).
+%% @type connect_options() = list({proto, ubf | ebf | jsf | tbf | pbf | abf}).
 %%       An OTP-style property list, see 'proplists' module for details.
 %% @type ip_address() = string() | tuple().  An IP address in string form,
 %%       e.g. "127.0.0.1" (IPv4) or "::1" (IPv6), or in tuple form (see
@@ -142,6 +143,7 @@ ubf_client(Parent, Host, Port, Options, Timeout)
     process_flag(trap_exit, true),
     DefaultConnectOptions =
         [binary, {nodelay, true}, {active, false}],
+    ServerHello = proplists:get_value(serverhello, Options, defined),
     {DriverModule, DriverContract, DriverVersion, ConnectOptions} =
         case proplists:get_value(proto,Options,ubf) of
             ubf ->
@@ -149,7 +151,13 @@ ubf_client(Parent, Host, Port, Options, Timeout)
             ebf ->
                 {ebf_driver, undefined, 'ebf1.0', DefaultConnectOptions++[{packet,4}]};
             jsf ->
-                {jsf_driver, jsf, 'jsf1.0', DefaultConnectOptions}
+                {jsf_driver, jsf, 'jsf1.0', DefaultConnectOptions};
+            tbf ->
+                {tbf_driver, tbf, 'tbf1.0', DefaultConnectOptions};
+            pbf ->
+                {pbf_driver, pbf, 'pbf1.0', DefaultConnectOptions};
+            abf -> %% @TODO ubf_driver -> abf_driver
+                {ubf_driver, undefined, 'abf1.0', DefaultConnectOptions}
         end,
     case gen_tcp:connect(Host, Port, ConnectOptions) of
         {ok, Socket} ->
@@ -163,18 +171,23 @@ ubf_client(Parent, Host, Port, Options, Timeout)
                                   %%, {send_timeout, Timeout}
                                   %%, {send_timeout_close, true}
                                  ]),
-            %% wait for a startup message
-            receive
-                {Driver, {DriverVersion, Service, _}} ->
-                    Parent ! {self(), {ok, Service}},
-                    ubf_client_loop(Parent, Driver);
-                {'EXIT', Driver, Reason} ->
-                    Parent ! {self(), {error, Reason}};
-                {'EXIT', Parent, Reason} ->
-                    exit(Driver, Reason)
-            after Timeout ->
-                    exit(Driver, timeout),
-                    Parent ! {self(), {error, timeout}}
+            if ServerHello =/= undefined ->
+                    %% wait for a startup message
+                    receive
+                        {Driver, {DriverVersion, Service, _}} ->
+                            Parent ! {self(), {ok, Service}},
+                            ubf_client_loop(Parent, Driver);
+                        {'EXIT', Driver, Reason} ->
+                            Parent ! {self(), {error, Reason}};
+                        {'EXIT', Parent, Reason} ->
+                            exit(Driver, Reason)
+                    after Timeout ->
+                            exit(Driver, timeout),
+                            Parent ! {self(), {error, timeout}}
+                    end;
+               true ->
+                    Parent ! {self(), {ok, undefined}},
+                    ubf_client_loop(Parent, Driver)
             end;
         {error, _E} ->
             Parent ! {self(), {error, socket}}

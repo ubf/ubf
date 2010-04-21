@@ -117,20 +117,21 @@ usually have no need to use these functions.</p>
                     | 'T-I08' | 'T-I16' | 'T-I32' | 'T-U64' | 'T-I64' | 'T-DOUBLE'
                     | 'T-BINARY' | 'T-STRUCT' | 'T-MAP' | 'T-SET' | 'T-LIST'.
   tbf::field_id() = integer().
-  tbf::field_data() = tbf::void() | tbf::boolean() | integer() | double() | binary() | binary() |
-                    | tbf::struct() | tbf::map() | tbf::set() | tbf::list().
+  tbf::field_data() = tbf::void() | tbf::boolean() | integer()
+                    | integer() | float()
+                    | binary() | tbf::struct() | tbf::map() | tbf::set() | tbf::list().
  
   tbf::map() = {'map', tbf::map_type(), [tbf::map_data()]}.
   tbf::map_type() = {tbf::field_type(), tbf::field_type()}.
   tbf::map_data() = {tbf::field_data(), tbf::field_data()}.
  
-  tbf::list() = {'list', tbf::list_type(), [tbf::list_data()]}.
-  tbf::list_type() = tbf::field_type().
-  tbf::list_data() = tbf::field_data().
- 
   tbf::set() = {'set', tbf::set_type(), [tbf::set_data()]}.
   tbf::set_type() = tbf::field_type().
   tbf::set_data() = tbf::field_data().
+ 
+  tbf::list() = {'list', tbf::list_type(), [tbf::list_data()]}.
+  tbf::list_type() = tbf::field_type().
+  tbf::list_data() = tbf::field_data().
  
   tbf::void() = 'undefined'.
   tbf::boolean() = 'true' | 'false'.</pre>
