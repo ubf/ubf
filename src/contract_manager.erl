@@ -19,7 +19,7 @@
 
 -module(contract_manager).
 
--export([start/1, start/2]).
+-export([start/1, start/3]).
 
 -export([do_rpcIn/4, do_rpcOut/9, do_eventOut/4]).
 -export([do_rpcOutError/5, do_rpcOutError/6]).
@@ -67,17 +67,17 @@
 %%%  @spec (list()) -> pid()
 
 start(SpawnOpts) when is_list(SpawnOpts) ->
-    start(false, SpawnOpts).
+    start(false, false, SpawnOpts).
 
-%%%  @spec (bool(), list()) -> pid()
+%%%  @spec (bool(), bool(), list()) -> pid()
 
-start(VerboseRPC, SpawnOpts) ->
-    proc_utils:spawn_link_opt_debug(fun() -> wait(VerboseRPC) end, SpawnOpts, ?MODULE).
+start(SimpleRPC, VerboseRPC, SpawnOpts) ->
+    proc_utils:spawn_link_opt_debug(fun() -> wait(SimpleRPC, VerboseRPC) end, SpawnOpts, ?MODULE).
 
-wait(VerboseRPC) ->
+wait(SimpleRPC, VerboseRPC) ->
     receive
         {start, Client, Server, State, Mod, TLogMod} ->
-            loop(Client, Server, State, Mod, VerboseRPC, TLogMod);
+            loop(Client, Server, State, Mod, SimpleRPC, VerboseRPC, TLogMod);
         stop ->
             exit({serverContractManager, stop})
     end.
@@ -89,28 +89,29 @@ wait(VerboseRPC) ->
 %%      <li> State is our state </li>
 %%      <li> Contract is our contract </li>
 %%      <li> Mod is our callback module </li>
+%%      <li> SimpleRPC is a boolean </li>
 %%      <li> VerboseRPC is a boolean </li>
 %% </ul>
 %%
 %% NOTE: The protocol manager terminates a protocol session.
 
-loop(Client, Server, State, Mod, VerboseRPC, TLogMod) ->
+loop(Client, Server, State, Mod, SimpleRPC, VerboseRPC, TLogMod) ->
     receive
         {Client, contract} ->
             S = contract(Mod),
             Client ! {self(), {contract, S}},
-            loop(Client, Server, State, Mod, VerboseRPC, TLogMod);
+            loop(Client, Server, State, Mod, SimpleRPC, VerboseRPC, TLogMod);
         {Client, Q} ->
-            do_rpc(Client, Server, State, Mod, Q, VerboseRPC, TLogMod);
+            do_rpc(Client, Server, State, Mod, Q, SimpleRPC, VerboseRPC, TLogMod);
         {event_out, Msg} = Event ->
             case do_eventOut(Msg, State, Mod, TLogMod) of
                 {true,TLog} ->
                     Client ! {self(), Event},
                     do_txlog(TLog),
-                    loop(Client, Server, State, Mod, VerboseRPC, TLogMod);
+                    loop(Client, Server, State, Mod, SimpleRPC, VerboseRPC, TLogMod);
                 {false,TLog} ->
                     do_txlog(TLog),
-                    loop(Client, Server, State, Mod, VerboseRPC, TLogMod)
+                    loop(Client, Server, State, Mod, SimpleRPC, VerboseRPC, TLogMod)
             end;
         stop ->
             Server ! stop;
@@ -118,13 +119,17 @@ loop(Client, Server, State, Mod, VerboseRPC, TLogMod) ->
             exit({serverContractManager, Reason})
     end.
 
-do_rpc(Client, Server, State, Mod, Q, VerboseRPC, TLogMod) ->
+do_rpc(Client, Server, State, Mod, Q, SimpleRPC, VerboseRPC, TLogMod) ->
     %% check contract
     case do_rpcIn(Q, State, Mod, TLogMod) of
         {error, Reply, TLog} ->
-            Client ! {self(), {Reply, State}},
+            if SimpleRPC ->
+                    Client ! {self(), Reply};
+               true ->
+                    Client ! {self(), {Reply, State}}
+            end,
             do_txlog(TLog),
-            loop(Client, Server, State, Mod, VerboseRPC, TLogMod);
+            loop(Client, Server, State, Mod, SimpleRPC, VerboseRPC, TLogMod);
         {ok, {_TLog, FSM}=TLogRef} ->
             if VerboseRPC ->
                     Server ! {self(), {rpc, {Q, FSM}}};
@@ -135,15 +140,23 @@ do_rpc(Client, Server, State, Mod, Q, VerboseRPC, TLogMod) ->
                 {Server, {rpcReply, Reply, ReplyState, same}} ->
                     %% check contract
                     {_, NewReply, TLog} = do_rpcOut(TLogRef, Q, State, Mod, Reply, ReplyState, ReplyState, Mod, TLogMod),
-                    Client ! {self(), {NewReply, ReplyState}},
+                    if SimpleRPC ->
+                            Client ! {self(), NewReply};
+                       true ->
+                            Client ! {self(), {NewReply, ReplyState}}
+                    end,
                     do_txlog(TLog),
-                    loop(Client, Server, ReplyState, Mod, VerboseRPC, TLogMod);
+                    loop(Client, Server, ReplyState, Mod, SimpleRPC, VerboseRPC, TLogMod);
                 {Server, {rpcReply, Reply, ReplyState, {new, NewMod, NewState}}} ->
                     %% check contract
                     {_, NewReply, TLog} = do_rpcOut(TLogRef, Q, State, Mod, Reply, ReplyState, NewState, NewMod, TLogMod),
-                    Client ! {self(), {NewReply, NewState}},
+                    if SimpleRPC ->
+                            Client ! {self(), NewReply};
+                       true ->
+                            Client ! {self(), {NewReply, NewState}}
+                    end,
                     do_txlog(TLog),
-                    loop(Client, Server, NewState, NewMod, VerboseRPC, TLogMod);
+                    loop(Client, Server, NewState, NewMod, SimpleRPC, VerboseRPC, TLogMod);
                 stop ->
                     exit(Server, stop)
             end

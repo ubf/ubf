@@ -10,26 +10,12 @@ To build
 1. Get and install an erlang system
    http://www.erlang.org
 
-2. Optionally, get and install erlang-rfc4627
-   http://www.lshift.net/blog/2007/02/17/json-and-json-rpc-for-erlang
-
-3. Change to the src directory and type make
+2. Change to the src directory and type make
    $ cd src
    $ make
 
-4. Run the unit test
+3. Run the unit test
    $ make check
-
-   
-**NOTE**
-   
-   Before make, one quick/kludge method to "install" is to obtain and
-   compile the erlang-rfc4627 code from LShift.  (Optionally, copy its
-   .beam files to a more permanent installation location.)
-
-   Then edit "src/Makefile" to change the "MY_ERLANG_RFC4627_EBIN"
-   variable to point to where the ebin directory that contains
-   erlang-rfc4627's .beam files.  Then run "make check-jsf".
 
 
 Documentation -- Where should I start?
@@ -100,58 +86,21 @@ used instead:
 The name "EBF" is short for "Erlang Binary Format".
 
 
-What is JSF?
-============
 
-JSF is an implementation of UBF(B) but does not use UBF(A) for
-client<->server communication.  Instead, JSON (RFC 4627) is used.
-
-"JSF" is short for "JavaScript Format".
-
-There is no agreed-upon convention for converting Erlang terms to JSON
-objects.  This library uses the convention set forth by LShift's JSON
-library (see URL above).  In addition, there are a couple of other
-conventions layered on top of LShift's implementation.
-
-   The UBF(B) contract checker has been modified to make a distinction
-   between an Erlang record and an arbitrary Erlang tuple.  An
-   experience Erlang developer would view such a distinction either
-   with skepticism or with approval.
-
-   For the skeptics, the contract author has the option of having the
-   UBF(B) contract compiler automatically generate Erlang -record()
-   definitions for appropriate tuples within the contract.  Such
-   record definitions are very convenient for developers on the Erlang
-   side of the world, but they introduce more complication to the
-   JavaScript side of the world.  For example, JavaScript does not
-   have a concept of an arbitrary atom, as Erlang does.  Also, the
-   JavaScript side must make a distinction between {foo, 42} and {bar,
-   42} when #foo is a record on the Erlang side but #bar is not.
-
-This extra convention creates something slightly messy-looking, if you
-look at the raw JSON passed back-and-forth.  The examples of the
-Erlang record {foo, 42} and the general tuple {bar, 42} would look
-like this:
-
-   record (defined in the contract as "foo() = #foo{attribute1 = term()};")
-
-      {"$R":"foo", "attribute1":42}
-
-   general tuple
-
-      {"$T":[{"$A":"bar"}, 42]}
-
-However, it requires very little JavaScript code to convert objects
-with the "$R", "$T", and "$A" notation (for records, tuples, and
-atoms) into whatever object is most convenient.
-
-
-What about JSON-RPC?
-====================
+What about JSF and JSON-RPC?
+============================
 
 See the ubf-jsonrpc open source repository
 http://github.com/norton/ubf-jsonrpc for details.  ubf-jsonrpc is a
-framework for integrating UBF and JSON-RPC.
+framework for integrating UBF, JSF, and JSON-RPC.
+
+
+What about TBF and Thrift?
+==========================
+
+See the ubf-thrift open source repository
+http://github.com/norton/ubf-thrift for details.  ubf-thrift is a
+framework for integrating UBF, TBF, and Thrift.
 
 
 What about ABNF?
@@ -236,7 +185,7 @@ To do (in medium term)
 
   
 To do (in long term)
-======================
+====================
 
   - support multiple listeners for a single ubf server
   - ubf contract generators for QuickCheck

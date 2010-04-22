@@ -144,6 +144,7 @@ ubf_client(Parent, Host, Port, Options, Timeout)
     DefaultConnectOptions =
         [binary, {nodelay, true}, {active, false}],
     ServerHello = proplists:get_value(serverhello, Options, defined),
+    SimpleRPC = proplists:get_value(simplerpc, Options, false),
     {DriverModule, DriverContract, DriverVersion, ConnectOptions} =
         case proplists:get_value(proto,Options,ubf) of
             ubf ->
@@ -176,7 +177,7 @@ ubf_client(Parent, Host, Port, Options, Timeout)
                     receive
                         {Driver, {DriverVersion, Service, _}} ->
                             Parent ! {self(), {ok, Service}},
-                            ubf_client_loop(Parent, Driver);
+                            ubf_client_loop(Parent, Driver, SimpleRPC);
                         {'EXIT', Driver, Reason} ->
                             Parent ! {self(), {error, Reason}};
                         {'EXIT', Parent, Reason} ->
@@ -187,7 +188,7 @@ ubf_client(Parent, Host, Port, Options, Timeout)
                     end;
                true ->
                     Parent ! {self(), {ok, undefined}},
-                    ubf_client_loop(Parent, Driver)
+                    ubf_client_loop(Parent, Driver, SimpleRPC)
             end;
         {error, _E} ->
             Parent ! {self(), {error, socket}}
@@ -204,18 +205,25 @@ ubf_client(Parent, Plugins, Server, Options, Timeout)
   when is_list(Plugins) andalso length(Plugins) > 0 andalso is_pid(Server) andalso is_list(Options) ->
     process_flag(trap_exit, true),
     Driver = ubf_server:start_term_listener(Server, Plugins, Options),
-    %% wait for a startup message
-    receive
-        {Driver, {'etf1.0', Service, _}} ->
-            Parent ! {self(), {ok, Service}},
-            ubf_client_loop(Parent, Driver);
-        {'EXIT', Driver, Reason} ->
-            Parent ! {self(), {error, Reason}};
-        {'EXIT', Parent, Reason} ->
-            exit(Driver, Reason)
-    after Timeout ->
-            exit(Driver, timeout),
-            Parent ! {self(), {error, timeout}}
+    ServerHello = proplists:get_value(serverhello, Options, defined),
+    SimpleRPC = proplists:get_value(simplerpc, Options, false),
+    if ServerHello =/= undefined ->
+            %% wait for a startup message
+            receive
+                {Driver, {'etf1.0', Service, _}} ->
+                    Parent ! {self(), {ok, Service}},
+                    ubf_client_loop(Parent, Driver, SimpleRPC);
+                {'EXIT', Driver, Reason} ->
+                    Parent ! {self(), {error, Reason}};
+                {'EXIT', Parent, Reason} ->
+                    exit(Driver, Reason)
+            after Timeout ->
+                    exit(Driver, timeout),
+                    Parent ! {self(), {error, timeout}}
+            end;
+       true ->
+            Parent ! {self(), {ok, undefined}},
+            ubf_client_loop(Parent, Driver, SimpleRPC)
     end.
 
 drop_fun(_Msg) ->
@@ -296,12 +304,12 @@ install_handler(Pid, Fun) ->
 
 %% @doc Entry function for the UBF client process.
 
-ubf_client_loop(Parent, Driver) ->
-    loop(Parent, Driver, fun drop_fun/1).
+ubf_client_loop(Parent, Driver, SimpleRPC) ->
+    loop(Parent, Driver, SimpleRPC, fun drop_fun/1).
 
 %% @doc Main loop for the UBF client process.
 
-loop(Parent, Driver, Fun) ->
+loop(Parent, Driver, SimpleRPC, Fun) ->
     receive
         stop ->
             Driver ! stop,
@@ -314,14 +322,17 @@ loop(Parent, Driver, Fun) ->
         {Driver, {event_out, Event}} ->
             %% asynchronous event handler
             Fun1 = Fun(Event),
-            loop(Parent, Driver, Fun1);
+            loop(Parent, Driver, SimpleRPC, Fun1);
         {From, {rpc, Q}} ->
             %% rpc
             Driver ! {self(), Q},
             receive
+                {Driver, R} when SimpleRPC ->
+                    From ! {self(), {reply, R}},
+                    loop(Parent, Driver, SimpleRPC, Fun);
                 {Driver, {R, S}} ->
                     From ! {self(), {reply, R, S}},
-                    loop(Parent, Driver, Fun);
+                    loop(Parent, Driver, SimpleRPC, Fun);
                 {Driver, {error, _} = Error} ->
                     From ! {self(), Error};
                 {Driver, Other} ->
@@ -345,10 +356,10 @@ loop(Parent, Driver, Fun) ->
             end;
         {From, {install, Fun1}} ->
             From ! {self(), ack},
-            loop(Parent, Driver, Fun1);
+            loop(Parent, Driver, SimpleRPC, Fun1);
         X ->
             io:format("*** Client loop dropping:~p~n",[X]),
-            loop(Parent, Driver, Fun)
+            loop(Parent, Driver, SimpleRPC, Fun)
     end.
 
 %% @spec (module(), term()) -> term()

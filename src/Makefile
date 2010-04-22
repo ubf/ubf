@@ -19,16 +19,7 @@ MODULES = \
 	ubf \
 	ubf_utils \
 	ubf_driver \
-	jsf \
-	jsf_utils \
-	jsf_driver \
 	ebf_driver \
-	tbf \
-	tbf_driver \
-	pbf \
-	pbf_driver \
-	abf \
-	abf_driver \
 	ubf_plugin_meta_stateful \
 	ubf_plugin_meta_stateless
 
@@ -49,10 +40,7 @@ TESTS = \
 	test_ubf \
 	test_ebf \
 	test_etf \
-	test_jsf \
-	ubf_test \
-	jsf_test \
-	jsf_test2
+	ubf_test
 
 EUNITTESTS = \
 	types_plugin \
@@ -72,24 +60,16 @@ PLUGINS = \
 # include erl make
 include ../priv/make/erl_make.mk
 
-MY_ERLANG_RFC4627_EBIN = ./example-symlink-to-erlang-rfc4627-ebin
-
-ERL_FLAGS += \
-	-pz $(MY_ERLANG_RFC4627_EBIN)
-
 # standard targets
 clean::
 	rm -f contract_lex.erl contract_yecc.erl
 
 check: all
 	-rm -f ./*.log
-	$(RUNERL1) -noinput -noshell -pz $(TEST_DIR) -pz $(EUNITTEST_DIR) -pz $(MY_ERLANG_RFC4627_EBIN) \
+	$(RUNERL1) -noinput -noshell -pz $(TEST_DIR) -pz $(EUNITTEST_DIR) \
 		-s ubf_test tests \
-		-s jsf_test tests \
-		-s jsf_test2 tests \
 		-s test_ubf tests \
 		-s test_ebf tests \
-		-s test_jsf tests \
 		-s test_etf tests \
 		-s stateless_plugin_test do_eunit \
 		-s stateful_plugin_test do_eunit \

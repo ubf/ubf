@@ -33,15 +33,6 @@ all_tests_(Setup,Teardown) ->
      Teardown,
      (stateless_plugin_test:all_actual_tests_(ubf,false,start))(not_used)
      ++ (stateless_plugin_test:all_actual_tests_(ebf,false,start))(not_used)
-     ++ case code:which(rfc4627) of
-            non_existing ->
-                [];
-            _ ->
-                [] %% @TODO fix failure (stateless_plugin_test:all_actual_tests_(jsf,false,start))(not_used)
-        end
-     ++ (stateless_plugin_test:all_actual_tests_(tbf,false,start))(not_used)
-     %% @TODO ++ (stateless_plugin_test:all_actual_tests_(pbf,false,start))(not_used)
-     %% @TODO ++ (stateless_plugin_test:all_actual_tests_(abf,false,start))(not_used)
      ++ (stateless_plugin_test:all_actual_tests_(etf,false,start))(not_used)
      ++ (stateless_plugin_test:all_actual_tests_(lpc,false,start))(not_used)
     }.

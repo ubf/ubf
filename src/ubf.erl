@@ -34,7 +34,7 @@
 -compile(export_all).
 
 -export([decode_init/0, decode/1, decode/2, encode/1, encode/2]).
--export([encode_print/1, ubf2term/1, deabstract/1]).
+-export([ubf2term/1, deabstract/1]).
 
 -import(lists, [foldl/3, reverse/1, map/2, seq/2, sort/1]).
 
@@ -179,11 +179,6 @@ collect_int(T, N, '-', Stack, Dict) ->
     decode1(T, push(-N, Stack), Dict).
 
 %%---------------------------------------------------------------------
-
-
-encode_print(X) ->
-    io:format("~s~n",[encode(X)]).
-
 
 encode(X) ->
     element(1, encode(X, dict:new())).

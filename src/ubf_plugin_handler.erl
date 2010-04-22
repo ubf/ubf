@@ -23,8 +23,8 @@ start_handler(SpawnOpts) ->
 
 wait() ->
     receive
-        {start, ContractManager, Manager, Mod, TLogMod} ->
-            loop(ContractManager, start, [], Manager, Mod, TLogMod);
+        {start, ContractManager, State, Data, Manager, Mod, TLogMod} ->
+            loop(ContractManager, State, Data, Manager, Mod, TLogMod);
         stop ->
             exit({serverPluginHandler, stop})
     end.

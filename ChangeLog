@@ -1,3 +1,9 @@
+2010-04-22 12:30 JST  norton
+        * src/contract_manager.erl, src/ubf.erl, src/ubf_client.erl,
+	src/ubf_plugin_handler.erl, src/ubf_server.erl: Refactor and move
+	non ubf/ebf drivers to their own repository.  Misc. modifications
+	for Thrift support.
+
 2010-04-21 12:45 JST  norton
         * include/ubf_impl.hrl, src/contract_manager.erl,
 	src/contract_manager_tlog.erl, src/ubf_client.erl,

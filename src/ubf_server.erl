@@ -60,30 +60,28 @@
 
 %% @spec (list(atom()), integer()) -> true
 %% @doc Start a server and a TCP listener on port Port and register
-%% all of the protocol implementation modules in the PluginModules
-%% list.
+%% all of the protocol implementation modules in the Plugins list.
 %%
 %% Here we start the server.
 
-start(PluginModules, Port) ->
-    start(undefined, PluginModules, Port).
+start(Plugins, Port) ->
+    start(undefined, Plugins, Port).
 
 %% @spec (atom(), list(atom()), integer()) -> true
 %% @doc Start a registered server and a TCP listener on port Port and
-%% register all of the protocol implementation modules in the
-%% PluginModules list. If Name is undefined, the server is not
-%% registered.
+%% register all of the protocol implementation modules in the Plugins
+%% list. If Name is undefined, the server is not registered.
 %%
 %% Here we start the server.
 
-start(Name, PluginModules, Port) ->
-    start(Name, PluginModules, Port, []).
+start(Name, Plugins, Port) ->
+    start(Name, Plugins, Port, []).
 
 %% @spec (atom(), list(atom()), integer(), proplist()) -> true
 %% @doc Start a registered server and a TCP listener on port Port with
 %% the Options properties list and register all of the protocol
-%% implementation modules in the PluginModules list.  If Name is
-%% undefined, the server is not registered
+%% implementation modules in the Plugins list.  If Name is undefined,
+%% the server is not registered
 %%
 %% Valid properties in the Options proplist are:
 %% <ul>
@@ -102,76 +100,83 @@ start(Name, PluginModules, Port) ->
 %%      the TCP listener.  If undefined, a default name is automatically
 %%      registered.
 %%      Default: undefined. </li>
+%% <li> {statelessrpc, true | false} ... Run the stateless variety of
+%%      a UBF(B) contract.  A stateless contract is an extension of
+%%      Joe Armstrong's original UBF server implementation.
+%%      Default: false. </li>
+%% <li> {startplugin, atom()} ... Set the starting plugin, set after a
+%%      client first connects to the server.  If not set, client may
+%%      select the service using the startSession() API.  There is
+%%      no default setting. </li>
 %% <li> {serverhello, string() | undefined} ... Meta contract greeting
 %%      string, sent when a client first connects to the server.  If
 %%      undefined, server hello is not sent to the client.
-%%      Default: "meta_server" </li>
-%% <li> {statelessrpc, true | false} ... run the stateless variety of
-%%      a UBF(B) contract.  A stateless contract is an extension of
-%%      Joe Armstrong's original UBF server implementation.
-%%      Default: false.
-%%      TO-DO: JoeNorton, add more? </li>
+%%      Default: "meta_server". </li>
+%% <li> {simplerpc, true | false} ... Set the simple RPC mode.  If
+%%      true, server returns only the rpc reply to client.  If false,
+%%      server returns the rpc reply and next state to client.
+%%      Default: false. </li>
+%% <li> {verboserpc, true | false} ... Set the verbose RPC mode.  If
+%%      true, server calls the plugin handler with the rpc request and
+%%      matched contract types.  If false, server calls the plugin
+%%      handler only with the rpc request.
+%%      Default: false. </li>
 %% <li> {tlog_module, atom() | {atom(), boolean()}} ... Set the transaction
 %%      log callback module and optionally control the built-in calls
 %%      by 'contract_manager_tlog' to the 'error_logger' module.
 %%      If the 2-tuple representation is used and the boolean() member is
 %%      false, then calls to 'error_logger' will not be attempted.
 %%      Default: undefined. </li>
-%% <li> {verboserpc, true | false} ... Set the verbose RPC mode.
-%%      Default: false. </li>
-%%
-%% <li> TO-DO: JoeNorton, add more? </li>
+%% <li> {process_options, list()} ... Specify additional options used
+%%      for spawning server and/or client related erlang processes.
+%%      Typically used to specify non-default, garbage collection options.
+%%      Default: []. </li>
 %% </ul>
-
-start(Name, PluginModules, Port, Options) ->
-    start_registered(Name, fun() -> start_server(PluginModules, Port, Options) end).
+%%
+start(Name, Plugins, Port, Options) ->
+    start_registered(Name, fun() -> start_server(Plugins, Port, Options) end).
 
 %% @spec (list(atom()), integer()) -> true
 %% @doc See start/2, but also link the server processs to the caller.
 
-start_link(PluginModules, Port) ->
-    start_link(undefined, PluginModules, Port).
+start_link(Plugins, Port) ->
+    start_link(undefined, Plugins, Port).
 
 %% @spec (atom(), list(atom()), integer()) -> true
 %% @doc See start/3, but also link the server processs to the caller.
 
-start_link(Name, PluginModules, Port) ->
-    start_link(Name, PluginModules, Port, []).
+start_link(Name, Plugins, Port) ->
+    start_link(Name, Plugins, Port, []).
 
 %% @spec (atom(), list(atom()), integer(), proplist()) -> true
 %% @doc See start/4, but also link the server processs to the caller.
 
-start_link(Name, PluginModules, Port, Options) ->
-    proc_lib:start_link(?MODULE, init, [Name, self(), PluginModules, Port, Options]).
+start_link(Name, Plugins, Port, Options) ->
+    proc_lib:start_link(?MODULE, init, [Name, self(), Plugins, Port, Options]).
 
-init(Name, Parent, PluginModules, Port, Options) ->
+init(Name, Parent, Plugins, Port, Options) ->
     if Name /= undefined ->
             register(Name, self());
        true ->
             noop
     end,
     proc_lib:init_ack(Parent, {ok, self()}),
-    start_server(PluginModules, Port, Options).
+    start_server(Plugins, Port, Options).
 
-start_server(PluginModules, Port, Options) ->
-    SortedPluginModules = lists:usort(PluginModules),
-    {MetaContract,Server} =
-        case proplists:get_value(statelessrpc,Options,false) of
-            false ->
-                {ubf_plugin_meta_stateful:new(SortedPluginModules), self()};
-            true ->
-                {ubf_plugin_meta_stateless:new(SortedPluginModules), undefined}
-        end,
+start_server(Plugins, Port, Options) ->
     %% set up a UBF listener on Port
-    {ok, ListenerPid} = start_ubf_listener(MetaContract, Port, Server, Options),
-    ubf_plugin_handler:manager(ListenerPid, MetaContract, [ListenerPid]).
+    {ok, ListenerPid, MetaPlugin} = start_ubf_listener(self(), Plugins, Port, Options),
+    ubf_plugin_handler:manager(ListenerPid, MetaPlugin, [ListenerPid]).
 
-start_ubf_listener(MetaContract, Port, Server, Options) ->
-    {ServerHello, VerboseRPC, TLogModule, ProcessOptions} =
-        basic_listener_options(MetaContract, Options),
+start_ubf_listener(Server0, Plugins, Port, Options) ->
+    {MetaPlugin, StartPlugin, Server
+     , IdleTimer, MaxConn, Proto, RegisteredName
+     , StatelessRPC, ServerHello, SimpleRPC, VerboseRPC
+     , TLogMod, ProcessOptions
+    } = listener_options(Server0, Plugins, Options),
 
-    {DriverModule, DriverVersion, PacketType} =
-        case proplists:get_value(proto,Options,ubf) of
+    {DriverMod, DriverVersion, PacketType} =
+        case Proto of
             ubf ->
                 {ubf_driver, 'ubf1.0', 0};
             ebf ->
@@ -185,35 +190,23 @@ start_ubf_listener(MetaContract, Port, Server, Options) ->
             abf -> %% @TODO ubf_driver -> abf_driver
                 {ubf_driver, 'abf1.0', 0}
         end,
-    IdleTimer =
-        case proplists:get_value(idletimer,Options,16#ffffffff) of
-            infinity ->
-                16#ffffffff;
-            Else when Else > 16#ffffffff ->
-                16#ffffffff;
-            Else ->
-                Else
-        end,
+
     ServerFun =
         fun(Socket) ->
-                %% This gets spawned every time a new
-                %% socket connection is is established on
-                %% this port.
-                %%
-                %% We have to start 2 additional
-                %% processes - a contract manager and a
-                %% plugin handler The driver (This
-                %% process) sends messages to the
-                %% contract manager The contract manager
-                %% sends messages to the handler.
+                %% This gets spawned every time a new socket
+                %% connection is is established on this port.
+                {StartState, StartData, StartManagerPid}
+                    = handler_state(MetaPlugin, StartPlugin, Server, StatelessRPC),
+
+                %% We have to start 2 additional processes - a
+                %% contract manager and a plugin handler. The driver
+                %% (This process) sends messages to the contract
+                %% manager. The contract manager sends messages to the
+                %% handler.
                 Driver          = self(),
-                ContractManager =
-                    if VerboseRPC ->
-                            contract_manager:start(true, ProcessOptions);
-                       true ->
-                            contract_manager:start(ProcessOptions)
-                    end,
+                ContractManager = contract_manager:start(SimpleRPC, VerboseRPC, ProcessOptions),
                 Handler         = ubf_plugin_handler:start_handler(ProcessOptions),
+
                 %% Next few lines are pretty devious but they work!
                 if ServerHello =/= undefined ->
                         %% send hello back to the opening program
@@ -222,14 +215,14 @@ start_ubf_listener(MetaContract, Port, Server, Options) ->
                         noop
                 end,
                 %% swap the driver
-                contract_driver:relay(DriverModule, self(), ContractManager),
+                contract_driver:relay(DriverMod, self(), ContractManager),
                 ContractManager !
-                    {start, Driver, Handler, start, MetaContract, TLogModule},
+                    {start, Driver, Handler, StartState, StartPlugin, TLogMod},
                 Handler !
-                    {start, ContractManager, Server, MetaContract, TLogModule},
-                %% and activate the loop that will now
-                %% execute the last two statements :-)
-                case (catch contract_driver:loop(DriverModule, MetaContract, self(), Socket, IdleTimer)) of
+                    {start, ContractManager, StartState, StartData, StartManagerPid, StartPlugin, TLogMod},
+                %% and activate the loop that will now execute the
+                %% last two statements :-)
+                case (catch contract_driver:loop(DriverMod, StartPlugin, self(), Socket, IdleTimer)) of
                     {'EXIT', normal} ->
                         exit(normal);
                     {'EXIT', Reason} ->
@@ -239,45 +232,41 @@ start_ubf_listener(MetaContract, Port, Server, Options) ->
                         exit(Reason)
                 end
         end,
-    MaxConn =
-        proplists:get_value(maxconn,Options,10000),
 
-    start_raw_server(proplists:get_value(registeredname,Options),
-                     Port,
-                     MaxConn,
-                     ProcessOptions,
-                     ServerFun,
-                     PacketType,
-                     0).
+    {ok, Pid} = start_raw_server(RegisteredName,
+                                 Port,
+                                 MaxConn,
+                                 ProcessOptions,
+                                 ServerFun,
+                                 PacketType,
+                                 0),
+    {ok, Pid, MetaPlugin}.
 
-start_term_listener(Server0, PluginModules, Options) ->
-    SortedPluginModules = lists:usort(PluginModules),
-    {MetaContract,Server} =
-        case proplists:get_value(statelessrpc,Options,false) of
-            false ->
-                {ubf_plugin_meta_stateful:new(SortedPluginModules), Server0};
-            true ->
-                {ubf_plugin_meta_stateless:new(SortedPluginModules), undefined}
-        end,
+start_term_listener(Server0, Plugins, Options) ->
+    {MetaPlugin, StartPlugin, Server
+     , _IdleTimer, _MaxConn, _Proto, _RegisteredName
+     , StatelessRPC, ServerHello, SimpleRPC, VerboseRPC
+     , TLogMod, ProcessOptions
+    } = listener_options(Server0, Plugins, Options),
 
-    {ServerHello, VerboseRPC, TLogModule, ProcessOptions} =
-        basic_listener_options(MetaContract, Options),
+    {StartState, StartData, StartManagerPid}
+        = handler_state(MetaPlugin, StartPlugin, Server, StatelessRPC),
 
     Driver = self(),
-    ContractManager =
-        if VerboseRPC ->
-                contract_manager:start(true, ProcessOptions);
-           true ->
-                contract_manager:start(ProcessOptions)
-        end,
+    ContractManager = contract_manager:start(SimpleRPC, VerboseRPC, ProcessOptions),
     Handler = ubf_plugin_handler:start_handler(ProcessOptions),
 
-    self() ! {ContractManager, {'etf1.0', ?S(ServerHello), help()}},
+    if ServerHello =/= undefined ->
+            %% send hello back to the opening program
+            self() ! {ContractManager, {'etf1.0', ?S(ServerHello), help()}};
+       true ->
+            noop
+    end,
 
-    ContractManager ! {start, Driver, Handler,
-                       start, MetaContract, TLogModule},
-    Handler ! {start, ContractManager,
-               Server, MetaContract, TLogModule},
+    ContractManager !
+        {start, Driver, Handler, StartState, StartPlugin, TLogMod},
+    Handler !
+        {start, ContractManager, StartState, StartData, StartManagerPid, StartPlugin, TLogMod},
 
     ContractManager.
 
@@ -326,9 +315,70 @@ start_proc(Parent, Name, F) ->
             F()
     end.
 
-basic_listener_options(MetaContract, Options) ->
-    {proplists:get_value(serverhello, Options, MetaContract:contract_name()),
-     proplists:get_value(verboserpc, Options, false),
-     proplists:get_value(tlog_module, Options, ?UBF_TLOG_MODULE_DEFAULT),
-     proplists:get_value(process_options, Options, [])}.
+listener_options(Server0, Plugins, Options) ->
+    SortedPlugins = lists:usort(Plugins),
+    StatelessRPC = proplists:get_value(statelessrpc, Options, false),
 
+    {MetaPlugin,Server} =
+        case StatelessRPC of
+            false ->
+                {ubf_plugin_meta_stateful:new(SortedPlugins), Server0};
+            true ->
+                {ubf_plugin_meta_stateless:new(SortedPlugins), undefined}
+        end,
+    StartPlugin = proplists:get_value(startplugin, Options, MetaPlugin),
+
+    IdleTimer =
+        case proplists:get_value(idletimer, Options, infinity) of
+            infinity ->
+                16#ffffffff;
+            Else when Else > 16#ffffffff ->
+                16#ffffffff;
+            Else ->
+                Else
+        end,
+
+    {MetaPlugin
+     , StartPlugin
+     , Server
+     , IdleTimer
+     , proplists:get_value(maxconn, Options, 10000)
+     , proplists:get_value(proto, Options, ubf)
+     , proplists:get_value(registeredname, Options, undefined)
+     , StatelessRPC
+     , proplists:get_value(serverhello, Options, StartPlugin:contract_name())
+     , proplists:get_value(simplerpc, Options, false)
+     , proplists:get_value(verboserpc, Options, false)
+     , proplists:get_value(tlog_module, Options, ?UBF_TLOG_MODULE_DEFAULT)
+     , proplists:get_value(process_options, Options, [])
+    }.
+
+handler_state(MetaPlugin, StartPlugin, Server, StatelessRPC) ->
+    %% start state, data, and pid
+    if StartPlugin =/= MetaPlugin ->
+            StartSession = {startSession, ?S(StartPlugin:contract_name()), []},
+            case StatelessRPC of
+                false ->
+                    case MetaPlugin:handlerRpc(start, StartSession, [], Server) of
+                        {changeContract, {ok, _}, StartPlugin, StartState, StartData, StartManagerPid} ->
+                            noop;
+                        {{error, Reason}, _, _} ->
+                            StartState = StartData = StartManagerPid = undefined,
+                            exit(Reason)
+                    end;
+                true ->
+                    case MetaPlugin:handlerRpc(StartSession) of
+                        {changeContract, {ok, _}, StartPlugin, StartState, StartData} ->
+                            StartManagerPid = undefined,
+                            noop;
+                        {error, Reason} ->
+                            StartState = StartData = StartManagerPid = undefined,
+                            exit(Reason)
+                    end
+            end;
+       true ->
+            StartState = start,
+            StartData = [],
+            StartManagerPid = Server
+    end,
+    {StartState, StartData, StartManagerPid}.
