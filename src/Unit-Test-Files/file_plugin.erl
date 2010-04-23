@@ -26,6 +26,7 @@
 %%% </ol>
 
 -module(file_plugin).
+-behavior(ubf_plugin_stateful).
 
 -include("ubf.hrl").
 

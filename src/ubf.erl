@@ -28,89 +28,76 @@
 %% <li> [ ]            -> List </li>
 %% <li> {...}          -> Tuple </li>
 %% </ul>
+%%
 
 -module(ubf).
+-behavior(contract_proto).
 
--compile(export_all).
-
--export([decode_init/0, decode/1, decode/2, encode/1, encode/2]).
--export([ubf2term/1, deabstract/1]).
+-export([proto_vsn/0, proto_driver/0, proto_packet_type/0]).
+-export([encode/1, encode/2]).
+-export([decode_init/0, decode/1, decode/2, decode/3]).
+-export([deabstract/1]).
 
 -import(lists, [foldl/3, reverse/1, map/2, seq/2, sort/1]).
 
-bug() ->
-    C = decode("{'abc"),
-    decode("d'}$", C).
 
-%% Decoding rules
-%% {'#S', String} -> String
-%% Int            -> Int
-%% [ ]            -> List
-%% {...}          -> Tuple
-
-%% decode_init() -> Cont
-%% decode(Str, Cont) -> {more, Cont'} | {ok, Term, Str}
-%% encode(Str) -> Bytes
-
-%% intro() -> single line terminated with \n
+%%---------------------------------------------------------------------
+proto_vsn()         -> 'ubf1.0'.
+proto_driver()      -> ubf_driver.
+proto_packet_type() -> 0.
 
 
-ubf2term(Str) ->
-    {ok, Term, _} = decode(Str),
-    Term.
-
-decode_init() -> {more, fun(I) -> decode(I, [[]], dict:new()) end}.
+%%---------------------------------------------------------------------
+decode_init() ->
+    {more, fun(I) -> decode1(I, [[]], dict:new()) end}.
 
 decode(Str) ->
-    %% io:format("decode:~s~n",[Str]),
-    decode(Str, decode_init()).
+    decode(Str, ?MODULE).
 
-decode(S, {more, Fun}) ->
-    %% io:format("decode:~s~n",[S]),
+decode(Str, Mod) ->
+    decode(Str, Mod, decode_init()).
+
+decode(S, _Mod, {more, Fun}) ->
     Fun(S).
 
-decode1(S, Stack, D) ->
-    %% io:format("AAAHere:|~s| Stack=~p~n", [S,Stack]),
-    decode(S, Stack, D).
-
-decode([$'|T], Stack, Dict) ->
+decode1([$'|T], Stack, Dict) ->
     get_stuff(T, $', [], Stack, Dict);
-decode([$~|T], [[Int|Stack]|S1], Dict) when is_integer(Int), Int >= 0 ->
+decode1([$~|T], [[Int|Stack]|S1], Dict) when is_integer(Int), Int >= 0 ->
     collect_binary(Int, T, [], [Stack|S1], Dict);
-decode([$~|_T], _Stack, _Dict) ->
+decode1([$~|_T], _Stack, _Dict) ->
     exit(tilde);
-decode([$%|T], Stack, Dict) ->
+decode1([$%|T], Stack, Dict) ->
     get_stuff(T, $%, [], Stack, Dict);
-decode([$"|T], Stack, Dict) ->
+decode1([$"|T], Stack, Dict) ->
     get_stuff(T, $", [], Stack, Dict);
-decode([$`|T], Stack, Dict) ->
+decode1([$`|T], Stack, Dict) ->
     get_stuff(T, $`, [], Stack, Dict);
-decode([$-|T], Stack, Dict) ->
+decode1([$-|T], Stack, Dict) ->
     collect_int(T, 0, '-', Stack, Dict);
-decode([H|T], Stack, Dict) when $0 =< H, H =< $9 ->
+decode1([H|T], Stack, Dict) when $0 =< H, H =< $9 ->
     collect_int(T, H-$0, '+', Stack, Dict);
-decode([${|T], Stack, Dict) ->
+decode1([${|T], Stack, Dict) ->
     decode1(T, [[]|Stack], Dict);
-decode([$}|T], [H|Stack], Dict) ->
+decode1([$}|T], [H|Stack], Dict) ->
     decode1(T, push(list_to_tuple(reverse(H)),Stack), Dict);
-decode([$&|T], [[H1,H2|T1] | Stack], Dict) ->
+decode1([$&|T], [[H1,H2|T1] | Stack], Dict) ->
     decode1(T, [[[H1|H2]|T1]|Stack], Dict);
-decode([$#|T], Stack, Dict) ->
+decode1([$#|T], Stack, Dict) ->
     decode1(T, push([], Stack), Dict);
-decode([$$|T], [[X]], _Dict) ->
+decode1([$$|T], [[X]], _Dict) ->
     {ok, X, T};
-decode([$>,Key|T], [[Val|R]|Stack], Dict) ->
+decode1([$>,Key|T], [[Val|R]|Stack], Dict) ->
     decode1(T, [R|Stack], dict:store(Key,Val,Dict));
-decode([H|T], Stack, Dict) ->
+decode1([H|T], Stack, Dict) ->
     case special(H) of
         true ->
             decode1(T, Stack, Dict);
         false ->
             decode1(T, push(dict:fetch(H, Dict), Stack), Dict)
     end;
-decode([], Stack, Dict) ->
+decode1([], Stack, Dict) ->
     {more, fun(I) -> decode1(I, Stack, Dict) end};
-decode(X, Stack, Dict) ->
+decode1(X, Stack, Dict) ->
     io:format("OOOOO:~p ~p ~p~n",[X, Stack, Dict]),
     exit(aaaaaa).
 
@@ -127,8 +114,7 @@ get_stuff([$%|T], $%, _L, Stack, Dict)  ->
 get_stuff([H|T], Stop, L, Stack, Dict) ->
     get_stuff(T, Stop, [H|L], Stack, Dict);
 get_stuff([], Stop, L, Stack, Dict) ->
-    {more, fun(I) ->
-                   get_stuff(I, Stop, L, Stack, Dict) end}.
+    {more, fun(I) -> get_stuff(I, Stop, L, Stack, Dict) end}.
 
 collect_binary(0, T, L, Stack, Dict) ->
     expect_tilde(T, push(list_to_binary(reverse(L)),Stack), Dict);
@@ -138,7 +124,7 @@ collect_binary(N, [], L, Stack, Dict) ->
     {more, fun(I) -> collect_binary(N, I, L, Stack, Dict) end}.
 
 expect_tilde([$~|T], Stack, Dict) ->
-    decode(T, Stack, Dict);
+    decode1(T, Stack, Dict);
 expect_tilde([], Stack, Dict) ->
     {more, fun(I) -> expect_tilde(I, Stack, Dict) end};
 expect_tilde([H|_], _, _) ->
@@ -178,13 +164,15 @@ collect_int(T, N, '+', Stack, Dict) ->
 collect_int(T, N, '-', Stack, Dict) ->
     decode1(T, push(-N, Stack), Dict).
 
+
 %%---------------------------------------------------------------------
-
 encode(X) ->
-    element(1, encode(X, dict:new())).
+    encode(X, ?MODULE).
 
+encode(X, _Mod) ->
+    element(1, encode1(X, dict:new())).
 
-encode(X, Dict0) ->
+encode1(X, Dict0) ->
     {Dict1, L1} = initial_dict(X, Dict0),
     case (catch do_encode(X, Dict1)) of
         {'EXIT', What} ->
@@ -197,7 +185,6 @@ encode(X, Dict0) ->
 initial_dict(X, Dict0) ->
     Free = seq(32,255) -- special_chars(),
     Most = analyse(X),
-    %% io:format("Analysis:~p~n",[Most]),
     load_dict(Most, Free, Dict0, []).
 
 load_dict([{N,X}|T], [Key|T1], Dict0, L) when N > 0->
@@ -208,8 +195,8 @@ load_dict(_, _, Dict, L) ->
 
 analyse(T) ->
     KV = dict:to_list(analyse(T, dict:new())),
-    %% The Range is the Number of things times its size
-    %% If the size is greater than 0
+    %% The Range is the Number of things times its size.  If the size
+    %% is greater than 0
     KV1 = map(fun rank/1, KV),
     reverse(sort(KV1)).
 
@@ -273,29 +260,25 @@ do_encode(T, Dict) when is_tuple(T) ->
 do_encode([], _Dict) ->
     $#.
 
-encode_list([H|T], Dict, L) ->
-    encode_list(T, Dict, [$&,do_encode(H, Dict)|L]);
-encode_list([], _Dict, L) ->
-    reverse(L).
-
 encode_tuple(N, T, _Dict) when N > size(T) ->
     "";
 encode_tuple(N, T, Dict) ->
     S1 = do_encode(element(N, T), Dict),
-    S2 = encode_tuple(N+1, T,  Dict),
+    S2 = encode_tuple(N+1, T, Dict),
     [S1,possible_comma(N, T),S2].
 
 possible_comma(N, T) when N < size(T) -> $,;
 possible_comma(_, _)                  -> [].
 
-%% The ascii printables are in the range 32..126 includive
-
+%% The ascii printables are in the range 32..126 inclusive
 add_string([$\\|T], Quote)   -> [$\\,$\\|add_string(T, Quote)];
 add_string([Quote|T], Quote) -> [$\\,Quote|add_string(T, Quote)];
 add_string([H|T], Quote) when H >= 0,  H=< 255 -> [H|add_string(T, Quote)];
 add_string([H|_], _Quote) -> exit({string_character,H});
 add_string([], _)            -> [].
 
+
+%%---------------------------------------------------------------------
 deabstract({'#S',S}) -> S;
 deabstract(T) when is_tuple(T) ->
     list_to_tuple(map(fun deabstract/1, tuple_to_list(T)));

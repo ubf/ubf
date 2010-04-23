@@ -128,9 +128,8 @@ the server is not registered</p>
   <li> {maxconn, integer()} ... Maximum number of simultaneous TCP
        connections allowed.
        Default: 10,000. </li>
-  <li> {proto, {ubf | ebf | jsf | tbf | pbf | abf}} ... Enable the
-       UBF, EBF, JSF, TBF, PBF or ABF version of the protocol's wire
-       format.
+  <li> {proto, {ubf | ebf | atom()}} ... Enable the UBF, EBF, or
+       an alternative protocol wire format.
        Default: ubf. </li>
   <li> {registeredname, atom()} ... Set the name to be registered for
        the TCP listener.  If undefined, a default name is automatically

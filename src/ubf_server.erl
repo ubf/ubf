@@ -92,9 +92,8 @@ start(Name, Plugins, Port) ->
 %% <li> {maxconn, integer()} ... Maximum number of simultaneous TCP
 %%      connections allowed.
 %%      Default: 10,000. </li>
-%% <li> {proto, {ubf | ebf | jsf | tbf | pbf | abf}} ... Enable the
-%%      UBF, EBF, JSF, TBF, PBF or ABF version of the protocol's wire
-%%      format.
+%% <li> {proto, {ubf | ebf | atom()}} ... Enable the UBF, EBF, or
+%%      an alternative protocol wire format.
 %%      Default: ubf. </li>
 %% <li> {registeredname, atom()} ... Set the name to be registered for
 %%      the TCP listener.  If undefined, a default name is automatically
@@ -175,21 +174,9 @@ start_ubf_listener(Server0, Plugins, Port, Options) ->
      , TLogMod, ProcessOptions
     } = listener_options(Server0, Plugins, Options),
 
-    {DriverMod, DriverVersion, PacketType} =
-        case Proto of
-            ubf ->
-                {ubf_driver, 'ubf1.0', 0};
-            ebf ->
-                {ebf_driver, 'ebf1.0', 4};
-            jsf ->
-                {jsf_driver, 'jsf1.0', 0};
-            tbf ->
-                {tbf_driver, 'tbf1.0', 0};
-            pbf ->
-                {pbf_driver, 'pbf1.0', 0};
-            abf -> %% @TODO ubf_driver -> abf_driver
-                {ubf_driver, 'abf1.0', 0}
-        end,
+    DriverMod = Proto:proto_driver(),
+    DriverVersion = Proto:proto_vsn(),
+    DriverPacketType = Proto:proto_packet_type(),
 
     ServerFun =
         fun(Socket) ->
@@ -238,7 +225,7 @@ start_ubf_listener(Server0, Plugins, Port, Options) ->
                                  MaxConn,
                                  ProcessOptions,
                                  ServerFun,
-                                 PacketType,
+                                 DriverPacketType,
                                  0),
     {ok, Pid, MetaPlugin}.
 

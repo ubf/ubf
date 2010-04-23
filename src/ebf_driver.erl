@@ -11,6 +11,7 @@
 %% <img src="../priv/doc/ubf-flow-01.png"></img>
 
 -module(ebf_driver).
+-behavior(contract_driver).
 
 -export([start/1, init/1, encode/2, decode/4]).
 

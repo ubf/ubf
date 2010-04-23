@@ -145,25 +145,23 @@ ubf_client(Parent, Host, Port, Options, Timeout)
         [binary, {nodelay, true}, {active, false}],
     ServerHello = proplists:get_value(serverhello, Options, defined),
     SimpleRPC = proplists:get_value(simplerpc, Options, false),
-    {DriverModule, DriverContract, DriverVersion, ConnectOptions} =
-        case proplists:get_value(proto,Options,ubf) of
-            ubf ->
-                {ubf_driver, undefined, 'ubf1.0', DefaultConnectOptions};
-            ebf ->
-                {ebf_driver, undefined, 'ebf1.0', DefaultConnectOptions++[{packet,4}]};
-            jsf ->
-                {jsf_driver, jsf, 'jsf1.0', DefaultConnectOptions};
-            tbf ->
-                {tbf_driver, tbf, 'tbf1.0', DefaultConnectOptions};
-            pbf ->
-                {pbf_driver, pbf, 'pbf1.0', DefaultConnectOptions};
-            abf -> %% @TODO ubf_driver -> abf_driver
-                {ubf_driver, undefined, 'abf1.0', DefaultConnectOptions}
+    Proto = proplists:get_value(proto,Options,ubf),
+
+    DriverMod = Proto:proto_driver(),
+    DriverVersion = Proto:proto_vsn(),
+    DriverPacketType = Proto:proto_packet_type(),
+
+    ConnectOptions =
+        if DriverPacketType =/= 0 ->
+                DefaultConnectOptions++[{packet,DriverPacketType}];
+           true ->
+                DefaultConnectOptions
         end,
+
     case gen_tcp:connect(Host, Port, ConnectOptions) of
         {ok, Socket} ->
             %% start a driver
-            Driver = DriverModule:start(DriverContract),
+            Driver = DriverMod:start(Proto),
             %% get the socket to send messages to the driver
             gen_tcp:controlling_process(Socket, Driver),
             %% Kick off the driver

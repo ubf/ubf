@@ -1,8 +1,10 @@
 -module(irc_plugin).
+-behavior(ubf_plugin_stateful).
 
 -include("ubf.hrl").
 
--export([handlerStart/2, handlerRpc/4, handlerStop/3,
+-export([info/0, description/0,
+         handlerStart/2, handlerRpc/4, handlerStop/3,
          managerStart/1, managerRpc/2]).
 
 -import(ubf_server, [sendEvent/2, ask_manager/2]).

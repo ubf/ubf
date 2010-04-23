@@ -1,7 +1,8 @@
 {application,ubf}.
 {packages,[]}.
 {modules,[contract_driver,contract_lex,contract_manager,contract_manager_tlog,
-          contract_parser,contract_yecc,contracts,contracts_abnf,ebf_driver,
-          proc_socket_server,proc_utils,ubf,ubf_client,ubf_driver,
-          ubf_plugin_handler,ubf_plugin_meta_stateful,
-          ubf_plugin_meta_stateless,ubf_server,ubf_utils]}.
+          contract_parser,contract_proto,contract_yecc,contracts,
+          contracts_abnf,ebf,ebf_driver,proc_socket_server,proc_utils,ubf,
+          ubf_client,ubf_driver,ubf_plugin_handler,ubf_plugin_meta_stateful,
+          ubf_plugin_meta_stateless,ubf_plugin_stateful,ubf_plugin_stateless,
+          ubf_server,ubf_utils]}.

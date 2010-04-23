@@ -14,14 +14,18 @@ MODULES = \
 	contracts \
 	contracts_abnf \
 	contract_driver \
+	contract_proto \
 	contract_manager \
 	contract_manager_tlog \
 	ubf \
 	ubf_utils \
 	ubf_driver \
+	ebf \
 	ebf_driver \
 	ubf_plugin_meta_stateful \
-	ubf_plugin_meta_stateless
+	ubf_plugin_meta_stateless \
+	ubf_plugin_stateful \
+	ubf_plugin_stateless
 
 PRIVS = \
 

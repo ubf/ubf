@@ -1,4 +1,5 @@
 -module(stateless_plugin).
+-behavior(ubf_plugin_stateless).
 
 -include("ubf.hrl").
 

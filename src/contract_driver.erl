@@ -6,6 +6,15 @@
 
 -export([start/2, relay/3, loop/4, loop/5, loop/6]).
 
+%% Interface Functions
+-export([behaviour_info/1]).
+
+behaviour_info(callbacks) ->
+    [{init,1}
+     , {encode,2}
+     , {decode,4}
+    ].
+
 start(Module, Contract) ->
     receive
         {start, Pid, Socket} ->

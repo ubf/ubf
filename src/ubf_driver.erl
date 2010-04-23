@@ -3,6 +3,7 @@
 %% <img src="../priv/doc/ubf-flow-01.png"></img>
 
 -module(ubf_driver).
+-behavior(contract_driver).
 
 -export([start/1, init/1, encode/2, decode/4]).
 
@@ -12,17 +13,17 @@ start(Contract) ->
 init(_Contract) ->
     ubf:decode_init().
 
-encode(_Contract, Term) ->
-    [ubf:encode(Term), "\n"].
+encode(Contract, Term) ->
+    [ubf:encode(Term, Contract), "\n"].
 
 decode(Contract, Cont, Binary, CallBack) ->
     List = binary_to_list(Binary),
-    Cont1 = ubf:decode(List, Cont),
+    Cont1 = ubf:decode(List, Contract, Cont),
     decode(Contract, Cont1, CallBack).
 
 decode(_Contract, {more, _}=Cont, _CallBack) ->
     Cont;
 decode(Contract, {ok, Term, List}=_Cont, CallBack) ->
     CallBack(Term),
-    Cont1 = ubf:decode(List),
+    Cont1 = ubf:decode(List, Contract),
     decode(Contract, Cont1, CallBack).
