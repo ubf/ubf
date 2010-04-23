@@ -7,7 +7,7 @@
          handlerStart/2, handlerRpc/4, handlerStop/3,
          managerStart/1, managerRpc/2]).
 
--import(ubf_server, [sendEvent/2, ask_manager/2]).
+-import(ubf_plugin_handler, [sendEvent/2, ask_manager/2]).
 -import(lists, [delete/2, map/2, member/2, foreach/2]).
 
 %% NOTE the following two lines

@@ -10,7 +10,7 @@
 -export([server_breaks_req01/0, server_timeout_req03/1, server_crash_req05/0]).
 
 -export([managerStart/1, managerRestart/2, managerRpc/2]).
--import(ubf_server, [ask_manager/2]).
+-import(ubf_plugin_handler, [ask_manager/2]).
 
 %% NOTE the following two lines
 -compile({parse_transform,contract_parser}).

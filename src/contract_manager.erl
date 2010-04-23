@@ -21,14 +21,15 @@
 
 -export([start/1, start/3]).
 
--export([do_rpcIn/4, do_rpcOut/9, do_eventOut/4]).
+-export([do_rpcIn/4, do_rpcOut/9]).
 -export([do_rpcOutError/5, do_rpcOutError/6]).
--export([do_txlog/1]).
 
 -export([do_lpcIn/4, do_lpcOut/9]).
 -export([do_lpcOutError/6]).
 
--import(contracts, [checkRPCIn/3, checkRPCOut/4, checkEventOut/3]).
+-export([do_eventOut/4, do_eventIn/4]).
+
+-import(contracts, [checkRPCIn/3, checkRPCOut/4, checkEventOut/3, checkEventIn/3]).
 -import(lists, [map/2]).
 
 -include("ubf.hrl").
@@ -38,26 +39,26 @@
 %%%    |                           |                          |
 %%%    |                           |                          |
 %%%    |                           |                          |
-%%%    |  {Driver, {rpc,Q}}        |                          |
-%%%    +---------->----------------+    {Contract, Q}         |
+%%%    |   {Driver,{rpc,Q}}        |                          |
+%%%    +---------->----------------+     {Contract,Q}         |
 %%%    |                           +------------->------------+
 %%%    |                           |                          |
 %%%    |                           |                          |
 %%%    |                           |      {reply,R,S1}        |
 %%%    |                           +-------------<------------+
-%%%    | {Contract, {reply,R,S1}}  |                          |
+%%%    |  {Contract,{reply,R,S1}}  |                          |
 %%%    +----------<----------------+                          |
 %%%    |                           |                          |
 %%%  ............................................................
 %%%    |                           |                          |
 %%%    |                           |      {event_out,M}       |
 %%%    |                           +-------------<------------+
-%%%    | {Contract, {event_out,M}} |                          |
+%%%    |  {Contract,{event_out,M}} |                          |
 %%%    +----------<----------------+                          |
 %%%    |                           |                          |
 %%%  ............................................................
 %%%    |                           |                          |
-%%%    | {Contract, {event_in,M}}  |                          |
+%%%    |  {Contract,{event_in,M}}  |                          |
 %%%    +---------->----------------+                          |
 %%%    |                           |      {event_in,M}        |
 %%%    |                           +------------->------------+
@@ -101,9 +102,19 @@ loop(Client, Server, State, Mod, SimpleRPC, VerboseRPC, TLogMod) ->
             S = contract(Mod),
             Client ! {self(), {contract, S}},
             loop(Client, Server, State, Mod, SimpleRPC, VerboseRPC, TLogMod);
+        {Client, {event_in, Msg}=Event} ->
+            case do_eventIn(Msg, State, Mod, TLogMod) of
+                {true,TLog} ->
+                    Server ! {self(), Event},
+                    do_txlog(TLog),
+                    loop(Client, Server, State, Mod, SimpleRPC, VerboseRPC, TLogMod);
+                {false,TLog} ->
+                    do_txlog(TLog),
+                    loop(Client, Server, State, Mod, SimpleRPC, VerboseRPC, TLogMod)
+            end;
         {Client, Q} ->
             do_rpc(Client, Server, State, Mod, Q, SimpleRPC, VerboseRPC, TLogMod);
-        {event_out, Msg} = Event ->
+        {Server, {event_out, Msg}=Event} ->
             case do_eventOut(Msg, State, Mod, TLogMod) of
                 {true,TLog} ->
                     Client ! {self(), Event},
@@ -113,6 +124,7 @@ loop(Client, Server, State, Mod, SimpleRPC, VerboseRPC, TLogMod) ->
                     do_txlog(TLog),
                     loop(Client, Server, State, Mod, SimpleRPC, VerboseRPC, TLogMod)
             end;
+
         stop ->
             Server ! stop;
         Reason ->
@@ -184,17 +196,6 @@ do_rpcOut({TLog, FSM}=_Ref, Q, State, Mod, Reply, ReplyState, NewState, NewMod, 
             {error, {serverBrokeContract, {Q, Reply}, Expect}, TLog1}
     end.
 
-do_eventOut(Msg, State, Mod, TLogMod) ->
-    case checkEventOut(Msg, State, Mod) of
-        true ->
-            TLog = contract_manager_tlog:eventOut(TLogMod, Msg, State, Mod, ok),
-            {true, TLog};
-        false ->
-            TLog = contract_manager_tlog:eventOut(TLogMod, Msg, State, Mod,
-                                                  server_broke_contract),
-            {false, TLog}
-    end.
-
 do_rpcOutError(Q, State, Mod, Error, TLogMod) ->
     TLog = contract_manager_tlog:rpcOutError(TLogMod, Q, State, Mod, Error),
     do_txlog(TLog).
@@ -231,14 +232,30 @@ do_lpcOut({TLog, FSM}=_Ref, Q, State, Mod, Reply, ReplyState, NewState, NewMod, 
 do_lpcOutError({TLog, _FSM}=_Ref, Q, State, Mod, Error, TLogMod) ->
     contract_manager_tlog:lpcOutError(TLogMod, TLog, Q, State, Mod, Error).
 
+do_eventOut(Msg, State, Mod, TLogMod) ->
+    case checkEventOut(Msg, State, Mod) of
+        true ->
+            TLog = contract_manager_tlog:eventOut(TLogMod, Msg, State, Mod, ok),
+            {true, TLog};
+        false ->
+            TLog = contract_manager_tlog:eventOut(TLogMod, Msg, State, Mod,
+                                                  server_broke_contract),
+            {false, TLog}
+    end.
+
+do_eventIn(Msg, State, Mod, TLogMod) ->
+    case checkEventIn(Msg, State, Mod) of
+        true ->
+            TLog = contract_manager_tlog:eventIn(TLogMod, Msg, State, Mod, ok),
+            {true, TLog};
+        false ->
+            TLog = contract_manager_tlog:eventIn(TLogMod, Msg, State, Mod,
+                                                 client_broke_contract),
+            {false, TLog}
+    end.
+
 contract(Mod) ->
     {{name,?S(Mod:contract_name())},
-     {states,
-      map(fun(S) ->
-                  {S, Mod:contract_state(S)}
-          end, Mod:contract_states())},
-     {anystate, Mod:contract_anystate()},
-     {types,
-      map(fun(S) ->
-                  {S, Mod:contract_type(S)}
-          end, Mod:contract_types())}}.
+     {states,map(fun(S) -> {S, Mod:contract_state(S)} end, Mod:contract_states())},
+     {anystate,Mod:contract_anystate()},
+     {types,map(fun(S) -> {S, Mod:contract_type(S)} end, Mod:contract_types())}}.

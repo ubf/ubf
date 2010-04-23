@@ -84,27 +84,7 @@ init(Args) ->
                    [EBFServer]
            end,
 
-    CJSF = case proplists:get_value(test_jsf_tcp_port, Args, 0) of
-               undefined ->
-                   [];
-               JSFPort ->
-                   JSFMaxConn = proplists:get_value(test_jsf_maxconn, Args, DefaultMaxConn),
-                   JSFIdleTimer = proplists:get_value(test_jsf_timeout, Args, DefaultTimeout),
-                   JSFOptions = [{serverhello, "test_meta_server"}
-                                 , {statelessrpc,false}
-                                 , {proto,jsf}
-                                 , {maxconn,JSFMaxConn}
-                                 , {idletimer,JSFIdleTimer}
-                                 , {registeredname,test_jsf_tcp_port}
-                                ],
-                   JSFServer =
-                       {jsf_server, {ubf_server, start_link, [undefined, DefaultPlugins, JSFPort, JSFOptions]},
-                        permanent, 2000, worker, [jsf_server]},
-
-                   [JSFServer]
-           end,
-
-    {ok, {{one_for_one, 2, 60}, CUBF ++ CEBF ++ CJSF}}.
+    {ok, {{one_for_one, 2, 60}, CUBF ++ CEBF}}.
 
 %%%----------------------------------------------------------------------
 %%% Internal functions

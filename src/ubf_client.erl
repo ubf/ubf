@@ -33,9 +33,8 @@
 %% rpc(Pid, Q) -> Reply
 %% stop(Pid)   -> ack.
 
--export([connect/2, connect/3, connect/4, rpc/2, rpc/3, stop/1,
-         install_default_handler/1, install_handler/2]).
-
+-export([connect/2, connect/3, connect/4, rpc/2, rpc/3, stop/1]).
+-export([sendEvent/2, install_default_handler/1, install_handler/2]).
 -export([lpc/2, lpc/3, lpc/4]).
 
 -include("ubf_impl.hrl").
@@ -224,8 +223,6 @@ ubf_client(Parent, Plugins, Server, Options, Timeout)
             ubf_client_loop(Parent, Driver, SimpleRPC)
     end.
 
-drop_fun(_Msg) ->
-    fun drop_fun/1.
 
 %% @spec (pid()) -> ok
 %% @doc Stop a UBF client process.
@@ -267,6 +264,18 @@ rpc(Pid, Q, Timeout) when is_pid(Pid) ->
 rpc(_Pid, _Q, _Timeout) ->
     erlang:error(badarg).
 
+%% @spec (pid(), Msg) -> any()
+%% @doc Send an asynchronous UBF message.
+
+sendEvent(Pid, Msg) when is_pid(Pid) ->
+    case is_process_alive(Pid) of
+        false ->
+            erlang:error(badpid);
+        true ->
+            Pid ! {self(), {event_in, Msg}},
+            ok
+    end.
+
 %% @spec (pid()) -> ack
 %% @doc Install a default handler function (callback-style) for
 %% asynchronous UBF messages.
@@ -280,9 +289,11 @@ install_default_handler(Pid) ->
 %% @doc Install a handler function (callback-style) for asynchronous
 %% UBF messages.
 %%
-%% The handler fun Fun should be an function of arity 1.  When an
+%% The handler fun Fun should be a function of arity 1.  When an
 %% asynchronous UBF message is received, the callback function will be
-%% called with the UBF message as its single argument.
+%% called with the UBF message as its single argument.  The Fun is
+%% called by the ubf client process so the Fun can crash and/or block
+%% this process.
 %%
 %% If your handler fun must maintain its own state, then you must use
 %% an intermediate anonymous fun to bind the state.  See the usage of
@@ -299,6 +310,10 @@ install_handler(Pid, Fun) ->
         {Pid, Reply} ->
             Reply
     end.
+
+drop_fun(_Msg) ->
+    fun drop_fun/1.
+
 
 %% @doc Entry function for the UBF client process.
 
@@ -352,6 +367,10 @@ loop(Parent, Driver, SimpleRPC, Fun) ->
                     Driver ! stop,
                     true
             end;
+        {_From, {event_in, _Msg}=Event} ->
+            %% asynchronous event
+            Driver ! {self(), Event},
+            loop(Parent, Driver, SimpleRPC, Fun);
         {From, {install, Fun1}} ->
             From ! {self(), ack},
             loop(Parent, Driver, SimpleRPC, Fun1);

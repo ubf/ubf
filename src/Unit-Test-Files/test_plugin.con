@@ -54,7 +54,8 @@ callbackOnItsWay() = callbackOnItsWay.
 		         |  noSuchFile() & stop;
        stop()            => void() & stop;
        testAmbiguities() => yes() & funny;
-      EVENT 		 => callback(). 
+       EVENT 		 => callback();
+       EVENT 		 <= callback(). 
 
 +STATE funny
 	string()         => upCase() & funny;

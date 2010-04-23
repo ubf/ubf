@@ -23,7 +23,7 @@
 
 -module(ubf_plugin_meta_stateless, [MODULES]).
 
--import(ubf_server, [ask_manager/2]).
+-import(ubf_plugin_handler, [ask_manager/2]).
 
 %% Required callback API for all UBF contract implementations.
 

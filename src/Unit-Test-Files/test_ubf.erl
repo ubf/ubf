@@ -5,7 +5,7 @@
 -include("ubf.hrl").
 
 -import(lists, [map/2, foldl/3, filter/2]).
--import(ubf_client, [rpc/2]).
+-import(ubf_client, [rpc/2, sendEvent/2, install_default_handler/1, install_handler/2]).
 
 defaultPlugins() -> [test_plugin, irc_plugin, file_plugin].
 defaultOptions() -> [{plugins, defaultPlugins()}].
@@ -15,11 +15,11 @@ defaultPort() -> server_port(test_ubf_tcp_port).
 
 server_port(Name) ->
     case proc_socket_server:server_port(Name) of
-	Port when is_integer(Port) ->
-	    Port;
-	_ ->
-	    timer:sleep(10),
-	    server_port(Name)
+        Port when is_integer(Port) ->
+            Port;
+        _ ->
+            timer:sleep(10),
+            server_port(Name)
     end.
 
 tests() ->
@@ -51,10 +51,19 @@ test() ->
     io:format("R3=~p~n",[R3]),
     rpc(Pid, {logon,?S("joe")}),
     {reply, {files, _}, active} = rpc(Pid, ls),
+
+    %% async. event server -> client
     install_single_callback_handler(Pid),
     Term = {1,2,cat,rain,dogs},
     {reply, callbackOnItsWay, active} = rpc(Pid, {callback,Term}),
     {callback, Term} = expect_callback(Pid),
+
+    %% async. event client -> server
+    install_single_callback_handler(Pid),
+    Term = {1,2,cat,rain,dogs},
+    sendEvent(Pid, {callback,Term}),
+    {callback, Term} = expect_callback(Pid),
+
     {reply, yes, funny} = rpc(Pid, testAmbiguities),
     {reply, ?S("ABC"), funny} = rpc(Pid, ?S("abc")),
     {reply, ?P([]), funny} = rpc(Pid, ?P([])),
@@ -73,11 +82,11 @@ host() ->
 
 install_single_callback_handler(Pid) ->
     Parent = self(),
-    ubf_client:install_handler(Pid,
-                               fun(Msg) ->
-                                       Parent ! {singleCallback, Msg},
-                                       ubf_client:install_default_handler(Pid)
-                               end).
+    install_handler(Pid,
+                    fun(Msg) ->
+                            Parent ! {singleCallback, Msg},
+                            install_default_handler(Pid)
+                    end).
 
 expect_callback(_Pid) ->
     receive
@@ -87,6 +96,6 @@ expect_callback(_Pid) ->
 
 sleep(T) ->
     receive
-        after T * 1000 ->
-                true
-        end.
+    after T * 1000 ->
+            true
+    end.

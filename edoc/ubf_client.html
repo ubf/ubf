@@ -83,6 +83,7 @@ UBF messages.</td></tr>
 <tr><td valign="top"><a href="#lpc-4">lpc/4</a></td><td></td></tr>
 <tr><td valign="top"><a href="#rpc-2">rpc/2</a></td><td>Perform a synchronous RPC call.</td></tr>
 <tr><td valign="top"><a href="#rpc-3">rpc/3</a></td><td>Perform a synchronous RPC call.</td></tr>
+<tr><td valign="top"><a href="#sendEvent-2">sendEvent/2</a></td><td>Send an asynchronous UBF message.</td></tr>
 <tr><td valign="top"><a href="#stop-1">stop/1</a></td><td>Stop a UBF client process.</td></tr>
 </table>
 
@@ -128,9 +129,11 @@ asynchronous UBF messages.</p>
 </div><p><p>Install a handler function (callback-style) for asynchronous  
 UBF messages.</p>
  
-  <p>The handler fun Fun should be an function of arity 1.  When an  
+  <p>The handler fun Fun should be a function of arity 1.  When an  
 asynchronous UBF message is received, the callback function will be  
-called with the UBF message as its single argument.</p>
+called with the UBF message as its single argument.  The Fun is  
+called by the ubf client process so the Fun can crash and/or block  
+this process.</p>
  
   If your handler fun must maintain its own state, then you must use
   an intermediate anonymous fun to bind the state.  See the usage of
@@ -172,6 +175,11 @@ called with the UBF message as its single argument.</p>
 <div class="spec">
 <p><tt>rpc(Pid::pid(), Q::term(), Timeout::<a href="#type-timeout">timeout()</a>) -&gt; timeout | term() | <a href="#type-exit">exit(badpid)</a> | <a href="#type-exit">exit(badarg)</a></tt></p>
 </div><p>Perform a synchronous RPC call.</p>
+
+<h3 class="function"><a name="sendEvent-2">sendEvent/2</a></h3>
+<div class="spec">
+<p><tt>sendEvent(Pid::pid(), Msg) -&gt; any()</tt></p>
+</div><p>Send an asynchronous UBF message.</p>
 
 <h3 class="function"><a name="stop-1">stop/1</a></h3>
 <div class="spec">

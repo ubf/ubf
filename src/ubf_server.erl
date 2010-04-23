@@ -49,8 +49,7 @@
 
 -module(ubf_server).
 
--export([start/2, start/3, start/4, start_link/2, start_link/3, start_link/4, init/5, ask_manager/2, sendEvent/2]).
-
+-export([start/2, start/3, start/4, start_link/2, start_link/3, start_link/4, init/5]).
 -export([start_term_listener/3]).
 
 -include("ubf.hrl").
@@ -182,41 +181,51 @@ start_ubf_listener(Server0, Plugins, Port, Options) ->
         fun(Socket) ->
                 %% This gets spawned every time a new socket
                 %% connection is is established on this port.
-                {StartState, StartData, StartManagerPid}
-                    = handler_state(MetaPlugin, StartPlugin, Server, StatelessRPC),
 
                 %% We have to start 2 additional processes - a
                 %% contract manager and a plugin handler. The driver
                 %% (This process) sends messages to the contract
                 %% manager. The contract manager sends messages to the
                 %% handler.
-                Driver          = self(),
-                ContractManager = contract_manager:start(SimpleRPC, VerboseRPC, ProcessOptions),
-                Handler         = ubf_plugin_handler:start_handler(ProcessOptions),
+
+                Driver = self(),
+
+                %% @TODO need to use the active once feature to ensure
+                %% data sent by the client is properly routed to the
+                %% contract manager and not to this driver.  These
+                %% devious lines do not work when the client is not
+                %% waiting for the server hello.
 
                 %% Next few lines are pretty devious but they work!
                 if ServerHello =/= undefined ->
                         %% send hello back to the opening program
-                        self() ! {self(), {DriverVersion, ?S(ServerHello), help()}};
+                        Driver ! {self(), {DriverVersion, ?S(ServerHello), help()}};
                    true ->
                         noop
                 end,
+
+                ContractManager = contract_manager:start(SimpleRPC, VerboseRPC, ProcessOptions),
                 %% swap the driver
                 contract_driver:relay(DriverMod, self(), ContractManager),
-                ContractManager !
-                    {start, Driver, Handler, StartState, StartPlugin, TLogMod},
-                Handler !
-                    {start, ContractManager, StartState, StartData, StartManagerPid, StartPlugin, TLogMod},
-                %% and activate the loop that will now execute the
-                %% last two statements :-)
-                case (catch contract_driver:loop(DriverMod, StartPlugin, self(), Socket, IdleTimer)) of
-                    {'EXIT', normal} ->
-                        exit(normal);
-                    {'EXIT', Reason} ->
-                        %% brute force
-                        exit(Handler, Reason),
-                        exit(ContractManager, Reason),
-                        exit(Reason)
+
+                Handler = ubf_plugin_handler:start_handler(MetaPlugin, StartPlugin, Server, StatelessRPC, ProcessOptions),
+                receive
+                    {state, Handler, StartState} ->
+                        ContractManager !
+                            {start, Driver, Handler, StartState, StartPlugin, TLogMod},
+                        Handler !
+                            {start, ContractManager, TLogMod},
+                        %% and activate the loop that will now execute
+                        %% the previous devious statements :-)
+                        case (catch contract_driver:loop(DriverMod, StartPlugin, self(), Socket, IdleTimer)) of
+                            {'EXIT', normal} ->
+                                exit(normal);
+                            {'EXIT', Reason} ->
+                                %% brute force
+                                exit(Handler, Reason),
+                                exit(ContractManager, Reason),
+                                exit(Reason)
+                        end
                 end
         end,
 
@@ -236,12 +245,8 @@ start_term_listener(Server0, Plugins, Options) ->
      , TLogMod, ProcessOptions
     } = listener_options(Server0, Plugins, Options),
 
-    {StartState, StartData, StartManagerPid}
-        = handler_state(MetaPlugin, StartPlugin, Server, StatelessRPC),
-
     Driver = self(),
     ContractManager = contract_manager:start(SimpleRPC, VerboseRPC, ProcessOptions),
-    Handler = ubf_plugin_handler:start_handler(ProcessOptions),
 
     if ServerHello =/= undefined ->
             %% send hello back to the opening program
@@ -250,28 +255,22 @@ start_term_listener(Server0, Plugins, Options) ->
             noop
     end,
 
-    ContractManager !
-        {start, Driver, Handler, StartState, StartPlugin, TLogMod},
-    Handler !
-        {start, ContractManager, StartState, StartData, StartManagerPid, StartPlugin, TLogMod},
-
-    ContractManager.
+    Handler = ubf_plugin_handler:start_handler(MetaPlugin, StartPlugin, Server, StatelessRPC, ProcessOptions),
+    receive
+        {state, Handler, StartState} ->
+            ContractManager !
+                {start, Driver, Handler, StartState, StartPlugin, TLogMod},
+            Handler !
+                {start, ContractManager, TLogMod},
+            ContractManager
+    end.
 
 help() ->
     ?S("\n\n See http://www.sics.se/~joe/ubf/ for details of this service.\n"
-       " See http://github.com/norton/ubf/tree/master for some source code\n"
+       " See http://github.com/norton/ubf for source code\n"
        "     extensions available as part of the larger OSS community.\n"
        " Type 'info'$ for information\n\n").
 
-sendEvent(Pid, Msg) ->
-    Pid ! {event_out, Msg}.
-
-ask_manager(Manager, Q) ->
-    Manager ! {self(), {handler_rpc, Q}},
-    receive
-        {handler_rpc_reply, R} ->
-            R
-    end.
 
 %%----------------------------------------------------------------------
 %% Misc junk
@@ -339,33 +338,3 @@ listener_options(Server0, Plugins, Options) ->
      , proplists:get_value(tlog_module, Options, ?UBF_TLOG_MODULE_DEFAULT)
      , proplists:get_value(process_options, Options, [])
     }.
-
-handler_state(MetaPlugin, StartPlugin, Server, StatelessRPC) ->
-    %% start state, data, and pid
-    if StartPlugin =/= MetaPlugin ->
-            StartSession = {startSession, ?S(StartPlugin:contract_name()), []},
-            case StatelessRPC of
-                false ->
-                    case MetaPlugin:handlerRpc(start, StartSession, [], Server) of
-                        {changeContract, {ok, _}, StartPlugin, StartState, StartData, StartManagerPid} ->
-                            noop;
-                        {{error, Reason}, _, _} ->
-                            StartState = StartData = StartManagerPid = undefined,
-                            exit(Reason)
-                    end;
-                true ->
-                    case MetaPlugin:handlerRpc(StartSession) of
-                        {changeContract, {ok, _}, StartPlugin, StartState, StartData} ->
-                            StartManagerPid = undefined,
-                            noop;
-                        {error, Reason} ->
-                            StartState = StartData = StartManagerPid = undefined,
-                            exit(Reason)
-                    end
-            end;
-       true ->
-            StartState = start,
-            StartData = [],
-            StartManagerPid = Server
-    end,
-    {StartState, StartData, StartManagerPid}.

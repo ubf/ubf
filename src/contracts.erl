@@ -6,8 +6,8 @@
 -module(contracts).
 
 %%-compile(export_all).
--export([checkEventOut/3, checkRPCIn/3, checkRPCOut/4, isTypeAttr/2, isType/3]).
--export([checkType/3]).
+-export([checkEventOut/3, checkEventIn/3, checkRPCIn/3, checkRPCOut/4]).
+-export([isTypeAttr/2, isType/3, checkType/3]).
 -include("ubf.hrl").
 
 
@@ -54,7 +54,15 @@ checkRPCOut(MsgOut, StateOut, FSM2, Mod) ->
 
 checkEventOut(Msg, ThisState, Mod) ->
     T = Mod:contract_state(ThisState),
-    Events = [ E || {event_out,E} <- T ],
+    T1 = Mod:contract_anystate(),
+    Events = [ E || {event_out,E} <- T ] ++ [ E || {event_out,E} <- T1 ],
+    %% io:format("Events=~p~n",[Events]),
+    lists:any(fun(Type) -> isType(Type, Msg, Mod) end, Events).
+
+checkEventIn(Msg, ThisState, Mod) ->
+    T = Mod:contract_state(ThisState),
+    T1 = Mod:contract_anystate(),
+    Events = [ E || {event_out,E} <- T ] ++ [ E || {event_out,E} <- T1 ],
     %% io:format("Events=~p~n",[Events]),
     lists:any(fun(Type) -> isType(Type, Msg, Mod) end, Events).
 

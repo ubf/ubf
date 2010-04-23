@@ -8,12 +8,15 @@
 
 -module(contract_manager_tlog).
 
--export([rpcIn/4, rpcOut/9, eventOut/5]).
+-export([rpcIn/4, rpcOut/9]).
 -export([rpcOutError/5, rpcOutError/6]).
 -export([rpcFinish/1]).
 
 -export([lpcIn/4, lpcOut/9]).
 -export([lpcOutError/6]).
+
+-export([eventOut/5, eventIn/5]).
+
 
 rpcIn(_TLogMod_x, _Q, _State, _Mod) ->
     erlang:now().
@@ -24,20 +27,17 @@ rpcOut(TLogMod_x, StartTime, Q, State, Mod, Reply, _NewState, _NewMod, Status) -
 rpcOut2({TLogMod, ErrLogP}, StartTime, Q, State, Mod, Reply, _NewState, _NewMod, Status) ->
     fun() ->
             if ErrLogP, Status =:= server_broke_contract ->
-                    error_logger:warning_msg("rpc server error: ~p:~p(~p): ~p\n", [Mod, State, Q, Reply]);
+                    error_logger:warning_msg("rpc server error: ~p:~p(~p): ~p\n"
+                                             , [Mod, State, Q, Reply]);
                true ->
                     noop
             end,
-            if TLogMod == undefined ->
+            if TLogMod =:= undefined ->
                     ok;
                true ->
                     TLogMod:tlog(rpc, StartTime, Mod, Q, Reply, Status)
             end
     end.
-
-eventOut(_TLogMod_x, _Msg, _State, _Mod, _Status) ->
-    %% not supported
-    ok.
 
 rpcOutError(TLogMod_x, Q, State, Mod, Error) ->
     rpcOutError2(tlm(TLogMod_x), Q, State, Mod, Error).
@@ -45,11 +45,12 @@ rpcOutError(TLogMod_x, Q, State, Mod, Error) ->
 rpcOutError2({TLogMod, ErrLogP}, Q, State, Mod, Error) ->
     fun() ->
             if ErrLogP ->
-                    error_logger:warning_msg("rpc error: ~p:~p(~p): ~p\n", [Mod, State, Q, Error]);
+                    error_logger:warning_msg("rpc error: ~p:~p(~p): ~p\n"
+                                             , [Mod, State, Q, Error]);
                true ->
                     noop
             end,
-            if TLogMod == undefined ->
+            if TLogMod =:= undefined ->
                     ok;
                true ->
                     TLogMod:tlog(rpc, undefined, Mod, Q, Error, error)
@@ -62,11 +63,12 @@ rpcOutError(TLogMod_x, StartTime, Q, State, Mod, Error) ->
 rpcOutError2({TLogMod, ErrLogP}, StartTime, Q, State, Mod, Error) ->
     fun() ->
             if ErrLogP ->
-                    error_logger:warning_msg("rpc error: ~p:~p(~p): ~p\n", [Mod, State, Q, Error]);
+                    error_logger:warning_msg("rpc error: ~p:~p(~p): ~p\n"
+                                             , [Mod, State, Q, Error]);
                true ->
                     noop
             end,
-            if TLogMod == undefined ->
+            if TLogMod =:= undefined ->
                     ok;
                true ->
                     TLogMod:tlog(rpc, StartTime, Mod, Q, Error, error)
@@ -86,11 +88,12 @@ lpcOut(TLogMod_x, StartTime, Q, State, Mod, Reply, _NewState, _NewMod, Status) -
 
 lpcOut2({TLogMod, ErrLogP}, StartTime, Q, State, Mod, Reply, _NewState, _NewMod, Status) ->
     if ErrLogP, Status =:= server_broke_contract ->
-            error_logger:warning_msg("lpc server error: ~p:~p(~p): ~p\n", [Mod, State, Q, Reply]);
+            error_logger:warning_msg("lpc server error: ~p:~p(~p): ~p\n"
+                                     , [Mod, State, Q, Reply]);
        true ->
             noop
     end,
-    if TLogMod == undefined ->
+    if TLogMod =:= undefined ->
             ok;
        true ->
             TLogMod:tlog(lpc, StartTime, Mod, Q, Reply, Status)
@@ -101,14 +104,51 @@ lpcOutError(TLogMod_x, StartTime, Q, State, Mod, Error) ->
 
 lpcOutError2({TLogMod, ErrLogP}, StartTime, Q, State, Mod, Error) ->
     if ErrLogP ->
-            error_logger:warning_msg("lpc error: ~p:~p(~p): ~p\n", [Mod, State, Q, Error]);
+            error_logger:warning_msg("lpc error: ~p:~p(~p): ~p\n"
+                                     , [Mod, State, Q, Error]);
        true ->
             noop
     end,
-    if TLogMod == undefined ->
+    if TLogMod =:= undefined ->
             ok;
        true ->
             TLogMod:tlog(lpc, StartTime, Mod, Q, Error, error)
+    end.
+
+eventOut(TLogMod_x, Msg, State, Mod, Status) ->
+    eventOut2(tlm(TLogMod_x), Msg, State, Mod, Status).
+
+eventOut2({TLogMod, ErrLogP}, Msg, State, Mod, Status) ->
+    fun() ->
+            if ErrLogP, Status =:= server_broke_contract ->
+                    error_logger:warning_msg("event_out server error: ~p:~p: ~p\n"
+                                             , [Mod, State, Msg]);
+               true ->
+                    noop
+            end,
+            if TLogMod =:= undefined ->
+                    ok;
+               true ->
+                    TLogMod:tlog(event_out, undefined, Mod, Msg, undefined, Status)
+            end
+    end.
+
+eventIn(TLogMod_x, Msg, State, Mod, Status) ->
+    eventIn2(tlm(TLogMod_x), Msg, State, Mod, Status).
+
+eventIn2({TLogMod, ErrLogP}, Msg, State, Mod, Status) ->
+    fun() ->
+            if ErrLogP, Status =:= client_broke_contract ->
+                    error_logger:warning_msg("event_in client error: ~p:~p: ~p\n"
+                                             , [Mod, State, Msg]);
+               true ->
+                    noop
+            end,
+            if TLogMod =:= undefined ->
+                    ok;
+               true ->
+                    TLogMod:tlog(event_in, undefined, Mod, Msg, undefined, Status)
+            end
     end.
 
 %% @doc The TLogMod_x thingie coming in is either:

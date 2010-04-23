@@ -5,10 +5,11 @@
 
 -export([info/0, description/0,
          managerStart/1, managerRpc/2,
-         handlerStart/2, handlerRpc/4, handlerStop/3
+         handlerStart/2, handlerRpc/4, handlerStop/3,
+         handlerEvent/1
         ]).
 
--import(ubf_server, [sendEvent/2]).
+-import(ubf_plugin_handler, [sendEvent/2, install_handler/2]).
 -import(lists, [map/2]).
 
 %% NOTE the following two lines
@@ -34,6 +35,7 @@ managerRpc(_, State) ->
 %%   {accept, State, InitialData}
 
 handlerStart(secret, _ManagerPid) ->
+    ack = install_handler(self(), fun handlerEvent/1),
     {accept, yesOffWeGo, start, myInitailData0};
 handlerStart(_Other, _ManagerPid) ->
     {reject, bad_password}.
@@ -64,6 +66,10 @@ handlerRpc(funny, stop, State, _Env) ->
 handlerStop(Pid, Reason, State) ->
     io:format("Client stopped:~p ~p~n",[Pid, Reason]),
     State.
+
+handlerEvent({callback, X}) ->
+    sendEvent(self(), {callback, X}),
+    fun handlerEvent/1.
 
 up_case(I) ->
     map(fun to_upper/1 , I).

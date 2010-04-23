@@ -1,3 +1,11 @@
+2010-04-23 20:30 JST  norton
+        * contract_manager.erl, contract_manager_tlog.erl, contracts.erl,
+	ubf_client.erl, ubf_plugin_handler.erl,
+	ubf_plugin_meta_stateful.erl, ubf_plugin_meta_stateless.erl,
+	ubf_server.erl: Implement asynchronous events from client to
+	server. Modify existing asynchronous events from server to client
+	implementation. Enhance existing unit tests.
+
 2010-04-23 12:30 JST  norton
         * contract_driver.erl, contract_proto.erl, ebf.erl,
 	ebf_driver.erl, ubf.erl, ubf_client.erl, ubf_driver.erl,

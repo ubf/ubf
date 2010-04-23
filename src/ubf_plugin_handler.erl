@@ -13,35 +13,74 @@
 
 -module(ubf_plugin_handler).
 
--export([start_handler/1, start_manager/2, manager/3]).
+-export([start_handler/5, start_manager/2, manager/3, ask_manager/2]).
+-export([sendEvent/2, install_default_handler/1, install_handler/2]).
+
+-include("ubf.hrl").
+
 
 %%----------------------------------------------------------------------
 %% Handler stuff
 
-start_handler(SpawnOpts) ->
-    proc_utils:spawn_link_opt_debug(fun() -> wait() end, SpawnOpts, ?MODULE).
+start_handler(MetaMod, Mod, Server, StatelessRPC, SpawnOpts) ->
+    Parent = self(),
+    Fun = fun() -> wait(Parent, MetaMod, Mod, Server, StatelessRPC) end,
+    proc_utils:spawn_link_opt_debug(Fun, SpawnOpts, ?MODULE).
 
-wait() ->
+wait(Parent, MetaMod, Mod, Server, StatelessRPC) ->
+    {State, Data, Manager} = handler_state(MetaMod, Mod, Server, StatelessRPC),
+    Parent ! {state, self(), State},
+
     receive
-        {start, ContractManager, State, Data, Manager, Mod, TLogMod} ->
-            loop(ContractManager, State, Data, Manager, Mod, TLogMod);
+        {start, ContractManager, TLogMod} ->
+            loop(ContractManager, State, Data, Manager, Mod, TLogMod, fun drop_fun/1);
         stop ->
             exit({serverPluginHandler, stop})
     end.
 
-loop(Client, State, Data, Manager, Mod, TLogMod) ->
+handler_state(MetaMod, Mod, Server, StatelessRPC) ->
+    %%  state, data, and pid
+    if MetaMod =/= Mod ->
+            StartSession = {startSession, ?S(Mod:contract_name()), []},
+            case StatelessRPC of
+                false ->
+                    case MetaMod:handlerRpc(start, StartSession, [], Server) of
+                        {changeContract, {ok, _}, Mod, State, Data, Manager} ->
+                            noop;
+                        {{error, Reason}, _, _} ->
+                            State = Data = Manager = undefined,
+                            exit(Reason)
+                    end;
+                true ->
+                    case MetaMod:handlerRpc(StartSession) of
+                        {changeContract, {ok, _}, Mod, State, Data} ->
+                            Manager = undefined,
+                            noop;
+                        {error, Reason} ->
+                            State = Data = Manager = undefined,
+                            exit(Reason)
+                    end
+            end;
+       true ->
+            State = start,
+            Data = [],
+            Manager = Server
+    end,
+    {State, Data, Manager}.
+
+loop(Client, State, Data, Manager, Mod, TLogMod, Fun) ->
     receive
-        {_Pid, {rpc, Q}} ->
+        {Client, {rpc, Q}} ->
             if Manager /= undefined ->
                     case (catch Mod:handlerRpc(State, Q, Data, Manager)) of
                         {Reply, State1, Data1} ->
                             Client ! {self(), {rpcReply, Reply, State1, same}},
                             erlang:garbage_collect(),
-                            loop(Client, State1, Data1, Manager, Mod, TLogMod);
+                            loop(Client, State1, Data1, Manager, Mod, TLogMod, Fun);
                         {changeContract, Reply, Mod1, State1, Data1, Manager1} ->
                             Client ! {self(), {rpcReply, Reply, State,
                                                {new, Mod1, State1}}},
-                            loop(Client, State1, Data1, Manager1, Mod1, TLogMod);
+                            loop(Client, State1, Data1, Manager1, Mod1, TLogMod, Fun);
                         {'EXIT', Reason} ->
                             contract_manager:do_rpcOutError(
                               Q, State, Mod, Reason, TLogMod),
@@ -52,7 +91,7 @@ loop(Client, State, Data, Manager, Mod, TLogMod) ->
                         {changeContract, Reply, Mod1, State1, Data1} ->
                             Client ! {self(), {rpcReply, Reply, State,
                                                {new, Mod1, State1}}},
-                            loop(Client, State1, Data1, Manager, Mod1, TLogMod);
+                            loop(Client, State1, Data1, Manager, Mod1, TLogMod, Fun);
                         {'EXIT', Reason} ->
                             contract_manager:do_rpcOutError(
                               Q, State, Mod, Reason, TLogMod),
@@ -60,13 +99,23 @@ loop(Client, State, Data, Manager, Mod, TLogMod) ->
                         Reply ->
                             Client ! {self(), {rpcReply, Reply, State, same}},
                             erlang:garbage_collect(),
-                            loop(Client, State, Data, Manager, Mod, TLogMod)
+                            loop(Client, State, Data, Manager, Mod, TLogMod, Fun)
                     end
             end;
-        {event_out, _} = Event ->
-            Client ! Event,
+        {Client, {event_in, Event}} ->
+            %% asynchronous event handler
+            Fun1 = Fun(Event),
             erlang:garbage_collect(),
-            loop(Client, State, Data, Manager, Mod, TLogMod);
+            loop(Client, State, Data, Manager, Mod, TLogMod, Fun1);
+        {event_out, _}=Event ->
+            Client ! {self(), Event},
+            erlang:garbage_collect(),
+            loop(Client, State, Data, Manager, Mod, TLogMod, Fun);
+        {install, Fun1} ->
+            loop(Client, State, Data, Manager, Mod, TLogMod, Fun1);
+        {From, {install, Fun1}} ->
+            From ! {self(), ack},
+            loop(Client, State, Data, Manager, Mod, TLogMod, Fun1);
         stop ->
             if Manager =/= undefined ->
                     Manager ! {client_has_stopped, self()};
@@ -80,7 +129,7 @@ loop(Client, State, Data, Manager, Mod, TLogMod) ->
             end;
         Other ->
             io:format("**** OOOPYikes ...~p (Client=~p)~n",[Other,Client]),
-            loop(Client, State, Data, Manager, Mod, TLogMod)
+            loop(Client, State, Data, Manager, Mod, TLogMod, Fun)
     end.
 
 
@@ -138,3 +187,69 @@ manager_loop(ExitPid, Mod, State) ->
                       [Mod,self(),X]),
             manager_loop(ExitPid, Mod, State)
     end.
+
+ask_manager(Manager, Q) ->
+    Manager ! {self(), {handler_rpc, Q}},
+    receive
+        {handler_rpc_reply, R} ->
+            R
+    end.
+
+
+%%----------------------------------------------------------------------
+
+%% @spec (pid(), Msg) -> any()
+%% @doc Send an asynchronous UBF message.
+
+sendEvent(Pid, Msg) when is_pid(Pid) ->
+    case is_process_alive(Pid) of
+        false ->
+            erlang:error(badpid);
+        true ->
+            Pid ! {event_out, Msg},
+            ok
+    end.
+
+%% @spec (pid()) -> ack
+%% @doc Install a default handler function (callback-style) for
+%% asynchronous UBF messages.
+%%
+%% The default handler function, drop_fun/1, does nothing.
+
+install_default_handler(Pid) ->
+    install_handler(Pid, fun drop_fun/1).
+
+%% @spec (pid(), function()) -> ack
+%% @doc Install a handler function (callback-style) for asynchronous
+%% UBF messages.
+%%
+%% The handler fun Fun should be a function of arity 1.  When an
+%% asynchronous UBF message is received, the callback function will be
+%% called with the UBF message as its single argument.  The Fun is
+%% called by the ubf plugin handler process so the Fun can crash
+%% and/or block this process.
+%%
+%% If your handler fun must maintain its own state, then you must use
+%% an intermediate anonymous fun to bind the state.  See the usage of
+%% the <tt>irc_client_gs:send_self/2</tt> fun as an example.  The
+%% <tt>send_self()</tt> fun is actually arity 2, but the extra
+%% argument is how the author, Joe Armstrong, maintains the extra
+%% state required to deliver the async UBF message to the process that
+%% is executing the event loop processing function,
+%% <tt>irc_client_gs:loop/6</tt>.
+
+install_handler(Pid, Fun) ->
+    if Pid =/= self() ->
+            Pid ! {self(), {install, Fun}},
+            receive
+                {Pid, Reply} ->
+                    Reply
+            end;
+       true ->
+            Pid ! {install, Fun},
+            ack
+    end.
+
+drop_fun(_Msg) ->
+    fun drop_fun/1.
+

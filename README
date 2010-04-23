@@ -121,7 +121,6 @@ framework for integrating UBF and EEP8.
 
 To do (in short term)
 =====================
-
   - cleanup (or remove) old documentation under priv/doc
   - document new features
     + predefined ubf contract (and contract checker) primitives
@@ -161,18 +160,21 @@ To do (in short term)
       - For protocols that do not require state transitions: a single
         state called ANYSTATE is used for the contract, and the
         implementation callback function API is a bit less complex.
-    + network formats
+    + async events from client to server
+      - plus misc. changes for existing async events from server to client
+    + transaction logger
+    + network and rpc formats
       * ebf - Erlang Binary Format
-      * jsf - Java Script Format
       * etf - Erlang Term Format
+      * jsf - Java Script Format
+      * tbf - Thrift Binary Format
     + ???
 
 
 To do (in medium term)
 ======================
-  - add Thrift (http://incubator.apache.org/thrift/) support
-    * Binary Format
-    * Compact Format (TBD)
+  - add more Thrift (http://incubator.apache.org/thrift/) support
+    * Compact Format
   - add Avro (http://hadoop.apache.org/avro/) support
   - add Google's Protocol Buffers (http://code.google.com/apis/protocolbuffers/) support
   - add Bert-RPC (http://bert-rpc.org/) support
@@ -186,15 +188,12 @@ To do (in medium term)
   
 To do (in long term)
 ====================
-
   - support multiple listeners for a single ubf server
-  - ubf contract generators for QuickCheck
-  - asynchronous events from client to server
+  - open-source ubf contract generators for QuickCheck
   - n-bidirectional requests/responses over single tcp/ip connection (similiar to smpp)
   - replace plugin manager and plugin handler with gen_server-based
     implementation
   - enable/disable contract checker by configuration
-  - eunit tests
   - quickcheck tests  
 
 
