@@ -1,7 +1,7 @@
 package ubf;
 
 import java.io.*;
-import java.util.*;
+// import java.util.*;
 
 public class UBFEncoder
 {
@@ -38,7 +38,7 @@ public class UBFEncoder
     {
 	if (object.isString())
 	    writeString((UBFString)object);
-	else if  (object.isAtom())
+	else if (object.isAtom())
 	    writeAtom((UBFAtom)object);
 	else if (object.isInteger())
 	    writeInteger((UBFInteger)object);
@@ -46,6 +46,8 @@ public class UBFEncoder
 	    writeTuple((UBFTuple)object);
 	else if (object.isList())
 	    writeList((UBFList)object);
+	else if (object.isBinary())
+	    writeBinary((UBFBinary)object);
 	else
 	    throw new IllegalArgumentException("Can't determine type of " +
 					       object);
@@ -61,6 +63,15 @@ public class UBFEncoder
 	throws IOException
     {
 	writeDelimited(s.value, '\'');
+    }
+
+    protected void writeBinary(UBFBinary b)
+	throws IOException
+    {
+	output.print(b.size());
+	output.print("~");
+	output.write(b.value);
+	output.print("~");
     }
 
     protected void writeDelimited(String s, char delimiter)

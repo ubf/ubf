@@ -5,8 +5,8 @@ import java.io.*;
 
 public class UBFClient
 {
-    protected InputStream input;
-    protected OutputStream output;
+    protected InputStream input = null;
+    protected OutputStream output = null;
     protected UBFEventHandler eventHandler;
     protected UBFAtom serverState;
 
@@ -22,6 +22,7 @@ public class UBFClient
     protected Object mutex = new Object();
     protected int rpcState = RPC_IDLE;
     protected UBFObject rpcReply;
+    protected boolean run_iohandler_thread = true;
 
     public UBFClient(UBFString service,
 		     UBFList args,
@@ -39,6 +40,17 @@ public class UBFClient
 	startSession(service, args);
     }
 
+    public static UBFClient new_via_sock(UBFString service,
+					 UBFList args,
+					 UBFEventHandler h,
+					 Socket sock)
+	throws UBFException, IOException
+    {
+	return new UBFClient(service, args, h,
+			     new DataInputStream(sock.getInputStream()),
+			     new DataOutputStream(sock.getOutputStream()));
+    }
+
     protected void startSession(UBFString service, UBFList args)
 	throws IOException, UBFException
     {
@@ -50,6 +62,14 @@ public class UBFClient
 				   reply);
     }
 
+    protected void stopSession()
+	throws IOException
+    {
+	run_iohandler_thread = false;
+	input.close();
+	output.close();
+    }
+
     public UBFObject rpc(UBFObject request)
 	throws IOException, UBFException
     {
@@ -58,7 +78,7 @@ public class UBFClient
 		throw new RuntimeException("Illegal rpcState: " + rpcState);
 	    /* make request */
 	    rpcState = RPC_PENDING;
-	    UBF.write(UBF.tuple(new UBFAtom("rpc"), request), output);
+	    UBF.write(request, output);
 	    UBF.debug("RPC -> " + request);
 	    /* wait reply */
 	    do {
@@ -98,24 +118,26 @@ public class UBFClient
     {
 	public void run() {
 	    try {
-		while (true) {
+		while (run_iohandler_thread) {
 		    UBFObject msg = UBF.read(input);
-		    if (msg.isTaggedTuple("rpcReply", 3)) {
+		    if (msg.isTaggedTuple("event_out", 2)) {
+			UBFObject event = ((UBFTuple)msg).value[1];
+			UBFClient.this.eventHandler.handleEvent(UBFClient.this, event);
+		    } else {
 			synchronized (UBFClient.this.mutex) {
 			    UBFObject[] replyTerms = ((UBFTuple)msg).value;
-			    serverState = (UBFAtom)replyTerms[2];
-			    UBFClient.this.rpcReply = (UBFObject)replyTerms[1];
+			    serverState = (UBFAtom)replyTerms[1];
+			    UBFClient.this.rpcReply = (UBFObject)replyTerms[0];
 			    UBFClient.this.rpcState = UBFClient.RPC_DONE;
 			    mutex.notifyAll();
 			}
-		    } else if (msg.isTaggedTuple("event", 2)) {
-			UBFObject event = ((UBFTuple)msg).value[1];
-			UBFClient.this.eventHandler.handleEvent(UBFClient.this, event);
 		    }
 		}
 	    } catch (Exception e) {
-		System.err.println("Error in event thread: " + e);
-		e.printStackTrace();
+		if (run_iohandler_thread) {
+		    System.err.println("Error in event thread: " + e);
+		    e.printStackTrace();
+		}
 	    }
 	}
     }

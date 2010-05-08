@@ -2,9 +2,13 @@ package ubf;
 
 public class UBFInteger extends UBFObject
 {
-    public final int value;
+    public final long value;
 
     public UBFInteger(int i) {
+	value = (long) i;
+    }
+
+    public UBFInteger(long i) {
 	value = i;
     }
 
@@ -23,7 +27,7 @@ public class UBFInteger extends UBFObject
 
     public int hashCode()
     {
-	return value;
+	return (int) value;
     }
 
 }

@@ -8,6 +8,7 @@ public class UBFDecoder
     protected PushbackInputStream input;
     protected Stack stack = new Stack();
     protected UBFObject value;
+    protected UBFObject register[] = new UBFObject[256];
 
     public UBFDecoder(InputStream in)
     {
@@ -87,9 +88,33 @@ public class UBFDecoder
 		return obj;
 	    else
 		throw new UBFException("Expected tuple: obj");
+	case '>':
+	    nextChar();
+	    char reg = nextChar();
+	    register[reg] = (UBFObject)stack.pop();
+	    /*
+	    ** We don't want to return this object because we don't want to
+	    ** have the caller push it on the stack ... so keep going!
+	    */
+	    return readObject();
 	default:
 	    if (ch == '-' || Character.isDigit(ch))
 		return readInteger();
+	    else if (ch == '~') {
+		nextChar();
+		int len = (int) ((UBFInteger)stack.pop()).value;
+		byte buf[] = new byte[len];
+		int bytes_read = 0;
+		while (bytes_read < len) {
+		    bytes_read += input.read(buf, bytes_read, len - bytes_read);
+		}
+		nextChar();	// Skip trailing ~
+		return new UBFBinary(buf, len);
+	    }
+	    else if (register[ch] != null) {
+		nextChar();
+		return register[ch];
+	    }
 	    else
 		throw new UBFException("Invalid start character: '" +
 				       ch + "' (" + (int)ch + ")");
@@ -154,13 +179,13 @@ public class UBFDecoder
 
 	while (Character.isDigit(ch)) {
 	    acc = (acc * 10) + ((ch - '0') * sign);
-	    if ((acc > Integer.MAX_VALUE) || (acc < Integer.MIN_VALUE))
+	    if ((acc > Long.MAX_VALUE) || (acc < Long.MIN_VALUE))
 		throw new UBFException("Integer overflow");
 	    ch = nextChar();
 	}
 	input.unread(ch);
 
-	return new UBFInteger((int)acc);
+	return new UBFInteger((long)acc);
     }
 
     protected char nextChar()
