@@ -1,3 +1,6 @@
+2010-05-08 15:10 CDT  slfritchie
+	Prepare for v1.13 tag: README, Java client, etc.
+
 2010-04-23 20:30 JST  norton
         * contract_manager.erl, contract_manager_tlog.erl, contracts.erl,
 	ubf_client.erl, ubf_plugin_handler.erl,
