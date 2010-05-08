@@ -1,7 +1,32 @@
 
-This is ubf, a framework for Getting Erlang to talk to the outside
+This is UBF, a framework for Getting Erlang to talk to the outside
 world.  This repository is based on Joe Armstrong's original UBF code
-with an MIT license file added to the distribution.
+with an MIT license file added to the distribution.  Since then, a
+large number of enhancements and improvements have been added.
+
+
+What is UBF?
+============
+
+UBF is the "Universal Binary Format", designed and implemented by Joe
+Armstrong.  See http://www.sics.se/~joe/ubf.html for full details.  A
+really short summary:
+
+   * UBF(A) is a protocol above a stream transport (e.g. TCP/IP), for
+     encoding structured data roughly equivalent to well-formed XML.
+
+   * UBF(B) is a programming langauge for describing types in UBF(A)
+     and protocols between clients and servers.  This layer is
+     typically called the "protocol contract".  All data sent by both
+     the client and the server is verified by the contract manager (an
+     Erlang process on the "server" side of the protocol).  Any data
+     that violates the contract is 
+
+     UBF(B) is roughly equivalent to to Verified XML, XML-schemas,
+     SOAP and WDSL.
+
+   * UBF(C) is a meta-level protocol used between a UBF client and a
+     UBF server.
 
 
 To build
@@ -16,6 +41,22 @@ To build
 
 3. Run the unit test
    $ make check
+
+4. To build the Java client and run its encoding/decoding unit test:
+   $ cd priv/java
+   $ make
+
+5. The Python client depends on the "py-interface" library.  To clone
+   and build it, use:
+
+   $ cd /some/place/else
+   $ git clone git://repo.or.cz/py_interface.git
+   $ cd py_interface
+   $ autoconf
+   $ make
+
+   Then install as a normal Python package or run using
+   "env PYTHONPATH=/path/to/py_interface python your-script.py"
 
 
 Documentation -- Where should I start?
@@ -46,24 +87,6 @@ The #1 most frequently asked question is: "My term X fails contract
 Y, but I can't figure out why!  This X is perfectly OK.  What is going
 on?"  See the the EDoc documentation for the contracts:checkType/3
 function.
-
-
-What is UBF?
-============
-
-UBF is the "Universal Binary Format", designed and implemented by Joe
-Armstrong.  See http://www.sics.se/~joe/ubf.html for full details.  A
-really short summary:
-
-   * UBF(A) is a protocol above a stream transport (e.g. TCP/IP), for
-     encoding structured data roughly equivalent to well-formed XML.
-
-   * UBF(B) is a programming langauge for describing types in UBF(A)
-     and protocols between clients and servers. UBF(B) is roughly
-     equivalent to to Verified XML, XML-schemas, SOAP and WDSL.
-
-   * UBF(C) is a meta-level protocol used between a UBF client and a
-     UBF server.
 
 
 What is EBF?
@@ -117,6 +140,33 @@ What about EEP8?
 See the ubf-eep8 open source repository
 http://github.com/norton/ubf-eep8 for details.  ubf-eep8 is a
 framework for integrating UBF and EEP8.
+
+
+What's New? in tag v1.13 (08 May 2010)
+======================================
+
+The last tag, v1.12, was created on 11 April 2009.  Joe's Github repo
+has had over 130 commits in the 13 months that v1.12 was tagged.  The
+number of differences are ... too large to enumerate, sorry.
+
+Gemini Mobile has a custom Webmail system in production now for
+NTT-Resonant in Japan that is serving well over 1 million users.  UBF
+contracts are heavily used in all major parts of the system.  Most
+heavily used are the EBF and JSON-RPC transports.  See the
+presentation slides by Scott Lystig Fritchie and Joe Norton at the
+Erlang Factory San Francisco 2010 conference at:
+
+    http://www.erlang-factory.com/conference/SFBay2010/speakers/ScottLystigFritchie
+    http://www.erlang-factory.com/upload/presentations/242/ErlangFactorySFBay2010-ScottLystigFritchieandJosephWayneNorton.pdf
+
+The Java client has been neglected for years.  Recent fixes to the
+encoder/decoder make it possible to handle "modern" UBF contracts
+that.  No work has been done to optimize the Java client for speed,
+but it is now able to handle contracts that use Erlang binary() and
+signed integers that fit into 63 bits.
+
+Experimenal support has been added for the Thrift protocol as the
+transport & session layers.
 
 
 To do (in short term)
