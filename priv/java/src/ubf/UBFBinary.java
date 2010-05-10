@@ -28,13 +28,9 @@ public class UBFBinary extends UBFObject
 	return size;
     }
 
-    /**
-     * O(1) when argument is an atom, normal string comparison when
-     * its a string
-     */
     public boolean equals(Object o) {
 	return ((o instanceof UBFBinary) && ((UBFBinary)o).value == value)
-	    || ((o instanceof String) && o.equals(value));
+	    || ((o instanceof String) && o.equals(new String(value)));
     }
 
     public int hashCode() {
