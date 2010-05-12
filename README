@@ -10,7 +10,7 @@ What is UBF?
 
 UBF is the "Universal Binary Format", designed and implemented by Joe
 Armstrong.  See http://www.sics.se/~joe/ubf.html for full details.  A
-really short summary:
+really short summary: 
 
    * UBF(A) is a protocol above a stream transport (e.g. TCP/IP), for
      encoding structured data roughly equivalent to well-formed XML.
@@ -43,15 +43,15 @@ To build
    $ make check
 
 4. To build the Java client and run its encoding/decoding unit test:
-   $ cd priv/java
-   $ make
+   $ cd priv/java 
+   $ make 
 
 5. The Python client depends on the "py-interface" library.  To clone
    and build it, use:
 
    $ cd /some/place/else
    $ git clone git://repo.or.cz/py_interface.git
-   $ cd py_interface
+   $ cd py_interface 
    $ autoconf
    $ make
 
@@ -150,8 +150,8 @@ has had over 130 commits in the 13 months that v1.12 was tagged.  The
 number of differences are ... too large to enumerate, sorry.
 
 Gemini Mobile has a custom Webmail system in production now for
-NTT-Resonant in Japan that is serving well over 1 million users.  UBF
-contracts are heavily used in all major parts of the system.  Most
+a production system in Asia that is serving well over 1 million users.
+UBF contracts are heavily used in all major parts of the system.  Most
 heavily used are the EBF and JSON-RPC transports.  See the
 presentation slides by Scott Lystig Fritchie and Joe Norton at the
 Erlang Factory San Francisco 2010 conference at:
@@ -250,8 +250,7 @@ To do (in long term)
 Credits
 =======
 
-Many, many thanks to Joe Armstrong, UBF's designer and original
-implementor.
+Many, many thanks to Joe Armstrong, UBF's designer and original implementor.
 
 Gemini Mobile Technologies, Inc. has approved the release of its
 extensions, improvements, etc. under an MIT license.  Joe Armstrong
