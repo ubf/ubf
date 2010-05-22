@@ -2,8 +2,13 @@
 # $Id: erl_make.mk 107291 2008-07-14 15:06:21Z norton $
 #
 
+BASH_LS=$(shell /bin/ls -l /bin/bash 2> /dev/null)
+ifneq (,$(BASH_LS))
 # force /bin/(ba)sh so we can take advantage of the pipefail feature
-export SHELL := /bin/sh -e -o pipefail
+export SHELL := /bin/bash -e -o pipefail
+else
+export SHELL := /bin/sh
+endif
 
 ######################################################################
 
