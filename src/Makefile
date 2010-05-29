@@ -105,10 +105,6 @@ edoc: all
 ### remove time tags
 	perl -i -pe 's!(Version:</b>)([^<]+)!$$1 \$$Id!;' \
 		../edoc/*.html
-### replace bom root with ./
-#	perl -i -pe 's!$(DEP_ROOT)!./!g;' \
-#		../edoc/*.html
-
 
 # irc demo
 irc-server: all
