@@ -1,7 +1,7 @@
 -module(stateful_plugin_test).
 
 -compile(export_all).
--include("eunit.hrl").
+-include_lib("eunit/include/eunit.hrl").
 -include("ubf.hrl").
 
 do_eunit() ->

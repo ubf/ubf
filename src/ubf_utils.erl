@@ -1,4 +1,3 @@
-%%% $Id$
 %%% Description: utils for ubf
 %%%-------------------------------------------------------------------
 
@@ -295,8 +294,8 @@ ubf_contract(Mod) ->
           , ""
          ],
     X4 = [ begin
-	       {Input, InputType, _} = get_type(Input,true,Mod),
-	       Params = typeref(InputType,Mod),
+               {Input, InputType, _} = get_type(Input,true,Mod),
+               Params = typeref(InputType,Mod),
                Result =
                    case get_type(Output,false,Mod) of
                        {Output, OutputType, _} ->

@@ -1,5 +1,4 @@
 %%% -*- mode: erlang -*-
-%%% $Id$
 %%% @doc Implement the UBF(C) meta-protocol for UBF(B) "stateless" contracts.
 %%%
 %%% The metaprotocol is used at the beginning of a UBF session to

@@ -1,6 +1,5 @@
 %%%----------------------------------------------------------------------
-%%% $Id$
-%%% Description: UBF Implmentation Utilities
+%%% Description: UBF Implementation Utilities
 %%%----------------------------------------------------------------------
 
 -ifndef(ubf_impl).

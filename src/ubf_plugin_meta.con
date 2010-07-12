@@ -1,5 +1,4 @@
 %%% -*- mode: erlang -*-
-%%% $Id$
 %%%
 
 +NAME("meta_server").

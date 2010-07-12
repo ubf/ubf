@@ -1,6 +1,5 @@
 
 ##
-## $Id$
 ##
 
 from pyubf import Integer, Float, Atom, String, Binary, Tuple, List, PropList
