@@ -17,6 +17,10 @@
 ### Purpose :
 ###----------------------------------------------------------------------
 
+ifeq ($(erl-bom-mk),)
+include $(SRCDIR)/$(firstword $(filter src/erl-tools/gmt-bom__%,$(MY_DEPENDS)))/make/erl_bom.mk
+endif
+
 $(ME)/.bom_config: $(erl-bom-mk)
 	$(erl-bom-config)
 	touch $@
