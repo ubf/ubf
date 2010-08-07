@@ -10,7 +10,7 @@ What is UBF?
 
 UBF is the "Universal Binary Format", designed and implemented by Joe
 Armstrong.  See http://www.sics.se/~joe/ubf.html for full details.  A
-really short summary: 
+really short summary:
 
    * UBF(A) is a protocol above a stream transport (e.g. TCP/IP), for
      encoding structured data roughly equivalent to well-formed XML.
@@ -20,7 +20,7 @@ really short summary:
      typically called the "protocol contract".  All data sent by both
      the client and the server is verified by the contract manager (an
      Erlang process on the "server" side of the protocol).  Any data
-     that violates the contract is 
+     that violates the contract is
 
      UBF(B) is roughly equivalent to to Verified XML, XML-schemas,
      SOAP and WDSL.
@@ -29,8 +29,48 @@ really short summary:
      UBF server.
 
 
-To build
-========
+To download
+===========
+
+1. Get and install Git
+   http://git-scm.com/
+
+  and then append the following lines to your ~/.gitconfig file:
+
+    [url "git://github.com/norton/gmt-bom.git"]
+         insteadOf = git://github.com/norton/src/erl-tools/gmt-bom.git
+    [url "git://github.com/norton/ubf.git"]
+         insteadOf = git://github.com/norton/src/erl-tools/ubf.git
+
+  NOTE: UBF requires git version 1.7.x or newer.  UBF has been tested
+  most recently with git version 1.7.1.1.
+
+2. Download the 'bom.sh' tool and then download UBF
+
+    $ mkdir -p ~/work/ubf
+    $ cd ~/work/ubf
+    $ git clone git@github.com:norton/bom.git .
+    $ env BOM_GIT=git://github.com/norton/ \
+      ./bom.sh co src/erl-tools/ubf
+
+  NOTE: The Bill of Materials (BOM) system is a way to manage the
+  builds of heterougeneous products with shared components using GIT,
+  GIT-SVN, SVN, or CVS.  BOM maintains hierarchical dependencies
+  between modules stored in a source code repository.  BOM is
+  implemented using bash, make, and other UNIX tools.
+
+  NOTE: The bom.sh commands 'diff' and 'status' can be used to check
+  the differences and status of all components, respectively.  Type
+  './bom.sh help' for further information.
+
+  NOTE: The BOM system was originally developed by Gemini Mobile
+  Technologies as an in-house tool to build and to package it's own
+  commercial products.  BOM as been open-sourced as one of the helper
+  tools for UBF.
+
+
+To build - basic recipe
+=======================
 
 1. Get and install an erlang system
    http://www.erlang.org
@@ -38,23 +78,72 @@ To build
    NOTE: UBF requires Erlang/OTP R13B01 or newer.  UBF has been tested
    most recently with Erlang/OTP R13B04.
 
-2. Change to the src directory and type make
-   $ cd src
-   $ make
+2. Change to your working directory and create the toplevel Makefile
+   $ cd ~/work/ubf
+   $ ./bom.sh make
 
-3. Run the unit test
-   $ make check
+3. Build UBF
+   $ make ERL=/usr/local/hibari/ert/R13B04/bin/erl
+     OR
+   $ make ERL=/usr/local/hibari/ert/R13B04/bin/erl DEBUG="+debug_info"
 
-4. To build the Java client and run its encoding/decoding unit test:
-   $ cd priv/java 
-   $ make 
+   NOTE: Please specify the path to your erlang system's erl
+   executable.
 
-5. The Python client depends on the "py-interface" library.  To clone
+   NOTE: DEBUG="+debug_info" will produce DEBUG enabled beam files.
+
+4. Run the unit tests
+   $ make ERL=/usr/local/hibari/ert/R13B04/bin/erl test
+
+
+To build - optional features
+============================
+
+A. Run unit test for one module.
+
+   $ make ERL=/usr/local/hibari/ert/R13B04/bin/erl \
+     DEBUG="+debug_info" \
+     -C src/erl-tools/ubf__HEAD/src check
+
+B. Clean one module
+
+   $ make ERL=/usr/local/hibari/ert/R13B04/bin/erl \
+     DEBUG="+debug_info" \
+     -C src/erl-tools/ubf__HEAD/src clean
+
+C. Rebuild one module
+
+   $ make ERL=/usr/local/hibari/ert/R13B04/bin/erl \
+     DEBUG="+debug_info" \
+     -C src/erl-tools/ubf__HEAD/src
+
+D. Generate EDocs for one module
+
+   $ make ERL=/usr/local/hibari/ert/R13B04/bin/erl \
+     DEBUG="+debug_info" \
+     -C src/erl-tools/ubf__HEAD/src edoc
+
+E. Run dialyzer for one module (and it dependencies)
+
+   $ make ERL=/usr/local/hibari/ert/R13B04/bin/erl \
+     DEBUG="+debug_info" \
+     -C src/erl-tools/ubf__HEAD/src run-dialyzer
+
+   NOTE: Dialyzer will not work unless all beam files have been
+   compiled with debug information.
+
+F. To build the Java client and run its encoding/decoding unit test:
+
+  $ make ERL=/usr/local/hibari/ert/R13B04/bin/erl \
+     DEBUG="+debug_info" \
+     -C src/erl-tools/ubf__HEAD/priv/java
+
+G. The Python client depends on the "py-interface" library.  To clone
    and build it, use:
 
    $ cd /some/place/else
    $ git clone git://repo.or.cz/py_interface.git
-   $ cd py_interface 
+   $ cd py_interface
    $ autoconf
    $ make
 
@@ -112,7 +201,6 @@ used instead:
 The name "EBF" is short for "Erlang Binary Format".
 
 
-
 What about JSF and JSON-RPC?
 ============================
 
@@ -152,8 +240,8 @@ The last tag, v1.12, was created on 11 April 2009.  Joe's Github repo
 has had over 130 commits in the 13 months that v1.12 was tagged.  The
 number of differences are ... too large to enumerate, sorry.
 
-Gemini Mobile has a custom Webmail system in production now for
-a production system in Asia that is serving well over 1 million users.
+Gemini Mobile has a custom Webmail system in production now for a
+production system in Asia that is serving well over 1 million users.
 UBF contracts are heavily used in all major parts of the system.  Most
 heavily used are the EBF and JSON-RPC transports.  See the
 presentation slides by Scott Lystig Fritchie and Joe Norton at the
@@ -238,7 +326,7 @@ To do (in medium term)
       wire protocol (based on Erlang's binary serialization format).
   - ???
 
-  
+
 To do (in long term)
 ====================
   - support multiple listeners for a single ubf server
@@ -247,7 +335,7 @@ To do (in long term)
   - replace plugin manager and plugin handler with gen_server-based
     implementation
   - enable/disable contract checker by configuration
-  - quickcheck tests  
+  - quickcheck tests
 
 
 Credits

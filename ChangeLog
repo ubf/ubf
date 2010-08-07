@@ -1,5 +1,9 @@
+2010-08-07 13:00 JST  norton
+	* Update README, Makefile, BOM.mk, and GMBOM files for building
+	with bom.sh
+
 2010-05-08 15:10 CDT  slfritchie
-	Prepare for v1.13 tag: README, Java client, etc.
+	* Prepare for v1.13 tag: README, Java client, etc.
 
 2010-04-23 20:30 JST  norton
         * contract_manager.erl, contract_manager_tlog.erl, contracts.erl,
