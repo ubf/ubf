@@ -247,8 +247,8 @@ heavily used are the EBF and JSON-RPC transports.  See the
 presentation slides by Scott Lystig Fritchie and Joe Norton at the
 Erlang Factory San Francisco 2010 conference at:
 
-    http://www.erlang-factory.com/conference/SFBay2010/speakers/ScottLystigFritchie
-    http://www.erlang-factory.com/upload/presentations/242/ErlangFactorySFBay2010-ScottLystigFritchieandJosephWayneNorton.pdf
+http://www.erlang-factory.com/conference/SFBay2010/speakers/ScottLystigFritchie
+http://www.erlang-factory.com/upload/presentations/242/ErlangFactorySFBay2010-ScottLystigFritchieandJosephWayneNorton.pdf
 
 The Java client has been neglected for years.  Recent fixes to the
 encoder/decoder make it possible to handle "modern" UBF contracts
