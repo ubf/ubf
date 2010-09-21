@@ -16,6 +16,6 @@
 %%%-------------------------------------------------------------------
 
 -record(contract,
-        {name, vsn, types=[], leaftypenames=[], records=[], transitions=[], anystate=[]}).
+        {name, vsn, types=[], leaftypenames=[], importtypenames=[], records=[], transitions=[], anystate=[]}).
 
 -endif. % -ifndef(ubf_impl)

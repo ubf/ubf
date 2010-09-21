@@ -79,9 +79,13 @@ make_code(C) ->
     LeafTypeNames = C#contract.leaftypenames,
     F4 = {function,0,contract_leaftypes,0,
           [{clause,0,[],[],[erl_parse:abstract(LeafTypeNames, 0)]}]},
+    %% contract importtypes
+    ImportTypeNames = C#contract.importtypenames,
+    F5 = {function,0,contract_importtypes,0,
+          [{clause,0,[],[],[erl_parse:abstract(ImportTypeNames, 0)]}]},
     %% contract records
     RecordNames = map(fun({Record, _}) -> Record end, C#contract.records),
-    F5 = {function,0,contract_records,0,
+    F6 = {function,0,contract_records,0,
           [{clause,0,[],[],[erl_parse:abstract(RecordNames, 0)]}]},
     %% contract states
     StateNames =
@@ -90,7 +94,7 @@ make_code(C) ->
            true ->
                 map(fun({State,_}) -> State end, C#contract.transitions)
         end,
-    F6 = {function,0,contract_states,0,
+    F7 = {function,0,contract_states,0,
           [{clause,0,[],[],[erl_parse:abstract(StateNames, 0)]}]},
     %% contract type
     Type =
@@ -101,7 +105,7 @@ make_code(C) ->
                             {clause,1,[{atom,0,Type}],[],[erl_parse:abstract({Val,Str})]}
                     end, C#contract.types)
         end,
-    F7 = {function,0,contract_type,1,Type},
+    F8 = {function,0,contract_type,1,Type},
     %% contract record
     Record =
         if C#contract.records =:= [] ->
@@ -111,7 +115,7 @@ make_code(C) ->
                             {clause,1,[{atom,0,Record}],[],[erl_parse:abstract(Val)]}
                     end, C#contract.records)
         end,
-    F8 = {function,0,contract_record,1,Record},
+    F9 = {function,0,contract_record,1,Record},
     %% contract state
     State =
         if C#contract.transitions =:= [] ->
@@ -121,7 +125,7 @@ make_code(C) ->
                             {clause,1,[{atom,0,State}],[],[erl_parse:abstract(Val)]}
                     end, C#contract.transitions)
         end,
-    F9 = {function,0,contract_state,1,State},
+    F10 = {function,0,contract_state,1,State},
     %% contract anystate
     Any =
         if C#contract.anystate =:= [] ->
@@ -129,7 +133,7 @@ make_code(C) ->
            true ->
                 C#contract.anystate
         end,
-    F10 = {function,0,contract_anystate,0,
+    F11 = {function,0,contract_anystate,0,
            [{clause,0,[],[],[erl_parse:abstract(Any, 0)]}]},
     %% exports
     Exports = {attribute,0,export,
@@ -137,6 +141,7 @@ make_code(C) ->
                 {contract_vsn,0},
                 {contract_types,0},
                 {contract_leaftypes,0},
+                {contract_importtypes,0},
                 {contract_records,0},
                 {contract_states,0},
                 {contract_type,1},
@@ -145,7 +150,7 @@ make_code(C) ->
                 {contract_anystate,0}
                ]},
     %% funcs
-    Funcs =  [F1,F2,F3,F4,F5,F6,F7,F8,F9,F10],
+    Funcs =  [F1,F2,F3,F4,F5,F6,F7,F8,F9,F10,F11],
     {Exports, Funcs}.
 
 merge_in_code([H|T], Exports, Fns)
@@ -198,7 +203,12 @@ tags(P1, Imports) ->
                             noop;
                         UnusedTypes ->
                             if Contract#contract.transitions =/= [] orelse Contract#contract.anystate =/= [] ->
-                                    erlang:error({unused_types, UnusedTypes});
+                                    case UnusedTypes -- Contract#contract.importtypenames of
+                                        [] ->
+                                            noop;
+                                        UnusedNonImportTypes ->
+                                            erlang:error({unused_types, UnusedNonImportTypes})
+                                    end;
                                true ->
                                     noop
                             end
@@ -280,12 +290,29 @@ pass2(P, Imports) ->
     Trans = require(many, transition, P),
 
     ImportTypes = lists:flatten(
-                    [ [ begin {TDef, TTag} = Mod:contract_type(T), {T, TDef, TTag} end
-                        || T <- TL ] || {Mod, TL} <- Imports ]
+                    [
+                      begin
+                          case Import of
+                              Mod when is_atom(Mod) ->
+                                  Mod = Mod,
+                                  TL = Mod:contract_types();
+                              {Mod, TL} when is_atom(Mod), is_list(TL) ->
+                                  Mod = Mod,
+                                  TL = TL;
+                              X ->
+                                  Mod = unused,
+                                  TL = unused,
+                                  exit({invalid_import, X})
+                          end,
+                          [ begin {TDef, TTag} = Mod:contract_type(T), {T, TDef, TTag} end
+                            || T <- TL ]
+                      end
+                      || Import <- Imports ]
                    ),
+    ImportTypeNames = [ T || {T, _, _} <- ImportTypes ],
 
     C = #contract{name=Name, vsn=Vsn, anystate=Any,
-                  types=Types, transitions=Trans},
+                  types=Types, importtypenames=ImportTypeNames, transitions=Trans},
     pass3(C, ImportTypes).
 
 require(Multiplicity, Tag, P) ->
@@ -331,10 +358,11 @@ pass3(C1, ImportTypes) ->
     Types2 = C2#contract.types,
     %% DEBUG io:format("Types2=~p~n",[Types2]),
     DefinedTypes2 = [ I || {I,_,_} <- Types2 ] ++ [ {predef, I} || I <- preDefinedTypes() ],
-    %% DEBUG io:format("Defined types2=~p~n",[DefinedTypes2]),
-    case duplicates(DefinedTypes2, []) of
+    DefinedTypesVals2 = Types2 ++ [ {predef, I} || I <- preDefinedTypes() ],
+    %% DEBUG io:format("Defined types2=~p~n",[DefinedTypesVals2]),
+    case duplicates(lists:usort(DefinedTypesVals2), []) of
         [] -> true;
-        L2 -> erlang:error({duplicated_import_types, L2})
+        L2 -> erlang:error({duplicated_unmatched_import_types, L2})
     end,
 
     %% DEBUG io:format("Transitions=~p~n",[Transitions]),

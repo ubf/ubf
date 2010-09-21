@@ -1,3 +1,10 @@
+2010-09-21 23:30 JST  norton
+	* src/contract_parser.erl, include/ubf_impl.hrl: allow one to
+	easily import all types from one or more contracts.  allow
+	duplicate types to be imported as long as they have the same
+	definition.  add new method to obtain list of imported
+	type(name)s.
+
 2010-08-07 13:00 JST  norton
 	* Update README, Makefile, BOM.mk, and GMBOM files for building
 	with bom.sh
