@@ -299,6 +299,9 @@ pass2(P, Imports) ->
                               {Mod, TL} when is_atom(Mod), is_list(TL) ->
                                   Mod = Mod,
                                   TL = TL;
+                              {Mod, {except, ETL}} when is_atom(Mod), is_list(ETL) ->
+                                  Mod = Mod,
+                                  TL = Mod:contract_types() -- ETL;
                               X ->
                                   Mod = unused,
                                   TL = unused,
@@ -358,9 +361,8 @@ pass3(C1, ImportTypes) ->
     Types2 = C2#contract.types,
     %% DEBUG io:format("Types2=~p~n",[Types2]),
     DefinedTypes2 = [ I || {I,_,_} <- Types2 ] ++ [ {predef, I} || I <- preDefinedTypes() ],
-    DefinedTypesVals2 = Types2 ++ [ {predef, I} || I <- preDefinedTypes() ],
-    %% DEBUG io:format("Defined types2=~p~n",[DefinedTypesVals2]),
-    case duplicates(lists:usort(DefinedTypesVals2), []) of
+    %% DEBUG io:format("Defined types2=~p~n",[DefinedTypes2]),
+    case duplicates(DefinedTypes2, []) of
         [] -> true;
         L2 -> erlang:error({duplicated_unmatched_import_types, L2})
     end,
