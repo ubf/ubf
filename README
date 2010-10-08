@@ -286,7 +286,6 @@ To do (in short term)
       - nonempty: not equal to '', [], <<>>, or {}
       - nonundefined: not equal to 'undefined'
       - type()? for optional types
-      - type(){0} for undefined types
     + user-defined ubf contract (and contract checker) primitives
       - atom(), binary(), float(), integer(), and string() constants
       - #record syntax, ##extended_record syntax with automatic erlang record defines

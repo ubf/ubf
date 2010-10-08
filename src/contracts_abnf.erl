@@ -103,12 +103,15 @@ check_binary(S, _Next) ->
 
 %%----------------------------------------------------------------------
 %% check_binary_repeat
+check_binary_repeat(#state{check={abnf_repeat,_Min,Max,_Type}=_Check}=S, Next, Matches)
+  when Matches =:= Max ->
+    Next(S#state{check=undefined});
 check_binary_repeat(#state{check={abnf_repeat,Min,_Max,Type}=Check}=S, Next, Matches)
   when Matches < Min ->
     Fun = fun(S1) -> check_binary_repeat(S1#state{check=Check}, Next, Matches+1) end,
     check_binary(S#state{check=Type}, Fun);
 check_binary_repeat(#state{check={abnf_repeat,_Min,Max,Type}=Check}=S, Next, Matches)
-  when Max == infinity orelse Matches =< Max ->
+  when Max == infinity orelse Matches < Max ->
     Fun1 = fun() -> Next(S#state{check=undefined}) end,
     Fun2 = fun() -> Fun = fun(S1) -> check_binary_repeat(S1#state{check=Check}, Next, Matches+1) end,
                     check_binary(S#state{check=Type}, Fun) end,

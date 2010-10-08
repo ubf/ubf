@@ -32,9 +32,6 @@ type(Type,Mod) ->
 %% alt
 typeref({alt,Type1,Type2},Mod) ->
     io_lib:format("~s | ~s", [typeref(Type1,Mod), typeref(Type2,Mod)]);
-%% concat
-typeref({concat,Type1,Type2},Mod) ->
-    io_lib:format("~s ++ ~s", [typeref(Type1,Mod), typeref(Type2,Mod)]);
 %% prim
 typeref({prim,Min,Max,Tag},Mod) ->
     case Tag of
@@ -168,7 +165,6 @@ ubf_contract(Mod) ->
           , "%%   - A() means replace with \"A type reference\""
           , "%%   - A() | B() means \"A() or B()\""
           , "%%   - A()? means \"optional A()\""
-          , "%%   - A() ++ B() means \"list A() concatenate list B()"
           , "%%   - A(Attrs) means \"A() subject to the comma-delimited type attributes"
           , "%%"
           , ""
@@ -270,7 +266,6 @@ ubf_contract(Mod) ->
           , "[type()]\n\t\tlist of type()"
           , "[type()]?\n\t\tlist of length 0 or length 1 of type()"
           , "[type()]+\n\t\tlist of length greater than 0 of type()"
-          , "[type()]{0}\n\t\tempty list"
           , "[type()]{M}\n\t\tlist of length M of type()"
           , "[type()]{M,}\n\t\tlist of minimum length M of type()"
           , "[type()]{M,N}\n\t\tlist of minimum length M and maximum length N of type()"

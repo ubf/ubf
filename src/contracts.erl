@@ -103,10 +103,6 @@ isType(Type, X, Mod) ->
 %% alt
 check_term({alt, A, B}, X, Level, Mod) ->
     check_term(A, X, Level, Mod) orelse check_term(B, X, Level, Mod);
-%% concat
-check_term({concat, _A, _B}=_Check, _X, _Level, _Mod) ->
-    %% @TODO not (re-)implemented now
-    ?FAIL({notimplemented,_X});
 %% prim
 check_term({prim, Min, Max, Type}=_Check, X, Level, Mod) ->
     %% NOTE: hard-coded max level of 10010

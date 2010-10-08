@@ -1,3 +1,11 @@
+2010-10-08 19:00 JST  norton
+        * src/contract_lex.xrl, src/contract_parser.erl,
+	src/contract_yecc.yrl, src/contracts.erl, src/contracts_abnf.erl,
+	src/ubf_utils.erl: Remove not yet re-implemented "concat"
+	(a.k.a. ++) operator. Remove type(){0} and type(){1} support.
+	Permit "empty" tuples, records, and extended records.  Export new
+	parse_file API of contract_parser for unit and quickcheck testing.
+
 2010-09-25 02:00 JST  norton
 	* src/contract_parser.erl: allow one to easily import all types
 	from one or more contracts except for specified list of types.

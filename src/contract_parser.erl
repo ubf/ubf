@@ -16,7 +16,8 @@
 -export([parse_transform/2,
          make/0, make_lex/0, make_yecc/0, preDefinedTypes/0, preDefinedTypesWithoutAttrs/0, preDefinedTypesWithAttrs/0,
          tags/1, tags/2,
-         parse_transform_contract/2
+         parse_transform_contract/2,
+         parse_file/1
         ]).
 
 -import(lists, [filter/2, map/2, member/2, foldl/3]).
@@ -173,17 +174,23 @@ make_yecc() ->
     {ok,_} = yecc:file(contract_yecc),
     ok.
 
+parse_file(F) ->
+    {ok, Stream} = file:open(F, [read]),
+    try
+        handle(Stream, 1, [], 0)
+    after
+        file:close(Stream)
+    end.
+
 infileExtension()  -> ".con".
 outfileHUCExtension() -> ".huc".  %% hrl UBF contract records
 
 file(F, Imports) ->
-    {ok, Stream} = file:open(F, [read]),
-    P = handle(Stream, 1, [], 0),
-    file:close(Stream),
-    case P of
-        {ok, P1} ->
-            tags(P1, Imports);
-        E -> E
+    case parse_file(F) of
+        {ok, P} ->
+            tags(P, Imports);
+        E ->
+            E
     end.
 
 tags(P1) ->
@@ -519,9 +526,8 @@ handle1({eof, _}, _Stream, L, 0) ->
     {ok, lists:reverse(L)};
 handle1({eof, _}, _Stream, _L, N) ->
     {error, N};
-handle1(What, Stream, L, Nerrs) ->
-    io:format("Here:~p\n", [What]),
-    handle(Stream, 1, L, Nerrs+1).
+handle1(What, Stream, L, N) ->
+    {error, What}.
 
 remove_duplicates([H|T]) ->
     case member(H, T) of

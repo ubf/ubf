@@ -5,13 +5,12 @@ form type typeDef typeRef primType typeAttr typeSeq typeRec.
 
 Terminals
 namekwd vsnkwd typekwd statekwd anystatekwd eventkwd atom binary float integer string
- '+' '|'  '=' '#' '{' '}' '&' ';' ',' '[]' '[' ']' '(' ')' ']?' ']{0}' ']{1}' ']+' ')?' '){0}' '){1}' '++' '..' '##' '=>' '<=' dot.
-
+ '+' '|'  '=' '#' '{}' '{' '}' '&' ';' ',' '[]' '[' ']' '(' ')' ']?' ']+' ')?' '..' '##' '=>' '<=' dot.
 
 Rootsymbol form.
 
 form -> '+' namekwd '(' string ')' dot      : {name, unwrap('$4')}.
-form -> '+' vsnkwd '(' string ')'  dot      : {vsn, unwrap('$4')}.
+form -> '+' vsnkwd '(' string ')' dot       : {vsn, unwrap('$4')}.
 form -> '+' typekwd types dot               : {types, '$3'}.
 form -> '+' statekwd atom transitions dot   : {transition, {unwrap('$3'), '$4'}}.
 form -> '+' anystatekwd anyrules dot        : {anystate, '$3'}.
@@ -26,17 +25,12 @@ annotation -> binary                        : unwrap('$1').
 annotation -> '$empty'                      : "".
 
 type ->  primType '|' type                  : eor('$1', '$3').
-type ->  primType '++' type                 : econcat('$1', '$3').
 type ->  primType                           : '$1'.
 
 primType -> atom '(' ')'                    : {prim, 1, 1, unwrapprim('$1')}.
 primType -> atom '(' ')?'                   : {prim, 0, 1, unwrapprim('$1')}.
-primType -> atom '(' '){0}'                 : {prim, 0, 0, unwrapprim('$1')}.
-primType -> atom '(' '){1}'                 : {prim, 1, 1, unwrapprim('$1')}.
 primType -> atom '(' typeAttr ')'           : {prim, 1, 1, unwrapprim('$1', '$3')}.
 primType -> atom '(' typeAttr ')?'          : {prim, 0, 1, unwrapprim('$1', '$3')}.
-primType -> atom '(' typeAttr '){0}'        : {prim, 0, 0, unwrapprim('$1', '$3')}.
-primType -> atom '(' typeAttr '){1}'        : {prim, 1, 1, unwrapprim('$1', '$3')}.
 
 primType -> '{' typeSeq '}'                 : {tuple, '$2'}.
 
@@ -48,12 +42,16 @@ primType -> '##' atom '{' typeRec '}'       : {record_ext, unwrap('$2'),
 primType -> '[' type ']'                    : {list, 0, infinity, '$2'}.
 primType -> '[' type ']+'                   : {list, 1, infinity, '$2'}.
 primType -> '[' type ']?'                   : {list, 0, 1, '$2'}.
-primType -> '[' type ']{0}'                 : {list, 0, 0, '$2'}.
-primType -> '[' type ']{1}'                 : {list, 1, 1, '$2'}.
 primType -> '[' type ']' '{' integer '}'    : {list, '$5', '$5', '$2'}.
 primType -> '[' type ']' '{' integer ',' '}': {list, '$5', infinity, '$2'}.
 primType -> '[' type ']' '{' integer ',' integer '}'
                                             : {list, '$5', '$6', '$2'}.
+
+primType -> '{}'                            : {tuple, []}.
+primType -> '#' atom '{}'                   : {record, unwrap('$2'),
+                                               [unwraprecfields([]), add_prim_term()|unwraprecvalues([])]}.
+primType -> '##' atom '{}'                  : {record_ext, unwrap('$2'),
+                                               [unwraprecfields([]), add_prim_term()|unwraprecvalues([])]}.
 
 primType -> '[]'                            : {list, 0, 0, undefined}.
 
@@ -101,9 +99,6 @@ Erlang code.
 
 eor(X, nil) -> X;
 eor(X, Y) -> {alt, X, Y}.
-
-econcat(X, nil) -> X;
-econcat(X, Y) -> {concat, X, Y}.
 
 unwrap({V,_}) -> V;
 unwrap({_,_,V}) -> V;

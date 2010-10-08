@@ -18,7 +18,7 @@ Rules.
                                     true -> {Atom,TokenLine};
                                     false -> {atom,TokenLine,Atom}
                                 end}.
-'[^']+'            :     Atom = list_to_atom(lists:sublist(TokenChars, 2, length(TokenChars) - 2)),
+'[^']*'            :     Atom = list_to_atom(lists:sublist(TokenChars, 2, length(TokenChars) - 2)),
                          {token,case reserved_word(Atom) of
                                     true -> {Atom,TokenLine};
                                     false -> {atom,TokenLine,Atom}
@@ -35,22 +35,18 @@ EVENT              :     {token,{eventkwd,TokenLine}}.
                          {token,{string,TokenLine,S}}.
 =>                 :     {token,{'=>',TokenLine}}.
 <=                 :     {token,{'<=',TokenLine}}.
-\+\+               :     {token,{'++',TokenLine}}.
 \.\.               :     {token,{'..',TokenLine}}.
 \#\#               :     {token,{'##',TokenLine}}.
 \)\?               :     {token,{')?',TokenLine}}.
-\)\{0\}            :     {token,{'){0}',TokenLine}}.
-\)\{1\}            :     {token,{'){1}',TokenLine}}.
 \]\?               :     {token,{']?',TokenLine}}.
-\]\{0\}            :     {token,{']{0}',TokenLine}}.
-\]\{1\}            :     {token,{']{1}',TokenLine}}.
 \]\+               :     {token,{']+',TokenLine}}.
+\{\}               :     {token,{'{}',TokenLine}}.
 \[\]               :     {token,{'[]',TokenLine}}.
 [;&,=+()[\]|<>{}#] :     {token,{list_to_atom(TokenChars),TokenLine}}.
 \.{WS}             :     {end_token,{dot,TokenLine}}.
 \.%.*              :     {end_token,{dot,TokenLine}}. % Must special case this
-{WS}+              :     .                         % No token returned,eqivalent
-\%.*               :     skip_token.               % to 'skip_token'
+{WS}+              :     .                            % No token returned,equivalent
+\%.*               :     skip_token.                  % to 'skip_token'
 
 Erlang code.
 
