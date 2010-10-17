@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/PR-SVG-20010719/DTD/svg10.dtd">
+<svg width="48cm" height="20cm" viewBox="142 -249 943 396" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke-dasharray: 4; stroke: #000000" x1="693.198" y1="-70.0354" x2="845.246" y2="-70.0354"/>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="837.482,-65.0354 847.482,-70.0354 837.482,-75.0354 "/>
+  </g>
+  <g>
+    <ellipse style="fill: #ffffff" cx="650.185" cy="-200.917" rx="46.2512" ry="46.2512"/>
+    <ellipse style="fill: none; fill-opacity:0; stroke-width: 2; stroke-dasharray: 4; stroke: #0000ff" cx="650.185" cy="-200.917" rx="46.2512" ry="46.2512"/>
+    <text style="fill: #0000ff;text-anchor:middle;font-size:12.8;font-family:sanserif;font-style:normal;font-weight:normal" x="650.185" y="-213.017">
+      <tspan x="650.185" y="-213.017">UBF</tspan>
+      <tspan x="650.185" y="-197.017">TCP/IP</tspan>
+      <tspan x="650.185" y="-181.017">Listener</tspan>
+    </text>
+  </g>
+  <g>
+    <ellipse style="fill: #ffffff" cx="332.96" cy="-70.0354" rx="47.9782" ry="47.9782"/>
+    <ellipse style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #ff0000" cx="332.96" cy="-70.0354" rx="47.9782" ry="47.9782"/>
+    <text style="fill: #ff0000;text-anchor:middle;font-size:12.8;font-family:sanserif;font-style:normal;font-weight:normal" x="332.96" y="-74.1354">
+      <tspan x="332.96" y="-74.1354">UBF</tspan>
+      <tspan x="332.96" y="-58.1354">Client</tspan>
+    </text>
+  </g>
+  <g>
+    <path style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" d="M 429.917,-113.453 A 63.3403,63.3403 0 0 0 366.886,-103.961"/>
+    <polygon style="fill: #000000" points="436.661,-110.351 425.505,-111.095 430.191,-114.144 430.563,-119.722 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="436.661,-110.351 425.505,-111.095 430.191,-114.144 430.563,-119.722 "/>
+  </g>
+  <g>
+    <ellipse style="fill: #ffffff" cx="467.978" cy="-70.0354" rx="47.9782" ry="47.9782"/>
+    <ellipse style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #ff0000" cx="467.978" cy="-70.0354" rx="47.9782" ry="47.9782"/>
+    <text style="fill: #ff0000;text-anchor:middle;font-size:12.8;font-family:sanserif;font-style:normal;font-weight:normal" x="467.978" y="-74.1354">
+      <tspan x="467.978" y="-74.1354">UBF</tspan>
+      <tspan x="467.978" y="-58.1354">Driver</tspan>
+    </text>
+  </g>
+  <g>
+    <ellipse style="fill: #ffffff" cx="650.186" cy="-70.0353" rx="43.0119" ry="43.0119"/>
+    <ellipse style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #0000ff" cx="650.186" cy="-70.0353" rx="43.0119" ry="43.0119"/>
+    <text style="fill: #0000ff;text-anchor:middle;font-size:12.8;font-family:sanserif;font-style:normal;font-weight:normal" x="650.186" y="-74.1353">
+      <tspan x="650.186" y="-74.1353">UBF</tspan>
+      <tspan x="650.186" y="-58.1353">Driver</tspan>
+    </text>
+  </g>
+  <g>
+    <ellipse style="fill: #ffffff" cx="769.838" cy="-70.0353" rx="43.0119" ry="43.0119"/>
+    <ellipse style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #0000ff" cx="769.838" cy="-70.0353" rx="43.0119" ry="43.0119"/>
+    <text style="fill: #0000ff;text-anchor:middle;font-size:12.8;font-family:sanserif;font-style:normal;font-weight:normal" x="769.838" y="-74.1353">
+      <tspan x="769.838" y="-74.1353">Contract</tspan>
+      <tspan x="769.838" y="-58.1353">Manager</tspan>
+    </text>
+  </g>
+  <g>
+    <ellipse style="fill: #ffffff" cx="892.73" cy="-70.0353" rx="43.0119" ry="43.0119"/>
+    <ellipse style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #0000ff" cx="892.73" cy="-70.0353" rx="43.0119" ry="43.0119"/>
+    <text style="fill: #0000ff;text-anchor:middle;font-size:12.8;font-family:sanserif;font-style:normal;font-weight:normal" x="892.73" y="-74.1353">
+      <tspan x="892.73" y="-74.1353">Plugin</tspan>
+      <tspan x="892.73" y="-58.1353">Handler</tspan>
+    </text>
+  </g>
+  <g>
+    <ellipse style="fill: #ffffff" cx="192.75" cy="-70.0353" rx="49.6087" ry="49.6087"/>
+    <ellipse style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" cx="192.75" cy="-70.0353" rx="49.6087" ry="49.6087"/>
+    <text style="fill: #000000;text-anchor:middle;font-size:12.8;font-family:sanserif;font-style:normal;font-weight:normal" x="192.75" y="-74.1353">
+      <tspan x="192.75" y="-74.1353">Client</tspan>
+      <tspan x="192.75" y="-58.1353">Application</tspan>
+    </text>
+  </g>
+  <g>
+    <ellipse style="fill: #ffffff" cx="1033.89" cy="-70.0353" rx="49.6087" ry="49.6087"/>
+    <ellipse style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" cx="1033.89" cy="-70.0353" rx="49.6087" ry="49.6087"/>
+    <text style="fill: #000000;text-anchor:middle;font-size:12.8;font-family:sanserif;font-style:normal;font-weight:normal" x="1033.89" y="-74.1353">
+      <tspan x="1033.89" y="-74.1353">Server</tspan>
+      <tspan x="1033.89" y="-58.1353">Application</tspan>
+    </text>
+  </g>
+  <g>
+    <path style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" d="M 294.598,-113.337 A 67.2549,67.2549 0 0 0 227.828,-105.114"/>
+    <polygon style="fill: #000000" points="301.285,-110.095 290.141,-111.003 294.871,-113.983 295.326,-119.554 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="301.285,-110.095 290.141,-111.003 294.871,-113.983 295.326,-119.554 "/>
+  </g>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="520.428" y1="-70.0354" x2="602.702" y2="-70.0354"/>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="528.192,-75.0354 518.192,-70.0354 528.192,-65.0354 "/>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="594.938,-65.0354 604.938,-70.0354 594.938,-75.0354 "/>
+  </g>
+  <g>
+    <path style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" d="M 738.186,-112.574 A 67.0166,67.0166 0 0 0 666.646,-109.773"/>
+    <polygon style="fill: #000000" points="744.423,-108.534 733.477,-110.809 738.538,-113.183 739.676,-118.656 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="744.423,-108.534 733.477,-110.809 738.538,-113.183 739.676,-118.656 "/>
+  </g>
+  <g>
+    <path style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" d="M 854.867,-106.443 A 43.8205,43.8205 0 0 0 800.252,-100.449"/>
+    <polygon style="fill: #000000" points="860.737,-102.033 850.136,-105.584 855.442,-107.344 857.218,-112.645 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="860.737,-102.033 850.136,-105.584 855.442,-107.344 857.218,-112.645 "/>
+  </g>
+  <g>
+    <path style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" d="M 974.594,-70.8883 A 221.647,221.647 0 0 0 945.434,-70.8883"/>
+    <polygon style="fill: #000000" points="982.063,-70.2803 971.576,-66.4054 974.608,-71.1016 972.671,-76.3453 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="982.063,-70.2803 971.576,-66.4054 974.608,-71.1016 972.671,-76.3453 "/>
+    <polygon style="fill: #000000" points="937.965,-70.2803 947.357,-76.3453 945.42,-71.1016 948.452,-66.4054 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="937.965,-70.2803 947.357,-76.3453 945.42,-71.1016 948.452,-66.4054 "/>
+  </g>
+  <g>
+    <path style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" d="M 806.926,-32.8347 A 39.1342,39.1342 0 0 0 862.316,-39.6214"/>
+    <polygon style="fill: #000000" points="801.614,-37.8483 811.672,-32.965 806.184,-31.9011 803.742,-26.8723 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="801.614,-37.8483 811.672,-32.965 806.184,-31.9011 803.742,-26.8723 "/>
+  </g>
+  <g>
+    <path style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" d="M 373.929,-29.5066 A 64.4827,64.4827 0 0 0 449.618,-25.7094"/>
+    <polygon style="fill: #000000" points="368.398,-34.4624 378.844,-30.4772 373.47,-28.9375 371.478,-23.7145 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="368.398,-34.4624 378.844,-30.4772 373.47,-28.9375 371.478,-23.7145 "/>
+  </g>
+  <g>
+    <path style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" d="M 235.185,-28.7956 A 49.1049,49.1049 0 0 0 299.034,-36.1096"/>
+    <polygon style="fill: #000000" points="229.394,-33.3605 239.966,-29.7228 234.646,-28.0063 232.827,-22.7203 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="229.394,-33.3605 239.966,-29.7228 234.646,-28.0063 232.827,-22.7203 "/>
+  </g>
+  <g>
+    <path style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" d="M 688.645,-34.2533 A 72.8967,72.8967 0 0 0 753.378,-30.2976"/>
+    <polygon style="fill: #000000" points="682.374,-38.2596 693.35,-36.1356 688.322,-33.6922 687.26,-28.2038 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="682.374,-38.2596 693.35,-36.1356 688.322,-33.6922 687.26,-28.2038 "/>
+  </g>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke-dasharray: 4; stroke: #000000" x1="650.185" y1="-153.674" x2="650.186" y2="-118.507"/>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="645.186,-126.271 650.186,-116.271 655.186,-126.271 "/>
+  </g>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke-dasharray: 4; stroke: #000000" x1="693.198" y1="-70.0354" x2="726.016" y2="-84.6736"/>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="720.962,-76.9446 728.058,-85.5845 716.888,-86.0773 "/>
+  </g>
+  <text style="fill: #000000;text-anchor:start;font-size:16;font-family:sanserif;font-style:normal;font-weight:normal" x="539.306" y="-76.4854">
+    <tspan x="539.306" y="-76.4854">TCP/IP</tspan>
+  </text>
+  <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke-dasharray: 20; stroke: #ff0000" x1="264.972" y1="-183.022" x2="265.972" y2="38.9782"/>
+  <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke-dasharray: 20; stroke: #0000ff" x1="952.616" y1="-182.307" x2="953.616" y2="39.6934"/>
+  <g>
+    <ellipse style="fill: #ffffff" cx="467.978" cy="-202.632" rx="44.3344" ry="44.3344"/>
+    <ellipse style="fill: none; fill-opacity:0; stroke-width: 2; stroke-dasharray: 4; stroke: #ff0000" cx="467.978" cy="-202.632" rx="44.3344" ry="44.3344"/>
+    <text style="fill: #ff0000;text-anchor:middle;font-size:12.8;font-family:sanserif;font-style:normal;font-weight:normal" x="467.978" y="-214.732">
+      <tspan x="467.978" y="-214.732">UBF</tspan>
+      <tspan x="467.978" y="-198.732">TCP/IP</tspan>
+      <tspan x="467.978" y="-182.732">Client</tspan>
+    </text>
+  </g>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke-dasharray: 4; stroke: #000000" x1="467.978" y1="-158.297" x2="467.978" y2="-122.486"/>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="462.978,-130.25 467.978,-120.25 472.978,-130.25 "/>
+  </g>
+  <g>
+    <g>
+      <rect style="fill: #ffffff" x="785.112" y="60.484" width="89.7956" height="85.7599" rx="2.35099e-37" ry="2.35099e-37"/>
+      <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke-linejoin: round; stroke: #000000" x="785.112" y="60.484" width="89.7956" height="85.7599" rx="2.35099e-37" ry="2.35099e-37"/>
+    </g>
+    <text style="fill: #000000;text-anchor:middle;font-size:16;font-family:sanserif;font-style:normal;font-weight:normal" x="829.798" y="84.976">
+      <tspan x="829.798" y="84.976">Service</tspan>
+      <tspan x="829.798" y="104.976">Contract</tspan>
+      <tspan x="829.798" y="124.976">"B"</tspan>
+    </text>
+  </g>
+  <g>
+    <g>
+      <rect style="fill: #ffffff" x="722.962" y="41.914" width="89.7956" height="85.7599" rx="2.35099e-37" ry="2.35099e-37"/>
+      <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke-linejoin: round; stroke: #000000" x="722.962" y="41.914" width="89.7956" height="85.7599" rx="2.35099e-37" ry="2.35099e-37"/>
+    </g>
+    <text style="fill: #000000;text-anchor:middle;font-size:16;font-family:sanserif;font-style:normal;font-weight:normal" x="767.648" y="66.406">
+      <tspan x="767.648" y="66.406">Service</tspan>
+      <tspan x="767.648" y="86.406">Contract</tspan>
+      <tspan x="767.648" y="106.406">"A"</tspan>
+    </text>
+  </g>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke-linejoin: round; stroke-dasharray: 20 4 4 4 4 4; stroke: #000000" x1="767.86" y1="41.914" x2="768.981" y2="-21.5535"/>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="773.843,-13.7025 769.021,-23.7892 763.845,-13.8791 "/>
+  </g>
+</svg>

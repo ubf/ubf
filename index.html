@@ -1,95 +1,24 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-
-    <title>norton/ubf @ GitHub</title>
-
-    <style type="text/css">
-      body {
-      margin-top: 1.0em;
-      background-color: #a4de22;
-      font-family: "helvetica";
-      color: #000000;
-      }
-      #container {
-      margin: 0 auto;
-      width: 700px;
-      }
-      h1 { font-size: 3.8em; color: #5b21dd; margin-bottom: 3px; }
-      h1 .small { font-size: 0.4em; }
-      h1 a { text-decoration: none }
-      h2 { font-size: 1.5em; color: #5b21dd; }
-      h3 { text-align: center; color: #5b21dd; }
-      a { color: #5b21dd; }
-      .description { font-size: 1.2em; margin-bottom: 30px; margin-top: 30px; font-style: italic;}
-      .download { float: right; }
-      pre { background: #000; color: #fff; padding: 15px;}
-      hr { border: 0; width: 80%; border-bottom: 1px solid #aaa}
-      .footer { text-align:center; padding-top:30px; font-style: italic; }
-    </style>
-
-  </head>
-
-  <body>
-    <a href="http://github.com/norton/ubf"><img style="position: absolute; top: 0; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub" /></a>
-
-    <div id="container">
-
-      <div class="download">
-        <a href="http://github.com/norton/ubf/zipball/master">
-          <img border="0" width="90" src="http://github.com/images/modules/download/zip.png"></a>
-          <a href="http://github.com/norton/ubf/tarball/master">
-            <img border="0" width="90" src="http://github.com/images/modules/download/tar.png"></a>
-          </div>
-
-          <h1><a href="http://github.com/norton/ubf">ubf</a>
-            <span class="small">by <a href="http://github.com/norton">norton</a></small></h1>
-
-          <div class="description">
-            Universal Binary Format
-          </div>
-
-          <p>This is ubf, a framework for Getting Erlang to talk to the outside world.  This repository is based on Joe Armstrong's original UBF code with an MIT license file added to the distribution.</p><h2>Dependencies</h2>
-          <p>erlang system</p>
-          <p>optionally, erlang-rfc4627</p>
-          <h2>Install</h2>
-          <ol>
-          <li>Get and install an erlang system
-          (http://www.erlang.org)</li>
-          <li> Optionally, get and install erlang-rfc4627
-            (http://www.lshift.net/blog/2007/02/17/json-and-json-rpc-for-erlang)</li>
-          <li> Change to the src directory and type make
-            <p>$ cd src</p>
-            <p>$ make</p>
-          </li>
-          <li>Run the unit test
-            <p>$ make check</p>
-          </li>
-          </ol>
-          <h2>License</h2>
-          <p>MIT License</p>
-          <h2>Authors</h2>
-          <p>Joseph Wayne Norton (norton@alum.mit.edu)<br/><br/></p>
-          <h2>Contact</h2>
-          <p>Joseph Wayne Norton (norton@alum.mit.edu)<br/></p>
-
-          <h2>Download</h2>
-          <p>
-            You can download this project in either
-            <a href="http://github.com/norton/ubf/zipball/master">zip</a> or
-            <a href="http://github.com/norton/ubf/tarball/master">tar</a> formats.
-          </p>
-          <p>You can also clone the project with <a href="http://git-scm.com">Git</a>
-            by running:
-            <pre>$ git clone git://github.com/norton/ubf</pre>
-          </p>
-
-          <div class="footer">
-            get the source code on GitHub : <a href="http://github.com/norton/ubf">norton/ubf</a>
-          </div>
-        </div>
-      </body>
-    </html>
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>UBF Home Page</title><link rel="stylesheet" href="./docbook-xsl.css" type="text/css" /><meta name="generator" content="DocBook XSL Stylesheets V1.74.3" /></head><body><div class="article" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title"><a id="id2823282"></a>UBF Home Page</h2></div></div><hr /></div><p>UBF, a framework for Getting Erlang to talk to the outside world.
+This document and the corresponding open-source code repositories are
+based on Joe Armstrong’s original UBF site and code with an MIT
+license file added to the distribution.  Since then, a large number of
+enhancements and improvements have been added.</p><p>UBF is a language for transporting and describing complex data
+structures across a network.  It has three components:</p><div class="itemizedlist"><ul type="disc"><li>
+UBF(a) is a "language neutral" data transport format, roughly
+  equivalent to well-formed XML.
+</li><li>
+UBF(b) is a programming langauge for describing types in UBF(a) and
+  protocols between clients and servers.  This layer is typically
+  called the "protocol contract".  UBF(b) is roughly equivalent to
+  Verified XML, XML-schemas, SOAP and WDSL.
+</li><li>
+UBF(c) is a meta-level protocol used between a UBF client and a UBF
+  server.
+</li></ul></div><p><span class="strong"><strong>Documentation</strong></span></p><p>The <a class="ulink" href="http://github.com/norton/ubf" target="_top">UBF GitHub README</a> is a good
+first step to get started quickly.  Check the download, the build, and
+the install instructions.</p><p>A new document <a class="ulink" href="ubf-user-guide.en.html" target="_top">UBF User’s Guide</a> is
+currently under construction.  Reading the UBF User’s Guide is
+<span class="emphasis"><em>STRONGLY</em></span> recommended.</p><p>The documentation is in a state of change and improvement.
+Contributions from the wider world are welcome.  :-)</p></div></body></html>
