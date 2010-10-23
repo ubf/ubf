@@ -9,24 +9,21 @@ What is UBF?
 ============
 
 UBF is the "Universal Binary Format", designed and implemented by Joe
-Armstrong.  See http://www.sics.se/~joe/ubf.html for full details.  A
-really short summary:
+Armstrong.  UBF is a language for transporting and describing complex
+data structures across a network.  It has three components:
 
-   * UBF(A) is a protocol above a stream transport (e.g. TCP/IP), for
-     encoding structured data roughly equivalent to well-formed XML.
+   * UBF(A) is a "language neutral" data transport format, roughly
+     equivalent to well-formed XML.
 
    * UBF(B) is a programming langauge for describing types in UBF(A)
      and protocols between clients and servers.  This layer is
-     typically called the "protocol contract".  All data sent by both
-     the client and the server is verified by the contract manager (an
-     Erlang process on the "server" side of the protocol).  Any data
-     that violates the contract is
-
-     UBF(B) is roughly equivalent to to Verified XML, XML-schemas,
-     SOAP and WDSL.
+     typically called the "protocol contract".  UBF(B) is roughly
+     equivalent to Verified XML, XML-schemas, SOAP and WDSL.
 
    * UBF(C) is a meta-level protocol used between a UBF client and a
      UBF server.
+
+See http://norton.github.com/ubf for further details.
 
 
 To download
