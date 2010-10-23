@@ -86,6 +86,8 @@ decode1([$#|T], Stack, Dict) ->
     decode1(T, push([], Stack), Dict);
 decode1([$$|T], [[X]], _Dict) ->
     {ok, X, T};
+decode1([$>], Stack, Dict) ->
+    {more, fun(I) -> decode1([$>|I], Stack, Dict) end};
 decode1([$>,Key|T], [[Val|R]|Stack], Dict) ->
     decode1(T, [R|Stack], dict:store(Key,Val,Dict));
 decode1([H|T], Stack, Dict) ->
@@ -97,18 +99,19 @@ decode1([H|T], Stack, Dict) ->
     end;
 decode1([], Stack, Dict) ->
     {more, fun(I) -> decode1(I, Stack, Dict) end};
-decode1(X, Stack, Dict) ->
-    io:format("OOOOO:~p ~p ~p~n",[X, Stack, Dict]),
-    exit(aaaaaa).
+decode1(_X, _Stack, _Dict) ->
+    exit(decode1).
 
+get_stuff([$\\], Stop, L, Stack, Dict) ->
+    {more, fun(I) -> get_stuff([$\\|I], Stop, L, Stack, Dict) end};
 get_stuff([$\\,H|T], Stop, L, Stack, Dict) ->
     get_stuff(T, Stop, [H|L], Stack, Dict);
 get_stuff([$'|T], $', L, Stack, Dict)  ->
     decode1(T, push(list_to_atom(reverse(L)),Stack), Dict);
 get_stuff([$"|T], $", L, Stack, Dict)  ->
     decode1(T, push({'#S',reverse(L)},Stack), Dict);
-get_stuff([$`|T], $`, L, [Top|Stack], Dict)  ->
-    decode1(T, push({'$TYPE', reverse(L), Top},Stack), Dict);
+get_stuff([$`|T], $`, L, [[X|Top]|Stack], Dict)  ->
+    decode1(T, push({'$TYPE', reverse(L), X}, [Top|Stack]), Dict);
 get_stuff([$%|T], $%, _L, Stack, Dict)  ->
     decode1(T, Stack, Dict);
 get_stuff([H|T], Stop, L, Stack, Dict) ->
@@ -132,8 +135,8 @@ expect_tilde([H|_], _, _) ->
 
 push(X, [Top|Rest]) ->
     [[X|Top]|Rest];
-push(X, Y) ->
-    io:format("** bad push:~p ~p~n",[X,Y]).
+push(_X, _Y) ->
+    exit(push).
 
 special($ )  -> true;
 special(${)  -> true;
@@ -155,7 +158,7 @@ special(_)   -> false.
 special_chars() ->
     " 0123456789{},~%#>\n\r\s\t\"'-&$".
 
-collect_int([H|T], N, Sign, Stack, Dict) when  $0 =< H, H =< $9 ->
+collect_int([H|T], N, Sign, Stack, Dict) when $0 =< H, H =< $9 ->
     collect_int(T, N*10 + H - $0, Sign, Stack, Dict);
 collect_int([], N, Sign, Stack, Dict) ->
     {more, fun(I) -> collect_int(I, N, Sign, Stack, Dict) end};
@@ -175,9 +178,8 @@ encode(X, _Mod) ->
 encode1(X, Dict0) ->
     {Dict1, L1} = initial_dict(X, Dict0),
     case (catch do_encode(X, Dict1)) of
-        {'EXIT', What} ->
-            io:format("What=~p~n",[What]),
-            exit(encode);
+        {'EXIT', _What} ->
+            exit(encode1);
         L ->
             {flatten([L1, L,$$]), Dict1}
     end.
@@ -237,8 +239,8 @@ encode_obj(X) when is_integer(X) -> integer_to_list(X);
 encode_obj(X) when is_binary(X) -> encode_binary(X).
 
 encode_string(S) -> [$",add_string(S, $"), $"].
-encode_atom(X)   -> [$',add_string(atom_to_list(X), $'), $'].
-encode_binary(X) -> [integer_to_list(size(X)), $~,X,$~].
+encode_atom(X) -> [$',add_string(atom_to_list(X), $'), $'].
+encode_binary(X) -> [integer_to_list(byte_size(X)), $~,X,$~].
 
 do_encode(X, Dict) when is_atom(X); is_integer(X); is_binary(X) ->
     case dict:find(X, Dict) of
@@ -260,22 +262,22 @@ do_encode(T, Dict) when is_tuple(T) ->
 do_encode([], _Dict) ->
     $#.
 
-encode_tuple(N, T, _Dict) when N > size(T) ->
+encode_tuple(N, T, _Dict) when N > tuple_size(T) ->
     "";
 encode_tuple(N, T, Dict) ->
     S1 = do_encode(element(N, T), Dict),
     S2 = encode_tuple(N+1, T, Dict),
     [S1,possible_comma(N, T),S2].
 
-possible_comma(N, T) when N < size(T) -> $,;
-possible_comma(_, _)                  -> [].
+possible_comma(N, T) when N < tuple_size(T) -> $,;
+possible_comma(_, _) -> [].
 
 %% The ascii printables are in the range 32..126 inclusive
-add_string([$\\|T], Quote)   -> [$\\,$\\|add_string(T, Quote)];
+add_string([$\\|T], Quote) -> [$\\,$\\|add_string(T, Quote)];
 add_string([Quote|T], Quote) -> [$\\,Quote|add_string(T, Quote)];
 add_string([H|T], Quote) when H >= 0,  H=< 255 -> [H|add_string(T, Quote)];
 add_string([H|_], _Quote) -> exit({string_character,H});
-add_string([], _)            -> [].
+add_string([], _) -> [].
 
 
 %%---------------------------------------------------------------------

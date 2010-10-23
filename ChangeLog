@@ -1,79 +1,82 @@
+2010-10-23 17:00 JST  norton
+        * src/ubf.erl: Various fixes for UBF(a) decoder.
+
 2010-10-08 19:00 JST  norton
         * src/contract_lex.xrl, src/contract_parser.erl,
-	src/contract_yecc.yrl, src/contracts.erl, src/contracts_abnf.erl,
-	src/ubf_utils.erl: Remove not yet re-implemented "concat"
-	(a.k.a. ++) operator. Remove type(){0} and type(){1} support.
-	Permit "empty" tuples, records, and extended records.  Export new
-	parse_file API of contract_parser for unit and quickcheck testing.
+        src/contract_yecc.yrl, src/contracts.erl, src/contracts_abnf.erl,
+        src/ubf_utils.erl: Remove not yet re-implemented "concat"
+        (a.k.a. ++) operator. Remove type(){0} and type(){1} support.
+        Permit "empty" tuples, records, and extended records.  Export new
+        parse_file API of contract_parser for unit and quickcheck testing.
 
 2010-09-25 02:00 JST  norton
-	* src/contract_parser.erl: allow one to easily import all types
-	from one or more contracts except for specified list of types.
-	undo broken change for duplicate type checking.
+        * src/contract_parser.erl: allow one to easily import all types
+        from one or more contracts except for specified list of types.
+        undo broken change for duplicate type checking.
 
 2010-09-21 23:30 JST  norton
-	* src/contract_parser.erl, include/ubf_impl.hrl: allow one to
-	easily import all types from one or more contracts.  allow
-	duplicate types to be imported as long as they have the same
-	definition.  add new method to obtain list of imported
-	type(name)s.
+        * src/contract_parser.erl, include/ubf_impl.hrl: allow one to
+        easily import all types from one or more contracts.  allow
+        duplicate types to be imported as long as they have the same
+        definition.  add new method to obtain list of imported
+        type(name)s.
 
 2010-08-07 13:00 JST  norton
-	* Update README, Makefile, BOM.mk, and GMBOM files for building
-	with bom.sh
+        * Update README, Makefile, BOM.mk, and GMBOM files for building
+        with bom.sh
 
 2010-05-08 15:10 CDT  slfritchie
-	* Prepare for v1.13 tag: README, Java client, etc.
+        * Prepare for v1.13 tag: README, Java client, etc.
 
 2010-04-23 20:30 JST  norton
         * contract_manager.erl, contract_manager_tlog.erl, contracts.erl,
-	ubf_client.erl, ubf_plugin_handler.erl,
-	ubf_plugin_meta_stateful.erl, ubf_plugin_meta_stateless.erl,
-	ubf_server.erl: Implement asynchronous events from client to
-	server. Modify existing asynchronous events from server to client
-	implementation. Enhance existing unit tests.
+        ubf_client.erl, ubf_plugin_handler.erl,
+        ubf_plugin_meta_stateful.erl, ubf_plugin_meta_stateless.erl,
+        ubf_server.erl: Implement asynchronous events from client to
+        server. Modify existing asynchronous events from server to client
+        implementation. Enhance existing unit tests.
 
 2010-04-23 12:30 JST  norton
         * contract_driver.erl, contract_proto.erl, ebf.erl,
-	ebf_driver.erl, ubf.erl, ubf_client.erl, ubf_driver.erl,
-	ubf_plugin_stateful.erl, ubf_plugin_stateless.erl, ubf_server.erl:
-	Refactor to easily support new protocol drivers.  Few minor
-	cleanups for ubf.erl and ubf_driver.erl
+        ebf_driver.erl, ubf.erl, ubf_client.erl, ubf_driver.erl,
+        ubf_plugin_stateful.erl, ubf_plugin_stateless.erl, ubf_server.erl:
+        Refactor to easily support new protocol drivers.  Few minor
+        cleanups for ubf.erl and ubf_driver.erl
 
 2010-04-22 12:30 JST  norton
         * src/contract_manager.erl, src/ubf.erl, src/ubf_client.erl,
-	src/ubf_plugin_handler.erl, src/ubf_server.erl: Refactor and move
-	non ubf/ebf drivers to their own repository.  Misc. modifications
-	for Thrift support.
+        src/ubf_plugin_handler.erl, src/ubf_server.erl: Refactor and move
+        non ubf/ebf drivers to their own repository.  Misc. modifications
+        for Thrift support.
 
 2010-04-21 12:45 JST  norton
         * include/ubf_impl.hrl, src/contract_manager.erl,
-	src/contract_manager_tlog.erl, src/ubf_client.erl,
-	src/ubf_plugin_handler.erl, src/ubf_server.erl: rework txn logging
-	for ubf_server and ubf_client to permit a configurable module for
-	the txn logger.
+        src/contract_manager_tlog.erl, src/ubf_client.erl,
+        src/ubf_plugin_handler.erl, src/ubf_server.erl: rework txn logging
+        for ubf_server and ubf_client to permit a configurable module for
+        the txn logger.
 
 2010-04-13 23:30 JST  norton
-	* src/contract_manager.erl, src/proc_socket_server.erl,
-	src/proc_utils.erl,src/ubf_client.erl, src/ubf_plugin_handler.erl,
-	src/ubf_server.erl: fix txn logging for rpcOutError, add
-	manual calls for garbage collection, add configuration for spawn
-	options
+        * src/contract_manager.erl, src/proc_socket_server.erl,
+        src/proc_utils.erl,src/ubf_client.erl, src/ubf_plugin_handler.erl,
+        src/ubf_server.erl: fix txn logging for rpcOutError, add
+        manual calls for garbage collection, add configuration for spawn
+        options
 
 2010-02-05 14:00 JST  norton
-	* src/ubf_plugin_handler.erl, src/ubf_server.erl: detect if a
-	ubf/ebf/jsf listener process exits and then exit the manager
+        * src/ubf_plugin_handler.erl, src/ubf_server.erl: detect if a
+        ubf/ebf/jsf listener process exits and then exit the manager
 
 2010-01-23 23:35 JST  norton
 
         * src/jsf.erl, src/jsf_driver.erl, src/ubf.erl,
-	src/ubf_driver.erl: fix jsf driver to support partial inputs
+        src/ubf_driver.erl: fix jsf driver to support partial inputs
 
 2009-12-26 14:30 JST  norton
 
         * src/contract_manager.erl, src/contract_manager_tlog.erl,
-	ubf_client.erl, ubf_plugin_handler.erl: rework contract manager
-	and txn log interfaces
+        ubf_client.erl, ubf_plugin_handler.erl: rework contract manager
+        and txn log interfaces
 
 2009-11-18 22:20 JST  norton
 
@@ -115,15 +118,17 @@
 
 2009-10-21 23:45 JST  norton
 
-        * src/ubf_client.erl, src/ubf_plugin_handler.erl, src/contract_manager.erl, src/contract_manager_tlog.erl:
-        add checkOutError error logging for ubf_client and
-        ubf_plugin_handler, rename Why to Reason
+        * src/ubf_client.erl, src/ubf_plugin_handler.erl,
+        src/contract_manager.erl, src/contract_manager_tlog.erl: add
+        checkOutError error logging for ubf_client and ubf_plugin_handler,
+        rename Why to Reason
 
 2009-10-19 08:20 JST  norton
 
-        * src/ubf_client.erl, src/contract_manager.erl, src/contract_manager_tlog.erl:
-        implement local procedure call (lpc) mechanism, add transaction
-        log placeholder, and update eunit tests
+        * src/ubf_client.erl, src/contract_manager.erl,
+        src/contract_manager_tlog.erl: implement local procedure call
+        (lpc) mechanism, add transaction log placeholder, and update eunit
+        tests
 
 2009-10-18 21:25 JST  norton
 
@@ -133,8 +138,8 @@
 
 2009-10-17 23:45 JST  norton
 
-        * src/contract_lex.xrl, src/contract_yecc.yrl, src/contract_parser.erl, src/Makefile:
-        upgrade lex and yecc
+        * src/contract_lex.xrl, src/contract_yecc.yrl,
+        src/contract_parser.erl, src/Makefile: upgrade lex and yecc
 
 2009-10-15 00:45 JST  norton
 
