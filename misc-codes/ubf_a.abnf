@@ -19,7 +19,7 @@ ubf-a-atom     = "'" *(%x20-26 / %x28-5B / %x5D-7E / "\\" / "\'") "'"
 
 ubf-a-string   = '"' *(%x20-21 / %x23-5B / %x5D-7E / '\\' / '\"') '"'
 
-ubf-a-binary   = ubf-a-integer "~" *OCTET "~"
+ubf-a-binary   = ubf-a-integer *ubf-a-wsp "~" *OCTET "~"
 
 ubf-a-integer  = ["-"] 1*DIGIT
 
