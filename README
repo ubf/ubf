@@ -15,7 +15,7 @@ data structures across a network.  It has three components:
    * UBF(A) is a "language neutral" data transport format, roughly
      equivalent to well-formed XML.
 
-   * UBF(B) is a programming langauge for describing types in UBF(A)
+   * UBF(B) is a programming language for describing types in UBF(A)
      and protocols between clients and servers.  This layer is
      typically called the "protocol contract".  UBF(B) is roughly
      equivalent to Verified XML, XML-schemas, SOAP and WDSL.
@@ -51,7 +51,7 @@ To download
       ./bom.sh co src/erl-tools/ubf
 
   NOTE: The Bill of Materials (BOM) system is a way to manage the
-  builds of heterougeneous products with shared components using GIT,
+  builds of heterogeneous products with shared components using GIT,
   GIT-SVN, SVN, or CVS.  BOM maintains hierarchical dependencies
   between modules stored in a source code repository.  BOM is
   implemented using bash, make, and other UNIX tools.
@@ -75,7 +75,7 @@ To build - basic recipe
    NOTE: UBF requires Erlang/OTP R13B01 or newer.  UBF has been tested
    most recently with Erlang/OTP R13B04.
 
-2. Change to your working directory and create the toplevel Makefile
+2. Change to your working directory and create the top-level Makefile
    $ cd ~/work/ubf
    $ ./bom.sh make
 
@@ -253,7 +253,7 @@ that.  No work has been done to optimize the Java client for speed,
 but it is now able to handle contracts that use Erlang binary() and
 signed integers that fit into 63 bits.
 
-Experimenal support has been added for the Thrift protocol as the
+Experimental support has been added for the Thrift protocol as the
 transport & session layers.
 
 
@@ -327,7 +327,7 @@ To do (in long term)
 ====================
   - support multiple listeners for a single ubf server
   - open-source ubf contract generators for QuickCheck
-  - n-bidirectional requests/responses over single tcp/ip connection (similiar to smpp)
+  - n-bidirectional requests/responses over single tcp/ip connection (similar to smpp)
   - replace plugin manager and plugin handler with gen_server-based
     implementation
   - enable/disable contract checker by configuration
