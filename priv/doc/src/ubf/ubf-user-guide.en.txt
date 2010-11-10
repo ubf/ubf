@@ -2,7 +2,7 @@
 // vim: set syntax=asciidoc:
 
 = UBF User's Guide _DRAFT - UNDER CONSTRUCTION_
-:Date: 2010/11/09
+:Date: 2010/11/10
 :Revision: 0.1
 :Copyright: 2002 Joe Armstrong
 :Copyright: 2010 Gemini Mobile Technologies, Inc.  All rights reserved.
@@ -266,8 +266,9 @@ sections.  The mandatory sections are the "+NAME" and the "+VERSION"
 of the contract.  The optional sections are the "+TYPES", the
 "+STATE", and the "+ANYSTATE" of the contract.
 
-For example, the following UBF(b) contract defines a simple IRC
-(Internet Relay Chat) protocol between clients and a server:
+For example, the following UBF(b) contract having the filename
+"irc_plugin.con" defines a simple IRC (Internet Relay Chat) protocol
+between clients and a server:
 
 [source,erlang]
 ------
@@ -574,8 +575,126 @@ unintentionally after the original UBF implementation may be removed
 in the future.
 
 <<<
-== Contracts
-// *TODO*
+== Contracts & Plugins
+
+"Contracts" and "Plugins" are the basic building blocks of an Erlang
+UBF server.  Contracts are a server's specifications.  Plugins are a
+server's implementations.
+
+A contract is a UBF(b) specification stored to a file.  By convention,
+a contract's filename has ".con" as the suffix part.  Since all
+sections of a UBF(b) specification are optional except for the "+NAME"
+and "+VERSION" sections, it is possible to have "+TYPES" only
+contracts, "+STATE" only contracts, "+ANYSTATE" only contracts, or any
+combination of such contracts.
+
+For example, a "+TYPES" ony contract having the filename
+"irc_types_plugin.con" is as follows:
+
+[source,erlang]
+------
+include::misc-codes/irc_types_plugin.con[]
+------
+
+For example, a "+STATE" and "+ANYSTATE" contract having the filename
+"irc_fsm_plugin.con" is as follows:
+
+[source,erlang]
+------
+include::misc-codes/irc_fsm_plugin.con[]
+------
+
+A plugin is just a "normal" Erlang module that follows a few simple
+rules.  For a "+TYPES" only contract, the plugin contains just the
+name of it's contract.  Otherwise, the plugin contains the name of
+it's contract plus the necessary Erlang "glue code" needed to bind the
+UBF server to the server's application.  In either case, a plugin can
+also import all or a subset of "+TYPES" from other plugins.  This
+simple yet powerful import mechanism permits sharing and re-use of
+types between plugins and servers.
+
+NOTE: The necessary Erlang "glue code" is presented later in the
+<<Servers>> section.
+
+For example, the plugin for the "+TYPES" only contract having the
+filename "irc_types_plugin.erl" is as follows:
+
+------
+-module(irc_types_plugin).
+
+-compile({parse_transform,contract_parser}).
+-add_contract("irc_types_plugin").
+------
+
+For example, the plugin for the "+STATE" and "+ANYSTATE" contract
+having the filename "irc_fsm_plugin.erl" is as follows:
+
+------
+-module(irc_fsm_plugin).
+
+-compile({parse_transform,contract_parser}).
+-add_types(irc_types_plugin).
+-add_contract("irc_fsm_plugin").
+------
+
+The "-add_types(\'there\')" directive imports all "+TYPES" from the
+plugin named \'there' into the containing plugin.  An alternative
+syntax "-add_types({\'elsewhere\', [\'t1\', \'t2\', ..., \'tn\']})."
+for this directive imports a subset of "+TYPEs" from the plugin named
+\'elsewhere' into the containing plugin.  Multiple import directives
+of either syntax can be freely declared as long as the "-add_types"
+directives are listed before the "-add_contract" directive.  A plugin
+can have only one "-add_contract" directive.
+
+Similarly for the full example IRC contract described in a previous
+section, the plugin having the filename "irc_plugin.erl" is as
+follows:
+
+------
+-module(irc_plugin).
+
+-compile({parse_transform,contract_parser}).
+-add_contract("irc_plugin").
+------
+
+By using this Erlang "parse transform", the contract is parsed and the
+imported types (if any) are processed during the compilation of the
+plugin's Erlang module.  The normal search path used by Erlang's
+compiler to locate modules is used to import types from other plugins.
+
+The plugin will fail to compile if the plugin's contract cannot be
+found, cannot be parsed properly, or if one of the following errors
+occurs:
+
+{\'duplicated_records', L}::
+  One or more records having the same name are found.
+{\'duplicated_states', L}::
+  One or more states having the same name are found.
+{\'duplicated_types', L}::
+  One or more types having the same name are found.
+{\'duplicated_unmatched_import_types', L}::
+  One or more imported types having the same name but different
+  definitions are found.  _Type duplicates are permitted as long as
+  the type(s) are imported and all duplicates have the same
+  definition._
+{\'missing_states', L}::
+  One or more states were found to be missing.
+{\'missing_types', L}::
+  One or more types were found to be missing.
+{\'unused_types', L}::
+  One or more types were found to be unused in the contract.  _Unused
+  types are permitted as long as the unused type(s) are imported._
+
+where L is an Erlang list.
+
+As a by-product of a plugin's compilation and if one or more "record"
+or "extended record" types were declared in a plugin's contract, an
+Erlang "header" file containing the plugin's record definitions is
+automatically created.  This Erlang "header" file can be included by
+the plugin module itself or by other Erlang modules used by the
+server's application.  By convention, this Erlang "header" file has
+the same base filename as the plugin but having a ".huc" as the suffix
+part.
 
 == Transports
 // *TODO*
@@ -610,6 +729,7 @@ in the future.
 ==== LPC
 // *TODO*
 
+[[Servers]]
 == Servers
 // *TODO*
 
