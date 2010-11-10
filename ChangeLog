@@ -1,3 +1,7 @@
+2010-11-10 11:30 JST  norton
+        * src/contract_driver.erl, src/proc_socket_server.erl: Fix race
+        condition just after connection establishment.
+
 2010-10-23 17:00 JST  norton
         * src/ubf.erl: Various fixes for UBF(a) decoder.
 

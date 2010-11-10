@@ -31,6 +31,7 @@ loop(Module, Contract, Pid, Socket) ->
     loop(Module, Contract, Pid, Socket, 16#ffffffff).
 
 loop(Module, Contract, Pid, Socket, Timeout) ->
+    inet:setopts(Socket, [{active, true}]),
     put('ubf_socket', Socket),
     Cont = Module:init(Contract),
     loop(Module, Contract, Pid, Socket, Timeout, Cont).

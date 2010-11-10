@@ -59,8 +59,8 @@ start_raw_server(Name, Port, Max, SpawnOpts, Fun, PacketType, PacketSize) ->
         undefined ->
             Parent = self(),
             Pid = erlang:spawn_opt(?MODULE, cold_start,
-                                    [Parent, Name, Port, Max, Fun, PacketType, PacketSize],
-                                    [link | SpawnOpts]),
+                                   [Parent, Name, Port, Max, Fun, PacketType, PacketSize],
+                                   [link | SpawnOpts]),
             {ok, Pid};
         _Pid ->
             false
@@ -77,7 +77,7 @@ stop_server(Name) ->
         undefined ->
             ok;
         Pid ->
-	    ok = stop_server(Pid),
+            ok = stop_server(Pid),
             (catch unregister(Name)),
             ok
     end.
@@ -89,20 +89,20 @@ server_port(Name) ->
 server_port(Pid, Timeout) when is_pid(Pid) ->
     Pid ! {port, self()},
     receive
-	{Pid, Reply} ->
-	    Reply
+        {Pid, Reply} ->
+            Reply
     after Timeout ->
-	    timeout
+            timeout
     end;
 server_port(Port, Timeout) when is_integer(Port) ->
     Name = port_name(Port),
     server_port(Name, Timeout);
 server_port(Name, Timeout) ->
     case whereis(Name) of
-	undefined ->
-	    retrylater;
-	Pid ->
-	    server_port(Pid, Timeout)
+        undefined ->
+            retrylater;
+        Pid ->
+            server_port(Pid, Timeout)
     end.
 
 
@@ -112,20 +112,20 @@ server_status(Name) ->
 server_status(Pid, Timeout) when is_pid(Pid) ->
     Pid ! {status, self()},
     receive
-	{Pid, Reply} ->
-	    Reply
+        {Pid, Reply} ->
+            Reply
     after Timeout ->
-	    timeout
+            timeout
     end;
 server_status(Port, Timeout) when is_integer(Port) ->
     Name = port_name(Port),
     server_status(Name, Timeout);
 server_status(Name, Timeout) ->
     case whereis(Name) of
-	undefined ->
-	    retrylater;
-	Pid ->
-	    server_status(Pid, Timeout)
+        undefined ->
+            retrylater;
+        Pid ->
+            server_status(Pid, Timeout)
     end.
 
 
@@ -135,27 +135,27 @@ server_children(Name) ->
 server_children(Pid, Timeout) when is_pid(Pid) ->
     Pid ! {children, self()},
     receive
-	{Pid, Reply} ->
-	    Reply
+        {Pid, Reply} ->
+            Reply
     after Timeout ->
-	    timeout
+            timeout
     end;
 server_children(Port, Timeout) when is_integer(Port) ->
     Name = port_name(Port),
     server_children(Name, Timeout);
 server_children(Name, Timeout) ->
     case whereis(Name) of
-	undefined ->
-	    retrylater;
-	Pid ->
-	    server_children(Pid, Timeout)
+        undefined ->
+            retrylater;
+        Pid ->
+            server_children(Pid, Timeout)
     end.
 
 
 cold_start(Parent, Name, Port, Max, Fun, PacketType, PacketSize) ->
     process_flag(trap_exit, true),
     DefaultListenOptions =
-        [binary, {nodelay, true}, {active, true}, {reuseaddr, true}, {backlog, 4096}],
+        [binary, {nodelay, true}, {active, false}, {reuseaddr, true}, {backlog, 4096}],
     ListenOptions =
         case {PacketType, PacketSize} of
             {0,0} ->
@@ -168,13 +168,13 @@ cold_start(Parent, Name, Port, Max, Fun, PacketType, PacketSize) ->
                 DefaultListenOptions++[{packet,T}, {packet_size,S}]
         end,
     {ok, Listen} = gen_tcp:listen(Port, ListenOptions),
-    RegisterName = 
-	if Name =/= undefined ->
-		Name;
-	   true ->
-		{ok, RealPort} = inet:port(Listen),
-		port_name(RealPort)
-	end,
+    RegisterName =
+        if Name =/= undefined ->
+                Name;
+           true ->
+                {ok, RealPort} = inet:port(Listen),
+                port_name(RealPort)
+        end,
     register(RegisterName, self()),
     New = start_accept(Listen, Fun),
     socket_loop(Parent, Listen, New, [], 0, Max, Fun).
@@ -200,7 +200,7 @@ socket_loop(Parent, Listen, New, Active, Num, Max, Fun) ->
             Active1 = lists:delete(Pid, Active),
             possibly_start_another(Parent, New, Listen, Active1, length(Active1), Max, Fun);
         {port, From} ->
-	    {ok, Port} = inet:port(Listen),
+            {ok, Port} = inet:port(Listen),
             From ! {self(), Port},
             socket_loop(Parent, Listen, New, Active, Num, Max, Fun);
         {status, From} ->
@@ -210,8 +210,8 @@ socket_loop(Parent, Listen, New, Active, Num, Max, Fun) ->
             From ! {self(), Active},
             socket_loop(Parent, Listen, New, Active, Num, Max, Fun);
         Other ->
-	    io:format("*** YY Socket loop dropping:~p~n", [Other]),
-	    socket_loop(Parent, Listen, New, Active, Num, Max, Fun)
+            io:format("*** YY Socket loop dropping:~p~n", [Other]),
+            socket_loop(Parent, Listen, New, Active, Num, Max, Fun)
     end.
 
 
@@ -234,8 +234,8 @@ start_accept(Listen, Fun) ->
 start_child(Parent, Listen, Fun) ->
     case gen_tcp:accept(Listen) of
         {ok, Socket} ->
-            Parent ! {started, self()},             % tell the controller
-            inet:setopts(Socket, [{active, true}]), % before we activate socket
+            %% Kick off the parent
+            Parent ! {started, self()},
             %% Start the child
             case (catch Fun(Socket)) of
                 {'EXIT', normal} ->
