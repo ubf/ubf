@@ -1,0 +1,27 @@
+ubf-c           = ubf-c-rpc-req
+                / ubf-c-rpc-res
+                / ubf-c-event-in
+                / ubf-c-event-out
+
+ubf-c-rpc-req   = ubf-msg "$"
+
+ubf-c-rpc-res   = "{" (ubf-msg / ubf-error) "," ubf-nextstate "}" "$"
+
+ubf-c-event-in  = "{" 'event_in' "," ubf-msg "}" "$"
+
+ubf-c-event-out = "{" 'event_out' "," ubf-msg "}" "$"
+
+ubf-msg         = ubf-a-term
+
+ubf-nextstate   = ubf-a-atom
+
+ubf-error       = ubf-client-error
+                / ubf-server-error
+
+ubf-client-error = "{" 'clientBrokeContract' "," ubf-msg "," ubf-expects-in "}" "$"
+
+ubf-server-error = "{" 'serverBrokeContract' "," ubf-msg "," ubf-expects-out "}" "$"
+
+ubf-expects-in   = ubf-a-term  ;; list of acceptable input types (for debugging purposes)
+
+ubf-expects-out  = ubf-a-term  ;; list of acceptable output types (for debugging purposes)

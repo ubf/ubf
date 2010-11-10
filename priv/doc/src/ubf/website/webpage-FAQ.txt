@@ -1,0 +1,14 @@
+// -*- Doc -*-
+// vim: set syntax=asciidoc:
+
+UBF FAQ Page
+============
+
+This FAQ may help answer some of your questions.
+
+=== TODO
+
+[qanda]
+
+Question::
+    Answer.

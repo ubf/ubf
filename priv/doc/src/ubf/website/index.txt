@@ -1,0 +1,38 @@
+// -*- Doc -*-
+// vim: set syntax=asciidoc:
+
+UBF Home Page
+=============
+
+UBF, a framework for Getting Erlang to talk to the outside world.
+This document and the corresponding open-source code repositories are
+based on Joe Armstrong's original UBF site and code with an MIT
+license file added to the distribution.  Since then, a large number of
+enhancements and improvements have been added.
+
+UBF is a language for transporting and describing complex data
+structures across a network.  It has three components:
+
+- UBF(a) is a "language neutral" data transport format, roughly
+  equivalent to well-formed XML.
+
+- UBF(b) is a programming langauge for describing types in UBF(a) and
+  protocols between clients and servers.  This layer is typically
+  called the "protocol contract".  UBF(b) is roughly equivalent to
+  Verified XML, XML-schemas, SOAP and WDSL.
+
+- UBF(c) is a meta-level protocol used between a UBF client and a UBF
+  server.
+
+*Documentation*
+
+The link:http://github.com/norton/ubf[UBF GitHub README] is a good
+first step to get started quickly.  Check the download, the build, and
+the install instructions.
+
+A new document link:ubf-user-guide.en.html[UBF User's Guide] is
+currently under construction.  Reading the UBF User's Guide is
+_STRONGLY_ recommended.
+
+The documentation is in a state of change and improvement.
+Contributions from the wider world are welcome.  :-)

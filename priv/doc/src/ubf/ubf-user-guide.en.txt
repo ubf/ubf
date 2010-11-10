@@ -1,0 +1,728 @@
+// -*- Doc -*-
+// vim: set syntax=asciidoc:
+
+= UBF User's Guide _DRAFT - UNDER CONSTRUCTION_
+:Date: 2010/11/09
+:Revision: 0.1
+:Copyright: 2002 Joe Armstrong
+:Copyright: 2010 Gemini Mobile Technologies, Inc.  All rights reserved.
+
+<<<
+== Preface
+
+UBF is a framework that permits the Erlang to talk to the outside
+world <<UBFPAPER>>.  The acronym "UBF" stands for "Universal Binary
+Format", designed and implemented by Joe Armstrong.
+
+This document and the corresponding open-source code repositories
+hosted on github are based on Joe Armstrong's original UBF site
+<<UBFSITE>> and UBF code with an MIT license file added to the
+distribution.  Since then, a large number of enhancements and
+improvements have been added.
+
+== Introduction
+
+UBF is a language for transporting and describing complex data
+structures across a network.  It has three components:
+
+- UBF(a) is a "language neutral" data transport format, roughly
+  equivalent to well-formed XML.
+
+- UBF(b) is a programming language for describing types in UBF(a) and
+  protocols between clients and servers.  This layer is typically
+  called the "protocol contract".  UBF(b) is roughly equivalent to
+  Verified XML, XML-schemas, SOAP and WDSL.
+
+- UBF(c) is a meta-level protocol used between a UBF client and a UBF
+  server.
+
+While the XML series of languages had the goal of having a human
+readable format the UBF languages take the opposite view and provide a
+"machine friendly" format.  UBF is designed to be easy to implement.
+
+.Programming By Contract
+svgimage::images/ubf-flow-01["Programming By Contract"]
+
+Central to UBF is the idea of a "Contract" which regulates the set of
+legal conversations that can take place between a client and a server.
+The client-side is depicted in "red" and the server-side is depicted
+in "blue".  The client and server communicate with each other via a
+TCP/IP connection.  All data sent by both the client and the server is
+verified by the "Contract Manager" (an Erlang process on the "server"
+side of the protocol).  Any data that violates the contract is
+rejected.
+
+The UBF framework itself is designed to be easy to extend for
+supporting other data transport formats and other network transports.
+For example, JSON, Thrift, and Erlang native binary serialization data
+formats over TCP/IP and JSON-RPC over HTTP are supported alternatives
+to the original UBF(a) implementation.
+
+<<<
+== Specifications
+
+=== UBF(a)
+
+UBF(a) is a transport format.  UBF(a) was designed to be easy to parse
+and to be easy to write with a text editor.  UBF(a) is based on a byte
+encoded virtual machine, 26 byte codes are reserved.  Instead of
+allocating the byte codes from 0, the printable character codes are
+used to make the format easy to read.
+
+UBF(a) has four primitive types, when a primitive type is recognized
+it is pushed onto the "recognition stack" in our decoder.  The
+primitive types are Integer, String, Binary, and Atom.  UBF(a) has two
+types of "glue" for making compound objects.  The compound types are
+Tuple and List.  Lastly, the operator '$' (i.e. "end of object")
+signifies when objects are finished.
+
+For example, the following UBF(a) object:
+
+------
+'person'>p # {p "Joe" 123} & {p 'fred' 3~abc~} & $
+------
+
+Represents the following UBF(b) term, a list that contains two
+3-tuples:
+
+------
+[{'person', 'fred', <<"abc">>}, {'person', "Joe", 123}].
+------
+
+TIP: In UBF(a), white space as well as commas are treated as a
+delimiter.
+
+For this example, the recognition stack for parsing this UBF(a) object
+would be as follows:
+
+------
+    'person'>p # {p "Joe" 123} & {p 'fred', 3~abc~} & $
+             ^ ^ ^^     ^   ^^ ^                  ^ ^ ^
+             | | ||     |   || |                  | | |
+
+             1 2 ab     c   d3 4                  5 6 7
+
+Time  Stack
+
+1   'person'
+
+2   []
+
+2a  { ... incomplete
+    []
+
+2b  {'person' ... incomplete
+    []
+
+2c  {'person', "Joe",  ... incomplete
+    []
+
+2d  {'person', "Joe", 123 ... incomplete}
+    []
+
+3   {'person', "Joe", 123}
+    []
+
+4   [{'person', "Joe", 123}]
+
+5   {'person', 'fred', <<"abc">>}
+    [{'person', "Joe", 123}]
+
+6   [{'person', 'fred', <<"abc">>}, {'person', "Joe", 123}]
+
+7   [{'person', 'fred', <<"abc">>}, {'person', "Joe", 123}]
+------
+
+See <<ABNF-UBFa>> for a formal definition of the UBF(a) syntax.
+
+CAUTION: There is no "Float" primitive type in the original and
+current UBF(a) implementation.  After Joe Armstrong's original
+implementation, a "Float" type was added to UBF(b) for use in other
+network transports other than UBF(a).  In future, UBF(a) could be
+enhanced to support a "Float" primitive type.
+
+==== Integer: [-][0-9]+
+
+Integers are sequences of bytes which could be described by the
+regular expression [-][0-9]+, that is an optional minus (to denote a
+negative integer) and then a sequence of at least one digit.
+
+==== String: "..."
+
+Strings are written enclosed in double quotes.  Within a string two
+quoting conventions are observed, " must be written \" and \ must be
+written \\ - no other quotings are allowed.
+
+==== Binary: [0-9]+ \~...~
+
+Uninterpreted blocks of binary data are encoded.  First an integer,
+representing the length of the binary data is encoded, this is
+followed by a tilde, the data itself which must be exactly the length
+given in the integer and than a closing tilde.  The closing tilde has
+no significance and is retained for readability.  White space can be
+added between the integer length and the data for readability.
+
+==== Atom: \'...'
+
+Atoms are encoded as strings, only using a single quote instead of a
+double quote.  Atoms are commonly found in symbolic languages like
+Lisp, Prolog or Erlang.  In C, they would be represented by hashed
+strings.  The essential property of an atom is that two atoms can be
+compared for equality in constant time.  These are used for
+representing symbolic constants.
+
+==== Tuple: { Obj1 Obj2 ... ObjN-1 ObjN }
+
+Tuples are used to represent _fixed numbers_ of objects.  The byte
+codes for "{" and "}" are used to delimit a tuple. Obj1, Obj2, ObjN-1,
+and ObjN are arbitrary UBF(a) objects.
+
+==== List: # ObjN & ObjN-1 & ... & Obj2 & Obj1
+
+Lists are used to represent _variable numbers_ of objects.  The first
+object in the list is Obj1, the second object in the list is Obj2,
+etc.  Objects are presented in reverse order.
+
+Lisp programmers will recognize '#' as an operator that pushes NIL (or
+the end of list) onto the recognition stack and '&' as an operator
+that takes the top two items on the recognition stack and replaces
+them by a list cell.
+
+==== Term
+
+Terms represent primitive types and compound types.
+
+==== White space: \s \n \r \t , %...%
+
+For convenience, blank, carriage return, line feed, tab, comma, and
+comments are treated as white space.  Comments can be included in
+UBF(a) with the syntax %...% and the usual quoting convention applies.
+
+==== Tag: \`...`
+
+In addition any item can be followed by a semantic tag this is written
+\`...` - with in the tag the close quote is quoted as in the strings
+encoding.  This tag has no meaning in UBF(a) but might have a meaning
+in UBF(b).  For example:
+
+------
+12456 ~...~ `jpg`
+------
+
+Represents 12,456 bytes of raw data with the semantic tag "jpg".
+UBF(a) does not know what "jpg" means - this is passed on to UBF(b)
+which might know what it means - finally the end application is
+expected to know what to do with an object of type "jpg", it might for
+example know that this represents an image.  UBF(a) will just encode
+the tag, UBF(b) will type check the tag, and the application should be
+able to understand the tag.
+
+CAUTION: This feature of integrating a "tag" in UBF(a) for the purpose
+of a "type" in UBF(b) is currently not implemented.  Tags can be
+specified in UBF(a) but there is currently no way for the application
+to act upon this semantic information.
+
+==== Register: >C C
+
+So far, exactly 26 control characters have been used, namely:
+%"~'`{}#&\s\n\t\r,-01234567890
+
+This leaves us with 230 unallocated byte codes.  These are used as
+follows:
+
+------
+>C
+------
+
+Where 'C' is not one of the reserved byte codes, > means store the top
+of the recognition stack in the register 'C' and pop the recognition
+stack.  For caching optimizations, subsequent reuse of the single
+character 'C' means push register 'C' onto the recognition stack.
+
+==== Object
+
+Objects represent either a Term, a Register push, or a Register pop
+with an optional Tag.  The operator '$' signifies "end of object".
+When '$' is encountered there should be only one item on the
+recognition stack.
+
+=== UBF(b)
+
+UBF(b) is a language independent type system and protocol description
+language.  The protocol description language allows one to specify
+client server interaction in terms of a non-deterministic finite state
+machine.  The type system allows one to specify the asynchronous
+events and synchronous request/response pairs that define transitions
+of this finite state machine.
+
+The type system and protocol description language together define the
+basis of "Contracts" between clients and servers.  All data sent by
+both the client and the server is verified by the "Contract Manager"
+(an Erlang process on the "server" side of the protocol).  Any data
+that violates the contract is rejected.
+
+A UBF(b) contract is defined by 2 mandatory sections and 3 optional
+sections.  The mandatory sections are the "+NAME" and the "+VERSION"
+of the contract.  The optional sections are the "+TYPES", the
+"+STATE", and the "+ANYSTATE" of the contract.
+
+For example, the following UBF(b) contract defines a simple IRC
+(Internet Relay Chat) protocol between clients and a server:
+
+[source,erlang]
+------
+include::misc-codes/irc_plugin.con[]
+------
+
+See <<ABNF-UBFb>> for a formal definition of the UBF(b) syntax.
+
+NOTE: The astute reader (and otherwise :) ) may notice that UBF(a) and
+UBF(b) are Erlang-centric.  By design, the two languages are supposed
+to be language neutral and yet _by design_ the two are highly
+influenced by Erlang.  For example, the difference between a string
+type and a binary type is directly due to Erlang's implementation of
+binaries and strings.  Similarly, the reason for supporting a record
+type and extended record type is also directly due to Erlang's
+implementation of records.
+
+==== Name: +NAME("...").
+
+The name of the contract is specified as a double-quoted string.
+
+==== Version: +VSN("...").
+
+The version of the contract is specified as a double-quoted string.
+
+==== Types: +TYPES.
+
+The UBF(b) type system has user-defined types and predefined types.
+User-defined types and predefined types are either primitive types or
+complex types.
+
+The primitive types are Integer, Range, Float, Binary, String, Atom,
+and Reference.  The complex types are Alternative, Tuple, Record,
+Extended Record, and List.  User-defined "complex types" are defined
+recursively.
+
+===== Definition: X() = T
+
+New types are defined by the notation:
+
+------
+X() = T;
+------
+
+and the last type of new types must be defined by the notation:
+
+------
+X() = T.
+------
+
+The name of the type is 'X' and the type's definition 'T' is either a
+user-defined type or a predefined type.
+
+===== Integer: [-][0-9]+ _or_ [0-9]\+#[0-9a-f]+
+
+Positive and negative integer constants are expressed as in UBF(a).
+Integer constants may also be expressed in other bases using Erlang
+syntax.
+
+===== Range: [-][0-9]\+..[-][0-9]+ _or_ [-][0-9]\+.. _or_ ..[-][0-9]+
+
+Bounded, left unbounded, and right unbounded integer ranges are
+supported.
+
+===== Float: [-][0-9]\+.[0-9]+
+
+Positive and negative float constants are supported for network
+transports other than UBF(a).
+
+NOTE: In future, the implementation of UBF(b) could be enhanced to
+specify a float more compactly using scientific notation
+(e.g. "6.02e23").
+
+===== Binary: \<<"...">>
+
+Binary constants are expressed similarly as strings in UBF(a) but
+having two leading "less than brackets" and two following "greater
+than brackets".
+
+===== String: "..."
+
+String constants are expressed as in UBF(a).
+
+===== Atom: \'...' _or_ [a-z][a-zA-Z0-9_]*
+
+Atom constants are expressed as UBF(a) atoms.  Atom constants starting
+with lowercase letters do not require single quotes.
+
+===== Reference: R()
+
+Defined types are referenced by the notation:
+
+------
+R()
+------
+
+The name of the type is 'R'.
+
+===== Alternative: T1 | T2
+
+A type X is of type "T1 | T2" if X is of type T1 or if X is of type
+T2.
+
+===== Tuple: {T1, T2, ..., Tn}
+
+A type {X1, X2, ..., Xn} is of type "{T1, T2, ..., Tn}" if X1 is of
+type T1, X2 is of type T2, ... and Xn is of type Tn.
+
+===== Record: name#{x=T1, y=T2, ..., z=Tn}
+
+A record type is syntactic sugar for a tuple of type "{name, T1, T2,
+..., Tn}" where name, x, y, ..., and z are atoms.
+
+===== Extended Record: name##{x=T1, y=T2, ..., z=Tn}
+
+An extended record type is syntactic sugar for a tuple of type "{name,
+T1, T2, ..., Tn, '$fields'=[x,y,...,z], '$extra'=Extra}" where name,
+x, y, ..., and z are atoms and Extra is any valid term.
+
+===== List: [T]
+
+A type [X1, X2, ..., Xn] is of type [T] if all of Xi are of type T.
+
+=====  Predefined: P() _or_ P(A1, A2, ..., An)
+
+Predefined types are referenced by the notation:
+
+------
+P()
+------
+
+or by the notation:
+
+------
+P(A1, A2, ..., An)
+------
+
+The name of the predefined type is 'P'.  Using the second notation,
+attributes can be specified to make the predefined type less general
+and thus more specific when matching objects.
+
+|============
+|          | ascii | asciiprintable | nonempty | nonundefined
+| integer  |   X   |       X        |    X     |      X
+| float    |   X   |       X        |    X     |      X
+| binary   |   O   |       O        |    O     |      X
+| string   |   O   |       O        |    O     |      X
+| atom     |   O   |       O        |    O     |      O
+| tuple    |   X   |       X        |    O     |      X
+| list     |   X   |       X        |    O     |      X
+| proplist |   X   |       X        |    O     |      X
+| term     |   X   |       X        |    O     |      O
+| void     |   X   |       X        |    X     |      X
+|============
+
+The above table summarizes the set of supported predefined types and
+their respective optional attributes.
+
+The "integer", "float", "binary", "string", "atom", "tuple", and
+"list" predefined types match directly to the corresponding primitive
+or complex type.
+
+The "term" predefined type matches any object.
+
+The "proplist" predefined type is a specialized version of the "list"
+predefined type that matches the following types:
+
+------
+[{term(), term()}]
+------
+
+The "void" predefined type is used as a placeholder to describe the
+return value of a function call that does not return to the caller.
+
+The "ascii" attribute permits matches with binaries, strings, and
+atoms containing only ASCII values <<RFC20>>.  Similarly, the
+"asciiprintable" attribute permits matches with only printable ASCII
+values.
+
+The "nonempty" attribute permits matches with binaries, strings,
+atoms, tuples, lists, proplists, and terms that are of length greater
+than zero.  The following objects would not be matched with the
+"nonempty" attribute:
+
+------
+<<"">>
+""
+''
+{}
+[]
+------
+
+The "nonundefined" attribute permits matches with atoms and terms that
+are not equal to the 'undefined' atom.
+
+NOTE: By convention, the 'undefined' atom is commonly used to indicate
+a default value or an undefined value in Erlang programs.  The purpose
+of 'undefined' is similar to NULL in C, to None in Python, etc.
+
+==== State: +STATE.
+
+The "+STATE" sections of UBF(b) defines a finite state machine (FSM)
+to model the interaction between the client and server.  Symbolic
+names expressed as "atoms" are the states of the FSM.
+
+Transitions expressed as request, response, and next state triplets
+are the edges of the FSM.  Transitions are "synchronous" calls from
+the client to the server.  Any request sent by the client that cannot
+match at least one valid transition is ignored and a "client broke
+contract" error response is returned to the client.  Likewise, any
+response returned by the server that cannot match at least one valid
+transition is ignored and a "server broke contract" error response is
+returned to the client.
+
+The states of the FSM may also be annotated with events expressed as
+"asynchronous" casts.  Events are asynchronous casts either from the
+client to the server or from the server to the client.  Please see
+next section for additional details.
+
+NOTE: The terminology of "call" and of "cast" to distinguish between
+synchronous and asynchronous interaction is borrowed from Erlang.
+
+==== Anystate: +ANYSTATE.
+
+The "+ANYSTATE" section of UBF(b) can be used to define additional
+events that are valid in _all_ states of the FSM.
+
+Events are checked based on direction first, on the current state's
+valid events next, and finally on the valid anystate events.  Any cast
+sent by the client or sent by the server that cannot match at least
+one valid event is ignored and dropped.
+
+=== UBF(c)
+
+UBF(c) is a meta-level protocol used between a UBF client and a UBF
+server.  UBF(c) has two primitives: synchronous "calls" and
+asynchronous "casts".
+
+==== Calls: Request $ => {Response, NextState} $
+
+Synchronous calls have the following form for the request:
+
+------
+Request $
+------
+
+and for the response:
+
+------
+{Response, NextState} $
+------
+
+where "Request" is an UBF(A) type sent by the client and "Response" is
+an UBF(a) type and "NextState" is an UBF(a) atom sent by the server.
+
+If the client sends an invalid request, the server will respond with
+the following "client broke contract" error:
+
+------
+{{'clientBrokeContract', Request, ExpectsIn}, State} $
+------
+
+where "ExpectsIn" is a UBF(A) type to describe the acceptable list of
+input types and "State" is an UBF(a) atom.
+
+If the server sends an invalid response, the server will respond with
+the following "server broke contract" error:
+
+------
+{{'serverBrokeContract', Response, ExpectsOut}, State} $
+------
+
+where "ExpectsOut" is a UBF(A) type to describe the acceptable list of
+output types and "State" is an UBF(a) atom.
+
+CAUTION: By convention, the 3-tuples {\'clientBrokeContract\', _, _}
+and {\'serverBrokeContract', _, _} are reserved terms for responses.
+Please be careful when designing your application not to use either of
+these 3-tuples.
+
+==== Casts: {\'event_in\', Event} $ _or_ {\'event_out', Event} $
+
+Asynchronous casts from the client to server have the following form:
+
+------
+{'event_in', Event} $
+------
+
+and from the server to the client have the following form:
+
+------
+{'event_out', Event} $
+------
+
+where "Event" is an UBF(a) type.
+
+See <<ABNF-UBFc>> for a formal definition of the UBF(c) syntax.
+
+CAUTION: By convention, the 2-tuples {\'event_in\', _} and
+{\'event_out', _} are reserved terms for requests and responses
+respectively.  Please be careful when designing your application not
+to use either of these two tuples.  This limitation introduced
+unintentionally after the original UBF implementation may be removed
+in the future.
+
+<<<
+== Contracts
+// *TODO*
+
+== Transports
+// *TODO*
+
+=== TCP/IP
+// *TODO*
+
+==== UBF
+// *TODO*
+
+==== EBF
+// *TODO*
+
+==== JSF
+// *TODO*
+
+==== TBF
+// *TODO*
+
+=== HTTP
+// *TODO*
+
+==== JSON RPC
+// *TODO*
+
+=== Misc
+// *TODO*
+
+==== ETF
+// *TODO*
+
+==== LPC
+// *TODO*
+
+== Servers
+// *TODO*
+
+=== Stateless
+// *TODO*
+
+=== Stateful
+// *TODO*
+
+== Clients
+// *TODO*
+
+=== Erlang
+// *TODO*
+
+=== Python
+// *TODO*
+
+=== Java
+// *TODO*
+
+<<<
+== Miscellaneous
+// *TODO*
+
+- download
+- build
+- test
+
+<<<
+== Reference
+
+[bibliography]
+.Optional list title
+
+- [[[RFC20]]] Vint Cerf, "ASCII format for Network Interchange",
+  RFC20, October 16, 1969.
+
+- [[[RFC5234]]] D. Crocker, Ed. Brandenburg, "Augmented BNF for Syntax
+  Specifications: ABNF", RFC5234, January 2008.
+
+- [[[UBFPAPER]]] Joe Armstrong, "Getting Erlang to talk to the outside
+  world", Proceedings of the 2002 ACM SIGPLAN workshop on Erlang,
+  pages 64-72, ACM Press, 2002.
+
+- [[[UBFSITE]]] Joe Armstrong,
+  http://www.sics.se/~joe/ubf/site/home.html, March 2003.
+
+
+<<<
+== Appendix
+// *TODO*
+
+=== Acknowledgments
+
+Many, many thanks to Joe Armstrong, UBF's designer and original
+implementor.
+
+Gemini Mobile Technologies, Inc. has approved the release of its
+extensions, improvements, etc. under an MIT license.  Joe Armstrong
+has also given his blessing to Gemini's license choice.
+
+------------
+The MIT License
+
+Copyright (c) 2009,2010 Gemini Mobile Technologies, Inc.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+------------
+
+<<<
+=== ABNF Definition
+
+The formal syntax for UBF(a), UBF(b), and UBF(c) is defined in ABNF
+format per <<RFC5234>> except for one extension - single quoted
+strings are case-sensitive.
+
+[[ABNF-UBFa]]
+==== UBF(a)
+
+[source,abnf]
+------
+include::misc-codes/ubf_a.abnf[]
+------
+
+[[ABNF-UBFb]]
+==== UBF(b)
+
+[source,abnf]
+------
+include::misc-codes/ubf_b.abnf[]
+------
+
+[[ABNF-UBFc]]
+==== UBF(c)
+
+[source,abnf]
+------
+include::misc-codes/ubf_c.abnf[]
+------

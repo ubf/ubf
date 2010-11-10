@@ -1,0 +1,63 @@
+ubf-a          = *ubf-a-wsp ubf-a-object *ubf-a-wsp "$"
+
+ubf-a-object   = (ubf-a-term / ubf-a-pop / ubf-a-push) *ubf-a-wsp [ubf-a-tag] *ubf-a-wsp
+
+ubf-a-wsp      = ubf-a-comment / ubf-a-ignore
+
+ubf-a-term     = ubf-a-atom
+               / ubf-a-string
+               / ubf-a-binary
+               / ubf-a-integer
+               / ubf-a-list
+               / ubf-a-tuple
+
+ubf-a-pop      = ">" ubf-a-register
+
+ubf-a-push     = ubf-a-register
+
+ubf-a-atom     = "'" *(%x20-26 / %x28-5B / %x5D-7E / "\\" / "\'") "'"
+
+ubf-a-string   = '"' *(%x20-21 / %x23-5B / %x5D-7E / '\\' / '\"') '"'
+
+ubf-a-binary   = ubf-a-integer *ubf-a-wsp "~" *OCTET "~"
+
+ubf-a-integer  = ["-"] 1*DIGIT
+
+ubf-a-list     = "#" *ubf-a-wsp [ubf-a-object *ubf-a-wsp "&"]
+
+ubf-a-tuple    = "{" *ubf-a-wsp [ubf-a-object *ubf-a-wsp] "}"
+
+ubf-a-tag      = "`" 1*(%x20-5B / %x5D-5F / %x61-7E / "\\" / "\`") "`"
+
+ubf-a-comment  = "%" *(%x20-24 / %x26-5B / %x5D-7E / "\\" / "\%") "%"
+
+ubf-a-ignore   = SP    ;; %x20
+               / LF    ;; %x0A
+               / CR    ;; %x0D
+               / HTAB  ;; %x09
+               / ","   ;; %x2C
+
+ubf-a-control  = "%"   ;; %x25
+               / '"'   ;; %x22
+               / "~"   ;; %x7E
+               / "'"   ;; %x27
+               / "`"   ;; %x60
+               / "{"   ;; %x7B
+               / "}"   ;; %x7D
+               / "#"   ;; %x23
+               / "&"   ;; %x26
+               / "-"   ;; %x2D
+               / DIGIT ;; %x30-39
+               / ubf-a-ignore
+
+ubf-a-register = %x21  ;; any octet except ubf-a-control
+               / %x00-08
+               / %x0B-0C
+               / %x0E-1F
+               / %x23-24
+               / %x28-2B
+               / %x2F
+               / %x3A-5F
+               / %x61-7A
+               / %x7C
+               / %x7F
