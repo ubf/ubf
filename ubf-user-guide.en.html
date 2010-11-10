@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>UBF User’s Guide DRAFT - UNDER CONSTRUCTION</title><link rel="stylesheet" href="./docbook-xsl.css" type="text/css" /><meta name="generator" content="DocBook XSL Stylesheets V1.74.3" /></head><body><div class="article" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title"><a id="id2988679"></a>UBF User’s Guide <span class="emphasis"><em>DRAFT - UNDER CONSTRUCTION</em></span></h2></div><div><div class="revhistory"><table border="1" width="100%" summary="Revision history"><tr><th align="left" valign="top" colspan="2"><b>Revision History</b></th></tr><tr><td align="left">Revision 0.1</td><td align="left">2010/11/09</td></tr></table></div></div></div><hr /></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="section"><a href="#_preface">1. Preface</a></span></dt><dt><span class="section"><a href="#_introduction">2. Introduction</a></span></dt><dt><span class="section"><a href="#_specifications">3. Specifications</a></span></dt><dd><dl><dt><span class="section"><a href="#_ubf_a">3.1. UBF(a)</a></span></dt><dd><dl><dt><span class="section"><a href="#_integer_0_9">3.1.1. Integer: [-][0-9]+</a></span></dt><dt><span class="section"><a href="#_string_8230">3.1.2. String: "…"</a></span></dt><dt><span class="section"><a href="#_binary_0_9_8230">3.1.3. Binary: [0-9]+ ~…~</a></span></dt><dt><span class="section"><a href="#_atom_8230">3.1.4. Atom: '…'</a></span></dt><dt><span class="section"><a href="#_tuple_obj1_obj2_8230_objn_1_objn">3.1.5. Tuple: { Obj1 Obj2 … ObjN-1 ObjN }</a></span></dt><dt><span class="section"><a href="#_list_objn_amp_objn_1_amp_8230_amp_obj2_amp_obj1">3.1.6. List: # ObjN &amp; ObjN-1 &amp; … &amp; Obj2 &amp; Obj1</a></span></dt><dt><span class="section"><a href="#_term">3.1.7. Term</a></span></dt><dt><span class="section"><a href="#_white_space_s_n_r_t_8230">3.1.8. White space: \s \n \r \t , %…%</a></span></dt><dt><span class="section"><a href="#_tag_8230">3.1.9. Tag: `…`</a></span></dt><dt><span class="section"><a href="#_register_gt_c_c">3.1.10. Register: &gt;C C</a></span></dt><dt><span class="section"><a href="#_object">3.1.11. Object</a></span></dt></dl></dd><dt><span class="section"><a href="#_ubf_b">3.2. UBF(b)</a></span></dt><dd><dl><dt><span class="section"><a href="#_name_name_8230">3.2.1. Name: +NAME("…").</a></span></dt><dt><span class="section"><a href="#_version_vsn_8230">3.2.2. Version: +VSN("…").</a></span></dt><dt><span class="section"><a href="#_types_types">3.2.3. Types: +TYPES.</a></span></dt><dt><span class="section"><a href="#_state_state">3.2.4. State: +STATE.</a></span></dt><dt><span class="section"><a href="#_anystate_anystate">3.2.5. Anystate: +ANYSTATE.</a></span></dt></dl></dd><dt><span class="section"><a href="#_ubf_c">3.3. UBF(c)</a></span></dt><dd><dl><dt><span class="section"><a href="#_calls_request_8658_response_nextstate">3.3.1. Calls: Request $ ⇒ {Response, NextState} $</a></span></dt><dt><span class="section"><a href="#_casts_event_in_event_emphasis_or_emphasis_event_out_event">3.3.2. Casts: {'event_in', Event} $ or {'event_out', Event} $</a></span></dt></dl></dd></dl></dd><dt><span class="section"><a href="#_contracts">4. Contracts</a></span></dt><dt><span class="section"><a href="#_transports">5. Transports</a></span></dt><dd><dl><dt><span class="section"><a href="#_tcp_ip">5.1. TCP/IP</a></span></dt><dd><dl><dt><span class="section"><a href="#_ubf">5.1.1. UBF</a></span></dt><dt><span class="section"><a href="#_ebf">5.1.2. EBF</a></span></dt><dt><span class="section"><a href="#_jsf">5.1.3. JSF</a></span></dt><dt><span class="section"><a href="#_tbf">5.1.4. TBF</a></span></dt></dl></dd><dt><span class="section"><a href="#_http">5.2. HTTP</a></span></dt><dd><dl><dt><span class="section"><a href="#_json_rpc">5.2.1. JSON RPC</a></span></dt></dl></dd><dt><span class="section"><a href="#_misc">5.3. Misc</a></span></dt><dd><dl><dt><span class="section"><a href="#_etf">5.3.1. ETF</a></span></dt><dt><span class="section"><a href="#_lpc">5.3.2. LPC</a></span></dt></dl></dd></dl></dd><dt><span class="section"><a href="#_servers">6. Servers</a></span></dt><dd><dl><dt><span class="section"><a href="#_stateless">6.1. Stateless</a></span></dt><dt><span class="section"><a href="#_stateful">6.2. Stateful</a></span></dt></dl></dd><dt><span class="section"><a href="#_clients">7. Clients</a></span></dt><dd><dl><dt><span class="section"><a href="#_erlang">7.1. Erlang</a></span></dt><dt><span class="section"><a href="#_python">7.2. Python</a></span></dt><dt><span class="section"><a href="#_java">7.3. Java</a></span></dt></dl></dd><dt><span class="section"><a href="#_miscellaneous">8. Miscellaneous</a></span></dt><dt><span class="section"><a href="#_reference">9. Reference</a></span></dt><dt><span class="section"><a href="#_appendix">10. Appendix</a></span></dt><dd><dl><dt><span class="section"><a href="#_acknowledgments">10.1. Acknowledgments</a></span></dt><dt><span class="section"><a href="#_abnf_definition">10.2. ABNF Definition</a></span></dt><dd><dl><dt><span class="section"><a href="#ABNF-UBFa">10.2.1. UBF(a)</a></span></dt><dt><span class="section"><a href="#ABNF-UBFb">10.2.2. UBF(b)</a></span></dt><dt><span class="section"><a href="#ABNF-UBFc">10.2.3. UBF(c)</a></span></dt></dl></dd></dl></dd></dl></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_preface"></a>1. Preface</h2></div></div></div><p>UBF is a framework that permits the Erlang to talk to the outside
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>UBF User’s Guide DRAFT - UNDER CONSTRUCTION</title><link rel="stylesheet" href="./docbook-xsl.css" type="text/css" /><meta name="generator" content="DocBook XSL Stylesheets V1.74.3" /></head><body><div class="article" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title"><a id="id2624970"></a>UBF User’s Guide <span class="emphasis"><em>DRAFT - UNDER CONSTRUCTION</em></span></h2></div><div><div class="revhistory"><table border="1" width="100%" summary="Revision history"><tr><th align="left" valign="top" colspan="2"><b>Revision History</b></th></tr><tr><td align="left">Revision 0.1</td><td align="left">2010/11/10</td></tr></table></div></div></div><hr /></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="section"><a href="#_preface">1. Preface</a></span></dt><dt><span class="section"><a href="#_introduction">2. Introduction</a></span></dt><dt><span class="section"><a href="#_specifications">3. Specifications</a></span></dt><dd><dl><dt><span class="section"><a href="#_ubf_a">3.1. UBF(a)</a></span></dt><dd><dl><dt><span class="section"><a href="#_integer_0_9">3.1.1. Integer: [-][0-9]+</a></span></dt><dt><span class="section"><a href="#_string_8230">3.1.2. String: "…"</a></span></dt><dt><span class="section"><a href="#_binary_0_9_8230">3.1.3. Binary: [0-9]+ ~…~</a></span></dt><dt><span class="section"><a href="#_atom_8230">3.1.4. Atom: '…'</a></span></dt><dt><span class="section"><a href="#_tuple_obj1_obj2_8230_objn_1_objn">3.1.5. Tuple: { Obj1 Obj2 … ObjN-1 ObjN }</a></span></dt><dt><span class="section"><a href="#_list_objn_amp_objn_1_amp_8230_amp_obj2_amp_obj1">3.1.6. List: # ObjN &amp; ObjN-1 &amp; … &amp; Obj2 &amp; Obj1</a></span></dt><dt><span class="section"><a href="#_term">3.1.7. Term</a></span></dt><dt><span class="section"><a href="#_white_space_s_n_r_t_8230">3.1.8. White space: \s \n \r \t , %…%</a></span></dt><dt><span class="section"><a href="#_tag_8230">3.1.9. Tag: `…`</a></span></dt><dt><span class="section"><a href="#_register_gt_c_c">3.1.10. Register: &gt;C C</a></span></dt><dt><span class="section"><a href="#_object">3.1.11. Object</a></span></dt></dl></dd><dt><span class="section"><a href="#_ubf_b">3.2. UBF(b)</a></span></dt><dd><dl><dt><span class="section"><a href="#_name_name_8230">3.2.1. Name: +NAME("…").</a></span></dt><dt><span class="section"><a href="#_version_vsn_8230">3.2.2. Version: +VSN("…").</a></span></dt><dt><span class="section"><a href="#_types_types">3.2.3. Types: +TYPES.</a></span></dt><dt><span class="section"><a href="#_state_state">3.2.4. State: +STATE.</a></span></dt><dt><span class="section"><a href="#_anystate_anystate">3.2.5. Anystate: +ANYSTATE.</a></span></dt></dl></dd><dt><span class="section"><a href="#_ubf_c">3.3. UBF(c)</a></span></dt><dd><dl><dt><span class="section"><a href="#_calls_request_8658_response_nextstate">3.3.1. Calls: Request $ ⇒ {Response, NextState} $</a></span></dt><dt><span class="section"><a href="#_casts_event_in_event_emphasis_or_emphasis_event_out_event">3.3.2. Casts: {'event_in', Event} $ or {'event_out', Event} $</a></span></dt></dl></dd></dl></dd><dt><span class="section"><a href="#_contracts_amp_plugins">4. Contracts &amp; Plugins</a></span></dt><dt><span class="section"><a href="#_transports">5. Transports</a></span></dt><dd><dl><dt><span class="section"><a href="#_tcp_ip">5.1. TCP/IP</a></span></dt><dd><dl><dt><span class="section"><a href="#_ubf">5.1.1. UBF</a></span></dt><dt><span class="section"><a href="#_ebf">5.1.2. EBF</a></span></dt><dt><span class="section"><a href="#_jsf">5.1.3. JSF</a></span></dt><dt><span class="section"><a href="#_tbf">5.1.4. TBF</a></span></dt></dl></dd><dt><span class="section"><a href="#_http">5.2. HTTP</a></span></dt><dd><dl><dt><span class="section"><a href="#_json_rpc">5.2.1. JSON RPC</a></span></dt></dl></dd><dt><span class="section"><a href="#_misc">5.3. Misc</a></span></dt><dd><dl><dt><span class="section"><a href="#_etf">5.3.1. ETF</a></span></dt><dt><span class="section"><a href="#_lpc">5.3.2. LPC</a></span></dt></dl></dd></dl></dd><dt><span class="section"><a href="#Servers">6. Servers</a></span></dt><dd><dl><dt><span class="section"><a href="#_stateless">6.1. Stateless</a></span></dt><dt><span class="section"><a href="#_stateful">6.2. Stateful</a></span></dt></dl></dd><dt><span class="section"><a href="#_clients">7. Clients</a></span></dt><dd><dl><dt><span class="section"><a href="#_erlang">7.1. Erlang</a></span></dt><dt><span class="section"><a href="#_python">7.2. Python</a></span></dt><dt><span class="section"><a href="#_java">7.3. Java</a></span></dt></dl></dd><dt><span class="section"><a href="#_miscellaneous">8. Miscellaneous</a></span></dt><dt><span class="section"><a href="#_reference">9. Reference</a></span></dt><dt><span class="section"><a href="#_appendix">10. Appendix</a></span></dt><dd><dl><dt><span class="section"><a href="#_acknowledgments">10.1. Acknowledgments</a></span></dt><dt><span class="section"><a href="#_abnf_definition">10.2. ABNF Definition</a></span></dt><dd><dl><dt><span class="section"><a href="#ABNF-UBFa">10.2.1. UBF(a)</a></span></dt><dt><span class="section"><a href="#ABNF-UBFb">10.2.2. UBF(b)</a></span></dt><dt><span class="section"><a href="#ABNF-UBFc">10.2.3. UBF(c)</a></span></dt></dl></dd></dl></dd></dl></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_preface"></a>1. Preface</h2></div></div></div><p>UBF is a framework that permits the Erlang to talk to the outside
 world <a class="xref" href="#UBFPAPER">[UBFPAPER]</a>.  The acronym "UBF" stands for "Universal Binary
 Format", designed and implemented by Joe Armstrong.</p><p>This document and the corresponding open-source code repositories
 hosted on github are based on Joe Armstrong’s original UBF site
@@ -20,7 +20,7 @@ UBF(c) is a meta-level protocol used between a UBF client and a UBF
   server.
 </li></ul></div><p>While the XML series of languages had the goal of having a human
 readable format the UBF languages take the opposite view and provide a
-"machine friendly" format.  UBF is designed to be easy to implement.</p><div class="figure"><a id="id3066740"></a><p class="title"><b>Figure 1. Programming By Contract</b></p><div class="figure-contents"><a class="ulink" href="images/ubf-flow-01.svg" target="_top">
+"machine friendly" format.  UBF is designed to be easy to implement.</p><div class="figure"><a id="id2717919"></a><p class="title"><b>Figure 1. Programming By Contract</b></p><div class="figure-contents"><a class="ulink" href="images/ubf-flow-01.svg" target="_top">
   <div class="mediaobject"><img src="images/ubf-flow-01.png" alt="Programming By Contract" /></div>
 </a></div></div><br class="figure-break" /><p>Central to UBF is the idea of a "Contract" which regulates the set of
 legal conversations that can take place between a client and a server.
@@ -138,8 +138,9 @@ both the client and the server is verified by the "Contract Manager"
 that violates the contract is rejected.</p><p>A UBF(b) contract is defined by 2 mandatory sections and 3 optional
 sections.  The mandatory sections are the "+NAME" and the "+VERSION"
 of the contract.  The optional sections are the "+TYPES", the
-"+STATE", and the "+ANYSTATE" of the contract.</p><p>For example, the following UBF(b) contract defines a simple IRC
-(Internet Relay Chat) protocol between clients and a server:</p><pre class="programlisting">+NAME("irc").
+"+STATE", and the "+ANYSTATE" of the contract.</p><p>For example, the following UBF(b) contract having the filename
+"irc_plugin.con" defines a simple IRC (Internet Relay Chat) protocol
+between clients and a server:</p><pre class="programlisting">+NAME("irc").
 
 +VSN("ubf1.0").
 
@@ -266,29 +267,161 @@ these 3-tuples.</p></td></tr></table></div></div><div class="section" lang="en" 
 respectively.  Please be careful when designing your application not
 to use either of these two tuples.  This limitation introduced
 unintentionally after the original UBF implementation may be removed
-in the future.</p></td></tr></table></div></div></div></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_contracts"></a>4. Contracts</h2></div></div></div></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_transports"></a>5. Transports</h2></div></div></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="_tcp_ip"></a>5.1. TCP/IP</h3></div></div></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="_ubf"></a>5.1.1. UBF</h4></div></div></div></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="_ebf"></a>5.1.2. EBF</h4></div></div></div></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="_jsf"></a>5.1.3. JSF</h4></div></div></div></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="_tbf"></a>5.1.4. TBF</h4></div></div></div></div></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="_http"></a>5.2. HTTP</h3></div></div></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="_json_rpc"></a>5.2.1. JSON RPC</h4></div></div></div></div></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="_misc"></a>5.3. Misc</h3></div></div></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="_etf"></a>5.3.1. ETF</h4></div></div></div></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="_lpc"></a>5.3.2. LPC</h4></div></div></div></div></div></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_servers"></a>6. Servers</h2></div></div></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="_stateless"></a>6.1. Stateless</h3></div></div></div></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="_stateful"></a>6.2. Stateful</h3></div></div></div></div></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_clients"></a>7. Clients</h2></div></div></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="_erlang"></a>7.1. Erlang</h3></div></div></div></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="_python"></a>7.2. Python</h3></div></div></div></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="_java"></a>7.3. Java</h3></div></div></div></div></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_miscellaneous"></a>8. Miscellaneous</h2></div></div></div><div class="itemizedlist"><ul type="disc"><li>
+in the future.</p></td></tr></table></div></div></div></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_contracts_amp_plugins"></a>4. Contracts &amp; Plugins</h2></div></div></div><p>"Contracts" and "Plugins" are the basic building blocks of an Erlang
+UBF server.  Contracts are a server’s specifications.  Plugins are a
+server’s implementations.</p><p>A contract is a UBF(b) specification stored to a file.  By convention,
+a contract’s filename has ".con" as the suffix part.  Since all
+sections of a UBF(b) specification are optional except for the "+NAME"
+and "+VERSION" sections, it is possible to have "+TYPES" only
+contracts, "+STATE" only contracts, "+ANYSTATE" only contracts, or any
+combination of such contracts.</p><p>For example, a "+TYPES" ony contract having the filename
+"irc_types_plugin.con" is as follows:</p><pre class="programlisting">+NAME("irc_types").
+
++VSN("ubf1.0").
+
++TYPES
+info()            = info;
+description()     = description;
+contract()        = contract;
+
+ok()              = ok;
+bool()            = true | false;
+nick()            = string();
+oldnick()         = nick();
+newnick()         = nick();
+group()           = string();
+groups()          = [group()];
+
+logon()           = logon;
+proceed()         = {ok, nick()};
+listGroups()      = groups;
+joinGroup()       = {join, group()};
+leaveGroup()      = {leave, group()};
+changeNick()      = {nick, nick()};
+msg()             = {msg, group(), string()};
+
+msgEvent()        = {msg, nick(), group(), string()};
+joinEvent()       = {joins, nick(), group()};
+leaveEvent()      = {leaves, nick(), group()};
+changeNameEvent() = {changesName, oldnick(), newnick(), group()}.</pre><p>For example, a "+STATE" and "+ANYSTATE" contract having the filename
+"irc_fsm_plugin.con" is as follows:</p><pre class="programlisting">+NAME("irc").
+
++VSN("ubf1.0").
+
++STATE start
+   logon()       =&gt; proceed() &amp; active. %% Nick randomly assigned
+
++STATE active
+   listGroups()  =&gt; groups() &amp; active;
+   joinGroup()   =&gt; ok() &amp; active;
+   leaveGroup()  =&gt; ok() &amp; active;
+   changeNick()  =&gt; bool() &amp; active;
+   msg()         =&gt; bool() &amp; active;    %% False if you have not joined a group
+
+   EVENT         =&gt; msgEvent();         %% Group sends me a message
+   EVENT         =&gt; joinEvent();        %% Nick joins group
+   EVENT         =&gt; leaveEvent();       %% Nick leaves group
+   EVENT         =&gt; changeNameEvent().  %% Nick changes name
+
++ANYSTATE
+   info()        =&gt; string();
+   description() =&gt; string();
+   contract()    =&gt; term().</pre><p>A plugin is just a "normal" Erlang module that follows a few simple
+rules.  For a "+TYPES" only contract, the plugin contains just the
+name of it’s contract.  Otherwise, the plugin contains the name of
+it’s contract plus the necessary Erlang "glue code" needed to bind the
+UBF server to the server’s application.  In either case, a plugin can
+also import all or a subset of "+TYPES" from other plugins.  This
+simple yet powerful import mechanism permits sharing and re-use of
+types between plugins and servers.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="./images/icons/note.png" /></td><th align="left"></th></tr><tr><td align="left" valign="top"><p>The necessary Erlang "glue code" is presented later in the
+<a class="xref" href="#Servers" title="6.&#xA0;Servers">Section 6, “Servers”</a> section.</p></td></tr></table></div><p>For example, the plugin for the "+TYPES" only contract having the
+filename "irc_types_plugin.erl" is as follows:</p><pre class="screen">-module(irc_types_plugin).
+
+-compile({parse_transform,contract_parser}).
+-add_contract("irc_types_plugin").</pre><p>For example, the plugin for the "+STATE" and "+ANYSTATE" contract
+having the filename "irc_fsm_plugin.erl" is as follows:</p><pre class="screen">-module(irc_fsm_plugin).
+
+-compile({parse_transform,contract_parser}).
+-add_types(irc_types_plugin).
+-add_contract("irc_fsm_plugin").</pre><p>The "-add_types('there')" directive imports all "+TYPES" from the
+plugin named 'there' into the containing plugin.  An alternative
+syntax "-add_types({'elsewhere', ['t1', 't2', …, 'tn']})."
+for this directive imports a subset of "+TYPEs" from the plugin named
+'elsewhere' into the containing plugin.  Multiple import directives
+of either syntax can be freely declared as long as the "-add_types"
+directives are listed before the "-add_contract" directive.  A plugin
+can have only one "-add_contract" directive.</p><p>Similarly for the full example IRC contract described in a previous
+section, the plugin having the filename "irc_plugin.erl" is as
+follows:</p><pre class="screen">-module(irc_plugin).
+
+-compile({parse_transform,contract_parser}).
+-add_contract("irc_plugin").</pre><p>By using this Erlang "parse transform", the contract is parsed and the
+imported types (if any) are processed during the compilation of the
+plugin’s Erlang module.  The normal search path used by Erlang’s
+compiler to locate modules is used to import types from other plugins.</p><p>The plugin will fail to compile if the plugin’s contract cannot be
+found, cannot be parsed properly, or if one of the following errors
+occurs:</p><div class="variablelist"><dl><dt><span class="term">
+{'duplicated_records', L}
+</span></dt><dd>
+  One or more records having the same name are found.
+</dd><dt><span class="term">
+{'duplicated_states', L}
+</span></dt><dd>
+  One or more states having the same name are found.
+</dd><dt><span class="term">
+{'duplicated_types', L}
+</span></dt><dd>
+  One or more types having the same name are found.
+</dd><dt><span class="term">
+{'duplicated_unmatched_import_types', L}
+</span></dt><dd>
+  One or more imported types having the same name but different
+  definitions are found.  <span class="emphasis"><em>Type duplicates are permitted as long as
+  the type(s) are imported and all duplicates have the same
+  definition.</em></span>
+</dd><dt><span class="term">
+{'missing_states', L}
+</span></dt><dd>
+  One or more states were found to be missing.
+</dd><dt><span class="term">
+{'missing_types', L}
+</span></dt><dd>
+  One or more types were found to be missing.
+</dd><dt><span class="term">
+{'unused_types', L}
+</span></dt><dd>
+  One or more types were found to be unused in the contract.  <span class="emphasis"><em>Unused
+  types are permitted as long as the unused type(s) are imported.</em></span>
+</dd></dl></div><p>where L is an Erlang list.</p><p>As a by-product of a plugin’s compilation and if one or more "record"
+or "extended record" types were declared in a plugin’s contract, an
+Erlang "header" file containing the plugin’s record definitions is
+automatically created.  This Erlang "header" file can be included by
+the plugin module itself or by other Erlang modules used by the
+server’s application.  By convention, this Erlang "header" file has
+the same base filename as the plugin but having a ".huc" as the suffix
+part.</p></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_transports"></a>5. Transports</h2></div></div></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="_tcp_ip"></a>5.1. TCP/IP</h3></div></div></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="_ubf"></a>5.1.1. UBF</h4></div></div></div></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="_ebf"></a>5.1.2. EBF</h4></div></div></div></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="_jsf"></a>5.1.3. JSF</h4></div></div></div></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="_tbf"></a>5.1.4. TBF</h4></div></div></div></div></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="_http"></a>5.2. HTTP</h3></div></div></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="_json_rpc"></a>5.2.1. JSON RPC</h4></div></div></div></div></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="_misc"></a>5.3. Misc</h3></div></div></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="_etf"></a>5.3.1. ETF</h4></div></div></div></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title"><a id="_lpc"></a>5.3.2. LPC</h4></div></div></div></div></div></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="Servers"></a>6. Servers</h2></div></div></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="_stateless"></a>6.1. Stateless</h3></div></div></div></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="_stateful"></a>6.2. Stateful</h3></div></div></div></div></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_clients"></a>7. Clients</h2></div></div></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="_erlang"></a>7.1. Erlang</h3></div></div></div></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="_python"></a>7.2. Python</h3></div></div></div></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title"><a id="_java"></a>7.3. Java</h3></div></div></div></div></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_miscellaneous"></a>8. Miscellaneous</h2></div></div></div><div class="itemizedlist"><ul type="disc"><li>
 download
 </li><li>
 build
 </li><li>
 test
-</li></ul></div></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_reference"></a>9. Reference</h2></div></div></div><div class="bibliomixed"><a id="id3084066"></a><p class="bibliomixed">
+</li></ul></div></div><div class="section" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_reference"></a>9. Reference</h2></div></div></div><div class="bibliomixed"><a id="id2697813"></a><p class="bibliomixed">
 <span class="bibliomisc">
 <a id="RFC20"></a>[RFC20] Vint Cerf, "ASCII format for Network Interchange",
   RFC20, October 16, 1969.
 </span>
-</p></div><div class="bibliomixed"><a id="id3088587"></a><p class="bibliomixed">
+</p></div><div class="bibliomixed"><a id="id2709712"></a><p class="bibliomixed">
 <span class="bibliomisc">
 <a id="RFC5234"></a>[RFC5234] D. Crocker, Ed. Brandenburg, "Augmented BNF for Syntax
   Specifications: ABNF", RFC5234, January 2008.
 </span>
-</p></div><div class="bibliomixed"><a id="id3083592"></a><p class="bibliomixed">
+</p></div><div class="bibliomixed"><a id="id2721497"></a><p class="bibliomixed">
 <span class="bibliomisc">
 <a id="UBFPAPER"></a>[UBFPAPER] Joe Armstrong, "Getting Erlang to talk to the outside
   world", Proceedings of the 2002 ACM SIGPLAN workshop on Erlang,
   pages 64-72, ACM Press, 2002.
 </span>
-</p></div><div class="bibliomixed"><a id="id3067829"></a><p class="bibliomixed">
+</p></div><div class="bibliomixed"><a id="id2700365"></a><p class="bibliomixed">
 <span class="bibliomisc">
 <a id="UBFSITE"></a>[UBFSITE] Joe Armstrong,
   <a class="ulink" href="http://www.sics.se/~joe/ubf/site/home.html" target="_top">http://www.sics.se/~joe/ubf/site/home.html</a>, March 2003.

@@ -1,0 +1,29 @@
++NAME("irc").
+
++VSN("ubf1.0").
+
++STATE start
+   logon()       => proceed() & active. %% Nick randomly assigned
+
++STATE active
+   listGroups()  => groups() & active;
+   joinGroup()   => ok() & active;
+   leaveGroup()  => ok() & active;
+   changeNick()  => bool() & active;
+   msg()         => bool() & active;    %% False if you have not joined a group
+
+   EVENT         => msgEvent();         %% Group sends me a message
+   EVENT         => joinEvent();        %% Nick joins group
+   EVENT         => leaveEvent();       %% Nick leaves group
+   EVENT         => changeNameEvent().  %% Nick changes name
+
++ANYSTATE
+   info()        => string();
+   description() => string();
+   contract()    => term().
+
+
+
+
+
+
