@@ -2,10 +2,11 @@
 // vim: set syntax=asciidoc:
 
 = UBF User's Guide _DRAFT - UNDER CONSTRUCTION_
-:Date: 2010/11/10
+:Date: 2010/11/11
 :Revision: 0.1
 :Copyright: 2002 Joe Armstrong
 :Copyright: 2010 Gemini Mobile Technologies, Inc.  All rights reserved.
+
 
 <<<
 == Preface
@@ -15,8 +16,8 @@ world <<UBFPAPER>>.  The acronym "UBF" stands for "Universal Binary
 Format", designed and implemented by Joe Armstrong.
 
 This document and the corresponding open-source code repositories
-hosted on github are based on Joe Armstrong's original UBF site
-<<UBFSITE>> and UBF code with an MIT license file added to the
+hosted on github <<UBF>> are based on Joe Armstrong's original UBF
+site <<UBFSITE>> and UBF code with an MIT license file added to the
 distribution.  Since then, a large number of enhancements and
 improvements have been added.
 
@@ -58,9 +59,11 @@ For example, JSON, Thrift, and Erlang native binary serialization data
 formats over TCP/IP and JSON-RPC over HTTP are supported alternatives
 to the original UBF(a) implementation.
 
+
 <<<
 == Specifications
 
+[[UBFa]]
 === UBF(a)
 
 UBF(a) is a transport format.  UBF(a) was designed to be easy to parse
@@ -217,10 +220,10 @@ example know that this represents an image.  UBF(a) will just encode
 the tag, UBF(b) will type check the tag, and the application should be
 able to understand the tag.
 
-CAUTION: This feature of integrating a "tag" in UBF(a) for the purpose
-of a "type" in UBF(b) is currently not implemented.  Tags can be
-specified in UBF(a) but there is currently no way for the application
-to act upon this semantic information.
+CAUTION: Currently, this feature of integrating a "tag" in UBF(a) for
+the purpose of a "type" in UBF(b) is not implemented.  Tags can be
+specified in UBF(a) but there is no way for the application to act
+upon this semantic information.
 
 ==== Register: >C C
 
@@ -574,12 +577,15 @@ to use either of these two tuples.  This limitation introduced
 unintentionally after the original UBF implementation may be removed
 in the future.
 
+
 <<<
 == Contracts & Plugins
 
 "Contracts" and "Plugins" are the basic building blocks of an Erlang
 UBF server.  Contracts are a server's specifications.  Plugins are a
 server's implementations.
+
+=== Contract
 
 A contract is a UBF(b) specification stored to a file.  By convention,
 a contract's filename has ".con" as the suffix part.  Since all
@@ -588,7 +594,7 @@ and "+VERSION" sections, it is possible to have "+TYPES" only
 contracts, "+STATE" only contracts, "+ANYSTATE" only contracts, or any
 combination of such contracts.
 
-For example, a "+TYPES" ony contract having the filename
+For example, a "+TYPES" only contract having the filename
 "irc_types_plugin.con" is as follows:
 
 [source,erlang]
@@ -604,6 +610,8 @@ For example, a "+STATE" and "+ANYSTATE" contract having the filename
 include::misc-codes/irc_fsm_plugin.con[]
 ------
 
+=== Plugin
+
 A plugin is just a "normal" Erlang module that follows a few simple
 rules.  For a "+TYPES" only contract, the plugin contains just the
 name of it's contract.  Otherwise, the plugin contains the name of
@@ -616,8 +624,18 @@ types between plugins and servers.
 NOTE: The necessary Erlang "glue code" is presented later in the
 <<Servers>> section.
 
-For example, the plugin for the "+TYPES" only contract having the
-filename "irc_types_plugin.erl" is as follows:
+For the full example IRC contract described in a previous section, the
+plugin having the filename "irc_plugin.erl" is as follows:
+
+------
+-module(irc_plugin).
+
+-compile({parse_transform,contract_parser}).
+-add_contract("irc_plugin").
+------
+
+The plugin for the "+TYPES" only contract having the filename
+"irc_types_plugin.erl" is as follows:
 
 ------
 -module(irc_types_plugin).
@@ -626,8 +644,10 @@ filename "irc_types_plugin.erl" is as follows:
 -add_contract("irc_types_plugin").
 ------
 
-For example, the plugin for the "+STATE" and "+ANYSTATE" contract
-having the filename "irc_fsm_plugin.erl" is as follows:
+=== Importing Types
+
+The plugin for the "+STATE" and "+ANYSTATE" contract having the
+filename "irc_fsm_plugin.erl" is as follows:
 
 ------
 -module(irc_fsm_plugin).
@@ -646,21 +666,12 @@ of either syntax can be freely declared as long as the "-add_types"
 directives are listed before the "-add_contract" directive.  A plugin
 can have only one "-add_contract" directive.
 
-Similarly for the full example IRC contract described in a previous
-section, the plugin having the filename "irc_plugin.erl" is as
-follows:
-
-------
--module(irc_plugin).
-
--compile({parse_transform,contract_parser}).
--add_contract("irc_plugin").
-------
-
 By using this Erlang "parse transform", the contract is parsed and the
 imported types (if any) are processed during the compilation of the
 plugin's Erlang module.  The normal search path used by Erlang's
 compiler to locate modules is used to import types from other plugins.
+
+=== Compilation Errors
 
 The plugin will fail to compile if the plugin's contract cannot be
 found, cannot be parsed properly, or if one of the following errors
@@ -687,6 +698,8 @@ occurs:
 
 where L is an Erlang list.
 
+=== Miscellaneous
+
 As a by-product of a plugin's compilation and if one or more "record"
 or "extended record" types were declared in a plugin's contract, an
 Erlang "header" file containing the plugin's record definitions is
@@ -696,68 +709,359 @@ server's application.  By convention, this Erlang "header" file has
 the same base filename as the plugin but having a ".huc" as the suffix
 part.
 
+TIP: There are 2 experimental prototypes for extending UBF's type and
+plugin framework.  <<UBF_ABNF>> is a framework for integrating UBF and
+ABNF specifications.  <<UBF_EEP8>> is a framework for integrating UBF
+and EEP8 types.
+
+
+<<<
 == Transports
-// *TODO*
+
+The original "UBF" network transport is UBF(a) over TCP/IP.  Since
+then, a number of new transports *not* based on UBF(a) and not based
+on TCP/IP have been added.  Nevertheless, these transports are still
+considered as part of the overall UBF framework.  Most importantly,
+applications can share and re-use the same UBF contracts and plugins
+irregardless of the network transport.
 
 === TCP/IP
-// *TODO*
 
-==== UBF
-// *TODO*
+==== UBF: Universal Binary Format
 
-==== EBF
-// *TODO*
+The name "UBF" is short for "Universal Binary Format".  UBF is
+commonly used to refer to the network transport based on UBF(a) and to
+the overall UBF framework.
 
-==== JSF
-// *TODO*
+See <<UBFa>> for further details.
 
-==== TBF
-// *TODO*
+==== EBF: Erlang Binary Format
+
+EBF is an implementation of UBF(b) but it does not use UBF(a) for the
+client and server communication.  Instead, Erlang-style conventions
+are used instead:
+
+- Structured terms are serialized via the Erlang BIFs term_to_binary()
+  and binary_to_term().
+- Terms are framed using the 'gen_tcp' {packet, 4} format: a 32-bit
+  unsigned integer (big-endian?) specifies packet length.
++
+------
++-------------------------+-------------------------------+
+| Packet length (32 bits) | Packet data (variable length) |
++-------------------------+-------------------------------+
+------
+
+The name "EBF" is short for "Erlang Binary Format".
+
+==== JSF: JavaScript Format
+
+JSF is an implementation of UBF(b) but it does not use UBF(a) for the
+client and server communication.  Instead, JSON <<RFC4627>> is used
+instead as the wire format.  The name "JSF" is short for "JavaScript
+Format".
+
+There is no generally agreed upon convention for converting Erlang
+terms to JSON objects.  JSF uses the convention set forth by
+MochiWeb's JSON library <<MOCHIJSON2>>.  In addition, there are a
+couple of other conventions layered on top of MochiWeb's
+implementation.
+
+- The UBF(B) contract checker has been modified to make a distinction
+  between an Erlang record and an arbitrary Erlang tuple.  An
+  experienced Erlang developer would view such a distinction either
+  with skepticism or with approval.
+
+- For the skeptics, the contract author has the option of having the
+  UBF(B) contract compiler automatically generate Erlang -record()
+  definitions for appropriate tuples within the contract.  Such record
+  definitions are very convenient for developers on the Erlang side of
+  the world, but they introduce more complication to the JavaScript
+  side of the world.  For example, JavaScript does not have a concept
+  of an arbitrary atom, as Erlang does.  Also, the JavaScript side
+  must make a distinction between {foo, 42} and {bar, 42} when #foo is
+  a record on the Erlang side but #bar is not.
+
+This extra convention creates something slightly messy-looking, if you
+look at the raw JSON passed back-and-forth.  The examples of the
+Erlang record {foo, 42} and the general tuple {bar, 42} would look
+like this:
+
+------
+   record (defined in the contract as "foo() = #foo{attribute1 = term()};")
+
+      {"$R":"foo", "attribute1":42}
+
+   general tuple
+
+      {"$T":[{"$A":"bar"}, 42]}
+------
+
+However, it requires very little JavaScript code to convert objects
+with the "$R", "$T", and "$A" notation (for records, tuples, and
+atoms) into whatever object is most convenient.
+
+See <<UBF_JSONRPC>> for further details.
+
+TIP: Gemini Mobile Technologies, Inc. has implemented and open-sourced
+a module for classifying the input character set to detect non-UTF8
+JSON inputs <<GMTCHARSET>>.
+
+==== TBF / NTBF:  Thrift Binary Format / Native Thrift Binary Format
+
+TBF and NTBF is an implementation of UBF(b) but it does not use UBF(a)
+for the client and server communication.  Instead, Thrift <<THRIFT>>
+is used instead as the wire format.  The name "TBF" is short for
+"Thrift Binary Format".  The name "NTBF" is short for "Native Thrift
+Binary Format".
+
+TBF follows the conventions set forth by the Thrift community by
+re-using Thrift's binary wire-protocol except for the following
+exceptions:
+
+- The name of Thrift messages are hard-coded to the Thrift name
+  "$UBF".
+- The name of Thrift structs are not removed before being written to
+  the network.
+- TBF does not use nor require a Thrift IDL.
+- TBF by convention requires the client to read a "server hello"
+  message at the start of establishing a new TCP/IP connection.
+
+TBF *can* encode and decode all UBF(b) objects.  Synchronous calls are
+implemented as Thrift 'T-CALL' and 'T-REPLY' message pairs.
+Asynchronous casts are implemented as Thrift 'T-ONEWAY' messages.
+
+CAUTION: TBF is not compatible with standard Thrift clients and
+servers.
+
+NTBF follows all of the conventions set forth by the Thrift community
+by re-using Thrift's binary wire-protocol.  A standard Thrift client
+can communicate with a UBF "NTBF" server and a UBF "NTBF" client can
+communicate with a standard Thrift server.
+
+NTBF *cannot* encode and decode all UBF(b) objects.  There is no
+straigthforward convention for converting Erlang terms to Thrift
+messages.  Synchronous calls are implemented as Thrift 'T-CALL' and
+'T-REPLY' message pairs or 'T-CALL' and 'T-EXCEPTION' message pairs.
+Asynchronous casts are implemented as Thrift 'T-ONEWAY' messages.
+
+The NTBF transport is under active development to enhance, to improve,
+to simplify the integration of Thrift to the UBF framework.  The
+impedance mismatch between the two approaches of Thrift and UBF can
+only be addressed by further development.
+
+CAUTION: Currently, NTBF only implements the encoding and decoding of
+Thrift's binary wire-protocol.  Unlike standard Thrift clients and
+servers, a NTBF client and server must "manually" implement the
+features provided by the Thrift IDL.
+
+See <<UBF_THRIFT>> for further details.
+
+==== Miscellaneous
+
+It is worthwhile to mention there are two new TCP/IP transports namely
+PBF and ABF that are under investigation.  The name "PBF" is short for
+"Google's Protocol Buffers Format" <<PROTOBUF>>.  The name "ABF" is
+short for "Avro Binary Format" <<AVRO>>.
 
 === HTTP
-// *TODO*
 
-==== JSON RPC
-// *TODO*
+==== JSON-RPC
 
-=== Misc
-// *TODO*
+JSON-RPC <<JSONRPC>> is a lightweight remote procedure call protocol
+similar to XML-RPC.  The UBF framework implementation of JSON-RPC
+brings together JSF's encoder/decoder, UBF(b)'s contract checking, and
+an HTTP transport.
 
-==== ETF
-// *TODO*
+.Programming By Contract w/ Multiple Transports
+svgimage::images/ubf-flow-02["Programming By Contract w/ Multiple Transports"]
 
-==== LPC
-// *TODO*
+As previously stated, central to UBF is the idea of a "Contract" which
+regulates the set of legal conversations that can take place between a
+client and a server.  The client-side is depicted in "red" and the
+server-side is depicted in "blue".  The client and server communicate
+with each other via a TCP/IP and/or HTTP.
 
+Central to UBF is the idea of contract(s) can be shared and re-used by
+multiple transports.  Any data that violates the _same_ contract(s) is
+rejected regardless of the transport.
+
+See <<UBF_JSONRPC>> for further details.
+
+=== Miscellaneous
+
+Several transports that do not require an explicit network socket have
+been added to the UBF framework.  These transports permit an
+application to call a plugin directly without the need for TCP/IP or
+HTTP.
+
+==== ETF: Erlang Term Format
+
+The concept "ETF" was added to the UBF framework.  This transport
+relies on Erlang's Native Distribution for synchronous calls and
+asynchronous casts.
+
+The name "ETF" is short for "Erlang Term Format".
+
+==== LPC: Local Procedure Call
+
+The concept "LPC" was added to the UBF framework.  This transport is a
+"non-transport" that invokes synchronous calls directly to a plugin.
+Support for asynchronous casts has not been added (or designed) yet.
+
+The name "LPC" is short for "Local Procedure Call".
+
+NOTE: LPC is used to implement the JSON-RPC transport.
+
+
+<<<
 [[Servers]]
 == Servers
-// *TODO*
+
+The UBF framework provides two types of Erlang servers: "stateless"
+and "stateful".  The stateless server is an extension of Joe
+Armstrong's original UBF server implementation.  The "stateful" server
+is Joe Armstrong's original UBF server implementation.
+
+UBF servers are introspective - which means the servers can describe
+themselves.  The following commands (described in UBF(a) format) are
+always available:
+
+\'help' $::
+  Help information
+\'info' $::
+  Short information about the current service
+\'description' $::
+  Long information about the current service
+\'services' $::
+  A list of available services
+\'contract' $::
+  Return the service contract
+{\'startSession', "Name", Args} $::
+  To start a new session for the Name service.  Args are initial
+  arguments for the Name service and is specific to that service.
+{\'restartService', "Name", Args} $::
+  To restart the Name service.  Args are restart arguments for the
+  Name service and is specific to that service.
+
+The "ubf_server" Erlang module implements most of the commonly-used
+server-side functions and provides several ways to start a server.
+Configuration options for both types of servers are the same.
+However, the plugin callback API is different.
+
+------
+-module(ubf_server).
+
+-type name() :: atom().
+-type plugins() :: [module()].
+-type ipport() :: pos_integer().
+-type options() :: [{atom(), term()}].
+
+-spec start(plugins(), ipport()) -> true.
+-spec start(name(), plugins(), ipport()) -> true.
+-spec start(name(), plugins(), ipport(), options()) -> true.
+
+-spec start_link(plugins(), ipport()) -> true.
+-spec start_link(name(), plugins(), ipport()) -> true.
+-spec start_link(name(), plugins(), ipport(), options()) -> true.
+------
+
+The start/{2,3,4} and start_link/{2,3,4} functions start a registered
+server and a TCP listener on ipport() and register all of the protocol
+implementation modules in the plugins() list.  If name() is undefined,
+the server is not registered.  The list of supported options() are as
+follows:
+
+{\'idletimer', non_neg_integer() | \'infinity'}::
+  Maximum time (in milliseconds) that a client connection may remain
+  idle before the server will close the connection.  Default:
+  \'infinity'
+{\'maxconn', non_neg_integer()}::
+  Maximum number of simultaneous TCP connections allowed.  Default:
+  10000.
+{\'proto', {\'ubf' | \'ebf' | \'jsf' | \'tbf' | atom()}}::
+  Enable the UBF, EBF, JSF, TBF, or an alternative protocol wire
+  format. Default: \'ubf'.
+{\'registeredname', name()}::
+  Set the name to be registered for the TCP listener.  If
+  \'undefined', a default name is automatically registered.  Default:
+  \'undefined'.
+{\'statelessrpc', boolean()}::
+  Run the stateless variety of a UBF(B) contract.  A stateless
+  contract is an extension of Joe Armstrong's original UBF server
+  implementation.  Default: \'false'.
+{\'startplugin', module()}::
+  Set the starting plugin, set after a client first connects to the
+  server.  If not set, client may select the service using the
+  startSession() API.  There is no default setting.
+{\'serverhello', string() | \'undefined'}::
+  Meta contract greeting string, sent when a client first connects to
+  the server.  If \'undefined', server hello is not sent to the
+  client.  Default: "meta_server".
+{\'simplerpc', boolean()}::
+  Set the simple RPC mode.  If \'true', server returns only the rpc
+  reply to client.  If \'false', server returns the rpc reply and next
+  state to client.  Default: \'false'.
+{\'verboserpc', boolean()}::
+  Set the verbose RPC mode.  If \'true', server calls the plugin
+  handler with the rpc request and matched contract types.  If
+  \'false', server calls the plugin handler only with the rpc request.
+  Default: \'false'.
+{\'tlog_module', module() | {module(), boolean()}}::
+  Set the transaction log callback module and optionally control the
+  built-in calls by \'contract_manager_tlog' to the \'error_logger'
+  module.  If the 2-tuple representation is used and the boolean()
+  member is \'false', then calls to \'error_logger' will not be
+  attempted.  Default: \'undefined'.
+{\'process_options', list()}::
+  Specify additional options used for spawning server and/or client
+  related erlang processes.  Typically used to specify non-default,
+  garbage collection options.  Default: [].
+
+The "ubf_server" Erlang module doesn't provide a "stop" function.  To
+stop the server, instead stop the TCP listener that controls it.  See
+the "proc_socket_server" Erlang module for extra details.
+
+NOTE: The NTBF transport protocol is indirectly enabled by specifying
+the following options: [{\'proto', \'tbf'}, {\'serverhello',
+\'undefined'}, {\'simplerpc', \'true'}].
 
 === Stateless
-// *TODO*
+_Under Construction - TODO_
 
 === Stateful
-// *TODO*
+_Under Construction - TODO_
 
+<<<
 == Clients
-// *TODO*
 
 === Erlang
-// *TODO*
+_Under Construction - TODO_
 
 === Python
-// *TODO*
+
+==== EBF
+_Under Construction - To Be Added_
+
+==== JSON-RPC
+_Under Construction - To Be Added_
 
 === Java
-// *TODO*
+
+==== UBF
+_Under Construction - To Be Added_
+
 
 <<<
 == Miscellaneous
-// *TODO*
+_Under Construction - TODO_
 
 - download
 - build
 - test
+- utilities
+  * txn logging
+  * canonical contracts
 
 <<<
 == Reference
@@ -765,11 +1069,48 @@ part.
 [bibliography]
 .Optional list title
 
+- [[[AVRO]]] "Avro is a serialization system.",
+  http://avro.apache.org/.
+
+- [[[GMTCHARSET]]] "Gemini Mobile Technologies, Inc. Charset Module",
+  http://github.com/norton/gmt-util/blob/master/src/gmt_charset.erl.
+
+- [[[JSONRPC]]] "A lightweight remote procedure call protocol similar
+  to XML-RPC", http://json-rpc.org/.
+
+- [[[MOCHIJSON2]]] "MochiWeb is an Erlang library for building
+  lightweight HTTP servers.",
+  http://github.com/mochi/mochiweb/blob/master/src/mochijson2.erl.
+
+- [[[PROTOBUF]]] "Protocol buffers are Google's language-neutral,
+  platform-neutral, extensible mechanism for serializing structured
+  data.", http://code.google.com/apis/protocolbuffers/.
+
 - [[[RFC20]]] Vint Cerf, "ASCII format for Network Interchange",
   RFC20, October 16, 1969.
 
+- [[[RFC4627]]] D. Crockford, "The application/json Media Type for
+  JavaScript Object Notation (JSON)", RFC4627, July 2006.
+
 - [[[RFC5234]]] D. Crocker, Ed. Brandenburg, "Augmented BNF for Syntax
   Specifications: ABNF", RFC5234, January 2008.
+
+- [[[THRIFT]]] "A software framework for scalable cross-language
+  services development.", http://incubator.apache.org/thrift/.
+
+- [[[UBF]]] "Universal Binary Format", http://github.com/norton/ubf/.
+
+- [[[UBF_ABNF]]] "Universal Binary Format and Augmented Backus-Naur
+  Form", http://github.com/norton/ubf-abnf/.
+
+- [[[UBF_EEP8]]] "Universal Binary Format and Erlang Enhancement
+  Proposal 8", http://github.com/norton/ubf-eep8/.
+
+- [[[UBF_JSONRPC]]] "Universal Binary Format and JavaScript Object
+  Notation RPC", https://github.com/norton/ubf-jsonrpc/.
+
+- [[[UBF_THRIFT]]] "Universal Binary Format and Thrift",
+  https://github.com/norton/ubf-thrift/.
 
 - [[[UBFPAPER]]] Joe Armstrong, "Getting Erlang to talk to the outside
   world", Proceedings of the 2002 ACM SIGPLAN workshop on Erlang,
