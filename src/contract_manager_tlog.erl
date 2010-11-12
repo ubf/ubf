@@ -5,6 +5,15 @@
 %% Erlang/OTP `error_logger' module; we highly recommend that the
 %% `sasl' application be running to take full advantage of OTP's error
 %% and event handling capabilities.
+%%
+%% tlog/6 callback API:
+%%
+%% -type op() :: rpc | lpc | event_in | event_out.
+%% -type now() :: {pos_integer(), pos_integer(), pos_integer()}.
+%% -type plugin() :: module().
+%%
+%% -spec tlog(op(), now(), plugin(), Q::term(), Reply::term(), Status::term()) -> ok.
+%%
 
 -module(contract_manager_tlog).
 
@@ -16,7 +25,6 @@
 -export([lpcOutError/6]).
 
 -export([eventOut/5, eventIn/5]).
-
 
 rpcIn(_TLogMod_x, _Q, _State, _Mod) ->
     erlang:now().

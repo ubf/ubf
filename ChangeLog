@@ -1,3 +1,8 @@
+2010-11-13 00:45 JST  norton
+        * src/ubf_client.erl, contract_manager_tlog.erl: Add new -type and
+        -spec declarations for subset of client functions.  Add
+        documentation for tlog/6 callback API.
+
 2010-11-12 13:30 JST  norton
         * include/ubf.hrl, include/ubf_impl.hrl,
         include/ubf_plugin_stateful.hrl, include/ubf_plugin_stateless.hrl,

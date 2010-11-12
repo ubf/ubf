@@ -41,6 +41,39 @@
 
 -import(contract_manager, [do_lpcIn/4, do_lpcOut/9, do_lpcOutError/6]).
 
+-type host() :: nonempty_string().
+-type ipport() :: pos_integer().
+-type name() :: atom().
+-type server() :: name() | pid().
+-type plugin() :: module().
+-type plugins() :: [plugin()].
+-type options() :: [{atom(), term()}].
+-type service() :: {'#S', nonempty_string()} | undefined.
+-type statename() :: atom().
+-type tlogger() :: module().
+
+-spec connect(host() | plugins(), ipport() | server()) ->
+              {ok, Client::pid(), service()} | {error, term()}.
+-spec connect(host() | plugins(), ipport() | server(), timeout()) ->
+              {ok, Client::pid(), service()} | {error, term()}.
+-spec connect(host() | plugins(), ipport() | server(), options(), timeout()) ->
+              {ok, Client::pid(), service()} | {error, term()}.
+
+-spec rpc(Client::pid(), Call::term()) -> timeout | term() | no_return().
+-spec rpc(Client::pid(), Call::term(), timeout()) -> timeout | term() | no_return().
+
+-spec stop(Client::pid()) -> ok.
+
+-spec sendEvent(Handler::pid(), Cast::term()) -> ok | no_return().
+
+-spec install_default_handler(Client::pid()) -> ack.
+-spec install_handler(Client::pid(), Fun::fun()) -> ack.
+
+-spec lpc(plugin(), Call::term()) -> term().
+-spec lpc(plugin(), Call::term(), statename()) -> term().
+-spec lpc(plugin(), Call::term(), statename(), tlogger()) -> term().
+
+
 %% @type address() = string() | ip_address(). A DNS hostname or IP address.
 %% @type connect_options() = list({proto, ubf | ebf | jsf | tbf | pbf | abf}).
 %%       An OTP-style property list, see 'proplists' module for details.

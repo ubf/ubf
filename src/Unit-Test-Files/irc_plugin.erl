@@ -1,33 +1,30 @@
 -module(irc_plugin).
 -behavior(ubf_plugin_stateful).
 
--include("ubf.hrl").
-
--export([info/0, description/0,
-         handlerStart/2, handlerRpc/4, handlerStop/3,
-         managerStart/1, managerRpc/2]).
+-export([info/0, description/0, handlerStart/2, handlerRpc/4,
+         handlerStop/3, managerStart/1, managerRestart/2, managerRpc/2]).
 
 -import(ubf_plugin_handler, [sendEvent/2, ask_manager/2]).
 -import(lists, [delete/2, map/2, member/2, foreach/2]).
 
-%% NOTE the following two lines
-
 -compile({parse_transform,contract_parser}).
 -add_contract("./Unit-Test-Files/irc_plugin").
 
+-include("ubf.hrl").
+-include("ubf_plugin_stateful.hrl").
 
-info() ->"I am an IRC server".
+info() ->
+    "I am an IRC server".
 
-description() -> "
-
-  This is an experimental IRC server programmed
-to communicate via UBF
-
-".
+description() ->
+    "This is an experimental IRC server programmed to communicate via UBF.".
 
 managerStart(_) ->
     new_seed(),
     {ok, ets:new(irc, [])}.
+
+managerRestart(X, _) ->
+    managerStart(X).
 
 handlerStart(_, _ManagerPid) ->
     {accept, yes, start, []}.
