@@ -2,6 +2,7 @@
 -behavior(ubf_plugin_stateful).
 
 -include("ubf.hrl").
+-include("ubf_plugin_stateful.hrl").
 
 -export([info/0, description/0, keepalive/0]).
 -export([handlerStart/2, handlerStop/3, handlerRpc/4, handlerRpc/1]).

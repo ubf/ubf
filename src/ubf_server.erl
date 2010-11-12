@@ -57,6 +57,20 @@
 
 -import(proc_socket_server, [start_raw_server/7]).
 
+-type name() :: atom().
+-type plugins() :: [module()].
+-type ipport() :: pos_integer().
+-type options() :: [{atom(), term()}].
+
+-spec start(plugins(), ipport()) -> true.
+-spec start(name(), plugins(), ipport()) -> true.
+-spec start(name(), plugins(), ipport(), options()) -> true.
+-spec start_link(plugins(), ipport()) -> true.
+-spec start_link(name(), plugins(), ipport()) -> true.
+-spec start_link(name(), plugins(), ipport(), options()) -> true.
+-spec init(name(), pid(), plugins(), ipport(), options()) -> pid().
+-spec start_term_listener(pid(), plugins(), options()) -> pid().
+
 %% @spec (list(atom()), integer()) -> true
 %% @doc Start a server and a TCP listener on port Port and register
 %% all of the protocol implementation modules in the Plugins list.

@@ -18,6 +18,14 @@
 
 -include("ubf.hrl").
 
+%% ubf_plugin_handler API for plugins
+-spec ask_manager(Manager::pid(), Call::term()) -> Reply::term().
+
+-spec sendEvent(Handler::pid(), Cast::term()) -> ok | no_return().
+
+-spec install_default_handler(Handler::pid()) -> ack.
+-spec install_handler(Handler::pid(), Fun::fun()) -> ack.
+
 
 %%----------------------------------------------------------------------
 %% Handler stuff

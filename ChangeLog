@@ -1,3 +1,10 @@
+2010-11-12 13:30 JST  norton
+        * include/ubf.hrl, include/ubf_impl.hrl,
+        include/ubf_plugin_stateful.hrl, include/ubf_plugin_stateless.hrl,
+        src/contracts.erl, src/ubf_plugin_handler.erl,src/ubf_server.erl:
+        Add new -type and -spec declarations for subset of server and
+        plugin functions.
+
 2010-11-10 11:30 JST  norton
         * src/contract_driver.erl, src/proc_socket_server.erl: Fix race
         condition just after connection establishment.

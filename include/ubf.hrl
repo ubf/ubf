@@ -23,10 +23,10 @@
 
 %% ubf string record
 -record('#S',
-        {value=""}).
+        {value="" :: string()}).
 
 %% ubf proplist record
 -record('#P',
-        {value=[]}).
+        {value=[] :: [{term(),term()}]}).
 
 -endif. % -ifndef(ubf)

@@ -359,14 +359,9 @@ check_term_attr(_,_,_) ->
 
 
 %% is_string
-is_string(A) when is_atom(A) ->
-    is_string(atom_to_list(A));
 is_string([H|T]) when is_integer(H), H < 256, H > -1 ->
     is_string(T);
-is_string(<<H:8,T/binary>>) when is_integer(H), H < 256, H > -1 ->
-    is_string(T);
 is_string([]) -> true;
-is_string(<<>>) -> true;
 is_string(_)  -> false.
 
 
