@@ -2,7 +2,7 @@
 // vim: set syntax=asciidoc:
 
 = UBF User's Guide _DRAFT - UNDER CONSTRUCTION_
-:Date: 2010/11/11
+:Date: 2010/11/12
 :Revision: 0.1
 :Copyright: 2002 Joe Armstrong
 :Copyright: 2010 Gemini Mobile Technologies, Inc.  All rights reserved.
@@ -176,15 +176,15 @@ representing symbolic constants.
 
 ==== Tuple: { Obj1 Obj2 ... ObjN-1 ObjN }
 
-Tuples are used to represent _fixed numbers_ of objects.  The byte
-codes for "{" and "}" are used to delimit a tuple. Obj1, Obj2, ObjN-1,
-and ObjN are arbitrary UBF(a) objects.
+Tuples represent _fixed numbers_ of objects.  The byte codes for "{"
+and "}" are used to delimit a tuple. Obj1, Obj2, ObjN-1, and ObjN are
+arbitrary UBF(a) objects.
 
 ==== List: # ObjN & ObjN-1 & ... & Obj2 & Obj1
 
-Lists are used to represent _variable numbers_ of objects.  The first
-object in the list is Obj1, the second object in the list is Obj2,
-etc.  Objects are presented in reverse order.
+Lists represent _variable numbers_ of objects.  The first object in
+the list is Obj1, the second object in the list is Obj2, etc.  Objects
+are presented in reverse order.
 
 Lisp programmers will recognize '#' as an operator that pushes NIL (or
 the end of list) onto the recognition stack and '&' as an operator
@@ -443,8 +443,8 @@ predefined type that matches the following types:
 [{term(), term()}]
 ------
 
-The "void" predefined type is used as a placeholder to describe the
-return value of a function call that does not return to the caller.
+The "void" predefined type is a placeholder to describe the return
+value of a function call that does not return to the caller.
 
 The "ascii" attribute permits matches with binaries, strings, and
 atoms containing only ASCII values <<RFC20>>.  Similarly, the
@@ -859,10 +859,10 @@ See <<UBF_THRIFT>> for further details.
 
 ==== Miscellaneous
 
-It is worthwhile to mention there are two new TCP/IP transports namely
-PBF and ABF that are under investigation.  The name "PBF" is short for
-"Google's Protocol Buffers Format" <<PROTOBUF>>.  The name "ABF" is
-short for "Avro Binary Format" <<AVRO>>.
+It is worthwhile to mention two new TCP/IP transports namely PBF and
+ABF under investigation.  The name "PBF" is short for "Google's
+Protocol Buffers Format" <<PROTOBUF>>.  The name "ABF" is short for
+"Avro Binary Format" <<AVRO>>.
 
 === HTTP
 
@@ -1027,16 +1027,214 @@ the following options: [{\'proto', \'tbf'}, {\'serverhello',
 \'undefined'}, {\'simplerpc', \'true'}].
 
 === Stateless
-_Under Construction - TODO_
+
+The stateless server provides a simplified callback API and
+implementation in comparision to Joe Armstrong's original UBF server.
+The stateless server is helpful to applications that do not require
+explicit state management by the UBF server.
+
+The "ubf_plugin_stateless.hrl" Erlang header file defines the callback
+APIs to be implemented by a stateless plugin.  The five callbacks are
+mandatory for all stateless plugins.
+
+------
+%% common callback API
+-spec info() -> string().
+-spec description() -> string().
+-spec handlerStop(Handler::pid(), Reason::term(), StateData::term()) ->
+                  NewStateData::term().
+
+%% stateless callback API
+-spec handlerStart(Args::term()) ->
+                  {accept, Reply::term(), StateName::atom(), StateDate::term()} |
+                  {reject, Reply::term()}.
+-spec handlerRpc(Call::term()) -> Reply::term().
+------
+
+The info/0 and description/0 functions provide short and long
+information about the plugin's service, respectively.
+
+The handlerStart/1 function is called when starting a new session for
+the plugin's service.  The plugin may accept or reject the start
+session request.  When accepted, the plugin returns the reply for the
+client, the name of the state to be used for the entire session, and
+optional data for the state.  When rejected, the plugin returns the
+error for the client.
+
+The handlerStop/3 function is called when stopping a session of the
+plugin's service.  The plugin may perform some cleanup inside the
+handlerStop function.
+
+The handlerRpc/1 function is called when processing a synchronous call.
+
+For example, the following "skeleton" implementation of a <<BERTRPC>>
+server implemented by UBF illustrates a typical stateless server.  The
+source code for this implementation can be found on github
+<<UBF_BERTRPC>>.
+
+[source,erlang]
+------
+include::misc-codes/ubf_bertrpc_plugin.erl[]
+------
+
+The above example also introduces three new concepts:
+
+- The install_handler/2 and handleEvent/1 functions illustrate how to
+  receive asynchronous casts sent from the client to the server.  The
+  handler fun Fun should be a function of arity 1.  When an
+  asynchronous UBF message is received, the callback function is
+  called with the event as its single argument.  The Fun is called by
+  the ubf plugin handler process so the Fun can crash and/or block
+  this process.  The Fun should also return the same or a new Fun for
+  the next asynchronous event.  If the Fun must maintain its own
+  state, then an intermediate anonymous fun must be used to to bind
+  the state.
+
+- The sendEvent/2 function illustrates how to send asynchronous casts
+  from the server to the client.
+
+- For Erlang, the implementation of a UBF string is a two tuple having
+  \'$S' as the first element '$S' and a list of integers as the second
+  element.  A similar technique is also used for the implementation of
+  a UBF proplist.  The "?S(X)" macro definition plus other helpers
+  are located in the "ubf.hrl" Erlang header file.
 
 === Stateful
-_Under Construction - TODO_
+
+The stateful server is Joe Armstrong's original UBF server.  The
+stateful server permits a plugin to transition from one state to
+another and also supports a manager framework for managing application
+state between multiple clients.
+
+The "ubf_plugin_stateless.hrl" Erlang header file defines the callback
+APIs to be implemented by a stateful plugin.  The eight callbacks are
+mandatory for all stateful plugins.
+
+------
+%% common callback API
+-spec info() -> string().
+-spec description() -> string().
+-spec handlerStop(Handler::pid(), Reason::term(), StateData::term()) ->
+                  NewStateData::term().
+
+%% stateful callback API
+-spec handlerStart(Args::term(), Manager::pid()) ->
+                  {accept, Reply::term(), StateName::atom(), StateDate::term()} |
+                  {reject, Reply::term()}.
+-spec handlerRpc(StateName::atom(), Call::term(), StateDate::term(), Manager::pid()) ->
+                {Reply::term(), NewStateName::atom(), NewStateData::term()}.
+
+-spec managerStart(Args::term()) ->
+                   {ok, ManagerData::term()}.
+-spec managerRestart(Args::term(), Manager::pid()) ->
+                     ok | {error, Reason::term()}.
+-spec managerRpc(Args::term(), ManagerData::term()) ->
+                 {ok, NewManagerData::term()} | {error, Reason::term()}.
+------
+
+The info/0 and description/0 functions provide short and long
+information about the plugin's service, respectively.
+
+The handlerStart/2 function is called when starting a new session for
+the plugin's service.  The plugin may accept or reject the start
+session request.  When accepted, the plugin returns the reply for the
+client, the name of the initial state to be used for the session, and
+optional data for the state.  When rejected, the plugin returns the
+error for the client.
+
+The handlerStop/3 function is called when stopping a session of the
+plugin's service.  The plugin may perform some cleanup inside the
+handlerStop function.
+
+The handlerRpc/1 function is called when processing a synchronous
+call.
+
+The managerStart/1 function is called once at the start of the
+server's initialization for each plugin's service.
+
+The managerRestart/2 function is called to restart a plugin's service.
+
+The managerRpc/2 function is called when processing a call from
+handler.  A handler uses the ubf_plugin_handler:ask_manager/2 function
+API to make a synchronous call to the manager.
+
+For an example stateful server plugin, please see the
+"src/Unit-Test-Files/irc_plugin.erl" Erlang module in the <<UBF>>
+repository.  This plugin is the actual server-side implementation for
+the IRC protocol application described earlier.
+
 
 <<<
 == Clients
 
 === Erlang
-_Under Construction - TODO_
+
+The UBF framework provides two types of Erlang clients: "rpc" and
+"lpc".  The rpc client is the default client that supports
+TCP/IP-based and ETF transports.  The lpc client is an alternative
+client for making a synchronous local procedure call to a plugin's
+implementation.
+
+The "ubf_client" Erlang module implements most of the commonly-used
+client-side functions and contains the implementation for the two
+types of Erlang clients.
+
+------
+-module(ubf_client).
+
+-type host() :: nonempty_string().
+-type ipport() :: pos_integer().
+-type name() :: atom().
+-type server() :: name() | pid().
+-type plugin() :: module().
+-type plugins() :: [plugin()].
+-type options() :: [{atom(), term()}].
+-type service() :: nonempty_string() | undefined.
+-type statename() :: atom().
+-type tlogger() :: module().
+
+-spec connect(host() | plugins(), ipport() | server()) ->
+              {ok, Client::pid(), service()} | {error, term()}.
+-spec connect(host() | plugins(), ipport() | server(), timeout()) ->
+              {ok, Client::pid(), service()} | {error, term()}.
+-spec connect(host() | plugins(), ipport() | server(), options(), timeout()) ->
+              {ok, Client::pid(), service()} | {error, term()}.
+
+-spec rpc(Client::pid(), Call::term()) -> timeout | term() | no_return().
+-spec rpc(Client::pid(), Call::term(), timeout()) -> timeout | term() | no_return().
+
+-spec stop(Client::pid()) -> ok.
+
+-spec sendEvent(Handler::pid(), Cast::term()) -> ok | no_return().
+
+-spec install_default_handler(Client::pid()) -> ack.
+-spec install_handler(Client::pid(), Fun::fun()) -> ack.
+
+-spec lpc(plugin(), Call::term()) -> term().
+-spec lpc(plugin(), Call::term(), statename()) -> term().
+-spec lpc(plugin(), Call::term(), statename(), tlogger()) -> term().
+------
+
+The connect/{2,3,4} functions connect to a UBF server.  Upon success,
+the UBF client's pid() and the name of the UBF server's service (if
+known) is returned.  For TCP/IP transports, the default method is to
+connect to the specified host() and TCP ipport().  For the ETF
+transport, the alternative method is to connect to server() using the
+specified plugins().  The server() is either the process id or process
+registered name for an already-started UBF server.  See <<Servers>>
+for a description of options().
+
+The rpc/{2,3} functions make a synchronous call to the server.
+
+The stop/1 function closes the connection with the server and stops
+the client.
+
+The sendEvent/2, install_default_handler/1, and install_handler/2
+functions behave in the same way as the server-side implementation to
+send and receive asynchronous casts.
+
+The lpc/{2,3,4} functions make a synchronous local procedure call to a
+plugin's implementation.
 
 === Python
 
@@ -1072,6 +1270,9 @@ _Under Construction - TODO_
 - [[[AVRO]]] "Avro is a serialization system.",
   http://avro.apache.org/.
 
+- [[[BERTRPC]] "BERT and BERT-RPC 1.0 Specification",
+  http://bert-rpc.org/.
+
 - [[[GMTCHARSET]]] "Gemini Mobile Technologies, Inc. Charset Module",
   http://github.com/norton/gmt-util/blob/master/src/gmt_charset.erl.
 
@@ -1102,6 +1303,9 @@ _Under Construction - TODO_
 
 - [[[UBF_ABNF]]] "Universal Binary Format and Augmented Backus-Naur
   Form", http://github.com/norton/ubf-abnf/.
+
+- [[[UBF_BERTRPC]]] "Universal Binary Format and Binary ERlang Term
+  RPC", http://github.com/norton/ubf-bertrpc/.
 
 - [[[UBF_EEP8]]] "Universal Binary Format and Erlang Enhancement
   Proposal 8", http://github.com/norton/ubf-eep8/.
