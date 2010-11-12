@@ -2,7 +2,7 @@
 // vim: set syntax=asciidoc:
 
 = UBF User's Guide _DRAFT - UNDER CONSTRUCTION_
-:Date: 2010/11/11
+:Date: 2010/11/12
 :Revision: 0.1
 :Copyright: 2002 Joe Armstrong
 :Copyright: 2010 Gemini Mobile Technologies, Inc.  All rights reserved.
@@ -859,10 +859,10 @@ See <<UBF_THRIFT>> for further details.
 
 ==== Miscellaneous
 
-It is worthwhile to mention there are two new TCP/IP transports namely
-PBF and ABF that are under investigation.  The name "PBF" is short for
-"Google's Protocol Buffers Format" <<PROTOBUF>>.  The name "ABF" is
-short for "Avro Binary Format" <<AVRO>>.
+It is worthwhile to mention two new TCP/IP transports namely PBF and
+ABF under investigation.  The name "PBF" is short for "Google's
+Protocol Buffers Format" <<PROTOBUF>>.  The name "ABF" is short for
+"Avro Binary Format" <<AVRO>>.
 
 === HTTP
 
@@ -1027,7 +1027,82 @@ the following options: [{\'proto', \'tbf'}, {\'serverhello',
 \'undefined'}, {\'simplerpc', \'true'}].
 
 === Stateless
-_Under Construction - TODO_
+
+The stateless server provides a simplified callback API and
+implementation in comparision to Joe Armstrong's original UBF server.
+The stateless server is helpful to applications that do not require
+explicit state management by the UBF server.
+
+The "ubf_plugin_stateless.hrl" Erlang header file defines the callback
+APIs to be implemented by a stateless plugin.  The five callbacks are
+mandatory for all stateless plugins.
+
+------
+-ifndef(ubf_plugin_stateless).
+-define(ubf_plugin_stateless, true).
+
+%% common callback API
+-spec info() -> string().
+-spec description() -> string().
+-spec handlerStop(Handler::pid(), Reason::term(), StateData::term()) ->
+                  NewStateData::term().
+
+%% stateless callback API
+-spec handlerStart(Args::term()) ->
+                  {accept, Reply::term(), StateName::atom(), StateDate::term()} |
+                  {reject, Reply::term()}.
+-spec handlerRpc(Call::term()) -> Reply::term().
+
+-endif. % -ifndef(ubf_plugin_stateless)
+------
+
+The info/0 and description/0 functions provide short and long
+information about the plugin's service, respectively.
+
+The handlerStart/3 function is called for starting a new session for
+the plugin's service.  The plugin may accept or reject the start
+session request.  When accepted, the plugin returns the reply for the
+client, the name of the state to be used for the entire session, and
+optional data for the state.  When rejected, the plugin returns the
+error for the client.
+
+The handlerStop/3 function is called for stopping a session of the
+plugin's service.  The plugin may perform some cleanup inside the
+handlerStop function.
+
+The handlerRpc/1 function is called for processing a synchronous call.
+
+For example, the following "skeleton" implementation of a <<BERTRPC>>
+server implemented by UBF illustrates a typical stateless server.  The
+source code for this implementation can be found on github
+<<UBF_BERTRPC>>.
+
+[source,erlang]
+------
+include::misc-codes/ubf_bertrpc_plugin.erl[]
+------
+
+The above example also introduces three new concepts:
+
+- The install_handler/2 and handleEvent/1 functions illustrate how to
+  receive asynchronous casts sent from the client to the server.  The
+  handler fun Fun should be a function of arity 1.  When an
+  asynchronous UBF message is received, the callback function will be
+  called with the event as its single argument.  The Fun is called by
+  the ubf plugin handler process so the Fun can crash and/or block
+  this process.  The Fun should also return the same or a new Fun for
+  the next asynchronous event.  If the Fun must maintain its own
+  state, then an intermediate anonymous fun must be used to to bind
+  the state.
+
+- The sendEvent/2 function illustrates how to send asynchronous casts
+  from the server to the client.
+
+- For Erlang, the implementation of a UBF string is a two tuple having
+  \'$S' as the first element '$S' and a list of integers as the second
+  element.  A similar technique is also used for the implementation of
+  a UBF proplist.  The "?S(X)" macro definition plus other helpers
+  are located in the "ubf.hrl" Erlang header file.
 
 === Stateful
 _Under Construction - TODO_
@@ -1072,6 +1147,9 @@ _Under Construction - TODO_
 - [[[AVRO]]] "Avro is a serialization system.",
   http://avro.apache.org/.
 
+- [[[BERTRPC]] "BERT and BERT-RPC 1.0 Specification",
+  http://bert-rpc.org/.
+
 - [[[GMTCHARSET]]] "Gemini Mobile Technologies, Inc. Charset Module",
   http://github.com/norton/gmt-util/blob/master/src/gmt_charset.erl.
 
@@ -1102,6 +1180,9 @@ _Under Construction - TODO_
 
 - [[[UBF_ABNF]]] "Universal Binary Format and Augmented Backus-Naur
   Form", http://github.com/norton/ubf-abnf/.
+
+- [[[UBF_BERTRPC]]] "Universal Binary Format and Binary ERlang Term
+  RPC", http://github.com/norton/ubf-bertrpc/.
 
 - [[[UBF_EEP8]]] "Universal Binary Format and Erlang Enhancement
   Proposal 8", http://github.com/norton/ubf-eep8/.
