@@ -1,7 +1,7 @@
 // -*- Doc -*-
 // vim: set syntax=asciidoc:
 
-= UBF User's Guide _DRAFT - UNDER CONSTRUCTION_
+= UBF User's Guide _1st DRAFT_
 :Date: 2010/11/12
 :Revision: 0.1
 :Copyright: 2002 Joe Armstrong
@@ -491,7 +491,7 @@ The states of the FSM may also be annotated with events expressed as
 client to the server or from the server to the client.  Please see
 next section for additional details.
 
-NOTE: The terminology of "call" and of "cast" to distinguish between
+NOTE: The terminology of "call" and "cast" to distinguish between
 synchronous and asynchronous interaction is borrowed from Erlang.
 
 ==== Anystate: +ANYSTATE.
@@ -733,7 +733,7 @@ The name "UBF" is short for "Universal Binary Format".  UBF is
 commonly used to refer to the network transport based on UBF(a) and to
 the overall UBF framework.
 
-See <<UBFa>> for further details.
+See <<UBFa>> for further information.
 
 ==== EBF: Erlang Binary Format
 
@@ -801,7 +801,7 @@ However, it requires very little JavaScript code to convert objects
 with the "$R", "$T", and "$A" notation (for records, tuples, and
 atoms) into whatever object is most convenient.
 
-See <<UBF_JSONRPC>> for further details.
+See <<UBF_JSONRPC>> for further information.
 
 TIP: Gemini Mobile Technologies, Inc. has implemented and open-sourced
 a module for classifying the input character set to detect non-UTF8
@@ -855,7 +855,7 @@ Thrift's binary wire-protocol.  Unlike standard Thrift clients and
 servers, a NTBF client and server must "manually" implement the
 features provided by the Thrift IDL.
 
-See <<UBF_THRIFT>> for further details.
+See <<UBF_THRIFT>> for further information.
 
 ==== Miscellaneous
 
@@ -886,7 +886,7 @@ Central to UBF is the idea of contract(s) can be shared and re-used by
 multiple transports.  Any data that violates the _same_ contract(s) is
 rejected regardless of the transport.
 
-See <<UBF_JSONRPC>> for further details.
+See <<UBF_JSONRPC>> for further information.
 
 === Miscellaneous
 
@@ -1012,7 +1012,8 @@ follows:
   built-in calls by \'contract_manager_tlog' to the \'error_logger'
   module.  If the 2-tuple representation is used and the boolean()
   member is \'false', then calls to \'error_logger' will not be
-  attempted.  Default: \'undefined'.
+  attempted.  Default: \'undefined'.  See <<TLOG>> for further
+  information.
 {\'process_options', list()}::
   Specify additional options used for spawning server and/or client
   related erlang processes.  Typically used to specify non-default,
@@ -1093,11 +1094,12 @@ The above example also introduces three new concepts:
 - The sendEvent/2 function illustrates how to send asynchronous casts
   from the server to the client.
 
-- For Erlang, the implementation of a UBF string is a two tuple having
-  \'$S' as the first element '$S' and a list of integers as the second
-  element.  A similar technique is also used for the implementation of
-  a UBF proplist.  The "?S(X)" macro definition plus other helpers
-  are located in the "ubf.hrl" Erlang header file.
+- The "?S(X)" macro definition plus other helpers are located in the
+  "ubf.hrl" Erlang header file.  For Erlang, the implementation of a
+  UBF string is a two tuple having \'#S' as the first element and a
+  list of integers as the second element.  A similar technique is also
+  used for the implementation of a UBF proplist (i.e. \'#P' and
+  "?P(X)).
 
 === Stateful
 
@@ -1189,7 +1191,7 @@ types of Erlang clients.
 -type plugin() :: module().
 -type plugins() :: [plugin()].
 -type options() :: [{atom(), term()}].
--type service() :: nonempty_string() | undefined.
+-type service() :: {'#S', nonempty_string()} | undefined.
 -type statename() :: atom().
 -type tlogger() :: module().
 
@@ -1234,7 +1236,8 @@ functions behave in the same way as the server-side implementation to
 send and receive asynchronous casts.
 
 The lpc/{2,3,4} functions make a synchronous local procedure call to a
-plugin's implementation.
+plugin's implementation.  Regarding the tlogger(), see <<TLOG>> for
+further information.
 
 === Python
 
@@ -1252,14 +1255,254 @@ _Under Construction - To Be Added_
 
 <<<
 == Miscellaneous
-_Under Construction - TODO_
 
-- download
-- build
-- test
-- utilities
-  * txn logging
-  * canonical contracts
+[[DOWNLOAD]]
+=== Download
+
+==== Download and install Git
+
+Download and install <<GIT>>.
+
+Then append the following lines to your ~/.gitconfig file:
+
+------
+[url "git://github.com/norton/gmt-bom.git"]
+     insteadOf = git://github.com/norton/src/erl-tools/gmt-bom.git
+[url "git://github.com/norton/ubf.git"]
+     insteadOf = git://github.com/norton/src/erl-tools/ubf.git
+------
+
+NOTE: UBF requires git version 1.7.x or newer.  UBF has been tested
+most recently with git version 1.7.1.1.
+
+==== Download the 'bom.sh' tool and then download UBF
+
+Follow these steps:
+
+------
+$ mkdir -p ~/work/ubf
+$ cd ~/work/ubf
+$ git clone git://github.com/norton/bom.git .
+$ env BOM_GIT=git://github.com/norton/ ./bom.sh co src/erl-tools/ubf
+------
+
+TIP: The bom.sh commands 'diff' and 'status' can be used to check the
+differences and status of all components, respectively.  Type
+'./bom.sh help' for further information.
+
+NOTE: The Bill of Materials (BOM) system is a way to manage the builds
+of heterogeneous products with shared components using GIT, GIT-SVN,
+SVN, or CVS.  BOM maintains hierarchical dependencies between modules
+stored in a source code repository.  BOM is implemented using bash,
+make, and other UNIX tools.
+
+NOTE: The BOM system was originally developed by Gemini Mobile
+Technologies as an in-house tool to build and to package it's own
+commercial products.  BOM as been open-sourced as one of the helper
+tools for UBF.
+
+[[BUILD]]
+=== Build - Mandatory
+
+1. Get and install an <<ERLANG>> system
++
+NOTE: UBF requires Erlang/OTP R13B01 or newer.  UBF has been tested
+most recently with Erlang/OTP R13B04.
++
+2. Change to your working directory and create the top-level Makefile
++
+------
+$ cd ~/work/ubf
+$ ./bom.sh make
+------
++
+3. Build UBF
++
+------
+$ make ERL=/usr/local/hibari/ert/R13B04/bin/erl
+  OR
+$ make ERL=/usr/local/hibari/ert/R13B04/bin/erl DEBUG="+debug_info"
+------
++
+NOTE: Please specify the path to your erlang system's erl executable.
++
+TIP: DEBUG="+debug_info" will produce DEBUG enabled beam files.
++
+4. Run the unit tests
++
+------
+$ make ERL=/usr/local/hibari/ert/R13B04/bin/erl test
+------
+
+=== Build - Optional
+
+A. Run unit test for one module.
++
+------
+$ make ERL=/usr/local/hibari/ert/R13B04/bin/erl \
+  DEBUG="+debug_info" \
+  -C src/erl-tools/ubf__HEAD/src check
+------
++
+B. Clean one module
++
+------
+$ make ERL=/usr/local/hibari/ert/R13B04/bin/erl \
+  DEBUG="+debug_info" \
+  -C src/erl-tools/ubf__HEAD/src clean
+------
++
+C. Rebuild one module
++
+------
+$ make ERL=/usr/local/hibari/ert/R13B04/bin/erl \
+  DEBUG="+debug_info" \
+  -C src/erl-tools/ubf__HEAD/src
+------
++
+D. Generate EDocs for one module
++
+------
+$ make ERL=/usr/local/hibari/ert/R13B04/bin/erl \
+  DEBUG="+debug_info" \
+  -C src/erl-tools/ubf__HEAD/src edoc
+------
++
+E. Run dialyzer for one module (and it dependencies)
++
+------
+$ make ERL=/usr/local/hibari/ert/R13B04/bin/erl \
+  DEBUG="+debug_info" \
+  -C src/erl-tools/ubf__HEAD/src run-dialyzer
+------
++
+CAUTION: Dialyzer will not work unless all beam files have been
+compiled with debug information.
+
+=== Testing
+
+==== Unit Tests
+
+The unit tests in the "src/Unit-Test-Files" directory provide small
+examples of how to use all of the public API.  In particular, the
+\*client*.erl files contain comments at the top with a list of
+prerequisites and small examples, recipe-style, for starting each
+server and using the client.
+
+==== EUnit Tests
+
+The eunit tests in the "src/Unit-EUnit-Files" directory perform
+several smoke and error handling uses cases.
+
+==== QuickCheck Tests
+
+The quickcheck tests and related helper libaries in the
+"src/Unit-Quick-Files" directory have not been open sourced yet.
+Please stay tuned!
+
+See <<QUVIQ>> for further information about quickcheck.
+
+=== GitHub - Forking Your Own Repositories
+
+If you are interested in making your own changes to UBF or to one or
+more of the other UBF-related repositories, it is a straigthforward
+process to fork and to build your own repositories using <<GITHUB>>.
+GitHub provides a friendly and easy to use environment for developers
+and the like.
+
+1. If you haven't already done so, create your own account on GitHub
+   and setup access with your public ssh key.  Next using your web
+   browser, login as yourself to GitHub.
+
+2. Choose all or a subset of the UBF-related repositories that you are
+   interested in forking.  For the sake of an example, let's choose
+   the 'ubf-bertrpc' repository and open the front page of this
+   repository <<UBF_BERTRPC>> using your web browser.
+
+3. Click on the "Fork" button near the top of the page.  This action
+   creates a clone of the 'ubf-bertrpc' repository in your own account
+   on GitHub.
+
+4. Edit and/or append the following lines to your ~/.gitconfig file:
++
+------
+[url "git://github.com/norton/gmt-bom.git"]
+     insteadOf = git://github.com/norton/src/erl-tools/gmt-bom.git
+[url "git://github.com/norton/ubf.git"]
+     insteadOf = git://github.com/norton/src/erl-tools/ubf.git
+[url "git@github.com:YOURLOGIN/ubf-bertrpc.git"]
+     insteadOf = git://github.com/norton/src/erl-tools/ubf-bertrpc.git
+------
++
+CAUTION: Make sure to replace YOURLOGIN with your GitHub account name.
++
+5. Follow similar steps as described in <<DOWNLOAD>> but use
+   'ubf-bertrpc' as the target instead of 'ubf'.
++
+------
+$ mkdir -p ~/work/ubf-bertrpc
+$ cd ~/work/ubf-bertrpc
+$ git clone git://github.com/norton/bom.git .
+$ env BOM_GIT=git://github.com/norton/ ./bom.sh co src/erl-tools/ubf-bertrpc
+------
++
+6. Follow same steps as described in <<BUILD>> to build 'ubf-bertrpc'.
+
+7. Next, change directory into the 'ubf-bertrpc' directory and create
+   a remote pointing to the UBF master repository.
++
+------
+$ cd src/erl-tools/ubf-bertrpc__HEAD
+$ git remote add upstream git://github.com/norton/ubf-bertrpc.git
+------
++
+8. Create a new remote branch to hold your changes.
++
+------
+$ git push origin origin:refs/heads/new_feature_name
+------
++
+9. Start tracking the new branch.
++
+------
+$ git checkout --track -b new_feature_name origin/new_feature_name
+------
+
+
+As needed, pull in all changes from the master branch on the UBF
+remote into your new branch.
+
+------
+$ git pull upstream master
+------
+
+=== Utilities
+
+[[TLOG]]
+==== Transaction Logging
+
+For Erlang, the UBF server and the UBF "LPC" client can be configured
+to generate a transaction log.  The transaction log module must
+implement the following tlog/6 callback API.
+
+------
+-type op() :: rpc | lpc | event_in | event_out.
+-type now() :: {pos_integer(), pos_integer(), pos_integer()}.
+-type plugin() :: module().
+
+-spec tlog(op(), Start::now(), plugin(), Q::term(), Reply::term(), Status::term()) -> ok.
+------
+
+==== Canonical Contracts
+
+For documentation purposes, it is helpful to generate a "canonical"
+version of a UBF contract.  This feature is especially helpful when
+importing UBF(b) types from one or more plugins.
+
+For UBF, the ubf_utils:ubf_contract/{1,2} functions are available for
+this purpose.  For JSON-RPC (and JSF indirectly), the
+jsf_utils:ubf_contract/{1,2} functions are available for this purpose.
+
 
 <<<
 == Reference
@@ -1268,24 +1511,35 @@ _Under Construction - TODO_
 .Optional list title
 
 - [[[AVRO]]] "Avro is a serialization system.",
-  http://avro.apache.org/.
+  http://avro.apache.org.
 
-- [[[BERTRPC]] "BERT and BERT-RPC 1.0 Specification",
-  http://bert-rpc.org/.
+- [[[BERTRPC]]] "BERT and BERT-RPC 1.0 Specification",
+  http://bert-rpc.org.
 
-- [[[GMTCHARSET]]] "Gemini Mobile Technologies, Inc. Charset Module",
-  http://github.com/norton/gmt-util/blob/master/src/gmt_charset.erl.
+- [[[ERLANG]]] "A general-purpose programming language and runtime
+  environment", http://www.erlang.org.
+
+- [[[GIT]]] "Fast Version Control System", http://git-scm.com.
+
+- [[[GMTCHARSET]]] "Gemini Mobile Technologies, Inc. charset module",
+  https://github.com/norton/gmt-util/blob/master/src/gmt_charset.erl.
+
+- [[[GITHUB]]] "Secure source code hosting and collaborative
+  development ", https://github.com.
 
 - [[[JSONRPC]]] "A lightweight remote procedure call protocol similar
-  to XML-RPC", http://json-rpc.org/.
+  to XML-RPC", http://json-rpc.org.
 
 - [[[MOCHIJSON2]]] "MochiWeb is an Erlang library for building
   lightweight HTTP servers.",
-  http://github.com/mochi/mochiweb/blob/master/src/mochijson2.erl.
+  https://github.com/mochi/mochiweb/blob/master/src/mochijson2.erl.
 
 - [[[PROTOBUF]]] "Protocol buffers are Google's language-neutral,
   platform-neutral, extensible mechanism for serializing structured
-  data.", http://code.google.com/apis/protocolbuffers/.
+  data.", http://code.google.com/apis/protocolbuffers.
+
+- [[[QUVIQ]]] "Quviq ... amazing testing tools",
+  http://www.quviq.com/.
 
 - [[[RFC20]]] Vint Cerf, "ASCII format for Network Interchange",
   RFC20, October 16, 1969.
@@ -1297,24 +1551,24 @@ _Under Construction - TODO_
   Specifications: ABNF", RFC5234, January 2008.
 
 - [[[THRIFT]]] "A software framework for scalable cross-language
-  services development.", http://incubator.apache.org/thrift/.
+  services development.", http://incubator.apache.org/thrift.
 
-- [[[UBF]]] "Universal Binary Format", http://github.com/norton/ubf/.
+- [[[UBF]]] "Universal Binary Format", https://github.com/norton/ubf.
 
 - [[[UBF_ABNF]]] "Universal Binary Format and Augmented Backus-Naur
-  Form", http://github.com/norton/ubf-abnf/.
+  Form", https://github.com/norton/ubf-abnf.
 
 - [[[UBF_BERTRPC]]] "Universal Binary Format and Binary ERlang Term
-  RPC", http://github.com/norton/ubf-bertrpc/.
+  RPC", https://github.com/norton/ubf-bertrpc.
 
 - [[[UBF_EEP8]]] "Universal Binary Format and Erlang Enhancement
-  Proposal 8", http://github.com/norton/ubf-eep8/.
+  Proposal 8", https://github.com/norton/ubf-eep8.
 
 - [[[UBF_JSONRPC]]] "Universal Binary Format and JavaScript Object
-  Notation RPC", https://github.com/norton/ubf-jsonrpc/.
+  Notation RPC", https://github.com/norton/ubf-jsonrpc.
 
 - [[[UBF_THRIFT]]] "Universal Binary Format and Thrift",
-  https://github.com/norton/ubf-thrift/.
+  https://github.com/norton/ubf-thrift.
 
 - [[[UBFPAPER]]] Joe Armstrong, "Getting Erlang to talk to the outside
   world", Proceedings of the 2002 ACM SIGPLAN workshop on Erlang,
