@@ -176,15 +176,15 @@ representing symbolic constants.
 
 ==== Tuple: { Obj1 Obj2 ... ObjN-1 ObjN }
 
-Tuples are used to represent _fixed numbers_ of objects.  The byte
-codes for "{" and "}" are used to delimit a tuple. Obj1, Obj2, ObjN-1,
-and ObjN are arbitrary UBF(a) objects.
+Tuples represent _fixed numbers_ of objects.  The byte codes for "{"
+and "}" are used to delimit a tuple. Obj1, Obj2, ObjN-1, and ObjN are
+arbitrary UBF(a) objects.
 
 ==== List: # ObjN & ObjN-1 & ... & Obj2 & Obj1
 
-Lists are used to represent _variable numbers_ of objects.  The first
-object in the list is Obj1, the second object in the list is Obj2,
-etc.  Objects are presented in reverse order.
+Lists represent _variable numbers_ of objects.  The first object in
+the list is Obj1, the second object in the list is Obj2, etc.  Objects
+are presented in reverse order.
 
 Lisp programmers will recognize '#' as an operator that pushes NIL (or
 the end of list) onto the recognition stack and '&' as an operator
@@ -443,8 +443,8 @@ predefined type that matches the following types:
 [{term(), term()}]
 ------
 
-The "void" predefined type is used as a placeholder to describe the
-return value of a function call that does not return to the caller.
+The "void" predefined type is a placeholder to describe the return
+value of a function call that does not return to the caller.
 
 The "ascii" attribute permits matches with binaries, strings, and
 atoms containing only ASCII values <<RFC20>>.  Similarly, the
@@ -1168,7 +1168,73 @@ the IRC protocol application described earlier.
 == Clients
 
 === Erlang
-_Under Construction - TODO_
+
+The UBF framework provides two types of Erlang clients: "rpc" and
+"lpc".  The rpc client is the default client that supports
+TCP/IP-based and ETF transports.  The lpc client is an alternative
+client for making a synchronous local procedure call to a plugin's
+implementation.
+
+The "ubf_client" Erlang module implements most of the commonly-used
+client-side functions and contains the implementation for the two
+types of Erlang clients.
+
+------
+-module(ubf_client).
+
+-type host() :: nonempty_string().
+-type ipport() :: pos_integer().
+-type name() :: atom().
+-type server() :: name() | pid().
+-type plugin() :: module().
+-type plugins() :: [plugin()].
+-type options() :: [{atom(), term()}].
+-type service() :: nonempty_string() | undefined.
+-type statename() :: atom().
+-type tlogger() :: module().
+
+-spec connect(host() | plugins(), ipport() | server()) ->
+              {ok, Client::pid(), service()} | {error, term()}.
+-spec connect(host() | plugins(), ipport() | server(), timeout()) ->
+              {ok, Client::pid(), service()} | {error, term()}.
+-spec connect(host() | plugins(), ipport() | server(), options(), timeout()) ->
+              {ok, Client::pid(), service()} | {error, term()}.
+
+-spec rpc(Client::pid(), Call::term()) -> timeout | term() | no_return().
+-spec rpc(Client::pid(), Call::term(), timeout()) -> timeout | term() | no_return().
+
+-spec stop(Client::pid()) -> ok.
+
+-spec sendEvent(Handler::pid(), Cast::term()) -> ok | no_return().
+
+-spec install_default_handler(Client::pid()) -> ack.
+-spec install_handler(Client::pid(), Fun::fun()) -> ack.
+
+-spec lpc(plugin(), Call::term()) -> term().
+-spec lpc(plugin(), Call::term(), statename()) -> term().
+-spec lpc(plugin(), Call::term(), statename(), tlogger()) -> term().
+------
+
+The connect/{2,3,4} functions connect to a UBF server.  Upon success,
+the UBF client's pid() and the name of the UBF server's service (if
+known) is returned.  For TCP/IP transports, the default method is to
+connect to the specified host() and TCP ipport().  For the ETF
+transport, the alternative method is to connect to server() using the
+specified plugins().  The server() is either the process id or process
+registered name for an already-started UBF server.  See <<Servers>>
+for a description of options().
+
+The rpc/{2,3} functions make a synchronous call to the server.
+
+The stop/1 function closes the connection with the server and stops
+the client.
+
+The sendEvent/2, install_default_handler/1, and install_handler/2
+functions behave in the same way as the server-side implementation to
+send and receive asynchronous casts.
+
+The lpc/{2,3,4} functions make a synchronous local procedure call to a
+plugin's implementation.
 
 === Python
 
