@@ -1,0 +1,240 @@
+// -*- Doc -*-
+// vim: set syntax=asciidoc:
+
+= UBF Tutorial
+:Date: 2010/11/12
+:Revision: 0.1
+:Copyright: 2010 Gemini Mobile Technologies, Inc.  All rights reserved.
+
+== UBF Basics
+
+=== Overview
+*TODO*
+
+=== Specifications
+
+==== UBF(a)
+*TODO*
+
+==== UBF(b)
+*TODO*
+
+==== UBF(c)
+*TODO*
+
+=== Transports
+
+==== TCP/IP - UBF/EBF/JSF/TBF
+*TODO*
+
+==== HTTP - JSON-RPC
+*TODO*
+
+==== ETF
+*TODO*
+
+==== LPC
+*TODO*
+
+=== Contracts & Plugins
+
+==== +TYPE only
+*TODO*
+
+==== +STATE and/or +ANYSTATE only
+*TODO*
+
+==== +TYPE, +STATE and +ANYSTATE
+*TODO*
+
+==== Plugins
+*TODO*
+
+=== Servers
+
+==== Stateless
+*TODO*
+
+==== Stateful
+*TODO*
+
+=== Clients
+
+==== Erlang TCP/IP
+*TODO*
+
+==== Erlang LPC
+*TODO*
+
+== UBF Hands On
+
+Provide an opportunity for hands-on experience to download, to build,
+to develop, and to test a *real* UBF contract, *real* UBF client, and
+*real* UBF server.
+
+The goal of this exercise is to learn more about UBF and to implement
+and to test your own Bert-RPC server using the UBF framework.
+
+=== Setup
+
+- Download
+- Build
+- Unit Test
+
+=== BERTRPC Specification
+
+Review the link:./BERTandBERT-RPC1.0Specification.mht[Bert-RPC]
+specification.
+
+- Types
+  * simple data types
+    ** integer
+    ** float
+    ** atom
+    ** tuple
+    ** bytelist
+    ** list
+    ** binary
+  * complex data types
+    ** nil
+    ** boolean
+    ** dictionary
+    ** time
+    ** regex
+- Encoding/Decoding
+- BERP
+- BERT-RPC
+  * {call, Module, Function, Arguments}
+  * {reply, Result}
+  * {error, {Type, Code, Class, Detail, Backtrace}}
+  * Protocol Error Codes
+  * Server Error Codes
+  * {cast, Module, Function, Arguments}
+  * {info, Command, Options}
+  * {info, callback, [{service, Service}, {mfa, Mod, Fun, Args}]}
+  * {noreply}
+  * Expiration Caching
+  * Validation Caching
+  * Streaming Binary Request
+  * Streaming Binary Response
+
+=== UBF-BERTRPC Application
+
+1. Change directory to the ubf-bertrpc application.
++
+------
+$ cd ~/work/ubf-bertrpc/src/erl-tools/ubf-bertrpc__HEAD
+------
++
+2. List directory of the ubf-bertrpc application.
++
+------
+$ ls -R
+.:
+ BOM.mk
+ ChangeLog
+ ebin
+ GMBOM
+ include
+ LICENSE
+ priv
+ README
+ src
+
+./ebin:
+
+./include:
+ bertrpc.hrl
+ bertrpc_impl.hrl
+
+./priv:
+ sys.config
+
+./src:
+ Makefile
+ bert.erl
+ bert_driver.erl
+ ubf_bertrpc_client.erl
+ ubf_bertrpc_plugin.con
+ ubf_bertrpc_plugin.erl
+ Unit-EUnit-Files
+
+./src/Unit-EUnit-Files:
+ bertrpc_plugin.app
+ bertrpc_plugin_app.erl
+ bertrpc_plugin_sup.erl
+ bertrpc_plugin_test.erl
+------
++
+3. Review key files of the ubf-bertrpc application.
+
+  * src/ubf_bertrpc_client.erl
+  * src/ubf_bertrpc_plugin.con
+  * src/ubf_bertrpc_plugin.erl
+
+4. Review key files of the ubf-bertrpc application's eunit tests.
+
+  * ./src/Unit-EUnit-Files/bertrpc_plugin.app
+  * ./src/Unit-EUnit-Files/bertrpc_plugin_app.erl
+  * ./src/Unit-EUnit-Files/bertrpc_plugin_sup.erl
+  * ./src/Unit-EUnit-Files/bertrpc_plugin_test.erl
+
+5. Review ubf-bertrpc application's Makefile.
+
+  * src/Makefile
+
+TIP: The command make target "run-erl1" starts an erlang shell that
+can be used for interactive development, debugging, and testing.
+
+=== UBF-BERTRPC Exercises
+
+==== Basic
+
+1. Implement and test BERT-RPC's call/3 and reply/1 primitives:
+   a. Modify ubf_bertrpc_plugin.con
+   b. Modify ubf_bertrpc_plugin.erl
+   c. Add new unit test to bertrpc_plugin_test.erl that uses
+      erlang:now()
+
+2. Implement and test BERT-RPC's error/1 primitive for Server Error
+   Codes:
+   a. Modify ubf_bertrpc_plugin.con
+   b. Modify ubf_bertrpc_plugin.erl
+   c. Add new unit test to bertrpc_plugin_test.erl that tests calling
+      an unknown module "foobar".
+   d. Add new unit test bertrpc_plugin_test.erl that tests calling an
+      unknown function "erlang:foobar".
+
+3. Implement and test BERT-RPC's cast/1 primitive:
+   a. Modify ubf_bertrpc_plugin.con
+   b. Modify ubf_bertrpc_plugin.erl
+   c. Add new unit test to bertrpc_plugin_test.erl that uses
+      error_logger:error_report/1.  Manually check if your test
+      triggers a message to stderr.
+
+==== Advanced
+
+1. Implement and test BERT-RPC's info callback/2 primitive:
+   a. modify ubf_bertrpc_plugin.con
+   b. modify ubf_bertrpc_plugin.erl
+   c. add new unit test to bertrpc_plugin_test.erl that tests using
+      erlang:now().
++
+TIP: Re-use the ubf_bertrpc_client.erl client inside the
+ubf_bertrpc_plugin.erl implementation.  Re-use the same test server as
+target service.
++
+
+2. Implement and test BERT-RPC's error/1 primitive for Protocol Error
+   Codes:
+   a. modify bert_driver.erl
+   b. add new unit test to bertrpc_plugin_test.erl
+
+3. Implement Caching Directives
+   a. modify ubf_bertrpc_plugin.erl
+   b. add new unit test to bertrpc_plugin_test.erl
+
+4. Implement Streaming Binary Request and Response
+   a. modify bert_driver.erl
+   b. add new unit test to bertrpc_plugin_test.erl
+
