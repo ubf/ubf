@@ -2,7 +2,7 @@
 // vim: set syntax=asciidoc:
 
 = UBF User's Guide _1st DRAFT_
-:Date: 2010/11/12
+:Date: 2010/11/15
 :Revision: 0.1
 :Copyright: 2002 Joe Armstrong
 :Copyright: 2010 Gemini Mobile Technologies, Inc.  All rights reserved.
@@ -395,7 +395,7 @@ x, y, ..., and z are atoms and Extra is any valid term.
 
 A type [X1, X2, ..., Xn] is of type [T] if all of Xi are of type T.
 
-=====  Predefined: P() _or_ P(A1, A2, ..., An)
+===== Predefined: P() _or_ P(A1, A2, ..., An)
 
 Predefined types are referenced by the notation:
 
@@ -496,8 +496,9 @@ synchronous and asynchronous interaction is borrowed from Erlang.
 
 ==== Anystate: +ANYSTATE.
 
-The "+ANYSTATE" section of UBF(b) can be used to define additional
-events that are valid in _all_ states of the FSM.
+The "+ANYSTATE" section of UBF(b) are used to define request and
+response pairs and to define events that are valid in _all_ states of
+the FSM.
 
 Events are checked based on direction first, on the current state's
 valid events next, and finally on the valid anystate events.  Any cast
@@ -524,7 +525,7 @@ and for the response:
 {Response, NextState} $
 ------
 
-where "Request" is an UBF(A) type sent by the client and "Response" is
+where "Request" is an UBF(a) type sent by the client and "Response" is
 an UBF(a) type and "NextState" is an UBF(a) atom sent by the server.
 
 If the client sends an invalid request, the server will respond with
@@ -534,7 +535,7 @@ the following "client broke contract" error:
 {{'clientBrokeContract', Request, ExpectsIn}, State} $
 ------
 
-where "ExpectsIn" is a UBF(A) type to describe the acceptable list of
+where "ExpectsIn" is a UBF(a) type to describe the acceptable list of
 input types and "State" is an UBF(a) atom.
 
 If the server sends an invalid response, the server will respond with
@@ -544,7 +545,7 @@ the following "server broke contract" error:
 {{'serverBrokeContract', Response, ExpectsOut}, State} $
 ------
 
-where "ExpectsOut" is a UBF(A) type to describe the acceptable list of
+where "ExpectsOut" is a UBF(a) type to describe the acceptable list of
 output types and "State" is an UBF(a) atom.
 
 CAUTION: By convention, the 3-tuples {\'clientBrokeContract\', _, _}
@@ -552,7 +553,7 @@ and {\'serverBrokeContract', _, _} are reserved terms for responses.
 Please be careful when designing your application not to use either of
 these 3-tuples.
 
-==== Casts: {\'event_in\', Event} $ _or_ {\'event_out', Event} $
+==== Casts: {\'event_in', Event} $ _or_ {\'event_out', Event} $
 
 Asynchronous casts from the client to server have the following form:
 
@@ -568,9 +569,12 @@ and from the server to the client have the following form:
 
 where "Event" is an UBF(a) type.
 
+If client or server send an invalid event, the event is ignored and
+dropped by the server.
+
 See <<ABNF-UBFc>> for a formal definition of the UBF(c) syntax.
 
-CAUTION: By convention, the 2-tuples {\'event_in\', _} and
+CAUTION: By convention, the 2-tuples {\'event_in', _} and
 {\'event_out', _} are reserved terms for requests and responses
 respectively.  Please be careful when designing your application not
 to use either of these two tuples.  This limitation introduced
@@ -767,13 +771,13 @@ MochiWeb's JSON library <<MOCHIJSON2>>.  In addition, there are a
 couple of other conventions layered on top of MochiWeb's
 implementation.
 
-- The UBF(B) contract checker has been modified to make a distinction
+- The UBF(b) contract checker has been modified to make a distinction
   between an Erlang record and an arbitrary Erlang tuple.  An
   experienced Erlang developer would view such a distinction either
   with skepticism or with approval.
 
 - For the skeptics, the contract author has the option of having the
-  UBF(B) contract compiler automatically generate Erlang -record()
+  UBF(b) contract compiler automatically generate Erlang -record()
   definitions for appropriate tuples within the contract.  Such record
   definitions are very convenient for developers on the Erlang side of
   the world, but they introduce more complication to the JavaScript
@@ -987,7 +991,7 @@ follows:
   \'undefined', a default name is automatically registered.  Default:
   \'undefined'.
 {\'statelessrpc', boolean()}::
-  Run the stateless variety of a UBF(B) contract.  A stateless
+  Run the stateless variety of a UBF(b) contract.  A stateless
   contract is an extension of Joe Armstrong's original UBF server
   implementation.  Default: \'false'.
 {\'startplugin', module()}::
@@ -1326,7 +1330,7 @@ $ make ERL=/usr/local/hibari/ert/R13B04/bin/erl DEBUG="+debug_info"
 +
 NOTE: Please specify the path to your erlang system's erl executable.
 +
-TIP: DEBUG="+debug_info" will produce DEBUG enabled beam files.
+TIP: Adding DEBUG="+debug_info" will produce DEBUG enabled beam files.
 +
 4. Run the unit tests
 +
