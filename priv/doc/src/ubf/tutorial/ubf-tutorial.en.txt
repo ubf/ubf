@@ -445,16 +445,17 @@ most recently with Erlang/OTP R13B04.
 ------
 $ mkdir -p ~/work/
 $ cd ~/work/
-$ tar -cvzf ~/ubf-bertrpc.tgz
-$ tar -cvzf ~/ubf-tutorial.tgz
-$ tar -cvzf ~/ubf-user-guide.tgz
+$ tar -xvzf ~/ubf-bertrpc.tgz
+$ tar -xvzf ~/ubf-tutorial.tgz
+$ tar -xvzf ~/ubf-user-guide.tgz
 ------
 +
 3. Build
 +
 ------
 $ cd ~/work/ubf-bertrpc
-$ env BOM_FAKE= ./bom.sh co src/erl-tools/ubf-bertrpc
+$ env BOM_FAKE=1 ./bom.sh co src/erl-tools/ubf-bertrpc
+$ env BOM_FAKE=1 ./bom.sh make
 $ make ERL=/usr/local/hibari/ert/R13B04/bin/erl
 ----
 +
