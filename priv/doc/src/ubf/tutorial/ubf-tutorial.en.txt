@@ -1,70 +1,423 @@
 // -*- Doc -*-
 // vim: set syntax=asciidoc:
 
-= UBF Tutorial
-:Date: 2010/11/12
+= Erlang Users Conference 2010 Tutorial / UBF Basics and Hands ON
+:Author: Joseph Wayne Norton
+:Email: norton@geminimobile.com
+:Date: 2010/11/15
 :Revision: 0.1
 :Copyright: 2010 Gemini Mobile Technologies, Inc.  All rights reserved.
 
 == UBF Basics
 
-=== Overview
-*TODO*
+UBF is a language for transporting and describing complex data
+structures across a network.  It has three components:
 
-=== Specifications
+- UBF(a) is a "language neutral" data transport format, roughly
+  equivalent to well-formed XML.
 
-==== UBF(a)
-*TODO*
+- UBF(b) is a programming language for describing types in UBF(a) and
+  protocols between clients and servers.  This layer is typically
+  called the "protocol contract".  UBF(b) is roughly equivalent to
+  Verified XML, XML-schemas, SOAP and WDSL.
 
-==== UBF(b)
-*TODO*
+- UBF(c) is a meta-level protocol used between a UBF client and a UBF
+  server.
 
-==== UBF(c)
-*TODO*
+.Programming By Contract
+image::images/ubf-flow-01.png["Programming By Contract"]
 
-=== Transports
+== Specifications: UBF(a)
 
-==== TCP/IP - UBF/EBF/JSF/TBF
-*TODO*
+[horizontal]
+Integer:: [-][0-9]+
+String:: "..."
+Binary:: [0-9]+ \~...~
+Atom:: \'...'
+Tuple:: { Obj1 Obj2 ... ObjN-1 ObjN }
+List:: # ObjN & ObjN-1 & ... & Obj2 & Obj1
+Term:: represent primitive types and compound types
+White space:: \s \n \r \t , %...%
+Register:: >C C
+Object:: Term or Register Push or Register Pop
 
-==== HTTP - JSON-RPC
-*TODO*
+NOTE: The operator '$' (i.e. "end of object") signifies when objects
+are finished.
 
-==== ETF
-*TODO*
+== Specifications: UBF(a) Example
 
-==== LPC
-*TODO*
+For example, the following UBF(a) object:
 
-=== Contracts & Plugins
+------
+'person'>p # {p "Joe" 123} & {p 'fred' 3~abc~} & $
+------
 
-==== +TYPE only
-*TODO*
+Represents the following UBF(b) term, a list that contains two
+3-tuples:
 
-==== +STATE and/or +ANYSTATE only
-*TODO*
+------
+[{'person', 'fred', <<"abc">>}, {'person', "Joe", 123}].
+------
 
-==== +TYPE, +STATE and +ANYSTATE
-*TODO*
+== Specifications: UBF(b)
 
-==== Plugins
-*TODO*
+UBF(b) is a language independent type system and protocol description
+language to specify a "contract".
 
-=== Servers
+All data sent by both the client and the server is verified by the
+"Contract Manager" (an Erlang process on the "server" side of the
+protocol).  Any data that violates the contract is rejected.
 
-==== Stateless
-*TODO*
+A contract is defined by 2 mandatory sections and 3 optional sections.
 
-==== Stateful
-*TODO*
+[horizontal]
+Name:: +NAME("..."). _mandatory_
+Version:: +VSN("..."). _mandatory_
+Types:: +TYPES.
+State:: +STATE.
+  * Defines a finite state machine (FSM) to model the interaction
+    between the client and server.
+  * Symbolic names expressed as "atoms" are the states of the FSM.
+  * Transitions expressed as request, response, and next state
+    triplets are the edges of the FSM (a.k.a. synchronous calls).
+  * States may also be annotated with events (a.k.a. asynchronous
+    casts).
+Anystate:: +ANYSTATE.
+  * Defines request and response pairs and define events that are
+    valid in _all_ states of the FSM.
 
-=== Clients
+== Specifications: UBF(a) Types
 
-==== Erlang TCP/IP
-*TODO*
+[horizontal]
+Definition:: X() = T
+Integer:: [-][0-9]+ _or_ [0-9]\+#[0-9a-f]+
+Range:: [-][0-9]\+..[-][0-9]+ _or_ [-][0-9]\+.. _or_ ..[-][0-9]+
+Float:: [-][0-9]\+.[0-9]+
+Binary:: \<<"...">>
+String:: "..."
+Atom:: \'...' _or_ [a-z][a-zA-Z0-9_]*
+Reference:: R()
+Alternative:: T1 | T2
+Tuple:: {T1, T2, ..., Tn}
+Record:: name#{x=T1, y=T2, ..., z=Tn}
+Extended Record:: name##{x=T1, y=T2, ..., z=Tn}
+List:: [T]
+Predefined:: P() _or_ P(A1, A2, ..., An)
 
-==== Erlang LPC
-*TODO*
+== Specifications: UBF(a) Predefined Types
+
+|============
+|          | ascii | asciiprintable | nonempty | nonundefined
+| integer  |   X   |       X        |    X     |      X
+| float    |   X   |       X        |    X     |      X
+| binary   |   O   |       O        |    O     |      X
+| string   |   O   |       O        |    O     |      X
+| atom     |   O   |       O        |    O     |      O
+| tuple    |   X   |       X        |    O     |      X
+| list     |   X   |       X        |    O     |      X
+| proplist |   X   |       X        |    O     |      X
+| term     |   X   |       X        |    O     |      O
+| void     |   X   |       X        |    X     |      X
+|============
+
+NOTE: 'nonempty' does not match: \<<"">>, "", \'', {}, and [].
+'nonundefined' does not match: \'undefined'.
+
+== Specifications: UBF(b) Example
+
+[source,erlang]
+------
+include::misc-codes/irc_plugin.con[]
+------
+
+== Specifications: UBF(c)
+
+UBF(c) is a meta-level protocol used between a UBF client and a UBF
+server.
+
+UBF(c) has two primitives: synchronous "calls" and asynchronous
+"casts".
+
+[horizontal]
+Calls:: Request $ => {Response, NextState} $
+  * "Request" is an UBF(a) type sent by the client
+  * "Response" is an UBF(a) type and "NextState" is an UBF(a) atom
+     sent by the server
+Casts:: {\'event_in', Event} $
+  * "Event" is an UBF(a) type sent by the client
+Casts:: {\'event_out', Event} $
+  * "Event" is an UBF(a) type sent by the server
+
+== Specifications: UBF(c) errors
+
+Calls - Request::
+If clients sends an invalid request, server responds with "client
+broke contract":
++
+-----
+{{'clientBrokeContract', Request, ExpectsIn}, State} $
+-----
++
+Calls - Responses::
+If server sends an invalid response, server responds with "server
+broke contract":
++
+-----
+{{'serverBrokeContract', Response, ExpectsOut}, State} $
+-----
++
+Casts::
+If client or server send an invalid event, the event is ignored and
+dropped by the server.
+
+== Contracts and Plugins
+
+"Contracts" and "Plugins" are the basic building blocks of an Erlang
+UBF server.
+- Contracts are a server's specifications.
+- Plugins are a server's implementations.
+
+A contract is a UBF(b) specification stored to a file.  By convention,
+a contract's filename has ".con" as the suffix part.
+
+== Contracts: +TYPES only
+
+For example, a "+TYPES" only contract having the filename
+"irc_types_plugin.con" is as follows:
+
+[source,erlang]
+------
+include::misc-codes/irc_types_plugin.con[]
+------
+
+== Contracts: +STATE and/or +ANYSTATE only
+
+For example, a "+STATE" and "+ANYSTATE" contract having the filename
+"irc_fsm_plugin.con" is as follows:
+
+[source,erlang]
+------
+include::misc-codes/irc_fsm_plugin.con[]
+------
+
+== Plugins
+
+A plugin is just a "normal" Erlang module that follows a few simple
+rules.  For a "+TYPES" only contract, the plugin contains just the
+name of it's contract.
+
+The plugin for the "+TYPES" only contract having the filename
+"irc_types_plugin.erl" is as follows:
+
+------
+-module(irc_types_plugin).
+
+-compile({parse_transform,contract_parser}).
+-add_contract("irc_types_plugin").
+------
+
+Otherwise, the plugin contains the name of it's contract plus the
+necessary Erlang "glue code" needed to bind the UBF server to the
+server's application.
+
+TIP: Check the UBF User's Guide for possible ways that a plugin's
+contract may fail to compile.
+
+== Plugins - Importing Types
+
+A plugin can also import all or a subset of "+TYPES" from other
+plugins.  This simple yet powerful import mechanism permits sharing
+and re-use of types between plugins and servers.
+
+The plugin for the "+STATE" and "+ANYSTATE" contract having the
+filename "irc_fsm_plugin.erl" is as follows:
+
+------
+-module(irc_fsm_plugin).
+
+-compile({parse_transform,contract_parser}).
+-add_types(irc_types_plugin).
+-add_contract("irc_fsm_plugin").
+------
+
+The "-add_types(\'there\')" directive imports all "+TYPES" from the
+plugin named \'there' into the containing plugin.
+
+NOTE: An alternative syntax "-add_types({\'elsewhere\', [\'t1\',
+\'t2\', ..., \'tn\']})."  for this directive imports a subset of
+"+TYPEs" from the plugin named \'elsewhere' into the containing
+plugin.
+
+== Transports: TCP/IP - UBF/EBF/JSF/TBF
+
+The following TCP/IP based transports are supported:
+
+[horizontal]
+UBF:: Universal Binary Format
+EBF:: Erlang Binary Format
+JSF:: JavaScript Format
+TBF:: Thrift Binary Format
+
+== Transports: HTTP - JSON-RPC
+
+JSON-RPC is a lightweight remote procedure call protocol similar to
+XML-RPC.
+
+The UBF framework implementation of JSON-RPC brings together JSF's
+encoder/decoder, UBF(b)'s contract checking, and an HTTP transport.
+
+.Programming By Contract w/ Multiple Transports
+image::images/ubf-flow-02.png["Programming By Contract w/ Multiple Transports"]
+
+NOTE: Any data that violates the _same_ contract(s) is rejected
+regardless of the transport.
+
+== Transports: ETF and LPC
+
+Several transports that do not require an explicit network socket have
+been added to the UBF framework.
+
+[horizontal]
+ETF:: Erlang Term Format _(Erlang's Native Distribution)_
+LPC:: Local Procedure Call _(Calls made directly to a Plugin)_
+
+These transports permit an application to call a plugin directly
+without the need for TCP/IP or HTTP.
+
+== Servers
+
+The UBF framework provides two types of Erlang servers: "stateless"
+and "stateful".  The stateless server is an extension of Joe
+Armstrong's original UBF server implementation.  The "stateful" server
+is Joe Armstrong's original UBF server implementation.
+
+UBF servers are introspective - which means the servers can describe
+themselves.  The following commands (described in UBF(a) format) are
+always available:
+
+[horizontal]
+\'help' $::
+  Help information
+\'info' $::
+  Short information about the current service
+\'description' $::
+  Long information about the current service
+\'services' $::
+  A list of available services
+\'contract' $::
+  Return the service contract
+{\'startSession', "Name", Args} $::
+  To start a new session for the Name service.  Args are initial
+  arguments for the Name service and is specific to that service.
+{\'restartService', "Name", Args} $::
+  To restart the Name service.  Args are restart arguments for the
+  Name service and is specific to that service.
+
+== Servers: start _or_ start_link
+
+The "ubf_server" Erlang module implements most of the commonly-used
+server-side functions and provides several ways to start a server.
+
+------
+-module(ubf_server).
+
+-type name() :: atom().
+-type plugins() :: [module()].
+-type ipport() :: pos_integer().
+-type options() :: [{atom(), term()}].
+
+-spec start(plugins(), ipport()) -> true.
+-spec start(name(), plugins(), ipport()) -> true.
+-spec start(name(), plugins(), ipport(), options()) -> true.
+
+-spec start_link(plugins(), ipport()) -> true.
+-spec start_link(name(), plugins(), ipport()) -> true.
+-spec start_link(name(), plugins(), ipport(), options()) -> true.
+------
+
+TIP: Check the UBF User's Guide for supported configuration options.
+
+== Servers: Stateless
+
+The plugin callback API for the stateless server.
+
+------
+%% common callback API
+-spec info() -> string().
+-spec description() -> string().
+-spec handlerStop(Handler::pid(), Reason::term(), StateData::term()) ->
+                  NewStateData::term().
+
+%% stateless callback API
+-spec handlerStart(Args::term()) ->
+                  {accept, Reply::term(), StateName::atom(), StateDate::term()} |
+                  {reject, Reply::term()}.
+-spec handlerRpc(Call::term()) -> Reply::term().
+------
+
+== Servers: Stateful
+
+The plugin callback API for the stateful server.
+
+------
+%% common callback API
+-spec info() -> string().
+-spec description() -> string().
+-spec handlerStop(Handler::pid(), Reason::term(), StateData::term()) ->
+                  NewStateData::term().
+
+%% stateful callback API
+-spec handlerStart(Args::term(), Manager::pid()) ->
+                  {accept, Reply::term(), StateName::atom(), StateDate::term()} |
+                  {reject, Reply::term()}.
+-spec handlerRpc(StateName::atom(), Call::term(), StateDate::term(), Manager::pid()) ->
+                {Reply::term(), NewStateName::atom(), NewStateData::term()}.
+
+-spec managerStart(Args::term()) ->
+                   {ok, ManagerData::term()}.
+-spec managerRestart(Args::term(), Manager::pid()) ->
+                     ok | {error, Reason::term()}.
+-spec managerRpc(Args::term(), ManagerData::term()) ->
+                 {ok, NewManagerData::term()} | {error, Reason::term()}.
+------
+
+== Clients: Erlang RPC
+
+The "default" Erlang client is the "rpc" client and it supports TCP/IP
+and ETF transports.
+
+The "ubf_client" Erlang module implements most of the commonly-used
+client-side functions and contains the implementation for all types of
+Erlang clients.
+
+------
+-module(ubf_client).
+
+-type host() :: nonempty_string().
+-type ipport() :: pos_integer().
+-type name() :: atom().
+-type server() :: name() | pid().
+-type plugin() :: module().
+-type plugins() :: [plugin()].
+-type options() :: [{atom(), term()}].
+-type service() :: {'#S', nonempty_string()} | undefined.
+-type statename() :: atom().
+-type tlogger() :: module().
+
+-spec connect(host() | plugins(), ipport() | server()) ->
+              {ok, Client::pid(), service()} | {error, term()}.
+-spec connect(host() | plugins(), ipport() | server(), timeout()) ->
+              {ok, Client::pid(), service()} | {error, term()}.
+-spec connect(host() | plugins(), ipport() | server(), options(), timeout()) ->
+              {ok, Client::pid(), service()} | {error, term()}.
+
+-spec stop(Client::pid()) -> ok.
+
+-spec rpc(Client::pid(), Call::term()) -> timeout | term() | no_return().
+-spec rpc(Client::pid(), Call::term(), timeout()) -> timeout | term() | no_return().
+------
+
+TIP: Check the UBF User's Guide for the "lpc" client.
 
 == UBF Hands On
 
@@ -75,58 +428,115 @@ to develop, and to test a *real* UBF contract, *real* UBF client, and
 The goal of this exercise is to learn more about UBF and to implement
 and to test your own Bert-RPC server using the UBF framework.
 
-=== Setup
+First, let's briefly review the
+link:./BERTandBERT-RPC1.0Specification.mht[Bert-RPC] specification.
 
-- Download
-- Build
-- Unit Test
+== Setup
 
-=== BERTRPC Specification
+CAUTION: UBF requires Erlang/OTP R13B01 or newer.  UBF has been tested
+most recently with Erlang/OTP R13B04.
 
-Review the link:./BERTandBERT-RPC1.0Specification.mht[Bert-RPC]
-specification.
+1. Copy the 'ubf-bertrpc.tgz' tarball, 'ubf-tutorial.tgz' tarball, and
+   'ubf-user-guide.tgz' tarball from the USB stick to your home
+   directory.
 
-- Types
-  * simple data types
-    ** integer
-    ** float
-    ** atom
-    ** tuple
-    ** bytelist
-    ** list
-    ** binary
-  * complex data types
-    ** nil
-    ** boolean
-    ** dictionary
-    ** time
-    ** regex
-- Encoding/Decoding
-- BERP
-- BERT-RPC
-  * {call, Module, Function, Arguments}
-  * {reply, Result}
-  * {error, {Type, Code, Class, Detail, Backtrace}}
-  * Protocol Error Codes
-  * Server Error Codes
-  * {cast, Module, Function, Arguments}
-  * {info, Command, Options}
-  * {info, callback, [{service, Service}, {mfa, Mod, Fun, Args}]}
-  * {noreply}
-  * Expiration Caching
-  * Validation Caching
-  * Streaming Binary Request
-  * Streaming Binary Response
+2. Make work directory and untar each of the tarballs:
++
+------
+$ mkdir -p ~/work/
+$ cd ~/work/
+$ tar -cvzf ~/ubf-bertrpc.tgz
+$ tar -cvzf ~/ubf-tutorial.tgz
+$ tar -cvzf ~/ubf-user-guide.tgz
+------
++
+3. Build
++
+------
+$ cd ~/work/ubf-bertrpc
+$ env BOM_FAKE= ./bom.sh co src/erl-tools/ubf-bertrpc
+$ make ERL=/usr/local/hibari/ert/R13B04/bin/erl
+----
++
+NOTE: Please specify the path to your erlang system's erl executable.
++
+TIP: Adding DEBUG="+debug_info" will produce DEBUG enabled beam files.
++
+4. Unit Test
++
+------
+$ make ERL=/usr/local/hibari/ert/R13B04/bin/erl test
+----
 
-=== UBF-BERTRPC Application
+== BERTRPC Types
 
-1. Change directory to the ubf-bertrpc application.
+Simple Data Types::
+  * integer
+  * float
+  * atom
+  * tuple
+  * bytelist
+  * list
+  * binary
+Complex Data Types::
+  * nil
+  * boolean
+  * dictionary
+  * time
+  * regex
+
+== BERP
+
+BERP is same as EBF.
+
+EBF is an implementation of UBF(b) but it does not use UBF(a) for the
+client and server communication.  Instead, Erlang-style conventions
+are used instead:
+
+- Structured terms are serialized via the Erlang BIFs term_to_binary()
+  and binary_to_term().
+- Terms are framed using the 'gen_tcp' {packet, 4} format: a 32-bit
+  unsigned integer (big-endian?) specifies packet length.
++
+------
++-------------------------+-------------------------------+
+| Packet length (32 bits) | Packet data (variable length) |
++-------------------------+-------------------------------+
+------
+
+The name "EBF" is short for "Erlang Binary Format".
+
+== BERT-RPC
+
+Synchronous RPC::
+ * {call, Module, Function, Arguments}
+ * {reply, Result}
+"Asynchronous" RPC::
+ * {cast, Module, Function, Arguments}
+ * \{noreply}
+Errors::
+ * {error, {Type, Code, Class, Detail, Backtrace}}
+ * Protocol Error Codes
+ * Server Error Codes
+Info Directives::
+ * {info, Command, Options}
+ * {info, callback, [{service, Service}, {mfa, Mod, Fun, Args}]}
+Caching Features::
+ * Expiration Caching
+ * Validation Caching
+Streaming Features::
+ * Streaming Binary Request
+ * Streaming Binary Response
+
+== UBF-BERTRPC: Application (1 of 2)
+
+1.:: Change directory to the ubf-bertrpc application.
 +
 ------
 $ cd ~/work/ubf-bertrpc/src/erl-tools/ubf-bertrpc__HEAD
 ------
 +
-2. List directory of the ubf-bertrpc application.
+2.:: List directory of the ubf-bertrpc application.
 +
 ------
 $ ls -R
@@ -154,7 +564,6 @@ $ ls -R
  Makefile
  bert.erl
  bert_driver.erl
- ubf_bertrpc_client.erl
  ubf_bertrpc_plugin.con
  ubf_bertrpc_plugin.erl
  Unit-EUnit-Files
@@ -165,38 +574,39 @@ $ ls -R
  bertrpc_plugin_sup.erl
  bertrpc_plugin_test.erl
 ------
-+
-3. Review key files of the ubf-bertrpc application.
 
-  * src/ubf_bertrpc_client.erl
+== UBF-BERTRPC: Application (2 of 2)
+
+3.:: Review key files of the ubf-bertrpc application.
+
   * src/ubf_bertrpc_plugin.con
   * src/ubf_bertrpc_plugin.erl
 
-4. Review key files of the ubf-bertrpc application's eunit tests.
+4.:: Review key files of the ubf-bertrpc application's eunit tests.
 
   * ./src/Unit-EUnit-Files/bertrpc_plugin.app
   * ./src/Unit-EUnit-Files/bertrpc_plugin_app.erl
   * ./src/Unit-EUnit-Files/bertrpc_plugin_sup.erl
   * ./src/Unit-EUnit-Files/bertrpc_plugin_test.erl
 
-5. Review ubf-bertrpc application's Makefile.
+5.:: Review ubf-bertrpc application's Makefile.
 
   * src/Makefile
 
 TIP: The command make target "run-erl1" starts an erlang shell that
 can be used for interactive development, debugging, and testing.
 
-=== UBF-BERTRPC Exercises
+== Basic Exercises (1 of 3)
 
-==== Basic
-
-1. Implement and test BERT-RPC's call/3 and reply/1 primitives:
+1.:: Implement and test BERT-RPC's call/3 and reply/1 primitives:
    a. Modify ubf_bertrpc_plugin.con
    b. Modify ubf_bertrpc_plugin.erl
    c. Add new unit test to bertrpc_plugin_test.erl that uses
       erlang:now()
 
-2. Implement and test BERT-RPC's error/1 primitive for Server Error
+== Basic Exercises (2 of 3)
+
+2.:: Implement and test BERT-RPC's error/1 primitive for Server Error
    Codes:
    a. Modify ubf_bertrpc_plugin.con
    b. Modify ubf_bertrpc_plugin.erl
@@ -205,36 +615,69 @@ can be used for interactive development, debugging, and testing.
    d. Add new unit test bertrpc_plugin_test.erl that tests calling an
       unknown function "erlang:foobar".
 
-3. Implement and test BERT-RPC's cast/1 primitive:
+== Basic Exercises (3 of 3)
+
+3.:: Implement and test BERT-RPC's cast/1 primitive:
    a. Modify ubf_bertrpc_plugin.con
    b. Modify ubf_bertrpc_plugin.erl
    c. Add new unit test to bertrpc_plugin_test.erl that uses
       error_logger:error_report/1.  Manually check if your test
       triggers a message to stderr.
 
-==== Advanced
+== Advanced Exercises (1 of 4)
 
-1. Implement and test BERT-RPC's info callback/2 primitive:
+1.:: Implement and test BERT-RPC's info callback/2 primitive:
    a. modify ubf_bertrpc_plugin.con
    b. modify ubf_bertrpc_plugin.erl
    c. add new unit test to bertrpc_plugin_test.erl that tests using
       erlang:now().
-+
-TIP: Re-use the ubf_bertrpc_client.erl client inside the
+
+TIP: Re-use the ubf_client.erl client inside the
 ubf_bertrpc_plugin.erl implementation.  Re-use the same test server as
 target service.
-+
 
-2. Implement and test BERT-RPC's error/1 primitive for Protocol Error
+CAUTION: To implement the "{info,...}" construct, changes are required
+for the bert.erl and bert_driver.erl modules.  The module must
+maintain state and should convert the "{info,...}" BERP and it's
+corresponding "{call,....}" BERP into a 2-tuple that forms a single
+UBF request.  To avoid such headaches, send such a 2-tuple directly
+from the UBF client to your server as a work-around.
+
+== Advanced Exercises (2 of 4)
+
+2.:: Implement and test BERT-RPC's error/1 primitive for Protocol Error
    Codes:
    a. modify bert_driver.erl
    b. add new unit test to bertrpc_plugin_test.erl
 
-3. Implement Caching Directives
+== Advanced Exercises (3 of 4)
+
+3.:: Implement Caching Directives
    a. modify ubf_bertrpc_plugin.erl
    b. add new unit test to bertrpc_plugin_test.erl
 
-4. Implement Streaming Binary Request and Response
+== Advanced Exercises (4 of 4)
+
+4.:: Implement Streaming Binary Request and Response
    a. modify bert_driver.erl
    b. add new unit test to bertrpc_plugin_test.erl
 
+TIP: Create a new ubf_bertrpc_client.erl implementation by
+   implementing a wrapper over the standard ubf_client.erl module.
+
+== Thank You
+
+For UBF, please check UBF's GitHub repository and webpage for updates.
+
+[horizontal]
+UBF:: https://github.com/norton/ubf
+
+For Hibari - an open-source key-value implemented in Erlang, please
+check one or more of the following links for updates.
+
+[horizontal]
+Hibari Open Source project:: http://sourceforge.net/projects/hibari/
+Hibari Twitter:: @hibaridb Hashtag: #hibaridb
+Gemini Twitter:: @geminimobile
+Big Data blog:: http://hibari-gemini.blogspot.com/
+Slideshare:: http://www.slideshare.net/geminimobile
