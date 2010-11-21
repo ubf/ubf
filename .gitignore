@@ -1,13 +1,10 @@
-*.P
+*.app
 *.beam
 *.boot
-*.d
 *.huc
 *.log
 *.script
-.bom_*
-.depends-*
-.deps/
+.eunit/
 erl_crash.dump
 src/contract_lex.erl
 src/contract_yecc.erl

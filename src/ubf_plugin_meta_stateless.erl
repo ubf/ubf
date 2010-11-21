@@ -32,7 +32,7 @@
 -export([info/0, description/0]).
 
 -compile({parse_transform,contract_parser}).
--add_contract("ubf_plugin_meta_stateless").
+-add_contract("src/ubf_plugin_meta_stateless").
 
 -include("ubf.hrl").
 
