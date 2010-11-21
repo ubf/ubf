@@ -15,7 +15,7 @@
 
 %% NOTE the following two lines
 -compile({parse_transform,contract_parser}).
--add_contract("./Unit-EUnit-Files/stateful_plugin").
+-add_contract("./test/Unit-EUnit-Files/stateful_plugin").
 -add_types({types_plugin, [contract_res,contract_req,description_res,description_req,info_res,info_req]}).
 -add_types({types_plugin, [keepalive_res,keepalive_req]}).
 -add_types({types_plugin, [timeout]}).

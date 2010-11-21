@@ -526,7 +526,7 @@ handle1({eof, _}, _Stream, L, 0) ->
     {ok, lists:reverse(L)};
 handle1({eof, _}, _Stream, _L, N) ->
     {error, N};
-handle1(What, Stream, L, N) ->
+handle1(What, _Stream, _L, _N) ->
     {error, What}.
 
 remove_duplicates([H|T]) ->
