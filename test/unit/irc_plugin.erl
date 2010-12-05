@@ -8,7 +8,7 @@
 -import(lists, [delete/2, map/2, member/2, foreach/2]).
 
 -compile({parse_transform,contract_parser}).
--add_contract("./test/Unit-Test-Files/irc_plugin").
+-add_contract("./test/unit/irc_plugin").
 
 -include("ubf.hrl").
 -include("ubf_plugin_stateful.hrl").

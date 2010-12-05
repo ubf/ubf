@@ -16,7 +16,7 @@
 %%% `Module:new(ModuleList)' syntax.  See the Erlang/OTP documentation
 %%% for more information on parameterized module syntax and usage.
 %%% For code examples, look in the
-%%% "<a href="../src/Unit-Test-Files">../src/Unit-Test-Files</a>"
+%%% "<a href="../test/unit">../test/unit</a>"
 %%% directory for several examples (see files with "_plugin.erl" suffix).
 %%%
 

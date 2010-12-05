@@ -43,7 +43,7 @@
 %%       dir in our parent dir, not this dir.
 
 -compile({parse_transform, contract_parser}).
--add_contract("./test/Unit-Test-Files/file_plugin").
+-add_contract("./test/unit/file_plugin").
 
 %% @spec () -> string()
 %% @doc Mandatory callback function: Return info/version string.

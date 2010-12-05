@@ -36,7 +36,7 @@ test10() ->
 
 
 test11() ->
-    T = epp:parse_file("./Unit-Test-Files/bug.erl","", ""),
+    T = epp:parse_file("./unit/bug.erl","", ""),
     %% io:format("T=~p~n",[T]),
     test_ubf(T).
 
@@ -45,14 +45,14 @@ encode_print(X) ->
 
 
 bug1() ->
-    T={ok,[{1,file,{"./Unit-Test-Files/bug.erl",1}},
+    T={ok,[{1,file,{"./unit/bug.erl",1}},
            {[{clause,2,[],[],[{call,3,{atom,3,decoe},[]}]}]},
            {[{clause,5,[],[],[{call,6,{atom,6,decode},[]}]}]},
            {eof,8}]},
     test_ubf(T).
 
 bug2() ->
-    T={ok,[{1,file,{"./Unit-Test-Files/bug.erl",1}},
+    T={ok,[{1,file,{"./unit/bug.erl",1}},
            {[{clause,2,[],[],[{{atom,3,decoe},[]}]}]},
            {[{clause,5,[],[],[{{atom,6,decode},[]}]}]},
            {eof,8}]},

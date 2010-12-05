@@ -161,13 +161,13 @@ One of the better places to start is to look in the "edoc" directory.
 See the "Reference Documentation" section for suggestions on where to
 find greater detail.
 
-The unit tests in the "src/Unit-Test-Files" directory provide small
+The unit tests in the "test/unit" directory provide small
 examples of how to use all of the public API.  In particular, the
 *client*.erl files contain comments at the top with a list of
 prerequisites and small examples, recipe-style, for starting each
 server and using the client.
 
-The eunit tests in the "src/Unit-EUnit-Files" directory perform
+The eunit tests in the "test/eunit" directory perform
 several smoke and error handling uses cases.
 
 The original documentation is in the "priv/doc" directory.
