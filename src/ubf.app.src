@@ -29,6 +29,6 @@
              , ubf_plugin_meta_stateless
              , ubf_plugin_stateful
              , ubf_plugin_stateless
-            ]}
- ]
-}.
+            ]},
+  {env, []}
+ ]}.

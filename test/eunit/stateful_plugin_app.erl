@@ -21,7 +21,7 @@
 %%          {error, Reason}
 %%----------------------------------------------------------------------
 start() ->
-    start(xxxwhocares, []).
+    start(normal, []).
 
 start(_Type, StartArgs) ->
     case stateful_plugin_sup:start_link(StartArgs) of

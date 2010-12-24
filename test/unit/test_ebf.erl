@@ -3,6 +3,7 @@
 -compile(export_all).
 
 -include("ubf.hrl").
+-include_lib("eunit/include/eunit.hrl").
 
 -import(lists, [map/2, foldl/3, filter/2]).
 -import(ubf_client, [rpc/2, sendEvent/2, install_default_handler/1, install_handler/2]).
@@ -22,9 +23,9 @@ server_port(Name) ->
             server_port(Name)
     end.
 
-tests() ->
+test_ebf() ->
     ss(),
-    test(),
+    run(),
     application:stop(test),
     true.
 
@@ -34,7 +35,7 @@ ss() ->
     application:stop(test),
     ok = application:start(test).
 
-test() ->
+run() ->
     {ok, Pid, _Name} = ubf_client:connect(host(), defaultPort(), [{proto,ebf}], defaultTimeout()),
     Info = ubf_client:rpc(Pid, info),
     io:format("Info=~p~n",[Info]),
