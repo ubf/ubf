@@ -216,8 +216,8 @@ check_term({integer, Y}=_Check, X, _Level, _Mod) ->
             ?FAIL({Check,X})
     end;
 %% string
-check_term({string, ?S(Y)}=_Check, X, _Level, _Mod) ->
-    if ?S(Y) =:= ?S(X) andalso is_list(Y) ->
+check_term({string, {'#S', Y0}=Y}=_Check, X, _Level, _Mod) ->
+    if Y =:= X andalso is_list(Y0) ->
             true;
        true ->
             ?FAIL({Check,X})
@@ -296,14 +296,14 @@ check_term_predef(list, X) ->
     is_list(X);
 check_term_predef(proplist, X) ->
     case X of
-        ?P(Y) when is_list(Y) ->
+        {'#P', Y} when is_list(Y) ->
             is_proplist(Y);
         _ ->
             false
     end;
 check_term_predef(string, X) ->
     case X of
-        ?S(Y) when is_list(Y) ->
+        {'#S', Y} when is_list(Y) ->
             is_string(Y);
         _ ->
             false
@@ -322,14 +322,14 @@ check_term_predef({list,Attrs}, X) ->
     is_list(X) andalso check_term_attrlist(list,Attrs,X);
 check_term_predef({proplist,Attrs}, X) ->
     case X of
-        ?P(Y) when is_list(Y) ->
+        {'#P', Y} when is_list(Y) ->
             is_proplist(Y) andalso check_term_attrlist(proplist,Attrs,X);
         _ ->
             false
     end;
 check_term_predef({string,Attrs}, X) ->
     case X of
-        ?S(Y) when is_list(Y) ->
+        {'#S', Y} when is_list(Y) ->
             is_string(Y) andalso check_term_attrlist(string,Attrs,X);
         _ ->
             false
@@ -366,7 +366,7 @@ is_string(_)  -> false.
 
 
 %% is_proplist
-is_proplist([{_,_}|T]) ->
+is_proplist([P|T]) when tuple_size(P) =:= 2 ->
     is_proplist(T);
 is_proplist([]) -> true;
 is_proplist(_)  -> false.
