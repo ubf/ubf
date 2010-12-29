@@ -69,7 +69,6 @@ Commands:
 %% client connection fails.
 
 managerStart(_ArgFromMetaManager) ->
-    %% io:format("DEBUG: managerStart: Arg ~p\n", [_ArgFromMetaManager]),
     {ok, myManagerState}.
 
 %% @spec (term(), term()) -> term()
@@ -102,7 +101,6 @@ managerRpc(_, State) ->
 %% </ul>
 
 handlerStart(_ArgFromUbfClient, _ManagerPid) ->
-    io:format("DEBUG: Arg ~p Pid ~p\n", [_ArgFromUbfClient, _ManagerPid]),
     Reply = ?S(info()),
     HandlerState = start,
     HandlerData = myFirstData0_is_not_used,
