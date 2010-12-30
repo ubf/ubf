@@ -1,4 +1,4 @@
--module(test_ubf).
+-module(ubf_tests).
 
 -compile(export_all).
 

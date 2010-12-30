@@ -1,4 +1,4 @@
--module(test_etf).
+-module(etf_tests).
 
 -compile(export_all).
 

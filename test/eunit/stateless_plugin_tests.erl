@@ -1,4 +1,4 @@
--module(stateless_plugin_test).
+-module(stateless_plugin_tests).
 
 -compile(export_all).
 -include_lib("eunit/include/eunit.hrl").

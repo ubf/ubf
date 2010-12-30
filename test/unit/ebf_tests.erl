@@ -1,4 +1,4 @@
--module(test_ebf).
+-module(ebf_tests).
 
 -compile(export_all).
 
