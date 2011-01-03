@@ -15,12 +15,14 @@ Rules.
 {D}+\#{H}+         :     {token,{integer,TokenLine,parse_erlang_single_expr(TokenChars)}}.
 [a-z]{A}*          :     Atom = list_to_atom(TokenChars),
                          {token,case reserved_word(Atom) of
-                                    true -> {Atom,TokenLine};
+                                    %% silence dialyzer warnings
+                                    %% true -> {Atom,TokenLine};
                                     false -> {atom,TokenLine,Atom}
                                 end}.
 '[^']*'            :     Atom = list_to_atom(lists:sublist(TokenChars, 2, length(TokenChars) - 2)),
                          {token,case reserved_word(Atom) of
-                                    true -> {Atom,TokenLine};
+                                    %% silence dialyzer warnings
+                                    %% true -> {Atom,TokenLine};
                                     false -> {atom,TokenLine,Atom}
                                 end}.
 NAME               :     {token,{namekwd,TokenLine}}.
