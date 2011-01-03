@@ -293,9 +293,7 @@ rpc(Pid, Q, Timeout) when is_pid(Pid) ->
                     Pid ! stop,
                     timeout
             end
-    end;
-rpc(_Pid, _Q, _Timeout) ->
-    erlang:error(badarg).
+    end.
 
 %% @spec (pid(), Msg) -> any()
 %% @doc Send an asynchronous UBF message.
