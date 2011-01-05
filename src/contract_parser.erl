@@ -179,7 +179,7 @@ parse_file(F) ->
     try
         handle(Stream, 1, [], 0)
     after
-        file:close(Stream)
+        ok = file:close(Stream)
     end.
 
 infileExtension()  -> ".con".

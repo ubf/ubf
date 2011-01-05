@@ -25,13 +25,14 @@ start(Module, Contract) ->
 
 relay(Module, Pid, Pid1) ->
     put('ubf_info', Module),
-    Pid ! {relay, self(), Pid1}.
+    Pid ! {relay, self(), Pid1},
+    ok.
 
 loop(Module, Contract, Pid, Socket) ->
     loop(Module, Contract, Pid, Socket, 16#ffffffff).
 
 loop(Module, Contract, Pid, Socket, Timeout) ->
-    inet:setopts(Socket, [{active, true}]),
+    ok = inet:setopts(Socket, [{active, true}]),
     put('ubf_socket', Socket),
     Cont = Module:init(Contract),
     loop(Module, Contract, Pid, Socket, Timeout, Cont).

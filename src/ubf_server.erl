@@ -211,12 +211,12 @@ start_ubf_listener(Server0, Plugins, Port, Options) ->
                 %% waiting for the server hello.
 
                 %% Next few lines are pretty devious but they work!
-                if ServerHello =/= undefined ->
-                        %% send hello back to the opening program
-                        Driver ! {self(), {DriverVersion, ?S(ServerHello), help()}};
-                   true ->
-                        noop
-                end,
+                _ = if ServerHello =/= undefined ->
+                            %% send hello back to the opening program
+                            Driver ! {self(), {DriverVersion, ?S(ServerHello), help()}};
+                       true ->
+                            noop
+                    end,
 
                 ContractManager = contract_manager:start(SimpleRPC, VerboseRPC, ProcessOptions),
                 %% swap the driver
@@ -262,12 +262,12 @@ start_term_listener(Server0, Plugins, Options) ->
     Driver = self(),
     ContractManager = contract_manager:start(SimpleRPC, VerboseRPC, ProcessOptions),
 
-    if ServerHello =/= undefined ->
-            %% send hello back to the opening program
-            self() ! {ContractManager, {'etf1.0', ?S(ServerHello), help()}};
-       true ->
-            noop
-    end,
+    _ = if ServerHello =/= undefined ->
+                %% send hello back to the opening program
+                self() ! {ContractManager, {'etf1.0', ?S(ServerHello), help()}};
+           true ->
+                noop
+        end,
 
     Handler = ubf_plugin_handler:start_handler(MetaPlugin, StartPlugin, Server, StatelessRPC, ProcessOptions),
     receive

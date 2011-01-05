@@ -135,38 +135,38 @@ do_rpc(Client, Server, State, Mod, Q, SimpleRPC, VerboseRPC, TLogMod) ->
     %% check contract
     case do_rpcIn(Q, State, Mod, TLogMod) of
         {error, Reply, TLog} ->
-            if SimpleRPC ->
-                    Client ! {self(), Reply};
-               true ->
-                    Client ! {self(), {Reply, State}}
-            end,
+            _ = if SimpleRPC ->
+                        Client ! {self(), Reply};
+                   true ->
+                        Client ! {self(), {Reply, State}}
+                end,
             do_txlog(TLog),
             loop(Client, Server, State, Mod, SimpleRPC, VerboseRPC, TLogMod);
         {ok, {_TLog, FSM}=TLogRef} ->
-            if VerboseRPC ->
-                    Server ! {self(), {rpc, {Q, FSM}}};
-               true ->
-                    Server ! {self(), {rpc, Q}}
-            end,
+            _ = if VerboseRPC ->
+                        Server ! {self(), {rpc, {Q, FSM}}};
+                   true ->
+                        Server ! {self(), {rpc, Q}}
+                end,
             receive
                 {Server, {rpcReply, Reply, ReplyState, same}} ->
                     %% check contract
                     {_, NewReply, TLog} = do_rpcOut(TLogRef, Q, State, Mod, Reply, ReplyState, ReplyState, Mod, TLogMod),
-                    if SimpleRPC ->
-                            Client ! {self(), NewReply};
-                       true ->
-                            Client ! {self(), {NewReply, ReplyState}}
-                    end,
+                    _ = if SimpleRPC ->
+                                Client ! {self(), NewReply};
+                           true ->
+                                Client ! {self(), {NewReply, ReplyState}}
+                        end,
                     do_txlog(TLog),
                     loop(Client, Server, ReplyState, Mod, SimpleRPC, VerboseRPC, TLogMod);
                 {Server, {rpcReply, Reply, ReplyState, {new, NewMod, NewState}}} ->
                     %% check contract
                     {_, NewReply, TLog} = do_rpcOut(TLogRef, Q, State, Mod, Reply, ReplyState, NewState, NewMod, TLogMod),
-                    if SimpleRPC ->
-                            Client ! {self(), NewReply};
-                       true ->
-                            Client ! {self(), {NewReply, NewState}}
-                    end,
+                    _ = if SimpleRPC ->
+                                Client ! {self(), NewReply};
+                           true ->
+                                Client ! {self(), {NewReply, NewState}}
+                        end,
                     do_txlog(TLog),
                     loop(Client, Server, NewState, NewMod, SimpleRPC, VerboseRPC, TLogMod);
                 stop ->
