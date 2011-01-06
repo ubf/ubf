@@ -29,41 +29,37 @@ See http://norton.github.com/ubf for further details.
 To download
 ===========
 
-1. Get and install Git
-   http://git-scm.com/
+1. Get and install Repo
 
-  and then append the following lines to your ~/.gitconfig file:
+    $ curl http://android.git.kernel.org/repo > ~/bin/repo
+    $ chmod a+x ~/bin/repo
 
-    [url "git://github.com/norton/gmt-bom.git"]
-         insteadOf = git://github.com/norton/src/erl-tools/gmt-bom.git
-    [url "git://github.com/norton/ubf.git"]
-         insteadOf = git://github.com/norton/src/erl-tools/ubf.git
+2. Create working directory
 
-  NOTE: UBF requires git version 1.7.x or newer.  UBF has been tested
-  most recently with git version 1.7.1.1.
+    $ mkdir working-directory-name
+    $ cd working-directory-name
+    $ repo init -u git://github.com/norton/manifests.git -m ubf-default.xml
 
-2. Download the 'bom.sh' tool and then download UBF
+3. Download Git repositories
 
-    $ mkdir -p ~/work/ubf
-    $ cd ~/work/ubf
-    $ git clone git://github.com/norton/bom.git .
-    $ env BOM_GIT=git://github.com/norton/ \
-      ./bom.sh co src/erl-tools/ubf
+    $ cd working-directory-name
+    $ repo sync
 
-  NOTE: The Bill of Materials (BOM) system is a way to manage the
-  builds of heterogeneous products with shared components using GIT,
-  GIT-SVN, SVN, or CVS.  BOM maintains hierarchical dependencies
-  between modules stored in a source code repository.  BOM is
-  implemented using bash, make, and other UNIX tools.
+For futher information and help for related tools, please refer to the
+following links:
 
-  NOTE: The bom.sh commands 'diff' and 'status' can be used to check
-  the differences and status of all components, respectively.  Type
-  './bom.sh help' for further information.
-
-  NOTE: The BOM system was originally developed by Gemini Mobile
-  Technologies as an in-house tool to build and to package it's own
-  commercial products.  BOM as been open-sourced as one of the helper
-  tools for UBF.
+- Erlang - http://www.erlang.org/
+  * *R14B01 has been tested most recently*
+  * *R13B01 or newer*
+- Git - http://git-scm.com/
+  * *Git 1.5.4 or newer*
+  * _required for Repo and GitHub_
+- GitHub - https://github.com
+- Python - http://www.python.org
+  * *Python 2.4 or newer (CAUTION: Python 3.x might be too new)*
+  * _required for Repo_
+- Rebar - https://github.com/basho/rebar/wiki
+- Repo - http://source.android.com/source/git-repo.html
 
 
 To build - basic recipe
@@ -72,80 +68,59 @@ To build - basic recipe
 1. Get and install an erlang system
    http://www.erlang.org
 
-   NOTE: UBF requires Erlang/OTP R13B01 or newer.  UBF has been tested
-   most recently with Erlang/OTP R13B04.
+2. Build UBF
+   $ cd working-directory-name/src
+   $ make compile
 
-2. Change to your working directory and create the top-level Makefile
-   $ cd ~/work/ubf
-   $ ./bom.sh make
-
-3. Build UBF
-   $ make ERL=/usr/local/hibari/ert/R13B04/bin/erl
-     OR
-   $ make ERL=/usr/local/hibari/ert/R13B04/bin/erl DEBUG="+debug_info"
-
-   NOTE: Please specify the path to your erlang system's erl
-   executable.
-
-   NOTE: DEBUG="+debug_info" will produce DEBUG enabled beam files.
-
-4. Run the unit tests
-   $ make ERL=/usr/local/hibari/ert/R13B04/bin/erl test
+3. Run the unit tests
+   $ cd working-directory-name/src
+   $ make eunit
 
 
 To build - optional features
 ============================
 
-A. Run unit test for one module.
+A. Dialyzer Testing _basic recipe_
 
-   $ make ERL=/usr/local/hibari/ert/R13B04/bin/erl \
-     DEBUG="+debug_info" \
-     -C src/erl-tools/ubf__HEAD/src check
+   A.1. Build Dialyzer's PLT _(required once)_
 
-B. Clean one module
+   $ cd working-directory-name/src
+   $ make build-plt
 
-   $ make ERL=/usr/local/hibari/ert/R13B04/bin/erl \
-     DEBUG="+debug_info" \
-     -C src/erl-tools/ubf__HEAD/src clean
+   TIP: Check Makefile and dialyzer's documentation for further
+   information.
 
-C. Rebuild one module
+   A.2. Dialyze without specs
 
-   $ make ERL=/usr/local/hibari/ert/R13B04/bin/erl \
-     DEBUG="+debug_info" \
-     -C src/erl-tools/ubf__HEAD/src
+   $ cd working-directory-name/src
+   $ make dialyze
 
-D. Generate EDocs for one module
+   CAUTION: If you manually run dialyzer with the "-r" option, execute
+   "make clean compile" first to avoid finding duplicate beam files
+   underneath rebar's .eunit directory.  Check Makefile for further
+   information.
 
-   $ make ERL=/usr/local/hibari/ert/R13B04/bin/erl \
-     DEBUG="+debug_info" \
-     -C src/erl-tools/ubf__HEAD/src edoc
+   A.3. Dialyze with specs
 
-E. Run dialyzer for one module (and it dependencies)
+   $ cd working-directory-name/src
+   $ make dialyze-spec
 
-   $ make ERL=/usr/local/hibari/ert/R13B04/bin/erl \
-     DEBUG="+debug_info" \
-     -C src/erl-tools/ubf__HEAD/src run-dialyzer
+B. To build the Java client and run its encoding/decoding unit test:
 
-   NOTE: Dialyzer will not work unless all beam files have been
-   compiled with debug information.
+   $ cd working-directory-name/src
+   $ make -C lib/ubf/priv/java
 
-F. To build the Java client and run its encoding/decoding unit test:
-
-  $ make ERL=/usr/local/hibari/ert/R13B04/bin/erl \
-     DEBUG="+debug_info" \
-     -C src/erl-tools/ubf__HEAD/priv/java
-
-G. The Python client depends on the "py-interface" library.  To clone
+C. The Python client depends on the "py-interface" library.  To clone
    and build it, use:
 
-   $ cd /some/place/else
+   $ cd working-directory-name
    $ git clone git://repo.or.cz/py_interface.git
    $ cd py_interface
    $ autoconf
    $ make
 
    Then install as a normal Python package or run using
-   "env PYTHONPATH=/path/to/py_interface python your-script.py"
+   "env PYTHONPATH=working-directory-name/py_interface python your-script.py"
 
 
 Documentation -- Where should I start?
@@ -153,6 +128,10 @@ Documentation -- Where should I start?
 
 This README is a good first step.  Check out and build using the "To
 build" instructions above.
+
+The UBF User's Guide is the best next step.  Check out
+http://norton.github.com/ubf/ubf-user-guide.en.html for further
+detailed information.
 
 The documentation is in a state of slow improvement.  Contributions
 from the wider world are welcome.  :-)
@@ -169,8 +148,6 @@ server and using the client.
 
 The eunit tests in the "test/eunit" directory perform
 several smoke and error handling uses cases.
-
-The original documentation is in the "priv/doc" directory.
 
 The #1 most frequently asked question is: "My term X fails contract
 Y, but I can't figure out why!  This X is perfectly OK.  What is going
@@ -230,86 +207,9 @@ http://github.com/norton/ubf-eep8 for details.  ubf-eep8 is a
 framework for integrating UBF and EEP8.
 
 
-What's New? in tag v1.13 (08 May 2010)
-======================================
-
-The last tag, v1.12, was created on 11 April 2009.  Joe's Github repo
-has had over 130 commits in the 13 months that v1.12 was tagged.  The
-number of differences are ... too large to enumerate, sorry.
-
-Gemini Mobile has a custom Webmail system in production now for a
-production system in Asia that is serving well over 1 million users.
-UBF contracts are heavily used in all major parts of the system.  Most
-heavily used are the EBF and JSON-RPC transports.  See the
-presentation slides by Scott Lystig Fritchie and Joe Norton at the
-Erlang Factory San Francisco 2010 conference at:
-
-http://www.erlang-factory.com/conference/SFBay2010/speakers/ScottLystigFritchie
-http://www.erlang-factory.com/upload/presentations/242/ErlangFactorySFBay2010-ScottLystigFritchieandJosephWayneNorton.pdf
-
-The Java client has been neglected for years.  Recent fixes to the
-encoder/decoder make it possible to handle "modern" UBF contracts
-that.  No work has been done to optimize the Java client for speed,
-but it is now able to handle contracts that use Erlang binary() and
-signed integers that fit into 63 bits.
-
-Experimental support has been added for the Thrift protocol as the
-transport & session layers.
-
-
-To do (in short term)
-=====================
-  - cleanup (or remove) old documentation under priv/doc
-  - document new features
-    + predefined ubf contract (and contract checker) primitives
-      - atom(), binary(), float(), integer(), list(), proplist(),
-        string(), term(), tuple(), void()
-      - atom(ascii), atom(asciiprintable), atom(nonempty), atom(nonundefined),
-        atom(ascii,nonempty), atom(ascii,nonundefined),
-        atom(asciiprintable,nonempty), atom(asciiprintable,nonundefined),
-        atom(ascii,nonempty,nonundefined),
-        atom(asciiprintable,nonempty,nonundefined)
-      - binary(ascii), binary(asciiprintable), binary(nonempty),
-        binary(ascii,nonempty), binary(asciiprintable,nonempty)
-      - list(nonempty)
-      - proplist(nonempty)
-      - string(ascii), string(asciiprintable), string(nonempty),
-        string(ascii,nonempty), string(asciiprintable,nonempty)
-      - term(nonempty), term(nonundefined), term(nonempty,nonundefined)
-      - tuple(nonempty)
-      - ascii: all items in atom name/string/binary are ASCII values
-      - asciiprintable: all items in atom name/string/binary are printable
-        ASCII values
-      - nonempty: not equal to '', [], <<>>, or {}
-      - nonundefined: not equal to 'undefined'
-      - type()? for optional types
-    + user-defined ubf contract (and contract checker) primitives
-      - atom(), binary(), float(), integer(), and string() constants
-      - #record syntax, ##extended_record syntax with automatic erlang record defines
-      - integer ranges (min..max, ..max, min..)
-      - erlang-based syntax for integers
-      - [type()]? for optional lists
-      - [type()]+ for mandatory lists
-      - [type()]{N}, [type()]{N,}, [type()]{M,N} for length-constrained lists
-    + ubf contract type imports
-    + ubf server and ubf client
-    + stateless server w/simplified plugin handler callbacks
-      - For protocols that do not require state transitions: a single
-        state called ANYSTATE is used for the contract, and the
-        implementation callback function API is a bit less complex.
-    + async events from client to server
-      - plus misc. changes for existing async events from server to client
-    + transaction logger
-    + network and rpc formats
-      * ebf - Erlang Binary Format
-      * etf - Erlang Term Format
-      * jsf - Java Script Format
-      * tbf - Thrift Binary Format
-    + ???
-
-
 To do (in medium term)
 ======================
+  - quickcheck tests
   - add more Thrift (http://incubator.apache.org/thrift/) support
     * Compact Format
   - add Avro (http://hadoop.apache.org/avro/) support
@@ -320,7 +220,6 @@ To do (in medium term)
       of the BERT data types.
     * UBF is the text-based wire protocol.  EBF is the binary-based
       wire protocol (based on Erlang's binary serialization format).
-  - ???
 
 
 To do (in long term)
@@ -331,7 +230,6 @@ To do (in long term)
   - replace plugin manager and plugin handler with gen_server-based
     implementation
   - enable/disable contract checker by configuration
-  - quickcheck tests
 
 
 Credits

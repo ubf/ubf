@@ -2,10 +2,10 @@
 // vim: set syntax=asciidoc:
 
 = UBF User's Guide _1st DRAFT_
-:Date: 2010/11/15
-:Revision: 0.1
+:Date: 2011/01/07
+:Revision: 0.2
 :Copyright: 2002 Joe Armstrong
-:Copyright: 2010 Gemini Mobile Technologies, Inc.  All rights reserved.
+:Copyright: 2010-2011 Gemini Mobile Technologies, Inc.  All rights reserved.
 
 
 <<<
@@ -1165,7 +1165,7 @@ handler.  A handler uses the ubf_plugin_handler:ask_manager/2 function
 API to make a synchronous call to the manager.
 
 For an example stateful server plugin, please see the
-"src/Unit-Test-Files/irc_plugin.erl" Erlang module in the <<UBF>>
+"test/unit/irc_plugin.erl" Erlang module in the <<UBF>>
 repository.  This plugin is the actual server-side implementation for
 the IRC protocol application described earlier.
 
@@ -1263,146 +1263,134 @@ _Under Construction - To Be Added_
 [[DOWNLOAD]]
 === Download
 
-==== Download and install Git
-
-Download and install <<GIT>>.
-
-Then append the following lines to your ~/.gitconfig file:
-
+. Get and install Repo
++
 ------
-[url "git://github.com/norton/gmt-bom.git"]
-     insteadOf = git://github.com/norton/src/erl-tools/gmt-bom.git
-[url "git://github.com/norton/ubf.git"]
-     insteadOf = git://github.com/norton/src/erl-tools/ubf.git
+$ curl http://android.git.kernel.org/repo > ~/bin/repo
+$ chmod a+x ~/bin/repo
 ------
-
-NOTE: UBF requires git version 1.7.x or newer.  UBF has been tested
-most recently with git version 1.7.1.1.
-
-==== Download the 'bom.sh' tool and then download UBF
-
-Follow these steps:
-
++
+. Create working directory
++
 ------
-$ mkdir -p ~/work/ubf
-$ cd ~/work/ubf
-$ git clone git://github.com/norton/bom.git .
-$ env BOM_GIT=git://github.com/norton/ ./bom.sh co src/erl-tools/ubf
+$ mkdir working-directory-name
+$ cd working-directory-name
+$ repo init -u git://github.com/norton/manifests.git -m ubf-default.xml
+------
++
+. Download Git repositories
++
+------
+$ cd working-directory-name
+$ repo sync
 ------
 
-TIP: The bom.sh commands 'diff' and 'status' can be used to check the
-differences and status of all components, respectively.  Type
-'./bom.sh help' for further information.
+For futher information and help for related tools, please refer to the
+following links:
 
-NOTE: The Bill of Materials (BOM) system is a way to manage the builds
-of heterogeneous products with shared components using GIT, GIT-SVN,
-SVN, or CVS.  BOM maintains hierarchical dependencies between modules
-stored in a source code repository.  BOM is implemented using bash,
-make, and other UNIX tools.
-
-NOTE: The BOM system was originally developed by Gemini Mobile
-Technologies as an in-house tool to build and to package it's own
-commercial products.  BOM as been open-sourced as one of the helper
-tools for UBF.
+- Erlang - http://www.erlang.org/
+  * *R14B01 has been tested most recently*
+  * *R13B01 or newer*
+- Git - http://git-scm.com/
+  * *Git 1.5.4 or newer*
+  * _required for Repo and GitHub_
+- GitHub - https://github.com
+- Python - http://www.python.org
+  * *Python 2.4 or newer (CAUTION: Python 3.x might be too new)*
+  * _required for Repo_
+- Rebar - https://github.com/basho/rebar/wiki
+- Repo - http://source.android.com/source/git-repo.html
 
 [[BUILD]]
 === Build - Mandatory
 
-1. Get and install an <<ERLANG>> system
-+
-NOTE: UBF requires Erlang/OTP R13B01 or newer.  UBF has been tested
-most recently with Erlang/OTP R13B04.
-+
-2. Change to your working directory and create the top-level Makefile
+. Get and install an erlang system (http://www.erlang.org)
+. Build UBF
 +
 ------
-$ cd ~/work/ubf
-$ ./bom.sh make
+$ cd working-directory-name/src
+$ make compile
 ------
 +
-3. Build UBF
+. Run the unit tests
 +
 ------
-$ make ERL=/usr/local/hibari/ert/R13B04/bin/erl
-  OR
-$ make ERL=/usr/local/hibari/ert/R13B04/bin/erl DEBUG="+debug_info"
-------
-+
-NOTE: Please specify the path to your erlang system's erl executable.
-+
-TIP: Adding DEBUG="+debug_info" will produce DEBUG enabled beam files.
-+
-4. Run the unit tests
-+
-------
-$ make ERL=/usr/local/hibari/ert/R13B04/bin/erl test
+$ cd working-directory-name/src
+$ make eunit
 ------
 
 === Build - Optional
 
-A. Run unit test for one module.
+. Dialyzer Testing _basic recipe_
+  .. Build Dialyzer's PLT _(required once)_
 +
 ------
-$ make ERL=/usr/local/hibari/ert/R13B04/bin/erl \
-  DEBUG="+debug_info" \
-  -C src/erl-tools/ubf__HEAD/src check
+$ cd working-directory-name/src
+$ make build-plt
 ------
 +
-B. Clean one module
+TIP: Check Makefile and dialyzer's documentation for further
+information.
++
+  .. Dialyze without specs
 +
 ------
-$ make ERL=/usr/local/hibari/ert/R13B04/bin/erl \
-  DEBUG="+debug_info" \
-  -C src/erl-tools/ubf__HEAD/src clean
+$ cd working-directory-name/src
+$ make dialyze
 ------
 +
-C. Rebuild one module
+CAUTION: If you manually run dialyzer with the "-r" option, execute
+"make clean compile" first to avoid finding duplicate beam files
+underneath rebar's .eunit directory.  Check Makefile for further
+information.
++
+  .. Dialyze with specs
 +
 ------
-$ make ERL=/usr/local/hibari/ert/R13B04/bin/erl \
-  DEBUG="+debug_info" \
-  -C src/erl-tools/ubf__HEAD/src
+$ cd working-directory-name/src
+$ make dialyze-spec
 ------
 +
-D. Generate EDocs for one module
+. To build the Java client and run its encoding/decoding unit test:
 +
 ------
-$ make ERL=/usr/local/hibari/ert/R13B04/bin/erl \
-  DEBUG="+debug_info" \
-  -C src/erl-tools/ubf__HEAD/src edoc
+$ cd working-directory-name/src
+$ make -C lib/ubf/priv/java
 ------
 +
-E. Run dialyzer for one module (and it dependencies)
+. The Python client depends on the "py-interface" library.  To clone
+  and build it, use:
 +
 ------
-$ make ERL=/usr/local/hibari/ert/R13B04/bin/erl \
-  DEBUG="+debug_info" \
-  -C src/erl-tools/ubf__HEAD/src run-dialyzer
+$ cd working-directory-name
+$ git clone git://repo.or.cz/py_interface.git
+$ cd py_interface
+$ autoconf
+$ make
 ------
 +
-CAUTION: Dialyzer will not work unless all beam files have been
-compiled with debug information.
+TIP: Then install as a normal Python package or run using "env
+PYTHONPATH=working-directory-name/py_interface python your-script.py"
 
 === Testing
 
 ==== Unit Tests
 
-The unit tests in the "src/Unit-Test-Files" directory provide small
-examples of how to use all of the public API.  In particular, the
-\*client*.erl files contain comments at the top with a list of
-prerequisites and small examples, recipe-style, for starting each
-server and using the client.
+The unit tests in the "test/unit" directory provide small examples of
+how to use all of the public API.  In particular, the \*client*.erl
+files contain comments at the top with a list of prerequisites and
+small examples, recipe-style, for starting each server and using the
+client.
 
 ==== EUnit Tests
 
-The eunit tests in the "src/Unit-EUnit-Files" directory perform
-several smoke and error handling uses cases.
+The eunit tests in the "test/eunit" directory perform several smoke
+and error handling uses cases.
 
 ==== QuickCheck Tests
 
-The quickcheck tests and related helper libaries in the
-"src/Unit-Quick-Files" directory have not been open sourced yet.
-Please stay tuned!
+The quickcheck tests and related helper libaries in the "test/eqc"
+directory have not been open sourced yet.  Please stay tuned!
 
 See <<QUVIQ>> for further information about quickcheck.
 
@@ -1427,58 +1415,7 @@ and the like.
    creates a clone of the 'ubf-bertrpc' repository in your own account
    on GitHub.
 
-4. Edit and/or append the following lines to your ~/.gitconfig file:
-+
-------
-[url "git://github.com/norton/gmt-bom.git"]
-     insteadOf = git://github.com/norton/src/erl-tools/gmt-bom.git
-[url "git://github.com/norton/ubf.git"]
-     insteadOf = git://github.com/norton/src/erl-tools/ubf.git
-[url "git@github.com:YOURLOGIN/ubf-bertrpc.git"]
-     insteadOf = git://github.com/norton/src/erl-tools/ubf-bertrpc.git
-------
-+
-CAUTION: Make sure to replace YOURLOGIN with your GitHub account name.
-+
-5. Follow similar steps as described in <<DOWNLOAD>> but use
-   'ubf-bertrpc' as the target instead of 'ubf'.
-+
-------
-$ mkdir -p ~/work/ubf-bertrpc
-$ cd ~/work/ubf-bertrpc
-$ git clone git://github.com/norton/bom.git .
-$ env BOM_GIT=git://github.com/norton/ ./bom.sh co src/erl-tools/ubf-bertrpc
-------
-+
-6. Follow same steps as described in <<BUILD>> to build 'ubf-bertrpc'.
-
-7. Next, change directory into the 'ubf-bertrpc' directory and create
-   a remote pointing to the UBF master repository.
-+
-------
-$ cd src/erl-tools/ubf-bertrpc__HEAD
-$ git remote add upstream git://github.com/norton/ubf-bertrpc.git
-------
-+
-8. Create a new remote branch to hold your changes.
-+
-------
-$ git push origin origin:refs/heads/new_feature_name
-------
-+
-9. Start tracking the new branch.
-+
-------
-$ git checkout --track -b new_feature_name origin/new_feature_name
-------
-
-
-As needed, pull in all changes from the master branch on the UBF
-remote into your new branch.
-
-------
-$ git pull upstream master
-------
+_Under Construction - To Be Updated_
 
 === Utilities
 

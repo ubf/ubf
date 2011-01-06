@@ -1,3 +1,7 @@
+2011-01-07 00:45 JST  norton
+	* Prepare for v1.15 tag: refactor UBF and friends to use repo and
+	rebar tools.
+
 2010-11-13 00:45 JST  norton
         * src/ubf_client.erl, contract_manager_tlog.erl: Add new -type and
         -spec declarations for subset of client functions.  Add
