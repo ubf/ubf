@@ -6,7 +6,7 @@
 :Email: norton@geminimobile.com
 :Date: 2010/11/15
 :Revision: 0.1
-:Copyright: 2010 Gemini Mobile Technologies, Inc.  All rights reserved.
+:Copyright: 2011 Gemini Mobile Technologies, Inc.  All rights reserved.
 
 == UBF Basics
 
