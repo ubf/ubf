@@ -1,0 +1,212 @@
+%%%-------------------------------------------------------------------
+%%% Copyright (c) 2008-2011 Gemini Mobile Technologies, Inc.  All rights reserved.
+%%%
+%%% Licensed under the Apache License, Version 2.0 (the "License");
+%%% you may not use this file except in compliance with the License.
+%%% You may obtain a copy of the License at
+%%%
+%%%     http://www.apache.org/licenses/LICENSE-2.0
+%%%
+%%% Unless required by applicable law or agreed to in writing, software
+%%% distributed under the License is distributed on an "AS IS" BASIS,
+%%% WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+%%% See the License for the specific language governing permissions and
+%%% limitations under the License.
+%%%
+%%% File    : gmt_eqc_ubf_types.erl
+%%% Purpose : QuickCheck type generators for UBF
+%%%-------------------------------------------------------------------
+
+-module(gmt_eqc_ubf_types).
+
+-ifdef(EQC).
+
+-include_lib("eqc/include/eqc.hrl").
+
+-include("ubf.hrl").
+
+%% API
+-export([type/2, type/3]).
+
+%%%----------------------------------------------------------------------
+%%% API
+%%%----------------------------------------------------------------------
+
+%% type/3
+type(Gen, Contract, TypeName) ->
+    case TypeName of
+        {predef,_} ->
+            Type = TypeName;
+        _ ->
+            {Type,_} = Contract:contract_type(TypeName)
+    end,
+    type1(Gen,Type).
+
+type(Gen,Type) ->
+    %%io:format("~p~n", [Type]),
+    ?SIZED(Size,resize(if Size > 0 -> Size-1; true -> 0 end,type1(Gen,Type))).
+
+%% alt
+type1(Gen,{alt,Type,Type2}) ->
+    oneof([type1(Gen,Type), type1(Gen,Type2)]);
+%% concat
+type1(Gen,{concat,Type,Type2}) ->
+    ?LET(L1,type1(Gen,Type),
+         ?LET(L2,type1(Gen,Type2),
+              L1 ++ L2));
+%%% prim - timeout
+type1(_Gen,{prim,1,1,timeout}) ->
+    gmt_eqc_gen:gmt_timeout();
+%%% prim - expires
+type1(_Gen,{prim,1,1,expires}) ->
+    gmt_eqc_gen:gmt_expires();
+%% prim
+type1(Gen,{prim,1,1,TypeName}) ->
+    Gen(TypeName);
+type1(Gen,{prim,0,1,TypeName}) ->
+    eqc_gen:oneof([undefined,Gen(TypeName)]);
+type1(_Gen,{prim,0,0,_Tag}) ->
+    undefined;
+%% tuple
+type1(Gen,{tuple,Elements}) ->
+    list_to_tuple([type1(Gen,E) || E <- Elements]);
+%% record
+type1(Gen,{record,Name,Elements}) when is_atom(Name) ->
+    list_to_tuple([Name|[type1(Gen,E) || E <- tl(tl(Elements))]]);
+type1(Gen,{record_ext,Name,_,Elements}) when is_atom(Name) ->
+    list_to_tuple([Name|[type1(Gen,E) || E <- Elements]]);
+%% list
+type1(Gen,{list,Min,Max,Element}) ->
+    repeat(Gen,Min,Max,infinity,Element);
+%% range
+type1(_Gen,{range,infinity,Hi}) ->
+    ?LET(Infinity,eqc_gen:largeint(),
+         %% @tbd this may not be sufficient
+         eqc_gen:choose(-1 * abs(Infinity),Hi));
+type1(_Gen,{range,Lo,infinity}) ->
+    ?LET(Infinity,eqc_gen:largeint(),
+         %% @tbd this may not be sufficient
+         eqc_gen:choose(Lo,abs(Infinity)));
+type1(_Gen,{range,Lo,Hi}) ->
+    eqc_gen:choose(Lo,Hi);
+%% atom
+type1(_Gen,{atom,Value}) when is_atom(Value) ->
+    Value;
+%% binary
+type1(_Gen,{binary,Value}) when is_binary(Value) ->
+    Value;
+%% float
+type1(_Gen,{float,Value}) when is_float(Value) ->
+    Value;
+%% integer
+type1(_Gen,{integer,Value}) when is_integer(Value) ->
+    Value;
+%% string
+type1(_Gen,{string,Value}) when is_list(Value) ->
+    Value;
+%% predef
+type1(_Gen,{predef,atom}) ->
+    gmt_eqc_gen:gmt_atom();
+type1(_Gen,{predef,integer}) ->
+    eqc_gen:int();
+type1(_Gen,{predef,float}) ->
+    eqc_gen:float();
+type1(_Gen,{predef,binary}) ->
+    gmt_eqc_gen:gmt_binary();
+type1(_Gen,{predef,list}) ->
+    gmt_eqc_gen:gmt_list();
+type1(_Gen,{predef,proplist}) ->
+    ?P(gmt_eqc_gen:gmt_proplist());
+type1(_Gen,{predef,string}) ->
+    ?S(gmt_eqc_gen:gmt_string());
+type1(_Gen,{predef,tuple}) ->
+    gmt_eqc_gen:gmt_tuple();
+type1(_Gen,{predef,term}) ->
+    gmt_eqc_gen:gmt_term();
+type1(_Gen,{predef,void}) ->
+    %% not supported
+    exit(fatal);
+%% predef with attributes
+type1(_Gen,{predef,{atom,Attrs}}) ->
+    gmt_eqc_gen:gmt_atom(Attrs);
+type1(_Gen,{predef,{binary,Attrs}}) ->
+    gmt_eqc_gen:gmt_binary(Attrs);
+type1(_Gen,{predef,{list,Attrs}}) ->
+    gmt_eqc_gen:gmt_list(Attrs);
+type1(_Gen,{predef,{proplist,Attrs}}) ->
+    ?P(gmt_eqc_gen:gmt_proplist(Attrs));
+type1(_Gen,{predef,{string,Attrs}}) ->
+    ?S(gmt_eqc_gen:gmt_string(Attrs));
+type1(_Gen,{predef,{term,Attrs}}) ->
+    gmt_eqc_gen:gmt_term(Attrs);
+type1(_Gen,{predef,{tuple,Attrs}}) ->
+    gmt_eqc_gen:gmt_tuple(Attrs);
+%% abnf
+type1(Gen,{abnf_alt,Types}) ->
+    ?LET(T,eqc_gen:oneof(Types),
+         type1(Gen,T));
+type1(Gen,{abnf_seq,Types}) ->
+    abnf_type_seq(Gen,Types,[]);
+type1(Gen,{abnf_repeat,Min,Max,Element}) ->
+    abnf_repeat(Gen,Min,Max,1,Element);
+type1(_Gen,{abnf_byte_range,Lo,Hi}) ->
+    ?LET(Value,eqc_gen:choose(Lo,Hi),
+         <<Value:8>>);
+type1(Gen,{abnf_byte_alt,Types}) ->
+    ?LET(T,eqc_gen:oneof(Types),
+         type(Gen,T));
+type1(Gen,{abnf_byte_seq,Types}) ->
+    abnf_type_byte_seq(Gen,Types,[]);
+type1(_Gen,{abnf_byte_val,Value}) ->
+    <<Value:8>>;
+%% otherwise
+type1(Gen,TypeName) ->
+    Gen(TypeName).
+
+
+%% repeat
+repeat(Gen,Min,Max,_Weight,Element) ->
+    ?SIZED(Size,
+           begin
+               MAX = if Max =/= infinity -> Max; true -> Size end,
+               ?LET(K, if Min >= MAX -> Min; true -> choose(Min, MAX) end,
+                    if K =:= 0 ->
+                            [];
+                       K =:= 1 ->
+                            [type(Gen,Element)];
+                       true ->
+                            vector(K,type(Gen,Element))
+                    end)
+           end).
+
+
+%% abnf_repeat
+abnf_repeat(Gen,Min,Max,Weight,Element) ->
+    ?LET(L, repeat(Gen,Min,Max,Weight,Element),
+         %% flatten -> append
+         abnf_append_byte_seq(lists:flatten(L),<<>>)).
+
+
+%% abnf_type_byte_seq
+abnf_type_byte_seq(_Gen,[],Acc) ->
+    abnf_append_byte_seq(lists:reverse(Acc),<<>>);
+abnf_type_byte_seq(Gen,[H|T],Acc) ->
+    ?LET(Type,type(Gen,H),
+         abnf_type_byte_seq(Gen,T,[Type|Acc])).
+
+
+%% abnf_append_byte_seq
+abnf_append_byte_seq([],Acc) ->
+    Acc;
+abnf_append_byte_seq([H|T],Acc) ->
+    abnf_append_byte_seq(T,<<Acc/binary,H/binary>>).
+
+%% abnf_type_seq
+abnf_type_seq(_Gen,[],Acc) ->
+    %% reverse -> flatten -> append
+    abnf_append_byte_seq(lists:flatten(lists:reverse(Acc)),<<>>);
+abnf_type_seq(Gen,[H|T],Acc) ->
+    ?LET(Type,type(Gen,H),
+         abnf_type_seq(Gen,T,[Type|Acc])).
+
+-endif. %% -ifdef(EQC).
