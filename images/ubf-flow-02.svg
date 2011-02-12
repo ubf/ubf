@@ -44,8 +44,8 @@
     </text>
   </g>
   <g>
-    <ellipse style="fill: #ffffff" cx="769.838" cy="-71.3067" rx="43.0119" ry="43.0119"/>
-    <ellipse style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #0000ff" cx="769.838" cy="-71.3067" rx="43.0119" ry="43.0119"/>
+    <ellipse style="fill: #ffffff" cx="769.838" cy="-71.3067" rx="43.0426" ry="43.0426"/>
+    <ellipse style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #0000ff" cx="769.838" cy="-71.3067" rx="43.0426" ry="43.0426"/>
     <text style="fill: #0000ff;text-anchor:middle;font-size:12.8;font-family:sanserif;font-style:normal;font-weight:normal" x="769.838" y="-75.4067">
       <tspan x="769.838" y="-75.4067">Contract</tspan>
       <tspan x="769.838" y="-59.4067">Manager</tspan>
@@ -60,16 +60,16 @@
     </text>
   </g>
   <g>
-    <ellipse style="fill: #ffffff" cx="192.75" cy="-72.0217" rx="49.6087" ry="49.6087"/>
-    <ellipse style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" cx="192.75" cy="-72.0217" rx="49.6087" ry="49.6087"/>
+    <ellipse style="fill: #ffffff" cx="192.75" cy="-72.0217" rx="49.6638" ry="49.6638"/>
+    <ellipse style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" cx="192.75" cy="-72.0217" rx="49.6638" ry="49.6638"/>
     <text style="fill: #000000;text-anchor:middle;font-size:12.8;font-family:sanserif;font-style:normal;font-weight:normal" x="192.75" y="-76.1217">
       <tspan x="192.75" y="-76.1217">Client</tspan>
       <tspan x="192.75" y="-60.1217">Application</tspan>
     </text>
   </g>
   <g>
-    <ellipse style="fill: #ffffff" cx="1029.89" cy="63.4179" rx="49.6087" ry="49.6087"/>
-    <ellipse style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" cx="1029.89" cy="63.4179" rx="49.6087" ry="49.6087"/>
+    <ellipse style="fill: #ffffff" cx="1029.89" cy="63.4179" rx="49.6638" ry="49.6638"/>
+    <ellipse style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" cx="1029.89" cy="63.4179" rx="49.6638" ry="49.6638"/>
     <text style="fill: #000000;text-anchor:middle;font-size:12.8;font-family:sanserif;font-style:normal;font-weight:normal" x="1029.89" y="59.3179">
       <tspan x="1029.89" y="59.3179">Server</tspan>
       <tspan x="1029.89" y="75.3179">Application</tspan>
@@ -86,9 +86,9 @@
     <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="594.899,-66.4027 604.938,-71.3241 594.978,-76.4024 "/>
   </g>
   <g>
-    <path style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" d="M 738.186,-113.845 A 67.0166,67.0166 0 0 0 666.646,-111.044"/>
-    <polygon style="fill: #000000" points="744.423,-109.805 733.477,-112.081 738.538,-114.454 739.676,-119.927 "/>
-    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="744.423,-109.805 733.477,-112.081 738.538,-114.454 739.676,-119.927 "/>
+    <path style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" d="M 738.172,-113.853 A 67.0166,67.0166 0 0 0 666.646,-111.044"/>
+    <polygon style="fill: #000000" points="744.41,-109.814 733.463,-112.088 738.524,-114.462 739.661,-119.936 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="744.41,-109.814 733.463,-112.088 738.524,-114.462 739.661,-119.936 "/>
   </g>
   <g>
     <path style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" d="M 854.867,-107.715 A 43.8205,43.8205 0 0 0 800.252,-101.721"/>
@@ -170,8 +170,8 @@
     </text>
   </g>
   <g>
-    <ellipse style="fill: #ffffff" cx="192.77" cy="172.746" rx="49.6087" ry="49.6087"/>
-    <ellipse style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" cx="192.77" cy="172.746" rx="49.6087" ry="49.6087"/>
+    <ellipse style="fill: #ffffff" cx="192.77" cy="172.746" rx="49.6638" ry="49.6638"/>
+    <ellipse style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" cx="192.77" cy="172.746" rx="49.6638" ry="49.6638"/>
     <text style="fill: #000000;text-anchor:middle;font-size:12.8;font-family:sanserif;font-style:normal;font-weight:normal" x="192.77" y="168.646">
       <tspan x="192.77" y="168.646">Client</tspan>
       <tspan x="192.77" y="184.646">Application</tspan>
@@ -223,8 +223,8 @@
     </text>
   </g>
   <g>
-    <ellipse style="fill: #ffffff" cx="650.809" cy="173.461" rx="45.4212" ry="45.4212"/>
-    <ellipse style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #0000ff" cx="650.809" cy="173.461" rx="45.4212" ry="45.4212"/>
+    <ellipse style="fill: #ffffff" cx="650.809" cy="173.461" rx="45.4308" ry="45.4308"/>
+    <ellipse style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #0000ff" cx="650.809" cy="173.461" rx="45.4308" ry="45.4308"/>
     <text style="fill: #0000ff;text-anchor:middle;font-size:12.8;font-family:sanserif;font-style:normal;font-weight:normal" x="650.809" y="169.361">
       <tspan x="650.809" y="169.361">JSON-RPC</tspan>
       <tspan x="650.809" y="185.361">Driver</tspan>
@@ -268,8 +268,8 @@
     <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="846.897,225.859 855.157,218.323 844.173,216.237 "/>
   </g>
   <g>
-    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke-dasharray: 20 4 4 4 4 4; stroke: #000000" x1="771.86" y1="241.914" x2="770.151" y2="-22.8167"/>
-    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="775.201,-15.0852 770.137,-25.0527 765.201,-15.0206 "/>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke-dasharray: 20 4 4 4 4 4; stroke: #000000" x1="771.86" y1="241.914" x2="770.135" y2="-25.235"/>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="775.185,-17.5035 770.121,-27.471 765.186,-17.439 "/>
   </g>
   <g>
     <rect style="fill: #ffffff" x="812.41" y="131.954" width="89.7956" height="85.7599" rx="2.35099e-37" ry="2.35099e-37"/>

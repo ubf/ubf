@@ -44,8 +44,8 @@
     </text>
   </g>
   <g>
-    <ellipse style="fill: #ffffff" cx="769.838" cy="-70.0353" rx="43.0119" ry="43.0119"/>
-    <ellipse style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #0000ff" cx="769.838" cy="-70.0353" rx="43.0119" ry="43.0119"/>
+    <ellipse style="fill: #ffffff" cx="769.838" cy="-70.0353" rx="43.0426" ry="43.0426"/>
+    <ellipse style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #0000ff" cx="769.838" cy="-70.0353" rx="43.0426" ry="43.0426"/>
     <text style="fill: #0000ff;text-anchor:middle;font-size:12.8;font-family:sanserif;font-style:normal;font-weight:normal" x="769.838" y="-74.1353">
       <tspan x="769.838" y="-74.1353">Contract</tspan>
       <tspan x="769.838" y="-58.1353">Manager</tspan>
@@ -60,16 +60,16 @@
     </text>
   </g>
   <g>
-    <ellipse style="fill: #ffffff" cx="192.75" cy="-70.0353" rx="49.6087" ry="49.6087"/>
-    <ellipse style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" cx="192.75" cy="-70.0353" rx="49.6087" ry="49.6087"/>
+    <ellipse style="fill: #ffffff" cx="192.75" cy="-70.0353" rx="49.6638" ry="49.6638"/>
+    <ellipse style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" cx="192.75" cy="-70.0353" rx="49.6638" ry="49.6638"/>
     <text style="fill: #000000;text-anchor:middle;font-size:12.8;font-family:sanserif;font-style:normal;font-weight:normal" x="192.75" y="-74.1353">
       <tspan x="192.75" y="-74.1353">Client</tspan>
       <tspan x="192.75" y="-58.1353">Application</tspan>
     </text>
   </g>
   <g>
-    <ellipse style="fill: #ffffff" cx="1033.89" cy="-70.0353" rx="49.6087" ry="49.6087"/>
-    <ellipse style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" cx="1033.89" cy="-70.0353" rx="49.6087" ry="49.6087"/>
+    <ellipse style="fill: #ffffff" cx="1033.89" cy="-70.0353" rx="49.6638" ry="49.6638"/>
+    <ellipse style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" cx="1033.89" cy="-70.0353" rx="49.6638" ry="49.6638"/>
     <text style="fill: #000000;text-anchor:middle;font-size:12.8;font-family:sanserif;font-style:normal;font-weight:normal" x="1033.89" y="-74.1353">
       <tspan x="1033.89" y="-74.1353">Server</tspan>
       <tspan x="1033.89" y="-58.1353">Application</tspan>
@@ -86,9 +86,9 @@
     <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="594.938,-65.0354 604.938,-70.0354 594.938,-75.0354 "/>
   </g>
   <g>
-    <path style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" d="M 738.186,-112.574 A 67.0166,67.0166 0 0 0 666.646,-109.773"/>
-    <polygon style="fill: #000000" points="744.423,-108.534 733.477,-110.809 738.538,-113.183 739.676,-118.656 "/>
-    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="744.423,-108.534 733.477,-110.809 738.538,-113.183 739.676,-118.656 "/>
+    <path style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" d="M 738.172,-112.582 A 67.0166,67.0166 0 0 0 666.646,-109.773"/>
+    <polygon style="fill: #000000" points="744.41,-108.543 733.463,-110.816 738.524,-113.191 739.661,-118.664 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="744.41,-108.543 733.463,-110.816 738.524,-113.191 739.661,-118.664 "/>
   </g>
   <g>
     <path style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" d="M 854.867,-106.443 A 43.8205,43.8205 0 0 0 800.252,-100.449"/>
@@ -171,7 +171,7 @@
     </text>
   </g>
   <g>
-    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke-linejoin: round; stroke-dasharray: 20 4 4 4 4 4; stroke: #000000" x1="767.86" y1="41.914" x2="768.981" y2="-21.5535"/>
-    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="773.843,-13.7025 769.021,-23.7892 763.845,-13.8791 "/>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke-linejoin: round; stroke-dasharray: 20 4 4 4 4 4; stroke: #000000" x1="767.86" y1="41.914" x2="768.981" y2="-21.5262"/>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="773.843,-13.6751 769.02,-23.7619 763.844,-13.8518 "/>
   </g>
 </svg>
