@@ -29,18 +29,33 @@ See http://norton.github.com/ubf for further details.
 To download
 ===========
 
-1. Get and install Repo
+1. Configure your e-mail and name for Git
 
-    $ curl http://android.git.kernel.org/repo > ~/bin/repo
+    $ git config --global user.email "you@example.com"
+    $ git config --global user.name "Your Name"
+
+2. Install Repo
+
+    $ mkdir -p ~/bin
+    $ wget -O - http://android.git.kernel.org/repo > ~/bin/repo
     $ chmod a+x ~/bin/repo
 
-2. Create working directory
+3. Create working directory
 
     $ mkdir working-directory-name
     $ cd working-directory-name
     $ repo init -u git://github.com/norton/manifests.git -m ubf-default.xml
 
-3. Download Git repositories
+    NOTE: Your "Git" identity is needed during the init step.  Please
+    enter the name and email of your GitHub account if you have one.
+    Team members having read-write access are recommended to use "repo
+    init -u git@github.com:norton/manifests.git -m
+    ubf-default-rw.xml".
+
+    TIP: If you want to checkout the latest development version of
+    UBF, please append " -b dev" to the repo init command.
+
+4. Download Git repositories
 
     $ cd working-directory-name
     $ repo sync

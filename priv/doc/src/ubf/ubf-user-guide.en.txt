@@ -2,8 +2,8 @@
 // vim: set syntax=asciidoc:
 
 = UBF User's Guide _1st DRAFT_
-:Date: 2011/01/07
-:Revision: 0.2
+:Date: 2011/02/12
+:Revision: 0.3
 :Copyright: 2002 Joe Armstrong
 :Copyright: 2010-2011 Gemini Mobile Technologies, Inc.  All rights reserved.
 
@@ -1260,13 +1260,130 @@ _Under Construction - To Be Added_
 <<<
 == Miscellaneous
 
+=== Testing
+
+==== Unit Tests
+
+The unit tests in the "test/unit" directory provide small examples of
+how to use all of the public API.  In particular, the \*client*.erl
+files contain comments at the top with a list of prerequisites and
+small examples, recipe-style, for starting each server and using the
+client.
+
+==== EUnit Tests
+
+The eunit tests in the "test/eunit" directory perform several smoke
+and error handling uses cases.
+
+==== QuickCheck Tests
+
+The quickcheck tests and related helper libaries in the "test/eqc"
+directory have not been open sourced yet.  Please stay tuned!
+
+See <<QUVIQ>> for further information about quickcheck.
+
+=== Utilities
+
+[[TLOG]]
+==== Transaction Logging
+
+For Erlang, the UBF server and the UBF "LPC" client can be configured
+to generate a transaction log.  The transaction log module must
+implement the following tlog/6 callback API.
+
+------
+-type op() :: rpc | lpc | event_in | event_out.
+-type now() :: {pos_integer(), pos_integer(), pos_integer()}.
+-type plugin() :: module().
+
+-spec tlog(op(), Start::now(), plugin(), Q::term(), Reply::term(), Status::term()) -> ok.
+------
+
+==== Canonical Contracts
+
+For documentation purposes, it is helpful to generate a "canonical"
+version of a UBF contract.  This feature is especially helpful when
+importing UBF(b) types from one or more plugins.
+
+For UBF, the ubf_utils:ubf_contract/{1,2} functions are available for
+this purpose.  For JSON-RPC (and JSF indirectly), the
+jsf_utils:ubf_contract/{1,2} functions are available for this purpose.
+
+
+<<<
+== Building UBF from Source
+
+This section describes the basic recipes for the following items:
+
+- UBF Downloading
+- UBF Building, Testing, and Dialyzing
+- UBF Documentation
+- Erlang/OTP System
+- GitHub - Forking Your Own Repositories
+
+Before getting started, review this checklist of tools and software.
+Please install and setup as needed.
+
+Git (Mandatory)::
+- Git - http://git-scm.com/
+  * *Git 1.5.4 or newer, Git 1.7.3.4 has been tested recently*
+  * _required for Repo and GitHub_
+- GitHub - https://github.com
+  * Anonymous read-only access using the GIT protocol is default.
+  * Team members having read-write access should add his/her ssh
+    public key under your GitHub account.
+Erlang/OTP (Mandatory)::
+- Erlang - http://www.erlang.org/
+  * *R13B04 or newer*
+  * *R14B01 has been tested most recently*
+  * If needed, see <<ErlangOTP>> for instructions to build Erlang/OTP
+    from source.
+Python (Mandatory)::
+- Python - http://www.python.org
+  * *Python 2.4 or newer, Python 2.7 has been tested most recently
+     (CAUTION: Python 3.x might be too new)*
+  * _required for Repo and AsciiDoc_
+AsciiDoc (Optional)::
+- AsciiDoc - http://www.methods.co.nz/asciidoc/index.html
+  * *asciidoc 8.6.1 and asciidoc 9.6.3 have been tested most recently*
+  * plus the following tools:
+    ** ImageMagick - http://www.imagemagick.org/
+    ** graphviz - http://www.graphviz.org/
+    ** mscgen - http://www.mcternan.me.uk/mscgen/
+  * Mandatory for building UBF's documentation. See
+    <<UBFAsciiDoc>> for further details.
+- docbook - http://www.docbook.org/
+  * Optional for building _pdf_ version of UBF's documentation
+- xmlto - https://fedorahosted.org/xmlto/
+  * Optional for building _text_ version of UBF's documentation
+
+In addition to the above list, UBF also depends on two tools to
+automate the downloading and the packaging steps.
+
+- Repo - http://source.android.com/source/git-repo.html
+- Rebar - https://github.com/basho/rebar/wiki
+
+Instructions for downloading the Repo tool are described next.  The
+Rebar tool is included in UBF's git repositories so there is no need
+to download it separately.  Please refer to the above sites for
+further information regarding the usage of these tools.
+
 [[DOWNLOAD]]
 === Download
 
-. Get and install Repo
+The first step is to download the Git repositories from GitHub.
+
+. Configure your e-mail and name for Git
 +
 ------
-$ curl http://android.git.kernel.org/repo > ~/bin/repo
+$ git config --global user.email "you@example.com"
+$ git config --global user.name "Your Name"
+------
+. Install Repo
++
+------
+$ mkdir -p ~/bin
+$ wget -O - http://android.git.kernel.org/repo > ~/bin/repo
 $ chmod a+x ~/bin/repo
 ------
 +
@@ -1278,6 +1395,14 @@ $ cd working-directory-name
 $ repo init -u git://github.com/norton/manifests.git -m ubf-default.xml
 ------
 +
+NOTE: Your "Git" identity is needed during the init step.  Please
+enter the name and email of your GitHub account if you have one.  Team
+members having read-write access are recommended to use "repo init -u
+git@github.com:norton/manifests.git -m ubf-default-rw.xml".
++
+TIP: If you want to checkout the latest development version of UBF,
+please append " -b dev" to the repo init command.
++
 . Download Git repositories
 +
 ------
@@ -1285,32 +1410,19 @@ $ cd working-directory-name
 $ repo sync
 ------
 
-For futher information and help for related tools, please refer to the
-following links:
-
-- Erlang - http://www.erlang.org/
-  * *R14B01 has been tested most recently*
-  * *R13B01 or newer*
-- Git - http://git-scm.com/
-  * *Git 1.5.4 or newer*
-  * _required for Repo and GitHub_
-- GitHub - https://github.com
-- Python - http://www.python.org
-  * *Python 2.4 or newer (CAUTION: Python 3.x might be too new)*
-  * _required for Repo_
-- Rebar - https://github.com/basho/rebar/wiki
-- Repo - http://source.android.com/source/git-repo.html
-
 [[BUILD]]
 === Build - Mandatory
 
-. Get and install an erlang system (http://www.erlang.org)
 . Build UBF
 +
 ------
 $ cd working-directory-name/src
 $ make compile
 ------
++
+TIP: If the response is "make: erl: Command not found", please make
+sure Erlang/OTP is installed and "otp-installing-directory-name/bin"
+is added to your $PATH environment.
 +
 . Run the unit tests
 +
@@ -1358,7 +1470,7 @@ $ cd working-directory-name/src
 $ make -C lib/ubf/priv/java
 ------
 +
-. The Python client depends on the "py-interface" library.  To clone
+. The Python client depends on the "Py-Interface" library.  To clone
   and build it, use:
 +
 ------
@@ -1372,27 +1484,107 @@ $ make
 TIP: Then install as a normal Python package or run using "env
 PYTHONPATH=working-directory-name/py_interface python your-script.py"
 
-=== Testing
+[[UBFAsciiDoc]]
+=== UBF Documentation
 
-==== Unit Tests
+This section is the first step to download and to build your own
+UBF documentation.
 
-The unit tests in the "test/unit" directory provide small examples of
-how to use all of the public API.  In particular, the \*client*.erl
-files contain comments at the top with a list of prerequisites and
-small examples, recipe-style, for starting each server and using the
-client.
+. Building UBF's "Guides" _basic recipe_
++
+------
+$ cd working-directory-name/src/lib/ubf/priv/doc/src/ubf
+$ make clean -OR- make realclean
+$ make
+------
++
+. Building Hibari's "Website" _basic recipe_
++
+------
+$ cd working-directory-name/src/lib/ubf/priv/doc/src/ubf/website
+$ make clean -OR- make realclean
+$ make
+------
++
+NOTE: HTML documentation is written in the "./public_html" directory.
 
-==== EUnit Tests
+UBF's documentation is authored using AsciiDoc and a few auxillary
+tools:
 
-The eunit tests in the "test/eunit" directory perform several smoke
-and error handling uses cases.
+- ImageMagick
+- docbook
+- graphviz
+- mscgen
+- xmlto
 
-==== QuickCheck Tests
+UBF's documentation is generated with asciidoc 8.6.3 and a manually
+modified version of the a2x tool.
 
-The quickcheck tests and related helper libaries in the "test/eqc"
-directory have not been open sourced yet.  Please stay tuned!
+------
+$ diff -u /usr/local/Cellar/asciidoc/8.6.3/bin/a2x{.orig,}
+--- /usr/local/Cellar/asciidoc/8.6.3/bin/a2x.orig	2011-01-02 18:09:35.000000000 +0900
++++ /usr/local/Cellar/asciidoc/8.6.3/bin/a2x	2011-01-02 18:11:19.000000000 +0900
+@@ -156,7 +156,10 @@
+ def shell_copy(src, dst):
+     verbose('copying "%s" to "%s"' % (src,dst))
+     if not OPTIONS.dry_run:
+-        shutil.copy(src, dst)
++        try:
++            shutil.copy(src, dst)
++        except shutil.Error:
++            return
 
-See <<QUVIQ>> for further information about quickcheck.
+ def shell_rm(path):
+     if not os.path.exists(path):
+------
+
+[[ErlangOTP]]
+=== Erlang/OTP System
+
+This section is the first step to download, to build, and to install
+your own Erlang/OTP system.
+
+. Downloading _basic recipe_
+  .. Get and install Git
++
+  .. Download the source code for your Erlang/OTP system
++
+------
+$ cd working-directory-name
+$ wget http://www.erlang.org/download/otp_src_R14B01.tar.gz
+------
++
+  .. Untar the source code for your Erlang/OTP system.
++
+------
+$ cd working-directory-name
+$ tar -xzf otp_src_R14B01.tar.gz
+------
++
+. Building _basic recipe_
+  .. Change to your working directory and configure Erlang/OTP
++
+------
+$ cd working-directory-name/otp_src_R14B01
+$ ./configure --prefix=otp-installing-directory-name
+------
++
+  .. Build Erlang/OTP
++
+------
+$ cd working-directory-name/otp_src_R14B01
+$ make
+------
++
+. Installing _basic recipe_
++
+------
+$ cd working-directory-name/otp_src_R14B01
+$ sudo make install
+------
+
+CAUTION: Please make sure "otp-installing-directory-name/bin" is added
+to your $PATH environment.
 
 === GitHub - Forking Your Own Repositories
 
@@ -1416,33 +1608,6 @@ and the like.
    on GitHub.
 
 _Under Construction - To Be Updated_
-
-=== Utilities
-
-[[TLOG]]
-==== Transaction Logging
-
-For Erlang, the UBF server and the UBF "LPC" client can be configured
-to generate a transaction log.  The transaction log module must
-implement the following tlog/6 callback API.
-
-------
--type op() :: rpc | lpc | event_in | event_out.
--type now() :: {pos_integer(), pos_integer(), pos_integer()}.
--type plugin() :: module().
-
--spec tlog(op(), Start::now(), plugin(), Q::term(), Reply::term(), Status::term()) -> ok.
-------
-
-==== Canonical Contracts
-
-For documentation purposes, it is helpful to generate a "canonical"
-version of a UBF contract.  This feature is especially helpful when
-importing UBF(b) types from one or more plugins.
-
-For UBF, the ubf_utils:ubf_contract/{1,2} functions are available for
-this purpose.  For JSON-RPC (and JSF indirectly), the
-jsf_utils:ubf_contract/{1,2} functions are available for this purpose.
 
 
 <<<
