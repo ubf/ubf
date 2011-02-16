@@ -4,12 +4,6 @@
 -include_lib("eunit/include/eunit.hrl").
 -include("ubf.hrl").
 
-do_eunit() ->
-    case eunit:test({timeout,120,?MODULE}) of
-        ok -> ok;
-        _ -> erlang:halt(1)
-    end.
-
 -define(APPLICATION, stateless_plugin).
 -define(UBF_PORT, server_port(test_ubf_tcp_port)).
 -define(EBF_PORT, server_port(test_ebf_tcp_port)).

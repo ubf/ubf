@@ -4,12 +4,6 @@
 -include_lib("eunit/include/eunit.hrl").
 -include("ubf.hrl").
 
-do_eunit() ->
-    case eunit:test({timeout,120,?MODULE}) of
-        ok -> ok;
-        _ -> erlang:halt(1)
-    end.
-
 
 -define(APPLICATION, stateful_plugin).
 
