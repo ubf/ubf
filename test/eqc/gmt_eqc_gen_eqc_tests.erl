@@ -28,14 +28,13 @@
 
 %% run from eunit
 eunit_test_() ->
-    erlang:group_leader(whereis(user), self()),
-    {timeout, 60, [fun() -> [] = run() end]}.
+    gmt_eqc:eunit_module(?MODULE, 3000).
 
 run() ->
     run(3000).
 
-run(Num) ->
-    eqc:module({numtests,Num}, ?MODULE).
+run(NumTests) ->
+    eqc:module({numtests,NumTests}, ?MODULE).
 
 %% @desc test the any generator against the ubf encoder/decoder
 prop_ubf_gen_any() ->
