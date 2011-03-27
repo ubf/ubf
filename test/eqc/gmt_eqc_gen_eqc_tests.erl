@@ -19,9 +19,19 @@
 
 -module(gmt_eqc_gen_eqc_tests).
 
--ifdef(EQC).
+-ifdef(PROPER).
+-include_lib("proper/include/proper.hrl").
+-define(GMTQC, proper).
+-undef(EQC).
+-endif. %% -ifdef(PROPER).
 
+-ifdef(EQC).
 -include_lib("eqc/include/eqc.hrl").
+-define(GMTQC, eqc).
+-undef(PROPER).
+-endif. %% -ifdef(EQC).
+
+-ifdef(GMTQC).
 
 -export([run/0]).
 -compile(export_all).
@@ -34,7 +44,7 @@ run() ->
     run(3000).
 
 run(NumTests) ->
-    eqc:module({numtests,NumTests}, ?MODULE).
+    ?GMTQC:module({numtests,NumTests}, ?MODULE).
 
 %% @desc test the any generator against the ubf encoder/decoder
 prop_ubf_gen_any() ->
@@ -46,4 +56,4 @@ prop_ubf_gen_any() ->
                 ?WHENFAIL(io:format("~n~p:~p ~p -> ~p -> ~p~n",[?FILE, ?LINE, X, UBF, Y]), Res)
             end).
 
--endif. %% -ifdef(EQC).
+-endif. %% -ifdef(GMTQC).

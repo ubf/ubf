@@ -19,10 +19,23 @@
 
 -module(gmt_eqc_ubf).
 
--ifdef(EQC).
+-ifdef(PROPER).
+-include_lib("proper/include/proper.hrl").
+-define(GMTQC, proper).
+-define(GMTQC_GEN, proper_gen).
+-undef(EQC).
+-define(ALWAYS(_N,PROP), PROP).
+-endif. %% -ifdef(PROPER).
 
+-ifdef(EQC).
 -include_lib("eqc/include/eqc.hrl").
 -include_lib("eqc/include/eqc_statem.hrl").
+-define(GMTQC, eqc).
+-define(GMTQC_GEN, eqc_gen).
+-undef(PROPER).
+-endif. %% -ifdef(EQC).
+
+-ifdef(GMTQC).
 
 -include("ubf.hrl").
 
@@ -67,9 +80,9 @@ behaviour_info(callbacks) ->
 -record(state,
         {
           %% mod
-              mod
-              %% mod state
-              , mod_state
+          mod
+          %% mod state
+          , mod_state
         }).
 
 %%%----------------------------------------------------------------------
@@ -83,9 +96,9 @@ ubf_sample_commands(Mod, Contracts, Options)
   when is_atom(Mod), is_list(Contracts), is_list(Options) ->
     %% commands - sample
     Params = [{ubfmod,Mod},{ubfcontracts,Contracts},{ubfoptions,Options}],
-    eqc_gen:sample(eqc_gen:with_parameters(Params,
-                                           ?LET(InitialState,initial_state(Mod),
-                                                command(InitialState)))).
+    ?GMTQC_GEN:sample(with_parameters(Params,
+                                      ?LET(InitialState,initial_state(Mod),
+                                           command(InitialState)))).
 
 ubf_run_commands(Mod, Contracts) ->
     ubf_run_commands(Mod, Contracts, []).
@@ -101,15 +114,15 @@ ubf_run_commands(Mod, Contracts, Options)
     Params = [{parallel,Parallel},{ubfmod,Mod},{ubfcontracts,Contracts},{ubfoptions,Options}],
     case Parallel of
         false ->
-            ?FORALL(Cmds,eqc_gen:with_parameters(Params,
-                                                 ?LET(InitialState,initial_state(Mod),
-                                                      eqc_statem:commands(?MODULE,InitialState))),
+            ?FORALL(Cmds,with_parameters(Params,
+                                         ?LET(InitialState,initial_state(Mod),
+                                              commands(?MODULE,InitialState))),
                     begin
                         %% commands - setup
                         {ok,TestRef} = Mod:ubf_commands_setup(false),
 
                         %% commands - run
-                        {H,S,Res} = eqc_statem:run_commands(?MODULE,Cmds,Params),
+                        {H,S,Res} = run_commands(?MODULE,Cmds,Params),
 
                         %% whenfail
                         ?WHENFAIL(
@@ -123,7 +136,7 @@ ubf_run_commands(Mod, Contracts, Options)
                                    length(H) < 1 ->
                                        io:format(" none~n");
                                    true ->
-                                       CmdsH = eqc_statem:zip(tl(Cmds),H),
+                                       CmdsH = zip(tl(Cmds),H),
                                        [ begin
                                              {Cmd,{State,Reply}} = lists:nth(N,CmdsH),
                                              io:format("~n #~p:~n\tCmd: ~p~n\tReply: ~p~n\tState: ~p~n",
@@ -144,17 +157,17 @@ ubf_run_commands(Mod, Contracts, Options)
                             andalso ok =:= Mod:ubf_commands_teardown(TestRef,S#state.mod_state)))
                     end);
         true ->
-            ?FORALL(Repetitions,?SHRINK(1,[10]),
-                    ?FORALL(Cmds,eqc_gen:with_parameters(Params,
-                                                         ?LET(InitialState,initial_state(Mod),
-                                                              eqc_statem:parallel_commands(?MODULE,InitialState))),
-                            ?ALWAYS(Repetitions,
+            ?FORALL(_Repetitions,?SHRINK(1,[10]),
+                    ?FORALL(Cmds,with_parameters(Params,
+                                                 ?LET(InitialState,initial_state(Mod),
+                                                      parallel_commands(?MODULE,InitialState))),
+                            ?ALWAYS(_Repetitions,
                                     begin
                                         %% commands - setup
                                         {ok,TestRef} = Mod:ubf_commands_setup(false),
 
                                         %% commands - run
-                                        {H,HL,Res} = eqc_statem:run_parallel_commands(?MODULE,Cmds,Params),
+                                        {H,HL,Res} = run_parallel_commands(?MODULE,Cmds,Params),
 
                                         %% whenfail
                                         ?WHENFAIL(
@@ -211,7 +224,7 @@ state_is_sane(Mod, S) ->
 %% command generator
 command(S)
   when is_record(S,state) ->
-    ?LET(Contracts,eqc_gen:parameter(ubfcontracts),
+    ?LET(Contracts,parameter(ubfcontracts),
          %% (S::symbolic_state(),Contracts::list(atom())) -> atom()
          ?LET(Contract,(S#state.mod):ubf_command_contract(S#state.mod_state, Contracts),
               begin
@@ -263,4 +276,4 @@ write_commands(Cmds,FileName) ->
     ok = file:write_file(FileName, io_lib:format("~p.", [Cmds])),
     FileName.
 
--endif. %% -ifdef(EQC).
+-endif. %% -ifdef(GMTQC).

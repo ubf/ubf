@@ -19,9 +19,19 @@
 
 -module(gmt_eqc_ubf_types).
 
--ifdef(EQC).
+-ifdef(PROPER).
+-include_lib("proper/include/proper.hrl").
+-define(GMTQC, proper).
+-undef(EQC).
+-endif. %% -ifdef(PROPER).
 
+-ifdef(EQC).
 -include_lib("eqc/include/eqc.hrl").
+-define(GMTQC, eqc).
+-undef(PROPER).
+-endif. %% -ifdef(EQC).
+
+-ifdef(GMTQC).
 
 -include("ubf.hrl").
 
@@ -64,7 +74,7 @@ type1(_Gen,{prim,1,1,expires}) ->
 type1(Gen,{prim,1,1,TypeName}) ->
     Gen(TypeName);
 type1(Gen,{prim,0,1,TypeName}) ->
-    eqc_gen:oneof([undefined,Gen(TypeName)]);
+    oneof([undefined,Gen(TypeName)]);
 type1(_Gen,{prim,0,0,_Tag}) ->
     undefined;
 %% tuple
@@ -80,15 +90,15 @@ type1(Gen,{list,Min,Max,Element}) ->
     repeat(Gen,Min,Max,infinity,Element);
 %% range
 type1(_Gen,{range,infinity,Hi}) ->
-    ?LET(Infinity,eqc_gen:largeint(),
+    ?LET(Infinity,largeint(),
          %% @tbd this may not be sufficient
-         eqc_gen:choose(-1 * abs(Infinity),Hi));
+         choose(-1 * abs(Infinity),Hi));
 type1(_Gen,{range,Lo,infinity}) ->
-    ?LET(Infinity,eqc_gen:largeint(),
+    ?LET(Infinity,largeint(),
          %% @tbd this may not be sufficient
-         eqc_gen:choose(Lo,abs(Infinity)));
+         choose(Lo,abs(Infinity)));
 type1(_Gen,{range,Lo,Hi}) ->
-    eqc_gen:choose(Lo,Hi);
+    choose(Lo,Hi);
 %% atom
 type1(_Gen,{atom,Value}) when is_atom(Value) ->
     Value;
@@ -108,9 +118,9 @@ type1(_Gen,{string,Value}) when is_list(Value) ->
 type1(_Gen,{predef,atom}) ->
     gmt_eqc_gen:gmt_atom();
 type1(_Gen,{predef,integer}) ->
-    eqc_gen:int();
+    int();
 type1(_Gen,{predef,float}) ->
-    eqc_gen:float();
+    real();
 type1(_Gen,{predef,binary}) ->
     gmt_eqc_gen:gmt_binary();
 type1(_Gen,{predef,list}) ->
@@ -143,17 +153,17 @@ type1(_Gen,{predef,{tuple,Attrs}}) ->
     gmt_eqc_gen:gmt_tuple(Attrs);
 %% abnf
 type1(Gen,{abnf_alt,Types}) ->
-    ?LET(T,eqc_gen:oneof(Types),
+    ?LET(T,oneof(Types),
          type1(Gen,T));
 type1(Gen,{abnf_seq,Types}) ->
     abnf_type_seq(Gen,Types,[]);
 type1(Gen,{abnf_repeat,Min,Max,Element}) ->
     abnf_repeat(Gen,Min,Max,1,Element);
 type1(_Gen,{abnf_byte_range,Lo,Hi}) ->
-    ?LET(Value,eqc_gen:choose(Lo,Hi),
+    ?LET(Value,choose(Lo,Hi),
          <<Value:8>>);
 type1(Gen,{abnf_byte_alt,Types}) ->
-    ?LET(T,eqc_gen:oneof(Types),
+    ?LET(T,oneof(Types),
          type(Gen,T));
 type1(Gen,{abnf_byte_seq,Types}) ->
     abnf_type_byte_seq(Gen,Types,[]);
@@ -170,13 +180,7 @@ repeat(Gen,Min,Max,_Weight,Element) ->
            begin
                MAX = if Max =/= infinity -> Max; true -> Size end,
                ?LET(K, if Min >= MAX -> Min; true -> choose(Min, MAX) end,
-                    if K =:= 0 ->
-                            [];
-                       K =:= 1 ->
-                            [type(Gen,Element)];
-                       true ->
-                            vector(K,type(Gen,Element))
-                    end)
+                    vector(K,type(Gen,Element)))
            end).
 
 
@@ -209,4 +213,4 @@ abnf_type_seq(Gen,[H|T],Acc) ->
     ?LET(Type,type(Gen,H),
          abnf_type_seq(Gen,T,[Type|Acc])).
 
--endif. %% -ifdef(EQC).
+-endif. %% -ifdef(GMTQC).
