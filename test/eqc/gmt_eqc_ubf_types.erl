@@ -64,12 +64,6 @@ type1(Gen,{concat,Type,Type2}) ->
     ?LET(L1,type1(Gen,Type),
          ?LET(L2,type1(Gen,Type2),
               L1 ++ L2));
-%%% prim - timeout
-type1(_Gen,{prim,1,1,timeout}) ->
-    gmt_eqc_gen:gmt_timeout();
-%%% prim - expires
-type1(_Gen,{prim,1,1,expires}) ->
-    gmt_eqc_gen:gmt_expires();
 %% prim
 type1(Gen,{prim,1,1,TypeName}) ->
     Gen(TypeName);
