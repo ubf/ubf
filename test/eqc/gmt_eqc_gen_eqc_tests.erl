@@ -44,7 +44,7 @@ run() ->
     run(3000).
 
 run(NumTests) ->
-    ?GMTQC:module({numtests,NumTests}, ?MODULE).
+    gmt_eqc:module({numtests,NumTests}, ?MODULE).
 
 %% @desc test the any generator against the ubf encoder/decoder
 prop_ubf_gen_any() ->
