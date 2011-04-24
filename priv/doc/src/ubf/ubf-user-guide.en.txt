@@ -2,8 +2,8 @@
 // vim: set syntax=asciidoc:
 
 = UBF User's Guide _1st DRAFT_
-:Date: 2011/02/12
-:Revision: 0.3
+:Date: 2011/04/24
+:Revision: 0.3.1
 :Copyright: 2002 Joe Armstrong
 :Copyright: 2010-2011 Gemini Mobile Technologies, Inc.  All rights reserved.
 
@@ -1345,17 +1345,17 @@ Python (Mandatory)::
   * _required for Repo and AsciiDoc_
 AsciiDoc (Optional)::
 - AsciiDoc - http://www.methods.co.nz/asciidoc/index.html
-  * *asciidoc 8.6.1 and asciidoc 9.6.3 have been tested most recently*
-  * plus the following tools:
+  * Must be version 8.6.1 or newer
+    ** 8.6.4 is the version most recently tested for UBF
+  * Plus the following support tools:
     ** ImageMagick - http://www.imagemagick.org/
-    ** graphviz - http://www.graphviz.org/
-    ** mscgen - http://www.mcternan.me.uk/mscgen/
-  * Mandatory for building UBF's documentation. See
-    <<UBFAsciiDoc>> for further details.
-- docbook - http://www.docbook.org/
-  * Optional for building _pdf_ version of UBF's documentation
-- xmlto - https://fedorahosted.org/xmlto/
-  * Optional for building _text_ version of UBF's documentation
+    ** Graphviz - http://www.graphviz.org/
+    ** Mscgen - http://www.mcternan.me.uk/mscgen/
+    ** Dia - http://projects.gnome.org/dia/
+- dblatex - http://dblatex.sourceforge.net/
+  * Optional for building a PDF version of UBF's documentation.
+- w3m - http://w3m.sourceforge.net/
+  * Optional for building a text version of UBF's documentation.
 
 In addition to the above list, UBF also depends on two tools to
 automate the downloading and the packaging steps.
@@ -1498,7 +1498,7 @@ $ make clean -OR- make realclean
 $ make
 ------
 +
-. Building Hibari's "Website" _basic recipe_
+. Building UBF's "Website" _basic recipe_
 +
 ------
 $ cd working-directory-name/src/lib/ubf/priv/doc/src/ubf/website
@@ -1512,18 +1512,20 @@ UBF's documentation is authored using AsciiDoc and a few auxillary
 tools:
 
 - ImageMagick
-- docbook
-- graphviz
-- mscgen
-- xmlto
+- dblatex
+- Dia
+- Graphviz
+- Mscgen
+- w3m
 
-UBF's documentation is generated with asciidoc 8.6.3 and a manually
-modified version of the a2x tool.
+UBF's documentation is generated with AsciiDoc and a manually modified
+version of the a2x tool.  A fake lang-ja.conf file can be easily
+created by making a symlink to the lang-en.conf file.
 
 ------
-$ diff -u /usr/local/Cellar/asciidoc/8.6.3/bin/a2x{.orig,}
---- /usr/local/Cellar/asciidoc/8.6.3/bin/a2x.orig	2011-01-02 18:09:35.000000000 +0900
-+++ /usr/local/Cellar/asciidoc/8.6.3/bin/a2x	2011-01-02 18:11:19.000000000 +0900
+diff -r -u 8.6.4-orig/bin/a2x.py 8.6.4/bin/a2x.py
+--- 8.6.4-orig/bin/a2x.py	2011-04-24 00:50:26.000000000 +0900
++++ 8.6.4/bin/a2x.py	2011-04-24 00:35:55.000000000 +0900
 @@ -156,7 +156,10 @@
  def shell_copy(src, dst):
      verbose('copying "%s" to "%s"' % (src,dst))
@@ -1536,6 +1538,7 @@ $ diff -u /usr/local/Cellar/asciidoc/8.6.3/bin/a2x{.orig,}
 
  def shell_rm(path):
      if not os.path.exists(path):
+Only in 8.6.4/etc/asciidoc: lang-ja.conf
 ------
 
 [[ErlangOTP]]
