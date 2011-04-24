@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>UBF User’s Guide 1st DRAFT</title><link rel="stylesheet" href="docbook-xsl.css" type="text/css" /><meta name="generator" content="DocBook XSL Stylesheets V1.75.2" /></head><body><div xml:lang="en" class="article" title="UBF User&#x2019;s Guide 1st DRAFT" lang="en"><div class="titlepage"><div><div><h2 class="title"><a id="id36104938"></a>UBF User’s Guide <span class="emphasis"><em>1st DRAFT</em></span></h2></div><div><div class="revhistory"><table border="1" width="100%" summary="Revision history"><tr><th align="left" valign="top" colspan="2"><b>Revision History</b></th></tr><tr><td align="left">Revision 0.3</td><td align="left">2011/02/12</td></tr></table></div></div></div><hr /></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="section"><a href="#_preface">1. Preface</a></span></dt><dt><span class="section"><a href="#_introduction">2. Introduction</a></span></dt><dt><span class="section"><a href="#_specifications">3. Specifications</a></span></dt><dd><dl><dt><span class="section"><a href="#UBFa">3.1. UBF(a)</a></span></dt><dt><span class="section"><a href="#_ubf_b">3.2. UBF(b)</a></span></dt><dt><span class="section"><a href="#_ubf_c">3.3. UBF(c)</a></span></dt></dl></dd><dt><span class="section"><a href="#_contracts_amp_plugins">4. Contracts &amp; Plugins</a></span></dt><dd><dl><dt><span class="section"><a href="#_contract">4.1. Contract</a></span></dt><dt><span class="section"><a href="#_plugin">4.2. Plugin</a></span></dt><dt><span class="section"><a href="#_importing_types">4.3. Importing Types</a></span></dt><dt><span class="section"><a href="#_compilation_errors">4.4. Compilation Errors</a></span></dt><dt><span class="section"><a href="#_miscellaneous">4.5. Miscellaneous</a></span></dt></dl></dd><dt><span class="section"><a href="#_transports">5. Transports</a></span></dt><dd><dl><dt><span class="section"><a href="#_tcp_ip">5.1. TCP/IP</a></span></dt><dt><span class="section"><a href="#_http">5.2. HTTP</a></span></dt><dt><span class="section"><a href="#_miscellaneous_3">5.3. Miscellaneous</a></span></dt></dl></dd><dt><span class="section"><a href="#Servers">6. Servers</a></span></dt><dd><dl><dt><span class="section"><a href="#_stateless">6.1. Stateless</a></span></dt><dt><span class="section"><a href="#_stateful">6.2. Stateful</a></span></dt></dl></dd><dt><span class="section"><a href="#_clients">7. Clients</a></span></dt><dd><dl><dt><span class="section"><a href="#_erlang">7.1. Erlang</a></span></dt><dt><span class="section"><a href="#_python">7.2. Python</a></span></dt><dt><span class="section"><a href="#_java">7.3. Java</a></span></dt></dl></dd><dt><span class="section"><a href="#_miscellaneous_4">8. Miscellaneous</a></span></dt><dd><dl><dt><span class="section"><a href="#_testing">8.1. Testing</a></span></dt><dt><span class="section"><a href="#_utilities">8.2. Utilities</a></span></dt></dl></dd><dt><span class="section"><a href="#_building_ubf_from_source">9. Building UBF from Source</a></span></dt><dd><dl><dt><span class="section"><a href="#DOWNLOAD">9.1. Download</a></span></dt><dt><span class="section"><a href="#BUILD">9.2. Build - Mandatory</a></span></dt><dt><span class="section"><a href="#_build_optional">9.3. Build - Optional</a></span></dt><dt><span class="section"><a href="#UBFAsciiDoc">9.4. UBF Documentation</a></span></dt><dt><span class="section"><a href="#ErlangOTP">9.5. Erlang/OTP System</a></span></dt><dt><span class="section"><a href="#_github_forking_your_own_repositories">9.6. GitHub - Forking Your Own Repositories</a></span></dt></dl></dd><dt><span class="section"><a href="#_reference">10. Reference</a></span></dt><dt><span class="section"><a href="#_appendix">11. Appendix</a></span></dt><dd><dl><dt><span class="section"><a href="#_acknowledgments">11.1. Acknowledgments</a></span></dt><dt><span class="section"><a href="#_abnf_definition">11.2. ABNF Definition</a></span></dt></dl></dd></dl></div><p></p><div class="section" title="1.&#xA0;Preface"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_preface"></a>1. Preface</h2></div></div></div><p>UBF is a framework that permits the Erlang to talk to the outside
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>UBF User’s Guide 1st DRAFT</title><link rel="stylesheet" type="text/css" href="docbook-xsl.css" /><meta name="generator" content="DocBook XSL Stylesheets V1.76.1" /></head><body><div xml:lang="en" class="article" title="UBF User&#x2019;s Guide 1st DRAFT" lang="en"><div class="titlepage"><div><div><h2 class="title"><a id="id36108557"></a>UBF User’s Guide <span class="emphasis"><em>1st DRAFT</em></span></h2></div><div><div class="revhistory"><table border="1" width="100%" summary="Revision history"><tr><th align="left" valign="top" colspan="2"><strong>Revision History</strong></th></tr><tr><td align="left">Revision 0.3.1</td><td align="left">2011/04/24</td></tr></table></div></div></div><hr /></div><div class="toc"><p><strong>Table of Contents</strong></p><dl><dt><span class="section"><a href="#_preface">1. Preface</a></span></dt><dt><span class="section"><a href="#_introduction">2. Introduction</a></span></dt><dt><span class="section"><a href="#_specifications">3. Specifications</a></span></dt><dd><dl><dt><span class="section"><a href="#UBFa">3.1. UBF(a)</a></span></dt><dt><span class="section"><a href="#_ubf_b">3.2. UBF(b)</a></span></dt><dt><span class="section"><a href="#_ubf_c">3.3. UBF(c)</a></span></dt></dl></dd><dt><span class="section"><a href="#_contracts_amp_plugins">4. Contracts &amp; Plugins</a></span></dt><dd><dl><dt><span class="section"><a href="#_contract">4.1. Contract</a></span></dt><dt><span class="section"><a href="#_plugin">4.2. Plugin</a></span></dt><dt><span class="section"><a href="#_importing_types">4.3. Importing Types</a></span></dt><dt><span class="section"><a href="#_compilation_errors">4.4. Compilation Errors</a></span></dt><dt><span class="section"><a href="#_miscellaneous">4.5. Miscellaneous</a></span></dt></dl></dd><dt><span class="section"><a href="#_transports">5. Transports</a></span></dt><dd><dl><dt><span class="section"><a href="#_tcp_ip">5.1. TCP/IP</a></span></dt><dt><span class="section"><a href="#_http">5.2. HTTP</a></span></dt><dt><span class="section"><a href="#_miscellaneous_3">5.3. Miscellaneous</a></span></dt></dl></dd><dt><span class="section"><a href="#Servers">6. Servers</a></span></dt><dd><dl><dt><span class="section"><a href="#_stateless">6.1. Stateless</a></span></dt><dt><span class="section"><a href="#_stateful">6.2. Stateful</a></span></dt></dl></dd><dt><span class="section"><a href="#_clients">7. Clients</a></span></dt><dd><dl><dt><span class="section"><a href="#_erlang">7.1. Erlang</a></span></dt><dt><span class="section"><a href="#_python">7.2. Python</a></span></dt><dt><span class="section"><a href="#_java">7.3. Java</a></span></dt></dl></dd><dt><span class="section"><a href="#_miscellaneous_4">8. Miscellaneous</a></span></dt><dd><dl><dt><span class="section"><a href="#_testing">8.1. Testing</a></span></dt><dt><span class="section"><a href="#_utilities">8.2. Utilities</a></span></dt></dl></dd><dt><span class="section"><a href="#_building_ubf_from_source">9. Building UBF from Source</a></span></dt><dd><dl><dt><span class="section"><a href="#DOWNLOAD">9.1. Download</a></span></dt><dt><span class="section"><a href="#BUILD">9.2. Build - Mandatory</a></span></dt><dt><span class="section"><a href="#_build_optional">9.3. Build - Optional</a></span></dt><dt><span class="section"><a href="#UBFAsciiDoc">9.4. UBF Documentation</a></span></dt><dt><span class="section"><a href="#ErlangOTP">9.5. Erlang/OTP System</a></span></dt><dt><span class="section"><a href="#_github_forking_your_own_repositories">9.6. GitHub - Forking Your Own Repositories</a></span></dt></dl></dd><dt><span class="section"><a href="#_reference">10. Reference</a></span></dt><dt><span class="section"><a href="#_appendix">11. Appendix</a></span></dt><dd><dl><dt><span class="section"><a href="#_acknowledgments">11.1. Acknowledgments</a></span></dt><dt><span class="section"><a href="#_abnf_definition">11.2. ABNF Definition</a></span></dt></dl></dd></dl></div><p></p><div class="section" title="1.&#xA0;Preface"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_preface"></a>1. Preface</h2></div></div></div><p>UBF is a framework that permits the Erlang to talk to the outside
 world <a class="xref" href="#UBFPAPER">[UBFPAPER]</a>.  The acronym "UBF" stands for "Universal Binary
 Format", designed and implemented by Joe Armstrong.</p><p>This document and the corresponding open-source code repositories
 hosted on github <a class="xref" href="#UBF">[UBF]</a> are based on Joe Armstrong’s original UBF
@@ -20,7 +20,7 @@ UBF(c) is a meta-level protocol used between a UBF client and a UBF
   server.
 </li></ul></div><p>While the XML series of languages had the goal of having a human
 readable format the UBF languages take the opposite view and provide a
-"machine friendly" format.  UBF is designed to be easy to implement.</p><div class="figure"><a id="id36105042"></a><p class="title"><b>Figure 1. Programming By Contract</b></p><div class="figure-contents"><a class="ulink" href="images/ubf-flow-01.svg" target="_top">
+"machine friendly" format.  UBF is designed to be easy to implement.</p><div class="figure"><a id="id36108657"></a><p class="title"><strong>Figure 1. Programming By Contract</strong></p><div class="figure-contents"><a class="ulink" href="images/ubf-flow-01.svg" target="_top">
   <div class="mediaobject"><img src="images/ubf-flow-01.png" alt="Programming By Contract" /></div>
 </a></div></div><br class="figure-break" /><p>Central to UBF is the idea of a "Contract" which regulates the set of
 legal conversations that can take place between a client and a server.
@@ -217,7 +217,7 @@ type T1, X2 is of type T2, … and Xn is of type Tn.</p></div><div class="sectio
 T1, T2, …, Tn, <span class="emphasis"><em>$fields</em></span>=[x,y,…,z], <span class="emphasis"><em>$extra</em></span>=Extra}" where name,
 x, y, …, and z are atoms and Extra is any valid term.</p></div><div class="section" title="List: [T]"><div class="titlepage"><div><div><h5 class="title"><a id="_list_t"></a>List: [T]</h5></div></div></div><p>A type [X1, X2, …, Xn] is of type [T] if all of Xi are of type T.</p></div><div class="section" title="Predefined: P() or P(A1, A2, &#x2026;, An)"><div class="titlepage"><div><div><h5 class="title"><a id="_predefined_p_emphasis_or_emphasis_p_a1_a2_8230_an"></a>Predefined: P() <span class="emphasis"><em>or</em></span> P(A1, A2, …, An)</h5></div></div></div><p>Predefined types are referenced by the notation:</p><pre class="screen">P()</pre><p>or by the notation:</p><pre class="screen">P(A1, A2, ..., An)</pre><p>The name of the predefined type is <span class="emphasis"><em>P</em></span>.  Using the second notation,
 attributes can be specified to make the predefined type less general
-and thus more specific when matching objects.</p><div class="informaltable"><table cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; border-left: 3px solid #527bbd; border-right: 3px solid #527bbd; "><colgroup><col /><col /><col /><col /><col /></colgroup><tbody><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p></p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>ascii</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>asciiprintable</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>nonempty</p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>nonundefined</p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>integer</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>X</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>X</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>X</p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>X</p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>float</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>X</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>X</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>X</p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>X</p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>binary</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>O</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>O</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>O</p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>X</p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>string</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>O</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>O</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>O</p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>X</p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>atom</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>O</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>O</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>O</p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>O</p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>tuple</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>X</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>X</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>O</p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>X</p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>list</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>X</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>X</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>O</p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>X</p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>proplist</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>X</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>X</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>O</p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>X</p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>term</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>X</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>X</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>O</p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>O</p></td></tr><tr><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p>void</p></td><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p>X</p></td><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p>X</p></td><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p>X</p></td><td style="" align="left" valign="top"><p>X</p></td></tr></tbody></table></div><p>The above table summarizes the set of supported predefined types and
+and thus more specific when matching objects.</p><div class="informaltable"><table cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; border-left: 3px solid #527bbd; border-right: 3px solid #527bbd; "><colgroup><col class="col_1" /><col class="col_2" /><col class="col_3" /><col class="col_4" /><col class="col_5" /></colgroup><tbody><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p></p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>ascii</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>asciiprintable</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>nonempty</p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>nonundefined</p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>integer</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>X</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>X</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>X</p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>X</p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>float</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>X</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>X</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>X</p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>X</p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>binary</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>O</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>O</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>O</p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>X</p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>string</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>O</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>O</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>O</p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>X</p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>atom</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>O</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>O</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>O</p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>O</p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>tuple</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>X</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>X</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>O</p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>X</p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>list</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>X</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>X</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>O</p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>X</p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>proplist</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>X</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>X</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>O</p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>X</p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>term</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>X</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>X</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>O</p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>O</p></td></tr><tr><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p>void</p></td><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p>X</p></td><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p>X</p></td><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p>X</p></td><td style="" align="left" valign="top"><p>X</p></td></tr></tbody></table></div><p>The above table summarizes the set of supported predefined types and
 their respective optional attributes.</p><p>The "integer", "float", "binary", "string", "atom", "tuple", and
 "list" predefined types match directly to the corresponding primitive
 or complex type.</p><p>The "term" predefined type matches any object.</p><p>The "proplist" predefined type is a specialized version of the "list"
@@ -494,7 +494,7 @@ Protocol Buffers Format" <a class="xref" href="#PROTOBUF">[PROTOBUF]</a>.  The n
 "Avro Binary Format" <a class="xref" href="#AVRO">[AVRO]</a>.</p></div></div><div class="section" title="5.2.&#xA0;HTTP"><div class="titlepage"><div><div><h3 class="title"><a id="_http"></a>5.2. HTTP</h3></div></div></div><div class="section" title="JSON-RPC"><div class="titlepage"><div><div><h4 class="title"><a id="_json_rpc"></a>JSON-RPC</h4></div></div></div><p>JSON-RPC <a class="xref" href="#JSONRPC">[JSONRPC]</a> is a lightweight remote procedure call protocol
 similar to XML-RPC.  The UBF framework implementation of JSON-RPC
 brings together JSF’s encoder/decoder, UBF(b)'s contract checking, and
-an HTTP transport.</p><div class="figure"><a id="id36107369"></a><p class="title"><b>Figure 2. Programming By Contract w/ Multiple Transports</b></p><div class="figure-contents"><a class="ulink" href="images/ubf-flow-02.svg" target="_top">
+an HTTP transport.</p><div class="figure"><a id="id36110841"></a><p class="title"><strong>Figure 2. Programming By Contract w/ Multiple Transports</strong></p><div class="figure-contents"><a class="ulink" href="images/ubf-flow-02.svg" target="_top">
   <div class="mediaobject"><img src="images/ubf-flow-02.png" alt="Programming By Contract w/ Multiple Transports" /></div>
 </a></div></div><br class="figure-break" /><p>As previously stated, central to UBF is the idea of a "Contract" which
 regulates the set of legal conversations that can take place between a
@@ -888,27 +888,28 @@ Python - <a class="ulink" href="http://www.python.org" target="_top">http://www.
 AsciiDoc (Optional)
 </span></dt><dd><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem"><p class="simpara">
 AsciiDoc - <a class="ulink" href="http://www.methods.co.nz/asciidoc/index.html" target="_top">http://www.methods.co.nz/asciidoc/index.html</a>
-</p><div class="itemizedlist"><ul class="itemizedlist" type="circle"><li class="listitem">
-<span class="strong"><strong>asciidoc 8.6.1 and asciidoc 9.6.3 have been tested most recently</strong></span>
-</li><li class="listitem"><p class="simpara">
-plus the following tools:
+</p><div class="itemizedlist"><ul class="itemizedlist" type="circle"><li class="listitem"><p class="simpara">
+Must be version 8.6.1 or newer
+</p><div class="itemizedlist"><ul class="itemizedlist" type="square"><li class="listitem">
+8.6.4 is the version most recently tested for UBF
+</li></ul></div></li><li class="listitem"><p class="simpara">
+Plus the following support tools:
 </p><div class="itemizedlist"><ul class="itemizedlist" type="square"><li class="listitem">
 ImageMagick - <a class="ulink" href="http://www.imagemagick.org/" target="_top">http://www.imagemagick.org/</a>
 </li><li class="listitem">
-graphviz - <a class="ulink" href="http://www.graphviz.org/" target="_top">http://www.graphviz.org/</a>
+Graphviz - <a class="ulink" href="http://www.graphviz.org/" target="_top">http://www.graphviz.org/</a>
 </li><li class="listitem">
-mscgen - <a class="ulink" href="http://www.mcternan.me.uk/mscgen/" target="_top">http://www.mcternan.me.uk/mscgen/</a>
-</li></ul></div></li><li class="listitem">
-Mandatory for building UBF’s documentation. See
-    <a class="xref" href="#UBFAsciiDoc" title="9.4.&#xA0;UBF Documentation">Section 9.4, “UBF Documentation”</a> for further details.
-</li></ul></div></li><li class="listitem"><p class="simpara">
-docbook - <a class="ulink" href="http://www.docbook.org/" target="_top">http://www.docbook.org/</a>
+Mscgen - <a class="ulink" href="http://www.mcternan.me.uk/mscgen/" target="_top">http://www.mcternan.me.uk/mscgen/</a>
+</li><li class="listitem">
+Dia - <a class="ulink" href="http://projects.gnome.org/dia/" target="_top">http://projects.gnome.org/dia/</a>
+</li></ul></div></li></ul></div></li><li class="listitem"><p class="simpara">
+dblatex - <a class="ulink" href="http://dblatex.sourceforge.net/" target="_top">http://dblatex.sourceforge.net/</a>
 </p><div class="itemizedlist"><ul class="itemizedlist" type="circle"><li class="listitem">
-Optional for building <span class="emphasis"><em>pdf</em></span> version of UBF’s documentation
+Optional for building a PDF version of UBF’s documentation.
 </li></ul></div></li><li class="listitem"><p class="simpara">
-xmlto - <a class="ulink" href="https://fedorahosted.org/xmlto/" target="_top">https://fedorahosted.org/xmlto/</a>
+w3m - <a class="ulink" href="http://w3m.sourceforge.net/" target="_top">http://w3m.sourceforge.net/</a>
 </p><div class="itemizedlist"><ul class="itemizedlist" type="circle"><li class="listitem">
-Optional for building <span class="emphasis"><em>text</em></span> version of UBF’s documentation
+Optional for building a text version of UBF’s documentation.
 </li></ul></div></li></ul></div></dd></dl></div><p>In addition to the above list, UBF also depends on two tools to
 automate the downloading and the packaging steps.</p><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem">
 Repo - <a class="ulink" href="http://source.android.com/source/git-repo.html" target="_top">http://source.android.com/source/git-repo.html</a>
@@ -975,24 +976,27 @@ Building UBF’s "Guides" <span class="emphasis"><em>basic recipe</em></span>
 </p><pre class="screen">$ cd working-directory-name/src/lib/ubf/priv/doc/src/ubf
 $ make clean -OR- make realclean
 $ make</pre></li><li class="listitem"><p class="simpara">
-Building Hibari’s "Website" <span class="emphasis"><em>basic recipe</em></span>
+Building UBF’s "Website" <span class="emphasis"><em>basic recipe</em></span>
 </p><pre class="screen">$ cd working-directory-name/src/lib/ubf/priv/doc/src/ubf/website
 $ make clean -OR- make realclean
 $ make</pre><div class="note" title="Note" style="margin-left: 0; margin-right: 10%;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/icons/note.png" /></td><th align="left"></th></tr><tr><td align="left" valign="top"><p>HTML documentation is written in the "./public_html" directory.</p></td></tr></table></div></li></ol></div><p>UBF’s documentation is authored using AsciiDoc and a few auxillary
 tools:</p><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem">
 ImageMagick
 </li><li class="listitem">
-docbook
+dblatex
 </li><li class="listitem">
-graphviz
+Dia
 </li><li class="listitem">
-mscgen
+Graphviz
 </li><li class="listitem">
-xmlto
-</li></ul></div><p>UBF’s documentation is generated with asciidoc 8.6.3 and a manually
-modified version of the a2x tool.</p><pre class="screen">$ diff -u /usr/local/Cellar/asciidoc/8.6.3/bin/a2x{.orig,}
---- /usr/local/Cellar/asciidoc/8.6.3/bin/a2x.orig       2011-01-02 18:09:35.000000000 +0900
-+++ /usr/local/Cellar/asciidoc/8.6.3/bin/a2x    2011-01-02 18:11:19.000000000 +0900
+Mscgen
+</li><li class="listitem">
+w3m
+</li></ul></div><p>UBF’s documentation is generated with AsciiDoc and a manually modified
+version of the a2x tool.  A fake lang-ja.conf file can be easily
+created by making a symlink to the lang-en.conf file.</p><pre class="screen">diff -r -u 8.6.4-orig/bin/a2x.py 8.6.4/bin/a2x.py
+--- 8.6.4-orig/bin/a2x.py       2011-04-24 00:50:26.000000000 +0900
++++ 8.6.4/bin/a2x.py    2011-04-24 00:35:55.000000000 +0900
 @@ -156,7 +156,10 @@
  def shell_copy(src, dst):
      verbose('copying "%s" to "%s"' % (src,dst))
@@ -1004,7 +1008,8 @@ modified version of the a2x tool.</p><pre class="screen">$ diff -u /usr/local/Ce
 +            return
 
  def shell_rm(path):
-     if not os.path.exists(path):</pre></div><div class="section" title="9.5.&#xA0;Erlang/OTP System"><div class="titlepage"><div><div><h3 class="title"><a id="ErlangOTP"></a>9.5. Erlang/OTP System</h3></div></div></div><p>This section is the first step to download, to build, and to install
+     if not os.path.exists(path):
+Only in 8.6.4/etc/asciidoc: lang-ja.conf</pre></div><div class="section" title="9.5.&#xA0;Erlang/OTP System"><div class="titlepage"><div><div><h3 class="title"><a id="ErlangOTP"></a>9.5. Erlang/OTP System</h3></div></div></div><p>This section is the first step to download, to build, and to install
 your own Erlang/OTP system.</p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p class="simpara">
 Downloading <span class="emphasis"><em>basic recipe</em></span>
 </p><div class="orderedlist"><ol class="orderedlist" type="a"><li class="listitem">
@@ -1044,113 +1049,113 @@ Choose all or a subset of the UBF-related repositories that you are
 Click on the "Fork" button near the top of the page.  This action
    creates a clone of the <span class="emphasis"><em>ubf-bertrpc</em></span> repository in your own account
    on GitHub.
-</li></ol></div><p><span class="emphasis"><em>Under Construction - To Be Updated</em></span></p><p></p></div></div><div class="section" title="10.&#xA0;Reference"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_reference"></a>10. Reference</h2></div></div></div><div class="bibliodiv" title="Optional list title"><h3 class="title"><a id="id36109303"></a>Optional list title</h3><div class="bibliomixed"><a id="id36109307"></a><p class="bibliomixed">
+</li></ol></div><p><span class="emphasis"><em>Under Construction - To Be Updated</em></span></p><p></p></div></div><div class="section" title="10.&#xA0;Reference"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_reference"></a>10. Reference</h2></div></div></div><div class="bibliodiv" title="Optional list title"><h3 class="title"><a id="id36112785"></a>Optional list title</h3><div class="bibliomixed"><a id="id36112789"></a><p class="bibliomixed">
 <span class="bibliomisc">
 <a id="AVRO"></a>[AVRO] "Avro is a serialization system.",
   <a class="ulink" href="http://avro.apache.org" target="_top">http://avro.apache.org</a>.
 </span>
-</p></div><div class="bibliomixed"><a id="id36109325"></a><p class="bibliomixed">
+</p></div><div class="bibliomixed"><a id="id36112807"></a><p class="bibliomixed">
 <span class="bibliomisc">
 <a id="BERTRPC"></a>[BERTRPC] "BERT and BERT-RPC 1.0 Specification",
   <a class="ulink" href="http://bert-rpc.org" target="_top">http://bert-rpc.org</a>.
 </span>
-</p></div><div class="bibliomixed"><a id="id36109344"></a><p class="bibliomixed">
+</p></div><div class="bibliomixed"><a id="id36112825"></a><p class="bibliomixed">
 <span class="bibliomisc">
 <a id="ERLANG"></a>[ERLANG] "A general-purpose programming language and runtime
   environment", <a class="ulink" href="http://www.erlang.org" target="_top">http://www.erlang.org</a>.
 </span>
-</p></div><div class="bibliomixed"><a id="id36109362"></a><p class="bibliomixed">
+</p></div><div class="bibliomixed"><a id="id36112844"></a><p class="bibliomixed">
 <span class="bibliomisc">
 <a id="GIT"></a>[GIT] "Fast Version Control System", <a class="ulink" href="http://git-scm.com" target="_top">http://git-scm.com</a>.
 </span>
-</p></div><div class="bibliomixed"><a id="id36109380"></a><p class="bibliomixed">
+</p></div><div class="bibliomixed"><a id="id36112861"></a><p class="bibliomixed">
 <span class="bibliomisc">
 <a id="GMTCHARSET"></a>[GMTCHARSET] "Gemini Mobile Technologies, Inc. charset module",
   <a class="ulink" href="https://github.com/norton/gmt-util/blob/master/src/gmt_charset.erl" target="_top">https://github.com/norton/gmt-util/blob/master/src/gmt_charset.erl</a>.
 </span>
-</p></div><div class="bibliomixed"><a id="id36109400"></a><p class="bibliomixed">
+</p></div><div class="bibliomixed"><a id="id36112881"></a><p class="bibliomixed">
 <span class="bibliomisc">
 <a id="GITHUB"></a>[GITHUB] "Secure source code hosting and collaborative
   development ", <a class="ulink" href="https://github.com" target="_top">https://github.com</a>.
 </span>
-</p></div><div class="bibliomixed"><a id="id36109418"></a><p class="bibliomixed">
+</p></div><div class="bibliomixed"><a id="id36112900"></a><p class="bibliomixed">
 <span class="bibliomisc">
 <a id="JSONRPC"></a>[JSONRPC] "A lightweight remote procedure call protocol similar
   to XML-RPC", <a class="ulink" href="http://json-rpc.org" target="_top">http://json-rpc.org</a>.
 </span>
-</p></div><div class="bibliomixed"><a id="id36109437"></a><p class="bibliomixed">
+</p></div><div class="bibliomixed"><a id="id36112918"></a><p class="bibliomixed">
 <span class="bibliomisc">
 <a id="MOCHIJSON2"></a>[MOCHIJSON2] "MochiWeb is an Erlang library for building
   lightweight HTTP servers.",
   <a class="ulink" href="https://github.com/mochi/mochiweb/blob/master/src/mochijson2.erl" target="_top">https://github.com/mochi/mochiweb/blob/master/src/mochijson2.erl</a>.
 </span>
-</p></div><div class="bibliomixed"><a id="id36109457"></a><p class="bibliomixed">
+</p></div><div class="bibliomixed"><a id="id36112939"></a><p class="bibliomixed">
 <span class="bibliomisc">
 <a id="PROTOBUF"></a>[PROTOBUF] "Protocol buffers are Google’s language-neutral,
   platform-neutral, extensible mechanism for serializing structured
   data.", <a class="ulink" href="http://code.google.com/apis/protocolbuffers" target="_top">http://code.google.com/apis/protocolbuffers</a>.
 </span>
-</p></div><div class="bibliomixed"><a id="id36109477"></a><p class="bibliomixed">
+</p></div><div class="bibliomixed"><a id="id36112959"></a><p class="bibliomixed">
 <span class="bibliomisc">
 <a id="QUVIQ"></a>[QUVIQ] "Quviq … amazing testing tools",
   <a class="ulink" href="http://www.quviq.com/" target="_top">http://www.quviq.com/</a>.
 </span>
-</p></div><div class="bibliomixed"><a id="id36109495"></a><p class="bibliomixed">
+</p></div><div class="bibliomixed"><a id="id36112977"></a><p class="bibliomixed">
 <span class="bibliomisc">
 <a id="RFC20"></a>[RFC20] Vint Cerf, "ASCII format for Network Interchange",
   RFC20, October 16, 1969.
 </span>
-</p></div><div class="bibliomixed"><a id="id36109509"></a><p class="bibliomixed">
+</p></div><div class="bibliomixed"><a id="id36112991"></a><p class="bibliomixed">
 <span class="bibliomisc">
 <a id="RFC4627"></a>[RFC4627] D. Crockford, "The application/json Media Type for
   JavaScript Object Notation (JSON)", RFC4627, July 2006.
 </span>
-</p></div><div class="bibliomixed"><a id="id36109523"></a><p class="bibliomixed">
+</p></div><div class="bibliomixed"><a id="id36113005"></a><p class="bibliomixed">
 <span class="bibliomisc">
 <a id="RFC5234"></a>[RFC5234] D. Crocker, Ed. Brandenburg, "Augmented BNF for Syntax
   Specifications: ABNF", RFC5234, January 2008.
 </span>
-</p></div><div class="bibliomixed"><a id="id36109538"></a><p class="bibliomixed">
+</p></div><div class="bibliomixed"><a id="id36113020"></a><p class="bibliomixed">
 <span class="bibliomisc">
 <a id="THRIFT"></a>[THRIFT] "A software framework for scalable cross-language
   services development.", <a class="ulink" href="http://incubator.apache.org/thrift" target="_top">http://incubator.apache.org/thrift</a>.
 </span>
-</p></div><div class="bibliomixed"><a id="id36109557"></a><p class="bibliomixed">
+</p></div><div class="bibliomixed"><a id="id36113039"></a><p class="bibliomixed">
 <span class="bibliomisc">
 <a id="UBF"></a>[UBF] "Universal Binary Format", <a class="ulink" href="https://github.com/norton/ubf" target="_top">https://github.com/norton/ubf</a>.
 </span>
-</p></div><div class="bibliomixed"><a id="id36109574"></a><p class="bibliomixed">
+</p></div><div class="bibliomixed"><a id="id36113056"></a><p class="bibliomixed">
 <span class="bibliomisc">
 <a id="UBF_ABNF"></a>[UBF_ABNF] "Universal Binary Format and Augmented Backus-Naur
   Form", <a class="ulink" href="https://github.com/norton/ubf-abnf" target="_top">https://github.com/norton/ubf-abnf</a>.
 </span>
-</p></div><div class="bibliomixed"><a id="id36109593"></a><p class="bibliomixed">
+</p></div><div class="bibliomixed"><a id="id36113075"></a><p class="bibliomixed">
 <span class="bibliomisc">
 <a id="UBF_BERTRPC"></a>[UBF_BERTRPC] "Universal Binary Format and Binary ERlang Term
   RPC", <a class="ulink" href="https://github.com/norton/ubf-bertrpc" target="_top">https://github.com/norton/ubf-bertrpc</a>.
 </span>
-</p></div><div class="bibliomixed"><a id="id36109612"></a><p class="bibliomixed">
+</p></div><div class="bibliomixed"><a id="id36113093"></a><p class="bibliomixed">
 <span class="bibliomisc">
 <a id="UBF_EEP8"></a>[UBF_EEP8] "Universal Binary Format and Erlang Enhancement
   Proposal 8", <a class="ulink" href="https://github.com/norton/ubf-eep8" target="_top">https://github.com/norton/ubf-eep8</a>.
 </span>
-</p></div><div class="bibliomixed"><a id="id36109630"></a><p class="bibliomixed">
+</p></div><div class="bibliomixed"><a id="id36113112"></a><p class="bibliomixed">
 <span class="bibliomisc">
 <a id="UBF_JSONRPC"></a>[UBF_JSONRPC] "Universal Binary Format and JavaScript Object
   Notation RPC", <a class="ulink" href="https://github.com/norton/ubf-jsonrpc" target="_top">https://github.com/norton/ubf-jsonrpc</a>.
 </span>
-</p></div><div class="bibliomixed"><a id="id36109649"></a><p class="bibliomixed">
+</p></div><div class="bibliomixed"><a id="id36113130"></a><p class="bibliomixed">
 <span class="bibliomisc">
 <a id="UBF_THRIFT"></a>[UBF_THRIFT] "Universal Binary Format and Thrift",
   <a class="ulink" href="https://github.com/norton/ubf-thrift" target="_top">https://github.com/norton/ubf-thrift</a>.
 </span>
-</p></div><div class="bibliomixed"><a id="id36109667"></a><p class="bibliomixed">
+</p></div><div class="bibliomixed"><a id="id36113149"></a><p class="bibliomixed">
 <span class="bibliomisc">
 <a id="UBFPAPER"></a>[UBFPAPER] Joe Armstrong, "Getting Erlang to talk to the outside
   world", Proceedings of the 2002 ACM SIGPLAN workshop on Erlang,
   pages 64-72, ACM Press, 2002.
 </span>
-</p></div><div class="bibliomixed"><a id="id36109682"></a><p class="bibliomixed">
+</p></div><div class="bibliomixed"><a id="id36113163"></a><p class="bibliomixed">
 <span class="bibliomisc">
 <a id="UBFSITE"></a>[UBFSITE] Joe Armstrong,
   <a class="ulink" href="http://www.sics.se/~joe/ubf/site/home.html" target="_top">http://www.sics.se/~joe/ubf/site/home.html</a>, March 2003.
