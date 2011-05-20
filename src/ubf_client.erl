@@ -195,7 +195,7 @@ ubf_client(Parent, Host, Port, Options, Timeout)
             %% start a driver
             Driver = DriverMod:start(Proto),
             %% get the socket to send messages to the driver
-            gen_tcp:controlling_process(Socket, Driver),
+            ok = gen_tcp:controlling_process(Socket, Driver),
             %% Kick off the driver
             Driver ! {start, self(), Socket},  % tell the controller
             ok = inet:setopts(Socket, [{active, true}
