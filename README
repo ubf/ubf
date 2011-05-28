@@ -105,7 +105,7 @@ A. Dialyzer Testing _basic recipe_
    TIP: Check Makefile and dialyzer's documentation for further
    information.
 
-   A.2. Dialyze without specs
+   A.2. Dialyze with specs
 
    $ cd working-directory-name/src
    $ make dialyze
@@ -115,10 +115,10 @@ A. Dialyzer Testing _basic recipe_
    underneath rebar's .eunit directory.  Check Makefile for further
    information.
 
-   A.3. Dialyze with specs
+   A.3. Dialyze without specs
 
    $ cd working-directory-name/src
-   $ make dialyze-spec
+   $ make dialyze-nospec
 
 B. To build the Java client and run its encoding/decoding unit test:
 
