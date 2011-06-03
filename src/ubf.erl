@@ -31,7 +31,7 @@
 %%
 
 -module(ubf).
--behavior(contract_proto).
+-behaviour(contract_proto).
 
 -export([proto_vsn/0, proto_driver/0, proto_packet_type/0]).
 -export([encode/1, encode/2]).

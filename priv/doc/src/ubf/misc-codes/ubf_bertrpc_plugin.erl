@@ -4,7 +4,7 @@
 %%%
 
 -module(ubf_bertrpc_plugin).
--behavior(ubf_plugin_stateless).
+-behaviour(ubf_plugin_stateless).
 
 %% Required (except keepalive/0) callback API for UBF stateless
 %% implementations.

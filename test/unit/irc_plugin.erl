@@ -1,5 +1,5 @@
 -module(irc_plugin).
--behavior(ubf_plugin_stateful).
+-behaviour(ubf_plugin_stateful).
 
 -export([info/0, description/0, handlerStart/2, handlerRpc/4,
          handlerStop/3, managerStart/1, managerRestart/2, managerRpc/2]).

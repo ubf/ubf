@@ -1,5 +1,5 @@
 -module(stateful_plugin).
--behavior(ubf_plugin_stateful).
+-behaviour(ubf_plugin_stateful).
 
 -include("ubf.hrl").
 -include("ubf_plugin_stateful.hrl").
