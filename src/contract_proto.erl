@@ -12,6 +12,8 @@ behaviour_info(callbacks) ->
      , {proto_driver,0}
      , {proto_packet_type,0}
      , {decode_init,0}
+     , {decode_init,1}
+     , {decode_init,2}
      , {decode,1}
      , {decode,2}
      , {encode,1}

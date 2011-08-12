@@ -4,21 +4,24 @@
 
 -module(contract_driver).
 
--export([start/2, relay/3, loop/4, loop/5, loop/6]).
+-export([start/3, relay/3, loop/5, loop/6, loop/7]).
 
 %% Interface Functions
 -export([behaviour_info/1]).
 
 behaviour_info(callbacks) ->
-    [{init,1}
-     , {encode,2}
-     , {decode,4}
+    [{start,1}
+     , {start,2}
+     , {init,1}
+     , {init,2}
+     , {encode,3}
+     , {decode,5}
     ].
 
-start(Module, Contract) ->
+start(Module, Contract, Options) ->
     receive
         {start, Pid, Socket} ->
-            loop(Module, Contract, Pid, Socket);
+            loop(Module, Contract, Options, Pid, Socket);
         stop ->
             exit(start)
     end.
@@ -28,14 +31,14 @@ relay(Module, Pid, Pid1) ->
     Pid ! {relay, self(), Pid1},
     ok.
 
-loop(Module, Contract, Pid, Socket) ->
-    loop(Module, Contract, Pid, Socket, 16#ffffffff).
+loop(Module, Contract, Options, Pid, Socket) ->
+    loop(Module, Contract, Options, Pid, Socket, 16#ffffffff).
 
-loop(Module, Contract, Pid, Socket, Timeout) ->
+loop(Module, Contract, Options, Pid, Socket, Timeout) ->
     ok = inet:setopts(Socket, [{active, true}]),
     put('ubf_socket', Socket),
-    Cont = Module:init(Contract),
-    loop(Module, Contract, Pid, Socket, Timeout, Cont).
+    {ParsedOptions, Cont} = Module:init(Contract, Options),
+    loop(Module, Contract, ParsedOptions, Pid, Socket, Timeout, Cont).
 
 %% @doc Driver main loop.
 %%
@@ -48,19 +51,19 @@ loop(Module, Contract, Pid, Socket, Timeout) ->
 %% <li> If one side dies the process dies </li>
 %% </ul>
 
-loop(Module, Contract, Pid, Socket, Timeout, Cont) ->
+loop(Module, Contract, Options, Pid, Socket, Timeout, Cont) ->
     receive
         {Pid, Term} ->
-            Binary = Module:encode(Contract, Term),
+            Binary = Module:encode(Contract, Options, Term),
             ok = gen_tcp:send(Socket, Binary),
-            loop(Module, Contract, Pid, Socket, Timeout, Cont);
+            loop(Module, Contract, Options, Pid, Socket, Timeout, Cont);
         {tcp, Socket, Binary} ->
-            Cont1 = Module:decode(Contract, Cont, Binary, fun(Term) -> Pid ! {self(), Term} end),
-            loop(Module, Contract, Pid, Socket, Timeout, Cont1);
+            Cont1 = Module:decode(Contract, Options, Cont, Binary, fun(Term) -> Pid ! {self(), Term} end),
+            loop(Module, Contract, Options, Pid, Socket, Timeout, Cont1);
         {changeContract, Contract1} ->
-            loop(Module, Contract1, Pid, Socket, Timeout, Cont);
+            loop(Module, Contract1, Options, Pid, Socket, Timeout, Cont);
         {relay, _From, Pid1} ->
-            loop(Module, Contract, Pid1, Socket, Timeout, Cont);
+            loop(Module, Contract, Options, Pid1, Socket, Timeout, Cont);
         {tcp_closed, Socket} ->
             exit(socket_closed);
         {tcp_error, Socket, Reason} ->
@@ -72,7 +75,7 @@ loop(Module, Contract, Pid, Socket, Timeout, Cont) ->
             exit(normal);
         Any ->
             io:format("~p:~p *** ~p dropping:~p~n",[Module, self(), Pid, Any]),
-            loop(Module, Contract, Pid, Socket, Timeout, Cont)
+            loop(Module, Contract, Options, Pid, Socket, Timeout, Cont)
     after Timeout ->
             gen_tcp:close(Socket),
             exit(timeout)

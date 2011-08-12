@@ -986,6 +986,13 @@ follows:
 {\'proto', {\'ubf' | \'ebf' | \'jsf' | \'tbf' | atom()}}::
   Enable the UBF, EBF, JSF, TBF, or an alternative protocol wire
   format. Default: \'ubf'.
+{\'proto', {\'ubf' | \'ebf' | \'jsf' | \'tbf' | atom(), proplist()}}::
+  Enable the UBF, EBF, JSF, TBF, or an alternative protocol wire
+  format with options. Default: {\'ubf', []}. Supported options:
+    \'safe';;
+    Prevents decoding data that may be used to attack the Erlang
+    system.  In the event of receiving unsafe data, decoding fails
+    with a badarg error.
 {\'registeredname', name()}::
   Set the name to be registered for the TCP listener.  If
   \'undefined', a default name is automatically registered.  Default:

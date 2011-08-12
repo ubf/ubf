@@ -108,6 +108,17 @@ start(Name, Plugins, Port) ->
 %% <li> {proto, {ubf | ebf | atom()}} ... Enable the UBF, EBF, or
 %%      an alternative protocol wire format.
 %%      Default: ubf. </li>
+%% <li> {proto, {ubf | ebf | atom(), proplist()}} ... Enable the UBF,
+%%      EBF, or an alternative protocol wire format with options.
+%%      Default: {ubf, []}. </li>
+%%
+%%      Supported options:
+%%      <ul>
+%%      <li> safe ... Prevents decoding data that may be used to
+%%      attack the Erlang system.  In the event of receiving unsafe
+%%      data, decoding fails with a badarg error.
+%%      </ul>
+%%
 %% <li> {registeredname, atom()} ... Set the name to be registered for
 %%      the TCP listener.  If undefined, a default name is automatically
 %%      registered.
@@ -182,7 +193,7 @@ start_server(Plugins, Port, Options) ->
 
 start_ubf_listener(Server0, Plugins, Port, Options) ->
     {MetaPlugin, StartPlugin, Server
-     , IdleTimer, MaxConn, Proto, RegisteredName
+     , IdleTimer, MaxConn, Proto, DriverOptions, RegisteredName
      , StatelessRPC, ServerHello, SimpleRPC, VerboseRPC
      , TLogMod, ProcessOptions
     } = listener_options(Server0, Plugins, Options),
@@ -231,7 +242,7 @@ start_ubf_listener(Server0, Plugins, Port, Options) ->
                             {start, ContractManager, TLogMod},
                         %% and activate the loop that will now execute
                         %% the previous devious statements :-)
-                        case (catch contract_driver:loop(DriverMod, StartPlugin, self(), Socket, IdleTimer)) of
+                        case (catch contract_driver:loop(DriverMod, StartPlugin, DriverOptions, self(), Socket, IdleTimer)) of
                             {'EXIT', normal} ->
                                 exit(normal);
                             {'EXIT', Reason} ->
@@ -254,7 +265,7 @@ start_ubf_listener(Server0, Plugins, Port, Options) ->
 
 start_term_listener(Server0, Plugins, Options) ->
     {MetaPlugin, StartPlugin, Server
-     , _IdleTimer, _MaxConn, _Proto, _RegisteredName
+     , _IdleTimer, _MaxConn, _Proto, _DriverOptions_, _RegisteredName
      , StatelessRPC, ServerHello, SimpleRPC, VerboseRPC
      , TLogMod, ProcessOptions
     } = listener_options(Server0, Plugins, Options),
@@ -338,12 +349,20 @@ listener_options(Server0, Plugins, Options) ->
                 Else
         end,
 
+    case proplists:get_value(proto, Options, ubf) of
+        Proto when is_atom(Proto) ->
+            DriverOptions = [];
+        {Proto, DriverOptions} when is_atom(Proto), is_list(DriverOptions) ->
+            DriverOptions
+    end,
+
     {MetaPlugin
      , StartPlugin
      , Server
      , IdleTimer
      , proplists:get_value(maxconn, Options, 10000)
-     , proplists:get_value(proto, Options, ubf)
+     , Proto
+     , DriverOptions
      , proplists:get_value(registeredname, Options, undefined)
      , StatelessRPC
      , proplists:get_value(serverhello, Options, StartPlugin:contract_name())

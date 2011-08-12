@@ -35,10 +35,15 @@
 
 -export([proto_vsn/0, proto_driver/0, proto_packet_type/0]).
 -export([encode/1, encode/2]).
--export([decode_init/0, decode/1, decode/2, decode/3]).
+-export([decode_init/0, decode_init/1, decode_init/2, decode/1, decode/2, decode/3]).
 -export([deabstract/1]).
 
 -import(lists, [foldl/3, reverse/1, map/2, seq/2, sort/1]).
+
+-record(state, {
+          safe=false :: boolean(),
+          dict :: dict()
+         }).
 
 
 %%---------------------------------------------------------------------
@@ -49,87 +54,99 @@ proto_packet_type() -> 0.
 
 %%---------------------------------------------------------------------
 decode_init() ->
-    {more, fun(I) -> decode1(I, [[]], dict:new()) end}.
+    decode_init(false).
 
-decode(Str) ->
-    decode(Str, ?MODULE).
+decode_init(Safe) ->
+    decode_init(Safe, []).
 
-decode(Str, Mod) ->
-    decode(Str, Mod, decode_init()).
+decode_init(Safe, []) ->
+    State = #state{safe=Safe, dict=dict:new()},
+    {more, fun(I) -> decode1(I, [[]], State) end};
+decode_init(Safe, String) when is_list(String) ->
+    State = #state{safe=Safe, dict=dict:new()},
+    decode1(String, [[]], State).
+
+decode(String) ->
+    decode(String, ?MODULE).
+
+decode(String, Mod) ->
+    decode(String, Mod, decode_init(false)).
 
 decode(S, _Mod, {more, Fun}) ->
     Fun(S).
 
-decode1([$'|T], Stack, Dict) ->
-    get_stuff(T, $', [], Stack, Dict);
-decode1([$~|T], [[Int|Stack]|S1], Dict) when is_integer(Int), Int >= 0 ->
-    collect_binary(Int, T, [], [Stack|S1], Dict);
-decode1([$~|_T], _Stack, _Dict) ->
+decode1([$'|T], Stack, State) ->
+    get_stuff(T, $', [], Stack, State);
+decode1([$~|T], [[Int|Stack]|S1], State) when is_integer(Int), Int >= 0 ->
+    collect_binary(Int, T, [], [Stack|S1], State);
+decode1([$~|_T], _Stack, _State) ->
     exit(tilde);
-decode1([$%|T], Stack, Dict) ->
-    get_stuff(T, $%, [], Stack, Dict);
-decode1([$"|T], Stack, Dict) ->
-    get_stuff(T, $", [], Stack, Dict);
-decode1([$`|T], Stack, Dict) ->
-    get_stuff(T, $`, [], Stack, Dict);
-decode1([$-|T], Stack, Dict) ->
-    collect_int(T, 0, '-', Stack, Dict);
-decode1([H|T], Stack, Dict) when $0 =< H, H =< $9 ->
-    collect_int(T, H-$0, '+', Stack, Dict);
-decode1([${|T], Stack, Dict) ->
-    decode1(T, [[]|Stack], Dict);
-decode1([$}|T], [H|Stack], Dict) ->
-    decode1(T, push(list_to_tuple(reverse(H)),Stack), Dict);
-decode1([$&|T], [[H1,H2|T1] | Stack], Dict) ->
-    decode1(T, [[[H1|H2]|T1]|Stack], Dict);
-decode1([$#|T], Stack, Dict) ->
-    decode1(T, push([], Stack), Dict);
-decode1([$$|T], [[X]], _Dict) ->
+decode1([$%|T], Stack, State) ->
+    get_stuff(T, $%, [], Stack, State);
+decode1([$"|T], Stack, State) ->
+    get_stuff(T, $", [], Stack, State);
+decode1([$`|T], Stack, State) ->
+    get_stuff(T, $`, [], Stack, State);
+decode1([$-|T], Stack, State) ->
+    collect_int(T, 0, '-', Stack, State);
+decode1([H|T], Stack, State) when $0 =< H, H =< $9 ->
+    collect_int(T, H-$0, '+', Stack, State);
+decode1([${|T], Stack, State) ->
+    decode1(T, [[]|Stack], State);
+decode1([$}|T], [H|Stack], State) ->
+    decode1(T, push(list_to_tuple(reverse(H)),Stack), State);
+decode1([$&|T], [[H1,H2|T1] | Stack], State) ->
+    decode1(T, [[[H1|H2]|T1]|Stack], State);
+decode1([$#|T], Stack, State) ->
+    decode1(T, push([], Stack), State);
+decode1([$$|T], [[X]], _State) ->
     {ok, X, T};
-decode1([$>], Stack, Dict) ->
-    {more, fun(I) -> decode1([$>|I], Stack, Dict) end};
-decode1([$>,Key|T], [[Val|R]|Stack], Dict) ->
-    decode1(T, [R|Stack], dict:store(Key,Val,Dict));
-decode1([H|T], Stack, Dict) ->
+decode1([$>], Stack, State) ->
+    {more, fun(I) -> decode1([$>|I], Stack, State) end};
+decode1([$>,Key|T], [[Val|R]|Stack], #state{dict=Dict}=State) ->
+    decode1(T, [R|Stack], State#state{dict=dict:store(Key,Val,Dict)});
+decode1([H|T], Stack, #state{dict=Dict}=State) ->
     case special(H) of
         true ->
-            decode1(T, Stack, Dict);
+            decode1(T, Stack, State);
         false ->
-            decode1(T, push(dict:fetch(H, Dict), Stack), Dict)
+            decode1(T, push(dict:fetch(H, Dict), Stack), State)
     end;
-decode1([], Stack, Dict) ->
-    {more, fun(I) -> decode1(I, Stack, Dict) end};
-decode1(_X, _Stack, _Dict) ->
+decode1([], Stack, State) ->
+    {more, fun(I) -> decode1(I, Stack, State) end};
+decode1(_X, _Stack, _State) ->
     exit(decode1).
 
-get_stuff([$\\], Stop, L, Stack, Dict) ->
-    {more, fun(I) -> get_stuff([$\\|I], Stop, L, Stack, Dict) end};
-get_stuff([$\\,H|T], Stop, L, Stack, Dict) ->
-    get_stuff(T, Stop, [H|L], Stack, Dict);
-get_stuff([$'|T], $', L, Stack, Dict)  ->
-    decode1(T, push(list_to_atom(reverse(L)),Stack), Dict);
-get_stuff([$"|T], $", L, Stack, Dict)  ->
-    decode1(T, push({'#S',reverse(L)},Stack), Dict);
-get_stuff([$`|T], $`, L, [[X|Top]|Stack], Dict)  ->
-    decode1(T, push({'$TYPE', reverse(L), X}, [Top|Stack]), Dict);
-get_stuff([$%|T], $%, _L, Stack, Dict)  ->
-    decode1(T, Stack, Dict);
-get_stuff([H|T], Stop, L, Stack, Dict) ->
-    get_stuff(T, Stop, [H|L], Stack, Dict);
-get_stuff([], Stop, L, Stack, Dict) ->
-    {more, fun(I) -> get_stuff(I, Stop, L, Stack, Dict) end}.
+get_stuff([$\\], Stop, L, Stack, State) ->
+    {more, fun(I) -> get_stuff([$\\|I], Stop, L, Stack, State) end};
+get_stuff([$\\,H|T], Stop, L, Stack, State) ->
+    get_stuff(T, Stop, [H|L], Stack, State);
+get_stuff([$'|T], $', L, Stack, #state{safe=Safe}=State) ->
+    RevL = reverse(L),
+    Atom = if Safe -> list_to_existing_atom(RevL); true -> list_to_atom(RevL) end,
+    decode1(T, push(Atom, Stack), State);
+get_stuff([$"|T], $", L, Stack, State)  ->
+    decode1(T, push({'#S',reverse(L)},Stack), State);
+get_stuff([$`|T], $`, L, [[X|Top]|Stack], State)  ->
+    decode1(T, push({'$TYPE', reverse(L), X}, [Top|Stack]), State);
+get_stuff([$%|T], $%, _L, Stack, State)  ->
+    decode1(T, Stack, State);
+get_stuff([H|T], Stop, L, Stack, State) ->
+    get_stuff(T, Stop, [H|L], Stack, State);
+get_stuff([], Stop, L, Stack, State) ->
+    {more, fun(I) -> get_stuff(I, Stop, L, Stack, State) end}.
 
-collect_binary(0, T, L, Stack, Dict) ->
-    expect_tilde(T, push(list_to_binary(reverse(L)),Stack), Dict);
-collect_binary(N, [H|T], L, Stack, Dict) ->
-    collect_binary(N-1, T, [H|L], Stack, Dict);
-collect_binary(N, [], L, Stack, Dict) ->
-    {more, fun(I) -> collect_binary(N, I, L, Stack, Dict) end}.
+collect_binary(0, T, L, Stack, State) ->
+    expect_tilde(T, push(list_to_binary(reverse(L)),Stack), State);
+collect_binary(N, [H|T], L, Stack, State) ->
+    collect_binary(N-1, T, [H|L], Stack, State);
+collect_binary(N, [], L, Stack, State) ->
+    {more, fun(I) -> collect_binary(N, I, L, Stack, State) end}.
 
-expect_tilde([$~|T], Stack, Dict) ->
-    decode1(T, Stack, Dict);
-expect_tilde([], Stack, Dict) ->
-    {more, fun(I) -> expect_tilde(I, Stack, Dict) end};
+expect_tilde([$~|T], Stack, State) ->
+    decode1(T, Stack, State);
+expect_tilde([], Stack, State) ->
+    {more, fun(I) -> expect_tilde(I, Stack, State) end};
 expect_tilde([H|_], _, _) ->
     exit({expect_tilde, H}).
 
@@ -158,14 +175,14 @@ special(_)   -> false.
 special_chars() ->
     " 0123456789{},~%#>\n\r\s\t\"'-&$".
 
-collect_int([H|T], N, Sign, Stack, Dict) when $0 =< H, H =< $9 ->
-    collect_int(T, N*10 + H - $0, Sign, Stack, Dict);
-collect_int([], N, Sign, Stack, Dict) ->
-    {more, fun(I) -> collect_int(I, N, Sign, Stack, Dict) end};
-collect_int(T, N, '+', Stack, Dict) ->
-    decode1(T, push(N, Stack), Dict);
-collect_int(T, N, '-', Stack, Dict) ->
-    decode1(T, push(-N, Stack), Dict).
+collect_int([H|T], N, Sign, Stack, State) when $0 =< H, H =< $9 ->
+    collect_int(T, N*10 + H - $0, Sign, Stack, State);
+collect_int([], N, Sign, Stack, State) ->
+    {more, fun(I) -> collect_int(I, N, Sign, Stack, State) end};
+collect_int(T, N, '+', Stack, State) ->
+    decode1(T, push(N, Stack), State);
+collect_int(T, N, '-', Stack, State) ->
+    decode1(T, push(-N, Stack), State).
 
 
 %%---------------------------------------------------------------------
@@ -219,8 +236,8 @@ rank({X, K}) when is_integer(X) ->
 rank({X, _}) ->
     {0, X}.
 
-analyse({'#S', Str}, Dict) ->
-    analyse(Str, Dict);
+analyse({'#S', String}, Dict) ->
+    analyse(String, Dict);
 analyse(T, Dict) when is_tuple(T) ->
     foldl(fun analyse/2, Dict, tuple_to_list(T));
 analyse(X, Dict) ->
@@ -249,9 +266,9 @@ do_encode(X, Dict) when is_atom(X); is_integer(X); is_binary(X) ->
         error ->
             encode_obj(X)
     end;
-do_encode({'#S', Str}, _Dict) ->
+do_encode({'#S', String}, _Dict) ->
     %% This *is* a string
-    encode_string(Str);
+    encode_string(String);
 do_encode([H|T], Dict) ->
     S1  = do_encode(T, Dict),
     S2  = do_encode(H, Dict),

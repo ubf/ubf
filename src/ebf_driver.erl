@@ -13,18 +13,24 @@
 -module(ebf_driver).
 -behaviour(contract_driver).
 
--export([start/1, init/1, encode/2, decode/4]).
+-export([start/1, start/2, init/1, init/2, encode/3, decode/5]).
 
 start(Contract) ->
-    proc_utils:spawn_link_debug(fun() -> contract_driver:start(?MODULE, Contract) end, ebf_client_driver).
+    start(Contract, []).
 
-init(_Contract) ->
-    undefined.
+start(Contract, Options) ->
+    proc_utils:spawn_link_debug(fun() -> contract_driver:start(?MODULE, Contract, Options) end, ebf_client_driver).
 
-encode(_Contract, Term) ->
+init(Contract) ->
+    init(Contract, []).
+
+init(_Contract, Options) ->
+    {Options, undefined}.
+
+encode(_Contract, _Options, Term) ->
     erlang:term_to_binary(Term).
 
-decode(_Contract, _Cont, Binary, CallBack) ->
-    Term = erlang:binary_to_term(Binary),
+decode(_Contract, Options, undefined, Binary, CallBack) ->
+    Term = erlang:binary_to_term(Binary, Options),
     CallBack(Term),
     undefined.
