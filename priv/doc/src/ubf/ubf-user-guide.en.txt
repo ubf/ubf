@@ -811,13 +811,14 @@ TIP: Gemini Mobile Technologies, Inc. has implemented and open-sourced
 a module for classifying the input character set to detect non-UTF8
 JSON inputs <<GMTCHARSET>>.
 
-==== TBF / NTBF:  Thrift Binary Format / Native Thrift Binary Format
+==== TBF / FTBF / NTBF / FNTBF:  Binary Format - Thrift / Framed Thrift / Native Thrift / Framed Native Thrift
 
 TBF and NTBF is an implementation of UBF(b) but it does not use UBF(a)
 for the client and server communication.  Instead, Thrift <<THRIFT>>
 is used instead as the wire format.  The name "TBF" is short for
 "Thrift Binary Format".  The name "NTBF" is short for "Native Thrift
-Binary Format".
+Binary Format".  FTBF and FNTBF are framed versions of TBF and NTBF,
+respectively.
 
 TBF follows the conventions set forth by the Thrift community by
 re-using Thrift's binary wire-protocol except for the following
@@ -983,11 +984,12 @@ follows:
 {\'maxconn', non_neg_integer()}::
   Maximum number of simultaneous TCP connections allowed.  Default:
   10000.
-{\'proto', {\'ubf' | \'ebf' | \'jsf' | \'tbf' | atom()}}::
-  Enable the UBF, EBF, JSF, TBF, or an alternative protocol wire
+{\'proto', {\'ubf' | \'ebf' | \'jsf' | \'tbf' |  \'ftbf' | atom()}}::
+  Enable the UBF, EBF, JSF, TBF, FTBF, or an alternative protocol wire
   format. Default: \'ubf'.
-{\'proto', {\'ubf' | \'ebf' | \'jsf' | \'tbf' | atom(), proplist()}}::
-  Enable the UBF, EBF, JSF, TBF, or an alternative protocol wire
+
+{\'proto', {\'ubf' | \'ebf' | \'jsf' | \'tbf' |  \'ftbf' | atom(), proplist()}}::
+  Enable the UBF, EBF, JSF, TBF, FTBF, or an alternative protocol wire
   format with options. Default: {\'ubf', []}. Supported options:
     \'safe';;
     Prevents decoding data that may be used to attack the Erlang
@@ -1034,9 +1036,11 @@ The "ubf_server" Erlang module doesn't provide a "stop" function.  To
 stop the server, instead stop the TCP listener that controls it.  See
 the "proc_socket_server" Erlang module for extra details.
 
-NOTE: The NTBF transport protocol is indirectly enabled by specifying
-the following options: [{\'proto', \'tbf'}, {\'serverhello',
-\'undefined'}, {\'simplerpc', \'true'}].
+NOTE: The NTBF and FNTBF transport protocol is indirectly enabled by
+specifying the following options: [{\'proto', \'tbf'},
+{\'serverhello', \'undefined'}, {\'simplerpc', \'true'}] or
+[{\'proto', \'ftbf'}, {\'serverhello', \'undefined'}, {\'simplerpc',
+\'true'}].
 
 === Stateless
 
