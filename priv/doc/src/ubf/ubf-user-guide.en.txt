@@ -2,8 +2,8 @@
 // vim: set syntax=asciidoc:
 
 = UBF User's Guide _1st DRAFT_
-:Date: 2011/04/24
-:Revision: 0.3.1
+:Date: 2011/08/29
+:Revision: 0.3.2
 :Copyright: 2002 Joe Armstrong
 :Copyright: 2010-2011 Gemini Mobile Technologies, Inc.  All rights reserved.
 
