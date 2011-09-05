@@ -34,8 +34,5 @@ A new document link:ubf-user-guide.en.html[UBF User's Guide] is
 currently under construction.  Reading the UBF User's Guide is
 _STRONGLY_ recommended.
 
-Read the link:webpage-FAQ.html[FAQ] page for common questions and
-answers.
-
 The documentation is in a state of change and improvement.
 Contributions from the wider world are welcome.  :-)

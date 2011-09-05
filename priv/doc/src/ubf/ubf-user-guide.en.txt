@@ -2,8 +2,8 @@
 // vim: set syntax=asciidoc:
 
 = UBF User's Guide _1st DRAFT_
-:Date: 2011/08/29
-:Revision: 0.3.2
+:Date: 2011/09/05
+:Revision: 0.3.3
 :Copyright: 2002 Joe Armstrong
 :Copyright: 2010-2011 Gemini Mobile Technologies, Inc.  All rights reserved.
 
@@ -1322,7 +1322,25 @@ jsf_utils:ubf_contract/{1,2} functions are available for this purpose.
 
 
 <<<
-== Building UBF from Source
+== Building UBF from Source - Option 1
+
+To download, build, and test the UBF application in one shot, please
+follow this recipe:
+
+------
+$ mkdir working-directory-name
+$ cd working-directory-name
+$ git clone git://github.com/norton/ubf.git ubf
+$ cd ubf
+$ ./rebar get-deps
+$ ./rebar compile
+$ ./rebar eunit
+------
+
+For an alternative recipe with other "features" albeit more complex,
+please read further.
+
+== Building UBF from Source - Option 2
 
 This section describes the basic recipes for the following items:
 
@@ -1337,7 +1355,7 @@ Please install and setup as needed.
 
 Git (Mandatory)::
 - Git - http://git-scm.com/
-  * *Git 1.5.4 or newer, Git 1.7.3.4 has been tested recently*
+  * *Git 1.5.4 or newer, Git 1.7.6.1 has been tested recently*
   * _required for Repo and GitHub_
 - GitHub - https://github.com
   * Anonymous read-only access using the GIT protocol is default.
@@ -1345,19 +1363,18 @@ Git (Mandatory)::
     public key under your GitHub account.
 Erlang/OTP (Mandatory)::
 - Erlang - http://www.erlang.org/
-  * *R13B04 or newer*
-  * *R14B01 has been tested most recently*
+  * *R13B04 or newer, R14B03 has been tested most recently*
   * If needed, see <<ErlangOTP>> for instructions to build Erlang/OTP
     from source.
 Python (Mandatory)::
 - Python - http://www.python.org
-  * *Python 2.4 or newer, Python 2.7 has been tested most recently
+  * *Python 2.4 or newer, Python 2.7.1 has been tested most recently
      (CAUTION: Python 3.x might be too new)*
   * _required for Repo and AsciiDoc_
 AsciiDoc (Optional)::
 - AsciiDoc - http://www.methods.co.nz/asciidoc/index.html
   * Must be version 8.6.1 or newer
-    ** 8.6.4 is the version most recently tested for UBF
+    ** 8.6.6 is the version most recently tested for UBF
   * Plus the following support tools:
     ** ImageMagick - http://www.imagemagick.org/
     ** Graphviz - http://www.graphviz.org/

@@ -1,3 +1,7 @@
+2011-09-05 23:00 JST  norton
+	* Update download, build, and test recipes. Replace gmt_eqc with
+	qc.
+
 2011-01-07 00:45 JST  norton
 	* Prepare for v1.15 tag: refactor UBF and friends to use repo and
 	rebar tools.

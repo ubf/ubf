@@ -26,6 +26,25 @@ data structures across a network.  It has three components:
 See http://norton.github.com/ubf for further details.
 
 
+Quick Start Recipe
+==================
+
+To download, build, and test the ubf application in one shot, please
+follow this recipe:
+
+    $ mkdir working-directory-name
+    $ cd working-directory-name
+    $ git clone git://github.com/norton/ubf.git ubf
+    $ cd ubf
+    $ ./rebar get-deps
+    $ ./rebar clean
+    $ ./rebar compile
+    $ ./rebar eunit
+
+For an alternative recipe with other "features" albeit more complex,
+please read further.
+
+
 To download
 ===========
 
@@ -37,8 +56,13 @@ To download
 2. Install Repo
 
     $ mkdir -p ~/bin
-    $ wget -O - http://android.git.kernel.org/repo > ~/bin/repo
+    $ wget -O - https://github.com/android/tools_repo/raw/master/repo > ~/bin/repo
+    $ perl -i.bak -pe 's!git://android.git.kernel.org/tools/repo.git!git://github.com/android/tools_repo.git!;' ~/bin/repo
     $ chmod a+x ~/bin/repo
+
+    CAUTION: Since access to kernel.org has been shutdown due to
+    hackers, fetch and replace repo tool with android's GitHub
+    repository mirror.
 
 3. Create working directory
 
@@ -64,14 +88,14 @@ For futher information and help for related tools, please refer to the
 following links:
 
 - Erlang - http://www.erlang.org/
-  * *R14B01 has been tested most recently*
-  * *R13B01 or newer*
+  * *R13B04 or newer, R14B03 has been tested most recently*
 - Git - http://git-scm.com/
-  * *Git 1.5.4 or newer*
+  * *Git 1.5.4 or newer, Git 1.7.6.1 has been tested recently*
   * _required for Repo and GitHub_
 - GitHub - https://github.com
 - Python - http://www.python.org
-  * *Python 2.4 or newer (CAUTION: Python 3.x might be too new)*
+  * *Python 2.4 or newer, Python 2.7.1 has been tested most recently
+     (CAUTION: Python 3.x might be too new)*
   * _required for Repo_
 - Rebar - https://github.com/basho/rebar/wiki
 - Repo - http://source.android.com/source/git-repo.html
@@ -225,6 +249,9 @@ framework for integrating UBF and EEP8.
 To do (in medium term)
 ======================
   - quickcheck tests
+
+To do (in long term)
+====================
   - add more Thrift (http://incubator.apache.org/thrift/) support
     * Compact Format
   - add Avro (http://hadoop.apache.org/avro/) support
@@ -235,12 +262,7 @@ To do (in medium term)
       of the BERT data types.
     * UBF is the text-based wire protocol.  EBF is the binary-based
       wire protocol (based on Erlang's binary serialization format).
-
-
-To do (in long term)
-====================
   - support multiple listeners for a single ubf server
-  - open-source ubf contract generators for QuickCheck
   - n-bidirectional requests/responses over single tcp/ip connection (similar to smpp)
   - replace plugin manager and plugin handler with gen_server-based
     implementation
@@ -250,7 +272,8 @@ To do (in long term)
 Credits
 =======
 
-Many, many thanks to Joe Armstrong, UBF's designer and original implementor.
+Many, many thanks to Joe Armstrong, UBF's designer and original
+implementor.
 
 Gemini Mobile Technologies, Inc. has approved the release of its
 extensions, improvements, etc. under an MIT license.  Joe Armstrong
