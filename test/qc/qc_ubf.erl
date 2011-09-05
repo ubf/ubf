@@ -13,29 +13,15 @@
 %%% See the License for the specific language governing permissions and
 %%% limitations under the License.
 %%%
-%%% File    : gmt_eqc_ubf.erl
+%%% File    : qc_ubf.erl
 %%% Purpose : QuickCheck wrappers for UBF
 %%%-------------------------------------------------------------------
 
--module(gmt_eqc_ubf).
+-module(qc_ubf).
 
--ifdef(PROPER).
--include_lib("proper/include/proper.hrl").
--define(GMTQC, proper).
--define(GMTQC_GEN, proper_gen).
--undef(EQC).
--define(ALWAYS(_N,PROP), PROP).
--endif. %% -ifdef(PROPER).
+-ifdef(QC).
 
--ifdef(EQC).
--include_lib("eqc/include/eqc.hrl").
--include_lib("eqc/include/eqc_statem.hrl").
--define(GMTQC, eqc).
--define(GMTQC_GEN, eqc_gen).
--undef(PROPER).
--endif. %% -ifdef(EQC).
-
--ifdef(GMTQC).
+-include_lib("qc/include/qc.hrl").
 
 -include("ubf.hrl").
 
@@ -80,9 +66,9 @@ behaviour_info(callbacks) ->
 -record(state,
         {
           %% mod
-          mod
-          %% mod state
-          , mod_state
+              mod
+              %% mod state
+              , mod_state
         }).
 
 %%%----------------------------------------------------------------------
@@ -96,9 +82,9 @@ ubf_sample_commands(Mod, Contracts, Options)
   when is_atom(Mod), is_list(Contracts), is_list(Options) ->
     %% commands - sample
     Params = [{ubfmod,Mod},{ubfcontracts,Contracts},{ubfoptions,Options}],
-    ?GMTQC_GEN:sample(with_parameters(Params,
-                                      ?LET(InitialState,initial_state(Mod),
-                                           command(InitialState)))).
+    ?QC_GEN:sample(with_parameters(Params,
+                                   ?LET(InitialState,initial_state(Mod),
+                                        command(InitialState)))).
 
 ubf_run_commands(Mod, Contracts) ->
     ubf_run_commands(Mod, Contracts, []).
@@ -203,7 +189,7 @@ ubf_gen_command_type(Mod, ModState, Contract, TypeName, TypeStack) ->
                           Mod:ubf_command_typegen(fun ubf_gen_command_type/5, Mod, ModState, Contract, TN, [TypeName|TypeStack])
                   end
           end,
-    gmt_eqc_ubf_types:type(Gen, Contract, TypeName).
+    qc_ubf_types:type(Gen, Contract, TypeName).
 
 
 %%%----------------------------------------------------------------------
@@ -276,4 +262,4 @@ write_commands(Cmds,FileName) ->
     ok = file:write_file(FileName, io_lib:format("~p.", [Cmds])),
     FileName.
 
--endif. %% -ifdef(GMTQC).
+-endif. %% -ifdef(QC).

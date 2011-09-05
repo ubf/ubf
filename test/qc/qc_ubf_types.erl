@@ -13,25 +13,15 @@
 %%% See the License for the specific language governing permissions and
 %%% limitations under the License.
 %%%
-%%% File    : gmt_eqc_ubf_types.erl
+%%% File    : qc_ubf_types.erl
 %%% Purpose : QuickCheck type generators for UBF
 %%%-------------------------------------------------------------------
 
--module(gmt_eqc_ubf_types).
+-module(qc_ubf_types).
 
--ifdef(PROPER).
--include_lib("proper/include/proper.hrl").
--define(GMTQC, proper).
--undef(EQC).
--endif. %% -ifdef(PROPER).
+-ifdef(QC).
 
--ifdef(EQC).
--include_lib("eqc/include/eqc.hrl").
--define(GMTQC, eqc).
--undef(PROPER).
--endif. %% -ifdef(EQC).
-
--ifdef(GMTQC).
+-include_lib("qc/include/qc.hrl").
 
 -include("ubf.hrl").
 
@@ -110,41 +100,41 @@ type1(_Gen,{string,Value}) when is_list(Value) ->
     Value;
 %% predef
 type1(_Gen,{predef,atom}) ->
-    gmt_eqc_gen:gmt_atom();
+    qc_gen:qc_atom();
 type1(_Gen,{predef,integer}) ->
     int();
 type1(_Gen,{predef,float}) ->
     real();
 type1(_Gen,{predef,binary}) ->
-    gmt_eqc_gen:gmt_binary();
+    qc_gen:qc_binary();
 type1(_Gen,{predef,list}) ->
-    gmt_eqc_gen:gmt_list();
+    qc_gen:qc_list();
 type1(_Gen,{predef,proplist}) ->
-    ?P(gmt_eqc_gen:gmt_proplist());
+    ?P(qc_gen:qc_proplist());
 type1(_Gen,{predef,string}) ->
-    ?S(gmt_eqc_gen:gmt_string());
+    ?S(qc_gen:qc_string());
 type1(_Gen,{predef,tuple}) ->
-    gmt_eqc_gen:gmt_tuple();
+    qc_gen:qc_tuple();
 type1(_Gen,{predef,term}) ->
-    gmt_eqc_gen:gmt_term();
+    qc_gen:qc_term();
 type1(_Gen,{predef,void}) ->
     %% not supported
     exit(fatal);
 %% predef with attributes
 type1(_Gen,{predef,{atom,Attrs}}) ->
-    gmt_eqc_gen:gmt_atom(Attrs);
+    qc_gen:qc_atom(Attrs);
 type1(_Gen,{predef,{binary,Attrs}}) ->
-    gmt_eqc_gen:gmt_binary(Attrs);
+    qc_gen:qc_binary(Attrs);
 type1(_Gen,{predef,{list,Attrs}}) ->
-    gmt_eqc_gen:gmt_list(Attrs);
+    qc_gen:qc_list(Attrs);
 type1(_Gen,{predef,{proplist,Attrs}}) ->
-    ?P(gmt_eqc_gen:gmt_proplist(Attrs));
+    ?P(qc_gen:qc_proplist(Attrs));
 type1(_Gen,{predef,{string,Attrs}}) ->
-    ?S(gmt_eqc_gen:gmt_string(Attrs));
+    ?S(qc_gen:qc_string(Attrs));
 type1(_Gen,{predef,{term,Attrs}}) ->
-    gmt_eqc_gen:gmt_term(Attrs);
+    qc_gen:qc_term(Attrs);
 type1(_Gen,{predef,{tuple,Attrs}}) ->
-    gmt_eqc_gen:gmt_tuple(Attrs);
+    qc_gen:qc_tuple(Attrs);
 %% abnf
 type1(Gen,{abnf_alt,Types}) ->
     ?LET(T,oneof(Types),
@@ -207,4 +197,4 @@ abnf_type_seq(Gen,[H|T],Acc) ->
     ?LET(Type,type(Gen,H),
          abnf_type_seq(Gen,T,[Type|Acc])).
 
--endif. %% -ifdef(GMTQC).
+-endif. %% -ifdef(QC).

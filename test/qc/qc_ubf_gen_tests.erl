@@ -13,42 +13,32 @@
 %%% See the License for the specific language governing permissions and
 %%% limitations under the License.
 %%%
-%%% File    : gmt_eqc_gen_eqc_tests.erl
+%%% File    : qc_ubf_gen_tests.erl
 %%% Purpose : GMT gen QuickCheck tests
 %%%-------------------------------------------------------------------
 
--module(gmt_eqc_gen_eqc_tests).
+-module(qc_ubf_gen_tests).
 
--ifdef(PROPER).
--include_lib("proper/include/proper.hrl").
--define(GMTQC, proper).
--undef(EQC).
--endif. %% -ifdef(PROPER).
+-ifdef(QC).
 
--ifdef(EQC).
--include_lib("eqc/include/eqc.hrl").
--define(GMTQC, eqc).
--undef(PROPER).
--endif. %% -ifdef(EQC).
-
--ifdef(GMTQC).
+-include_lib("qc/include/qc.hrl").
 
 -export([run/0]).
 -compile(export_all).
 
 %% run from eunit
 eunit_test_() ->
-    gmt_eqc:eunit_module(?MODULE, 3000).
+    qc:eunit_module(?MODULE, 3000).
 
 run() ->
     run(3000).
 
 run(NumTests) ->
-    gmt_eqc:module({numtests,NumTests}, ?MODULE).
+    qc:module({numtests,NumTests}, ?MODULE).
 
 %% @desc test the any generator against the ubf encoder/decoder
 prop_ubf_gen_any() ->
-    ?FORALL(X, gmt_eqc_gen:gmt_any(),
+    ?FORALL(X, qc_gen:qc_any(),
             begin
                 UBF = ubf:encode(X),
                 {ok, Y, ""} = ubf:decode(UBF),
@@ -56,4 +46,4 @@ prop_ubf_gen_any() ->
                 ?WHENFAIL(io:format("~n~p:~p ~p -> ~p -> ~p~n",[?FILE, ?LINE, X, UBF, Y]), Res)
             end).
 
--endif. %% -ifdef(GMTQC).
+-endif. %% -ifdef(QC).
