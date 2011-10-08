@@ -8,7 +8,7 @@
 %%
 %% The process executing `loop()' in this module is represented in the
 %% diagram below by the "UBF Driver" circle.
-%% <img src="../priv/doc/ubf-flow-01.png"></img>
+%% <img src="ubf-flow-01.png"></img>
 
 -module(ebf_driver).
 -behaviour(contract_driver).

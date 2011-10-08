@@ -1,4 +1,5 @@
-
+@doc
+```
 This is UBF, a framework for Getting Erlang to talk to the outside
 world.  This repository is based on Joe Armstrong's original UBF code
 with an MIT license file added to the distribution.  Since then, a
@@ -278,3 +279,4 @@ implementor.
 Gemini Mobile Technologies, Inc. has approved the release of its
 extensions, improvements, etc. under an MIT license.  Joe Armstrong
 has also given his blessing to Gemini's license choice.
+'''

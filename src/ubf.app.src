@@ -3,7 +3,7 @@
 {application, ubf,
  [
   {description, "Universal Binary Format"},
-  {vsn, "1.15.7"},
+  {vsn, git},
   {registered, []},
   {applications, [kernel, stdlib, sasl]},
   {modules, [contract_parser

@@ -16,8 +16,8 @@
 %%
 %% For more information, please see the following:
 %% <ul>
-%% <li> <a href="../priv/doc/doc/site/ubfa.html">Joe Armstrong's UBF(A) summary</a>  </li>
-%% <li> <a href="../priv/doc/doc/site/ubfa_quick.html">Joe Armstrong's UBF(A) quick-reference summary</a>  </li>
+%% <li> <a href="doc/site/ubfa.html">Joe Armstrong's UBF(A) summary</a>  </li>
+%% <li> <a href="doc/site/ubfa_quick.html">Joe Armstrong's UBF(A) quick-reference summary</a>  </li>
 %% </ul>
 %%
 %% == Hint: Decoding rules ==

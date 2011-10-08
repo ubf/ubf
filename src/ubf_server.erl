@@ -116,7 +116,7 @@ start(Name, Plugins, Port) ->
 %%      <ul>
 %%      <li> safe ... Prevents decoding data that may be used to
 %%      attack the Erlang system.  In the event of receiving unsafe
-%%      data, decoding fails with a badarg error.
+%%      data, decoding fails with a badarg error. </li>
 %%      </ul>
 %%
 %% <li> {registeredname, atom()} ... Set the name to be registered for

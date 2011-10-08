@@ -5,7 +5,7 @@
 %% driver for whatever protocol is being used "over the wire",
 %% e.g. JSON-RPC) and the plugin handler server.
 %%
-%% <img src="../priv/doc/ubf-flow-01.png"></img>
+%% <img src="ubf-flow-01.png"></img>
 %%
 %% == Message Passing ==
 %%
@@ -15,7 +15,7 @@
 %% plugin handler server, which acts as an intermediary between the
 %% actual server application.
 %%
-%% <img src="../priv/doc/contract_manager-01.png"></img>
+%% <img src="contract_manager-01.png"></img>
 
 -module(contract_manager).
 

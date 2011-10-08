@@ -1,6 +1,6 @@
 %% @doc Generic protocol encoder/decoder for protocol sessions.
 %%
-%% <img src="../priv/doc/ubf-flow-01.png"></img>
+%% <img src="ubf-flow-01.png"></img>
 
 -module(contract_proto).
 

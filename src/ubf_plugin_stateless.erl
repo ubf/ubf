@@ -1,6 +1,6 @@
 %% @doc Callbacks for stateless plugin implementations.
 %%
-%% <img src="../priv/doc/ubf-flow-01.png"></img>
+%% <img src="ubf-flow-01.png"></img>
 
 -module(ubf_plugin_stateless).
 

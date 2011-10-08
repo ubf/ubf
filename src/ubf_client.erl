@@ -84,7 +84,6 @@
 %%       that will be passed to ubf_plugin_meta_stateful:new() or
 %%       ubf_plugin_meta_stateless:new() for client initialization.
 %% @type tcp_port() = integer().  A TCP port number.
-%% @type timeout() = integer() | infinity.  An Erlang-style timeout value.
 
 %% @spec (string(), list()) -> term()
 %% @doc Debugging function, uncomment the alternate form for

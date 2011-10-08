@@ -9,7 +9,7 @@
 %% This module also implements the plugin manager loop.
 %% TODO More detail, please.
 %%
-%% <img src="../priv/doc/ubf-flow-01.png"></img>
+%% <img src="ubf-flow-01.png"></img>
 
 -module(ubf_plugin_handler).
 
@@ -17,14 +17,6 @@
 -export([sendEvent/2, install_default_handler/1, install_handler/2]).
 
 -include("ubf.hrl").
-
-%% ubf_plugin_handler API for plugins
--spec ask_manager(Manager::pid(), Call::term()) -> Reply::term().
-
--spec sendEvent(Handler::pid(), Cast::term()) -> ok | no_return().
-
--spec install_default_handler(Handler::pid()) -> ack.
--spec install_handler(Handler::pid(), Fun::fun()) -> ack.
 
 
 %%----------------------------------------------------------------------
@@ -196,6 +188,7 @@ manager_loop(ExitPid, Mod, State) ->
             manager_loop(ExitPid, Mod, State)
     end.
 
+-spec ask_manager(Manager::pid(), Call::term()) -> Reply::term().
 ask_manager(Manager, Q) ->
     Manager ! {self(), {handler_rpc, Q}},
     receive
@@ -206,9 +199,9 @@ ask_manager(Manager, Q) ->
 
 %%----------------------------------------------------------------------
 
-%% @spec (pid(), Msg) -> any()
 %% @doc Send an asynchronous UBF message.
 
+-spec sendEvent(Handler::pid(), Cast::term()) -> ok | no_return().
 sendEvent(Pid, Msg) when is_pid(Pid) ->
     case is_process_alive(Pid) of
         false ->
@@ -218,16 +211,15 @@ sendEvent(Pid, Msg) when is_pid(Pid) ->
             ok
     end.
 
-%% @spec (pid()) -> ack
 %% @doc Install a default handler function (callback-style) for
 %% asynchronous UBF messages.
 %%
 %% The default handler function, drop_fun/1, does nothing.
 
+-spec install_default_handler(Handler::pid()) -> ack.
 install_default_handler(Pid) ->
     install_handler(Pid, fun drop_fun/1).
 
-%% @spec (pid(), function()) -> ack
 %% @doc Install a handler function (callback-style) for asynchronous
 %% UBF messages.
 %%
@@ -246,6 +238,7 @@ install_default_handler(Pid) ->
 %% is executing the event loop processing function,
 %% <tt>irc_client_gs:loop/6</tt>.
 
+-spec install_handler(Handler::pid(), Fun::fun()) -> ack.
 install_handler(Pid, Fun) ->
     if Pid =/= self() ->
             Pid ! {self(), {install, Fun}},
