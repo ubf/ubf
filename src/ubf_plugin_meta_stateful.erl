@@ -38,7 +38,7 @@
 
 %% This is called when we start this manager It returns a state
 
-%% The server plugin only knows how to start it's sub-services
+%% The server plugin only knows how to start it\'s sub-services
 
 %% @doc Enumerate the UBF services of this server.
 
@@ -124,7 +124,7 @@ managerRestart(Args,Manager) ->
 
 %% @spec (Args::term(), Manager::pid()) ->
 %%       ok | {error, Reason::term()}
-%% @doc Required UBF contract implementation callback: call a manager's RPC
+%% @doc Required UBF contract implementation callback: call a manager\'s RPC
 %%      function.
 
 managerRpc({service,Service}, S) ->

@@ -413,7 +413,7 @@ is_nonundefined(_) -> true.
 %%       yup | error_hints_term_only_human_readable_sorry()
 %% @doc Given a contract type name, a term to check against that
 %% contract type, and a contract module name, verify the term against
-%% that contract's type.
+%% that contract\'s type.
 %%
 %% Example usage from the irc_plugin.con contract:
 %% <ul>
@@ -424,7 +424,7 @@ is_nonundefined(_) -> true.
 %% <li> contracts:checkType(joinEvent, {joins, {'#S', "nck"}, {'#S', bad_atom}}, irc_plugin). </li>
 %% </ul>
 %%
-%% NOTE: This is a brute-force function, but it works, mostly.  Don't
+%% NOTE: This is a brute-force function, but it works, mostly.  Don\'t
 %% try to have a computer parse the output in error cases: the failure
 %% output is meant only for human eyes.
 
@@ -512,7 +512,7 @@ bad_zip(TypesList, TermList, Mod) ->
         {false, WantedType, Pos} <- Items].
 
 %% checkType_investigate_deeper({prim, _} = Type, Term, Mod) ->
-%%     INFINITE LOOP, don't do this....
+%%     INFINITE LOOP, don\'t do this....
 %%     checkType2(Type, Term, Mod);
 checkType_investigate_deeper({list, _Min, _Max, Type}, TermL, Mod) ->
     if is_list(TermL) ->

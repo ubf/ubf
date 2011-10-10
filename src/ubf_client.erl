@@ -17,9 +17,9 @@
 %%% details.
 %%%
 %%% This module also provides an alternative client-side function for
-%%% calling's UBF contract manager and a UBF contract's implementation
+%%% calling\'s UBF contract manager and a UBF contract\'s implementation
 %%% without any side-effects: `lpc()' to make a synchronous local
-%%% procedure call to a contract's implementation.
+%%% procedure call to a contract\'s implementation.
 %%%
 %%% See the documentation for the <tt>TBD</tt> module for extra
 %%% commentary on writing an UBF server implementation module.
@@ -79,7 +79,7 @@
 %%       An OTP-style property list, see 'proplists' module for details.
 %% @type ip_address() = string() | tuple().  An IP address in string form,
 %%       e.g. "127.0.0.1" (IPv4) or "::1" (IPv6), or in tuple form (see
-%%       documentation for Erlang's 'inet' module for details).
+%%       documentation for Erlangs 'inet' module for details).
 %% @type plugin_module_list() = list(atom()).  A list of plugin module names
 %%       that will be passed to ubf_plugin_meta_stateful:new() or
 %%       ubf_plugin_meta_stateless:new() for client initialization.

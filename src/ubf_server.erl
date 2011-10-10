@@ -13,7 +13,7 @@
 %%% implementation of a UBF(B) protocol-checking server:
 %%%
 %%% <ul>
-%%% <li> UBF(A).  This is Joe Armstrong's original implementation.
+%%% <li> UBF(A).  This is Joe Armstrong\'s original implementation.
 %%%      See <a href="http://www.sics.se/~joe/ubf/">
 %%%      http://www.sics.se/~joe/ubf/</a> for details. </li>
 %%% <li> EBF, a.k.a. Erlang Binary Format.  This protocol uses common
@@ -23,20 +23,20 @@
 %%%      payload encoding.  These wire formats are used to pass Erlang
 %%%      terms between a UBF(B) contract checking server and a client
 %%%      that does not support the UBF(A) wire format but does support
-%%%      Erlang's native wire formats. </li>
+%%%      Erlang\'s native wire formats. </li>
 %%% <li> JSF, a.k.a the JSon Format.  Similar to EBF, except
-%%%      that JavaScript's JSON encoding is used for the wire protocol
-%%%      instead of UBF(A) or Erlang's native wire formats.</li>
+%%%      that JavaScript\'s JSON encoding is used for the wire protocol
+%%%      instead of UBF(A) or Erlang\'s native wire formats.</li>
 %%% <li> TBF, a.k.a the Thrift Binary Format.  Similar to EBF, except
-%%%      that Thrift's binary encoding is used for the wire protocol
-%%%      instead of UBF(A) or Erlang's native wire formats.</li>
-%%% <li> PBF, a.k.a the Google's Protocol Buffers Format.  Similar to
-%%%      EBF, except that Google's Protocol Buffers binary encoding is used
-%%%      for the wire protocol instead of UBF(A) or Erlang's native wire
+%%%      that Thrift\'s binary encoding is used for the wire protocol
+%%%      instead of UBF(A) or Erlang\'s native wire formats.</li>
+%%% <li> PBF, a.k.a the Google\'s Protocol Buffers Format.  Similar to
+%%%      EBF, except that Google\'s Protocol Buffers binary encoding is used
+%%%      for the wire protocol instead of UBF(A) or Erlang\'s native wire
 %%%      formats.</li>
 %%% <li> ABF, a.k.a the Avro Binary Format.  Similar to EBF, except
-%%%      that Avro's binary encoding is used for the wire protocol
-%%%      instead of UBF(A) or Erlang's native wire formats.</li>
+%%%      that Avro\'s binary encoding is used for the wire protocol
+%%%      instead of UBF(A) or Erlang\'s native wire formats.</li>
 %%% </ul>
 %%%
 %%% There is no "stop" function.  To stop the server, instead stop the
@@ -125,7 +125,7 @@ start(Name, Plugins, Port) ->
 %%      Default: undefined. </li>
 %% <li> {statelessrpc, true | false} ... Run the stateless variety of
 %%      a UBF(B) contract.  A stateless contract is an extension of
-%%      Joe Armstrong's original UBF server implementation.
+%%      Joe Armstrong\'s original UBF server implementation.
 %%      Default: false. </li>
 %% <li> {startplugin, atom()} ... Set the starting plugin, set after a
 %%      client first connects to the server.  If not set, client may
