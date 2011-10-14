@@ -6,15 +6,12 @@
 * [Function Details](#functions)
 
 
-Low-level functions for encoding and decoding the UBF(A)
-protocol for EBF.
+<p>Low-level functions for encoding and decoding the UBF(a)
+protocol for EBF.</p>.
 
 
 
-__Behaviours:__ [`contract_proto`](contract_proto.md).<a name="description"></a>
-
-##Description##
- <a name="index"></a>
+__Behaviours:__ [`contract_proto`](contract_proto.md).<a name="index"></a>
 
 ##Function Index##
 

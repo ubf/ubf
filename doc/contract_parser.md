@@ -6,15 +6,13 @@
 * [Function Details](#functions)
 
 
-UBF(B) contract parser.
-
-<a name="description"></a>
-
-##Description##
+<p>UBF(b) contract parser.</p>
 
 
-Parsing a UBF(B) contract is done via a compiler "parse transform"
-during the usual compilation of an Erlang source module.
+<pre><tt>Parsing a UBF(b) contract is done via a compiler "parse transform"
+during the usual compilation of an Erlang source module.</tt></pre>
+.
+
 <a name="index"></a>
 
 ##Function Index##

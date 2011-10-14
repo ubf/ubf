@@ -6,60 +6,27 @@
 * [Function Details](#functions)
 
 
-Low-level functions for encoding and decoding the UBF(A)  
-protocol.
+<p>Low-level functions for encoding and decoding the UBF(a)
+protocol.</p>
+
+
+<pre><tt>UBF is a family of languages for transporting and describing
+complex data structures across a network.  It has three
+components.  In terms of a protocol stack, UBF(a) is a data
+transport format, roughly equivalent to well-formed XML.</tt></pre>
 
 
 
-__Behaviours:__ [`contract_proto`](contract_proto.md).<a name="description"></a>
-
-##Description##
-
-
-
-
-UBF is a family of languages for transporting and describing    
-complex data structures across a network.  It has three    
-components.  In terms of a protocol stack, UBF(A) is a data    
-transport format, roughly equivalent to well-formed XML.
+<pre><tt>UBF(a) is the transport format, it was designed to be easy to
+parse and to be easy to write with a text editor. UBF(a) is based
+on a byte encoded virtual machine, 26 byte codes are
+reserved. Instead of allocating the byte codes from 0 we use the
+printable character codes to make the format easy to read.</tt></pre>
+.
 
 
 
-###<a name="Quick_Summary">Quick Summary</a>##
-
-
-
-
-UBF(A) is the transport format, it was designed to be easy to    
-parse and to be easy to write with a text editor. UBF(A) is based    
-on a byte encoded virtual machine, 26 byte codes are    
-reserved. Instead of allocating the byte codes from 0 we use the    
-printable character codes to make the format easy to read.
-
-For more information, please see the following:
-
-* [Joe Armstrong's UBF(A) summary](doc/site/ubfa.md) 
-
-* [Joe Armstrong's UBF(A) quick-reference summary](doc/site/ubfa_quick.md) 
-
-
-
-
-
-###<a name="Hint:_Decoding_rules">Hint: Decoding rules</a>##
-
-
-
-* {'#S', String} -> String
-
-* Int            -> Int
-
-* [ ]            -> List
-
-* {...}          -> Tuple
-
-
-<a name="index"></a>
+__Behaviours:__ [`contract_proto`](contract_proto.md).<a name="index"></a>
 
 ##Function Index##
 

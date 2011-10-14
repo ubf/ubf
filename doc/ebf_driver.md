@@ -6,26 +6,19 @@
 * [Function Details](#functions)
 
 
-Protocol driver process for EBF (Erlang Binary Format)  
-protocol sessions.
+<p>Protocol driver process for EBF (Erlang Binary Format)
+protocol sessions.</p>
+
+
+<pre><tt>This driver automagically relies on the OTP +gen_tcp+ "packet"
+feature, using a 4-byte prefix to specify the size of the data
+coming from the client.  Similarly, this packet feature is used
+when sending our reply back to the client.</tt></pre>
+.
 
 
 
-__Behaviours:__ [`contract_driver`](contract_driver.md).<a name="description"></a>
-
-##Description##
-
-
-
-
-This driver automagically relies on the OTP `gen_tcp` "packet"  
-feature, using a 4-byte prefix to specify the size of the data  
-coming from the client.  Similarly, this packet feature is used  
-when sending our reply back to the client.
-
-The process executing `loop()` in this module is represented in the
-diagram below by the "UBF Driver" circle.
-![ubf-flow-01.png](ubf-flow-01.png)<a name="index"></a>
+__Behaviours:__ [`contract_driver`](contract_driver.md).<a name="index"></a>
 
 ##Function Index##
 

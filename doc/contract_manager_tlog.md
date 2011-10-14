@@ -6,32 +6,16 @@
 * [Function Details](#functions)
 
 
-Contract manager transaction logging.
-
-<a name="description"></a>
-
-##Description##
+<p>Contract manager transaction logging.</p>
 
 
-
-
-This module can be used by the server to log individual protocol
+<pre><tt>This module can be used by the server to log individual protocol
 transactions, if desired.  This simple default module uses the
-Erlang/OTP `error_logger` module; we highly recommend that the
-`sasl` application be running to take full advantage of OTP's error  
-and event handling capabilities.
+Erlang/OTP +error_logger+ module; we highly recommend that the
++sasl+ application be running to take full advantage of OTP\'s
+error and event handling capabilities.</tt></pre>
+.
 
-
-
-tlog/6 callback API:
-
-
-
--type op() :: rpc | lpc | event_in | event_out.  
--type now() :: {pos_integer(), pos_integer(), pos_integer()}.  
--type plugin() :: module().
-
--spec tlog(op(), now(), plugin(), Q::term(), Reply::term(), Status::term()) -> ok.
 <a name="index"></a>
 
 ##Function Index##

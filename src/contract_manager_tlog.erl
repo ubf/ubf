@@ -1,19 +1,33 @@
-%% @doc Contract manager transaction logging.
-%%
-%% This module can be used by the server to log individual protocol
-%% transactions, if desired.  This simple default module uses the
-%% Erlang/OTP `error_logger' module; we highly recommend that the
-%% `sasl' application be running to take full advantage of OTP's error
-%% and event handling capabilities.
-%%
-%% tlog/6 callback API:
-%%
-%% -type op() :: rpc | lpc | event_in | event_out.
-%% -type now() :: {pos_integer(), pos_integer(), pos_integer()}.
-%% -type plugin() :: module().
-%%
-%% -spec tlog(op(), now(), plugin(), Q::term(), Reply::term(), Status::term()) -> ok.
-%%
+%%% The MIT License
+%%%
+%%% Copyright (C) 2011 by Joseph Wayne Norton <norton@alum.mit.edu>
+%%% Copyright (C) 2002 by Joe Armstrong
+%%%
+%%% Permission is hereby granted, free of charge, to any person obtaining a copy
+%%% of this software and associated documentation files (the "Software"), to deal
+%%% in the Software without restriction, including without limitation the rights
+%%% to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+%%% copies of the Software, and to permit persons to whom the Software is
+%%% furnished to do so, subject to the following conditions:
+%%%
+%%% The above copyright notice and this permission notice shall be included in
+%%% all copies or substantial portions of the Software.
+%%%
+%%% THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+%%% IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+%%% FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+%%% AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+%%% LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+%%% OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+%%% THE SOFTWARE.
+
+%%% @doc Contract manager transaction logging.
+%%%
+%%% This module can be used by the server to log individual protocol
+%%% transactions, if desired.  This simple default module uses the
+%%% Erlang/OTP +error_logger+ module; we highly recommend that the
+%%% +sasl+ application be running to take full advantage of OTP\'s
+%%% error and event handling capabilities.
 
 -module(contract_manager_tlog).
 
@@ -161,17 +175,17 @@ eventIn2({TLogMod, ErrLogP}, Msg, State, Mod, Status) ->
 
 %% @doc The TLogMod_x thingie coming in is either:
 %%
-%%  * an atom, specifying the txn log module name, and also assume the
-%%  caller wants 'error_logger' calls
+%% - an atom, specifying the txn log module name, and also assume the
+%%   caller wants +error_logger+ calls
 %%
-%%  * a tuple, {atom(), boolean()}, where the atom() is the txn log
-%%  module name, and the boolean() is whether or not the caller wants
-%%  'error_logger' calls.
+%% - a tuple, +{atom(), boolean()}+, where the +atom()+ is the txn log
+%%   module name, and the +boolean()+ is whether or not the caller
+%%   wants +error_logger+ calls.
 %%
-%% The other design option would be to strip out all 'error_logger'
+%% The other design option would be to strip out all +error_logger+
 %% calls from this module and force the TLogMod callback module to do
-%% it.  However, it's probably "nice" to provide a default that casual
-%% users don't need to fuss with?
+%% it.  However, it\'s probably "nice" to provide a default that
+%% casual users don\'t need to fuss with?
 
 tlm({_, _} = X) ->
     X;

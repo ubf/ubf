@@ -2,29 +2,15 @@
 %% vim: set syntax=asciidoc:
 @author Joseph Wayne Norton <norton@alum.mit.edu>
 @copyright 2011 by Joseph Wayne Norton
-@title Universal Bianry Format
+@title Universal Binary Format
 @doc
 This is UBF, a framework for getting Erlang to talk to the outside
 world.  This repository is based on Joe Armstrong\'s original UBF code
 with an MIT license file added to the distribution.  Since then, a
 large number of enhancements and improvements have been added.
 
-== What is UBF?
-
-UBF is the "Universal Binary Format", designed and implemented by Joe
-Armstrong.  UBF is a language for transporting and describing complex
-data structures across a network.  It has three components:
-
-- UBF(a) is a "language neutral" data transport format, roughly
-  equivalent to well-formed XML.
-- UBF(b) is a programming language for describing types in UBF(a) and
-  protocols between clients and servers.  This layer is typically
-  called the "protocol contract".  UBF(b) is roughly equivalent to
-  Verified XML, XML-schemas, SOAP and WDSL.
-- UBF(c) is a meta-level protocol used between a UBF client and a UBF
-  server.
-
-See http://norton.github.com/ubf for further details.
+_This repository is intended for production deployment and is deployed
+in carrier-grade systems._
 
 == Quick Start Recipe
 
@@ -44,6 +30,97 @@ $ ./rebar eunit
 
 For an alternative recipe with other "features" albeit more complex,
 please read further.
+
+== Documentation
+
+=== Where should I start?
+
+This README is a good first step.
+
+The UBF User\'s Guide is the best next step.  Check out
+http://norton.github.com/ubf/ubf-user-guide.en.html for further
+detailed information.
+
+One of the better places to start is to look in the "doc" directory.
+See the "Reference Documentation" section for suggestions on where to
+find greater detail.
+
+The unit tests in the "test/unit" directory provide small examples of
+how to use all of the public API.  In particular, the *client*.erl
+files contain comments at the top with a list of prerequisites and
+small examples, recipe-style, for starting each server and using the
+client.
+
+The eunit tests in the "test/eunit" directory perform several smoke
+and error handling uses cases.
+
+The #1 most frequently asked question is: "My term X fails contract Y,
+but I can\'t figure out why!  This X is perfectly OK.  What is going
+on?"  See the the EDoc documentation for the contracts:checkType/3
+function.
+
+The documentation is in a state of slow improvement.  Contributions
+from the wider world are welcome.  :-)
+
+=== What is UBF?
+
+UBF is the "Universal Binary Format", designed and implemented by Joe
+Armstrong.  UBF is a language for transporting and describing complex
+data structures across a network.  It has three components:
+
+- UBF(a) is a "language neutral" data transport format, roughly
+  equivalent to well-formed XML.
+- UBF(b) is a programming language for describing types in UBF(a) and
+  protocols between clients and servers.  This layer is typically
+  called the "protocol contract".  UBF(b) is roughly equivalent to
+  Verified XML, XML-schemas, SOAP and WDSL.
+- UBF(c) is a meta-level protocol used between a UBF client and a UBF
+  server.
+
+See http://norton.github.com/ubf for further details.
+
+=== What is EBF?
+
+EBF is an implementation of UBF(b) but does not use UBF(a) for client
+and server communication.  Instead, Erlang-style conventions are used
+instead:
+
+- Structured terms are serialized via the Erlang BIFs +term_to_binary()+
+  and +binary_to_term()+.
+- Terms are framed using the +gen_tcp+ +{packet, 4}+ format: a 32-bit
+  unsigned integer (big-endian?) specifies packet length.
++
+------
++-------------------------+-------------------------------+
+| Packet length (32 bits) | Packet data (variable length) |
++-------------------------+-------------------------------+
+------
+
+The name "EBF" is short for "Erlang Binary Format".
+
+=== What about JSF and JSON-RPC?
+
+See the ubf-jsonrpc open source repository
+https://github.com/norton/ubf-jsonrpc for details.  ubf-jsonrpc is a
+framework for integrating UBF, JSF, and JSON-RPC.
+
+=== What about TBF and Thrift?
+
+See the ubf-thrift open source repository
+https://github.com/norton/ubf-thrift for details.  ubf-thrift is a
+framework for integrating UBF, TBF, and Thrift.
+
+=== What about ABNF?
+
+See the ubf-abnf open source repository
+https://github.com/norton/ubf-abnf for details.  ubf-abnf is a
+framework for integrating UBF and ABNF.
+
+=== What about EEP8?
+
+See the ubf-eep8 open source repository
+https://github.com/norton/ubf-eep8 for details.  ubf-eep8 is a
+framework for integrating UBF and EEP8.
 
 == To download
 
@@ -79,8 +156,8 @@ enter the name and email of your GitHub account if you have one.  Team
 members having read-write access are recommended to use "repo init -u
 git@github.com:norton/manifests.git -m ubf-default-rw.xml".
 +
-TIP: If you want to checkout the latest development version of UBF,
-please append " -b dev" to the repo init command.
+TIP: If you want to checkout the latest development version, please
+append " -b dev" to the repo init command.
 
 4. Download Git repositories
 +
@@ -109,7 +186,7 @@ following links:
 
 1. Get and install an erlang system http://www.erlang.org
 
-2. Build UBF
+2. Build
 +
 ------
 $ cd working-directory-name/src
@@ -175,81 +252,6 @@ $ make
 +
 Then install as a normal Python package or run using "env
 PYTHONPATH=working-directory-name/py_interface python your-script.py"
-
-== Documentation
-
-=== Where should I start?
-
-This README is a good first step.  Check out and build using the "To
-build" instructions above.
-
-The UBF User\'s Guide is the best next step.  Check out
-http://norton.github.com/ubf/ubf-user-guide.en.html for further
-detailed information.
-
-The documentation is in a state of slow improvement.  Contributions
-from the wider world are welcome.  :-)
-
-One of the better places to start is to look in the "doc" directory.
-See the "Reference Documentation" section for suggestions on where to
-find greater detail.
-
-The unit tests in the "test/unit" directory provide small examples of
-how to use all of the public API.  In particular, the *client*.erl
-files contain comments at the top with a list of prerequisites and
-small examples, recipe-style, for starting each server and using the
-client.
-
-The eunit tests in the "test/eunit" directory perform several smoke
-and error handling uses cases.
-
-The #1 most frequently asked question is: "My term X fails contract Y,
-but I can\'t figure out why!  This X is perfectly OK.  What is going
-on?"  See the the EDoc documentation for the contracts:checkType/3
-function.
-
-=== What is EBF?
-
-EBF is an implementation of UBF(B) but does not use UBF(A) for client
-and server communication.  Instead, Erlang-style conventions are used
-instead:
-
-- Structured terms are serialized via the Erlang BIFs term_to_binary()
-  and binary_to_term().
-- Terms are framed using the 'gen_tcp' {packet, 4} format: a 32-bit
-  unsigned integer (big-endian?) specifies packet length.
-+
-------
-+-------------------------+-------------------------------+
-| Packet length (32 bits) | Packet data (variable length) |
-+-------------------------+-------------------------------+
-------
-
-The name "EBF" is short for "Erlang Binary Format".
-
-=== What about JSF and JSON-RPC?
-
-See the ubf-jsonrpc open source repository
-https://github.com/norton/ubf-jsonrpc for details.  ubf-jsonrpc is a
-framework for integrating UBF, JSF, and JSON-RPC.
-
-=== What about TBF and Thrift?
-
-See the ubf-thrift open source repository
-https://github.com/norton/ubf-thrift for details.  ubf-thrift is a
-framework for integrating UBF, TBF, and Thrift.
-
-=== What about ABNF?
-
-See the ubf-abnf open source repository
-https://github.com/norton/ubf-abnf for details.  ubf-abnf is a
-framework for integrating UBF and ABNF.
-
-=== What about EEP8?
-
-See the ubf-eep8 open source repository
-https://github.com/norton/ubf-eep8 for details.  ubf-eep8 is a
-framework for integrating UBF and EEP8.
 
 == Roadmap
 - QuickCheck/Proper tests

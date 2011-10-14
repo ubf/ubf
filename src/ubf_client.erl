@@ -1,37 +1,50 @@
+%%% The MIT License
+%%%
+%%% Copyright (C) 2011 by Joseph Wayne Norton <norton@alum.mit.edu>
+%%% Copyright (C) 2002 by Joe Armstrong
+%%%
+%%% Permission is hereby granted, free of charge, to any person obtaining a copy
+%%% of this software and associated documentation files (the "Software"), to deal
+%%% in the Software without restriction, including without limitation the rights
+%%% to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+%%% copies of the Software, and to permit persons to whom the Software is
+%%% furnished to do so, subject to the following conditions:
+%%%
+%%% The above copyright notice and this permission notice shall be included in
+%%% all copies or substantial portions of the Software.
+%%%
+%%% THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+%%% IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+%%% FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+%%% AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+%%% LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+%%% OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+%%% THE SOFTWARE.
+
 %%%
 %%% @doc UBF client-side public API.
 %%%
 %%% This module implements most of the commonly-used client-side
 %%% functions required to talk to UBF servers:
-%%% <ul>
-%%%   <li> connect() to a UBF server </li>
-%%%   <li> rpc() to make a synchronous call to a connected UBF server </li>
-%%%   <li> stop() a connection </li>
-%%%   <li> install_handler() to add a callback function to handle
-%%%        asynchronous notifications from theUBF server to your
-%%%        client process. </li>
-%%% </ul>
 %%%
-%%% Note that this library can support UBF(A), EBF, JSF, TBF, PBF, and
-%%% ABF transport.  See the `connect()' function arguments for
+%%% - +connect()+ to a UBF server
+%%% - +rpc()+ to make a synchronous call to a connected UBF server
+%%% - +stop()+ a connection
+%%% - +install_handler()+ to add a callback function to handle
+%%%   asynchronous notifications from theUBF server to your client
+%%%   process.
+%%%
+%%% Note that this library can support UBF(a), EBF, JSF, TBF, PBF, and
+%%% ABF transport.  See the +connect()+ function arguments for
 %%% details.
 %%%
 %%% This module also provides an alternative client-side function for
-%%% calling\'s UBF contract manager and a UBF contract\'s implementation
-%%% without any side-effects: `lpc()' to make a synchronous local
-%%% procedure call to a contract\'s implementation.
-%%%
-%%% See the documentation for the <tt>TBD</tt> module for extra
-%%% commentary on writing an UBF server implementation module.
+%%% calling\'s UBF contract manager and a UBF contract\'s
+%%% implementation without any side-effects: +lpc()+ to make a
+%%% synchronous local procedure call to a contract\'s implementation.
 %%%
 
 -module(ubf_client).
-
-%% -compile(export_all).
-
-%% connect(Host,Port)  -> {ok, Pid, Service} | {error, What}
-%% rpc(Pid, Q) -> Reply
-%% stop(Pid)   -> ack.
 
 -export([connect/2, connect/3, connect/4, rpc/2, rpc/3, stop/1]).
 -export([sendEvent/2, install_default_handler/1, install_handler/2]).
@@ -52,78 +65,42 @@
 -type statename() :: atom().
 -type tlogger() :: module().
 
--spec connect(host() | plugins(), ipport() | server()) ->
-              {ok, Client::pid(), service()} | {error, term()}.
--spec connect(host() | plugins(), ipport() | server(), timeout()) ->
-              {ok, Client::pid(), service()} | {error, term()}.
--spec connect(host() | plugins(), ipport() | server(), options(), timeout()) ->
-              {ok, Client::pid(), service()} | {error, term()}.
-
--spec rpc(Client::pid(), Call::term()) -> timeout | term() | no_return().
--spec rpc(Client::pid(), Call::term(), timeout()) -> timeout | term() | no_return().
-
--spec stop(Client::pid()) -> ok.
-
--spec sendEvent(Handler::pid(), Cast::term()) -> ok | no_return().
-
--spec install_default_handler(Client::pid()) -> ack.
--spec install_handler(Client::pid(), Fun::fun()) -> ack.
-
--spec lpc(plugin(), Call::term()) -> term().
--spec lpc(plugin(), Call::term(), statename()) -> term().
--spec lpc(plugin(), Call::term(), statename(), tlogger()) -> term().
-
-
-%% @type address() = string() | ip_address(). A DNS hostname or IP address.
-%% @type connect_options() = list({proto, ubf | ebf | jsf | tbf | pbf | abf}).
-%%       An OTP-style property list, see 'proplists' module for details.
-%% @type ip_address() = string() | tuple().  An IP address in string form,
-%%       e.g. "127.0.0.1" (IPv4) or "::1" (IPv6), or in tuple form (see
-%%       documentation for Erlangs 'inet' module for details).
-%% @type plugin_module_list() = list(atom()).  A list of plugin module names
-%%       that will be passed to ubf_plugin_meta_stateful:new() or
-%%       ubf_plugin_meta_stateless:new() for client initialization.
-%% @type tcp_port() = integer().  A TCP port number.
-
-%% @spec (string(), list()) -> term()
 %% @doc Debugging function, uncomment the alternate form for
 %% io:format()/"printf()"-style debugging messages.
 
 debug(_F, _S) -> true.
 %% debug(F, S) -> io:format(F, S).
 
-%% @spec (address(), tcp_port()) ->
-%%       {ok, pid(), service()} | {error, term()}
 %% @doc Connect to a UBF server at address Host + TCP port Port.
 
+-spec connect(host() | plugins(), ipport() | server()) ->
+                     {ok, Client::pid(), service()} | {error, term()}.
 connect(Host, Port)
   when is_list(Host) andalso is_integer(Port) ->
     connect(Host, Port, infinity).
 
-%% @spec (address(), tcp_port(), timeout()) ->
-%%       {ok, pid(), service()} | {error, term()}
 %% @doc Connect to a UBF server at address Host + TCP port Port.
 
+-spec connect(host() | plugins(), ipport() | server(), timeout()) ->
+                     {ok, Client::pid(), service()} | {error, term()}.
 connect(Host, Port, Timeout)
   when is_list(Host) andalso is_integer(Port) ->
     connect(Host, Port, [], Timeout).
 
-%% @spec (address() | plugin_module_list(), tcp_port() | pid() | atom(),
-%%        proplist(), timeout()) ->
-%%       {ok, pid(), service()} | {error, term()}
 %% @doc Connect to a UBF server at address Host + TCP port Port, or at
-%%      pid/registered name Server.
+%% pid/registered name Server.
 %%
 %% When using the alternate form, the first two arguments are:
-%% <ol>
-%% <li> Plugins: a plugin_module_list(). </li>
-%% <li> Server: either a process id (pid()) or process registered
-%%      name (atom()) for an already-started UBF server. </li>
-%% </ol>
 %%
-%% See the docs for ubf_server:start_link() for a description of the
-%% <tt>Options</tt> proplist.
+%% - Plugins: a +plugin_module_list()+.
+%% - Server: either a process id +(pid())+ or process registered
+%%   name +(atom())+ for an already-started UBF server.
+%%
+%% See the docs for +ubf_server:start_link()+ for a description of the
+%% +Options+ proplist.
 
+-spec connect(host() | plugins(), ipport() | server(), options(), timeout()) ->
+                     {ok, Client::pid(), service()} | {error, term()}.
 connect(X, Y, Options, infinity) ->
     connect(X, Y, Options, 16#ffffffff);
 connect(Host, Port, Options, Timeout)
@@ -261,25 +238,25 @@ ubf_client(Parent, Plugins, Server, Options, Timeout)
     end.
 
 
-%% @spec (pid()) -> ok
 %% @doc Stop a UBF client process.
 
+-spec stop(Client::pid()) -> ok.
 stop(Pid) ->
     Pid ! stop,
     ok.
 
-%% @spec (pid(), term()) -> timeout | term()
 %% @doc Perform a synchronous RPC call.
 %%
 %% NOTE: It is not recommended that a UBF client return the bare atom
-%% 'timeout' in response to any RPC call.
+%% +timeout+ in response to any RPC call.
 
+-spec rpc(Client::pid(), Call::term()) -> timeout | term() | no_return().
 rpc(Pid, Q) ->
     rpc(Pid, Q, infinity).
 
-%% @spec (pid(), term(), timeout()) -> timeout | term() | exit(badpid) | exit(badarg)
 %% @doc Perform a synchronous RPC call.
 
+-spec rpc(Client::pid(), Call::term(), timeout()) -> timeout | term() | no_return().
 rpc(Pid, Q, infinity) ->
     rpc(Pid, Q, 16#ffffffff);
 rpc(Pid, Q, Timeout) when is_pid(Pid) ->
@@ -299,9 +276,9 @@ rpc(Pid, Q, Timeout) when is_pid(Pid) ->
             end
     end.
 
-%% @spec (pid(), Msg) -> any()
 %% @doc Send an asynchronous UBF message.
 
+-spec sendEvent(Handler::pid(), Cast::term()) -> ok | no_return().
 sendEvent(Pid, Msg) when is_pid(Pid) ->
     case is_process_alive(Pid) of
         false ->
@@ -311,16 +288,15 @@ sendEvent(Pid, Msg) when is_pid(Pid) ->
             ok
     end.
 
-%% @spec (pid()) -> ack
 %% @doc Install a default handler function (callback-style) for
 %% asynchronous UBF messages.
 %%
 %% The default handler function, drop_fun/1, does nothing.
 
+-spec install_default_handler(Client::pid()) -> ack.
 install_default_handler(Pid) ->
     install_handler(Pid, fun drop_fun/1).
 
-%% @spec (pid(), function()) -> ack
 %% @doc Install a handler function (callback-style) for asynchronous
 %% UBF messages.
 %%
@@ -332,13 +308,13 @@ install_default_handler(Pid) ->
 %%
 %% If your handler fun must maintain its own state, then you must use
 %% an intermediate anonymous fun to bind the state.  See the usage of
-%% the <tt>irc_client_gs:send_self/2</tt> fun as an example.  The
-%% <tt>send_self()</tt> fun is actually arity 2, but the extra
-%% argument is how the author, Joe Armstrong, maintains the extra
-%% state required to deliver the async UBF message to the process that
-%% is executing the event loop processing function,
-%% <tt>irc_client_gs:loop/6</tt>.
+%% the +irc_client_gs:send_self/2+ fun as an example.  The
+%% +send_self()+ fun is actually arity 2, but the extra argument is
+%% how the author, Joe Armstrong, maintains the extra state required
+%% to deliver the async UBF message to the process that is executing
+%% the event loop processing function, +irc_client_gs:loop/6+.
 
+-spec install_handler(Client::pid(), Fun::fun()) -> ack.
 install_handler(Pid, Fun) ->
     Pid ! {self(), {install, Fun}},
     receive
@@ -414,22 +390,21 @@ loop(Parent, Driver, SimpleRPC, Fun) ->
             loop(Parent, Driver, SimpleRPC, Fun)
     end.
 
-%% @spec (module(), term()) -> term()
 %% @doc Perform a synchronous LPC (local procedure) call with the
-%% state 'none'.
-%%
+%% state +none+.
 
+-spec lpc(plugin(), Call::term()) -> term().
 lpc(Mod, Q) ->
     lpc(Mod, Q, none, undefined).
 
-%% @spec (module(), term(), atom()) -> term()
 %% @doc Perform a synchronous LPC (local procedure) call with the
 %% specified state.
-%%
 
+-spec lpc(plugin(), Call::term(), statename()) -> term().
 lpc(Mod, Q, State) ->
     lpc(Mod, Q, State, ?UBF_TLOG_MODULE_DEFAULT).
 
+-spec lpc(plugin(), Call::term(), statename(), tlogger()) -> term().
 lpc(Mod, Q, State, TLogMod) ->
     %% check contract
     case do_lpcIn(Q, State, Mod, TLogMod) of

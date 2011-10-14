@@ -1,29 +1,51 @@
+%%% The MIT License
 %%%
-%%% @doc UBF implementation (callback module) for a simple file server.
+%%% Copyright (C) 2011 by Joseph Wayne Norton <norton@alum.mit.edu>
+%%% Copyright (C) 2002 by Joe Armstrong
 %%%
-%%% The original implementation of this module is Joe Armstrong's.
+%%% Permission is hereby granted, free of charge, to any person obtaining a copy
+%%% of this software and associated documentation files (the "Software"), to deal
+%%% in the Software without restriction, including without limitation the rights
+%%% to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+%%% copies of the Software, and to permit persons to whom the Software is
+%%% furnished to do so, subject to the following conditions:
+%%%
+%%% The above copyright notice and this permission notice shall be included in
+%%% all copies or substantial portions of the Software.
+%%%
+%%% THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+%%% IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+%%% FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+%%% AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+%%% LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+%%% OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+%%% THE SOFTWARE.
+
+%%%
+%%% @doc UBF implementation (callback module) for a simple file
+%%% server.
+%%%
+%%% The original implementation of this module is Joe Armstrong\'s.
 %%% All of the EDoc commentary has been added to assist beginners in
 %%% understanding how to implement a UBF implementation/callback
 %%% module for a very simple stateful UBF protocol.
 %%%
 %%% This module can be used as a template for starting a new callback
 %%% module:
-%%% <ol>
-%%% <li> Create your protocol contract, e.g. <tt>myproto_plugin.con</tt> </li>
-%%% <li> Copy this file to a new name, e.g. <tt>myproto_plugin.erl</tt>. </li>
-%%% <li> Edit the <tt>-module</tt> line to use 'myproto_plugin'. </li>
-%%% <li> Edit the <tt>-add_contract</tt> line to use 'myproto_plugin'. </li>
-%%% <li> Change the <tt>info()</tt> and <tt>description()</tt> strings. </li>
-%%% <li> Most protocol implementations do not require changes to
-%%%      <tt>managerStart()</tt> <tt>managerRpc()</tt>. </li>
-%%% <li> Edit <tt>handlerStart()</tt> to take care of any server-side
-%%%      initialization/actions and private state required when a new
-%%%      client connection is received. </li>
-%%% <li> Edit <tt>handlerStop()</tt> to take care of any server-side
-%%%      clean-up details when a client connection is unexpectedly
-%%%      closed. </li>
-%%% <li> Edit <tt>handlerRpc()</tt> to implement each of the RPC calls. </li>
-%%% </ol>
+%%%
+%%% - Create your protocol contract, e.g. myproto_plugin.con
+%%% - Copy this file to a new name, e.g. myproto_plugin.erl.
+%%% - Edit the +-module+ line to use +myproto_plugin+.
+%%% - Edit the +-add_contract+ line to use +myproto_plugin+.
+%%%   * Change the +info()+ and +description()+ strings.
+%%%   * Most protocol implementations do not require changes to
+%%%     +managerStart()+ and +managerRpc()+.
+%%%   * Edit +handlerStart()+ to take care of any server-side
+%%%     initialization/actions and private state required when a new
+%%%     client connection is received.
+%%%   * Edit +handlerStop()+ to take care of any server-side clean-up
+%%%     details when a client connection is unexpectedly closed.
+%%%   * Edit +handlerRpc()+ to implement each of the RPC calls.
 
 -module(file_plugin).
 -behaviour(ubf_plugin_stateful).
@@ -74,10 +96,10 @@ managerStart(_ArgFromMetaManager) ->
 %% @spec (term(), term()) -> term()
 %% @doc Mandatory callback function: Manager call handler.
 %%
-%% TODO: Document this callback's real purpose.
+%% TODO: Document this callback\'s real purpose.
 %%
-%% NOTE: This function's implementation, a simple password checker, is
-%% not used.
+%% NOTE: This function\'s implementation, a simple password checker,
+%% is not used.
 
 managerRpc(secret, State) ->
     {accept, welcomeToFTP, State};
@@ -88,17 +110,17 @@ managerRpc(_, State) ->
 %% @doc Mandatory callback function: New UBF connection handler.
 %%
 %% If the handler wishes to accept the connection, it returns the tuple:
-%% <ul>
-%% <li> 'accept' </li>
-%% <li> Reply ... a term that is returned directly to the UBF client as
-%%      a response to the startSession() call. </li>
-%% <li> HandlerState ... the initial UBF contract state name. </li>
-%% <li> HanderData ... an arbitrary term to store this server's
-%%      private connection data.  The word "state" is typically used
-%%      here, but the word "data" is used instead, to avoid confusion
-%%      between the "state" name of the UBF contract finite-state
-%%      machine and the "state" data for the connection handler. </li>
-%% </ul>
+%%
+%%  - +accept+
+%%  - +Reply+ a term that is returned directly to the UBF client as
+%%    a response to the +startSession()+ call.
+%%  - +HandlerState+ the initial UBF contract state name.
+%%  - +HanderData+ an arbitrary term to store this server's private
+%%    connection data.  The word "state" is typically used here, but
+%%    the word "data" is used instead, to avoid confusion between the
+%%    "state" name of the UBF contract finite-state machine and the
+%%    "state" data for the connection handler.
+%%
 
 handlerStart(_ArgFromUbfClient, _ManagerPid) ->
     Reply = ?S(info()),

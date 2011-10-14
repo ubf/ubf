@@ -6,7 +6,7 @@
 * [Function Details](#functions)
 
 
-Low-level utilities for proc_socket_server.
+<p>Low-level utilities for proc_socket_server.</p>.
 
 <a name="index"></a>
 

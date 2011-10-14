@@ -6,23 +6,46 @@
 * [Function Details](#functions)
 
 
-Generic protocol driver process for protocol sessions.
+<p>Generic protocol driver process for protocol sessions.</p>.
 
 
 
 __This module defines the `contract_driver` behaviour.__
 <br></br>
- Required callback functions: `start/1`, `start/2`, `init/1`, `init/2`, `encode/3`, `decode/5`.<a name="description"></a>
-
-##Description##
-
-
-![ubf-flow-01.png](ubf-flow-01.png)<a name="index"></a>
+ Required callback functions: `start/1`, `start/2`, `init/1`, `init/2`, `encode/3`, `decode/5`.<a name="index"></a>
 
 ##Function Index##
 
 
-<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#behaviour_info-1">behaviour_info/1</a></td><td></td></tr><tr><td valign="top"><a href="#loop-5">loop/5</a></td><td></td></tr><tr><td valign="top"><a href="#loop-6">loop/6</a></td><td></td></tr><tr><td valign="top"><a href="#loop-7">loop/7</a></td><td>Driver main loop.</td></tr><tr><td valign="top"><a href="#relay-3">relay/3</a></td><td></td></tr><tr><td valign="top"><a href="#start-3">start/3</a></td><td></td></tr></table>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#behaviour_info-1">behaviour_info/1</a></td><td></td></tr><tr><td valign="top"><a href="#loop-5">loop/5</a></td><td></td></tr><tr><td valign="top"><a href="#loop-6">loop/6</a></td><td></td></tr><tr><td valign="top"><a href="#loop-7">loop/7</a></td><td><p>Driver main loop.</p>
+<ul>
+<li>
+<p>
+A driver sits between a socket and a Pid
+</p>
+</li>
+<li>
+<p>
+Stuff on the socket is send to the Pid
+</p>
+</li>
+<li>
+<p>
+Stuff from the Pid is send to the socket
+</p>
+</li>
+<li>
+<p>
+When it is called the Socket has been set to send messages to the
+driver and the Pid exists
+</p>
+</li>
+<li>
+<p>
+If one side dies the process dies
+</p>
+</li>
+</ul>.</td></tr><tr><td valign="top"><a href="#relay-3">relay/3</a></td><td></td></tr><tr><td valign="top"><a href="#start-3">start/3</a></td><td></td></tr></table>
 
 
 <a name="functions"></a>
@@ -67,22 +90,35 @@ __This module defines the `contract_driver` behaviour.__
 
 
 
-
-
-Driver main loop.
-
-
-* A driver sits between a socket and a Pid
-
-* Stuff on the socket is send to the Pid
-
-* Stuff from the Pid is send to the socket
-
-* When it is called the Socket has been set to send messages to
-the driver and the Pid exists
-
-* If one side dies the process dies
-
+<p>Driver main loop.</p>
+<ul>
+<li>
+<p>
+A driver sits between a socket and a Pid
+</p>
+</li>
+<li>
+<p>
+Stuff on the socket is send to the Pid
+</p>
+</li>
+<li>
+<p>
+Stuff from the Pid is send to the socket
+</p>
+</li>
+<li>
+<p>
+When it is called the Socket has been set to send messages to the
+driver and the Pid exists
+</p>
+</li>
+<li>
+<p>
+If one side dies the process dies
+</p>
+</li>
+</ul>
 <a name="relay-3"></a>
 
 ###relay/3##

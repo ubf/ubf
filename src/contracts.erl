@@ -1,7 +1,30 @@
-%% @doc Contract implementation: compare a term against a contract.
-%%
-%% See the function checkType/3 for assistance on checking if a term
-%% does/does not break a contract.
+%%% The MIT License
+%%%
+%%% Copyright (C) 2011 by Joseph Wayne Norton <norton@alum.mit.edu>
+%%% Copyright (C) 2002 by Joe Armstrong
+%%%
+%%% Permission is hereby granted, free of charge, to any person obtaining a copy
+%%% of this software and associated documentation files (the "Software"), to deal
+%%% in the Software without restriction, including without limitation the rights
+%%% to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+%%% copies of the Software, and to permit persons to whom the Software is
+%%% furnished to do so, subject to the following conditions:
+%%%
+%%% The above copyright notice and this permission notice shall be included in
+%%% all copies or substantial portions of the Software.
+%%%
+%%% THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+%%% IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+%%% FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+%%% AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+%%% LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+%%% OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+%%% THE SOFTWARE.
+
+%%% @doc Contract implementation: compare a term against a contract.
+%%%
+%%% See the function checkType/3 for assistance on checking if a term
+%%% does/does not break a contract.
 
 -module(contracts).
 
@@ -409,20 +432,19 @@ is_nonundefined(undefined) -> false;
 is_nonundefined(_) -> true.
 
 
-%% @spec (contract_type_name_atom(), term(), contract_module_name_atom()) ->
-%%       yup | error_hints_term_only_human_readable_sorry()
 %% @doc Given a contract type name, a term to check against that
 %% contract type, and a contract module name, verify the term against
 %% that contract\'s type.
 %%
 %% Example usage from the irc_plugin.con contract:
-%% <ul>
-%% <li> contracts:checkType(ok, ok, irc_plugin). </li>
-%% <li> contracts:checkType(bool, true, irc_plugin). </li>
-%% <li> contracts:checkType(nick, {'#S', "foo"}, irc_plugin). </li>
-%% <li> contracts:checkType(joinEvent, {joins, {'#S', "nck"}, {'#S', "grp"}}, irc_plugin). </li>
-%% <li> contracts:checkType(joinEvent, {joins, {'#S', "nck"}, {'#S', bad_atom}}, irc_plugin). </li>
-%% </ul>
+%%
+%% ------
+%% 1> contracts:checkType(ok, ok, irc_plugin).
+%% 2> contracts:checkType(bool, true, irc_plugin).
+%% 3> contracts:checkType(nick, {'#S', "foo"}, irc_plugin).
+%% 4> contracts:checkType(joinEvent, {joins, {'#S', "nck"}, {'#S', "grp"}}, irc_plugin).
+%% 5> contracts:checkType(joinEvent, {joins, {'#S', "nck"}, {'#S', bad_atom}}, irc_plugin).
+%% ------
 %%
 %% NOTE: This is a brute-force function, but it works, mostly.  Don\'t
 %% try to have a computer parse the output in error cases: the failure
@@ -430,6 +452,7 @@ is_nonundefined(_) -> true.
 
 %% @TODO implementation needs updating for new primitives?
 
+-spec checkType(atom(), term(), module()) -> yup | term().
 checkType(HumanType, Term, Mod) ->
     case (catch Mod:contract_type(HumanType)) of
         {'EXIT', {function_clause, _}} ->

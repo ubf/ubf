@@ -1,40 +1,44 @@
-%% @doc Contract manager server
-%%
-%% This module implements the contract manager server process, which
-%% runs on the Erlang server side, between the UBF driver (or the
-%% driver for whatever protocol is being used "over the wire",
-%% e.g. JSON-RPC) and the plugin handler server.
-%%
-%% <img src="ubf-flow-01.png"></img>
-%%
-%% == Message Passing ==
-%%
-%% In the diagram below, the "Client" is actually the UBF driver
-%% (using UBF, EBF, JSON, JSON-RPC, or other transport protocol) that
-%% acts on behalf of the remote client.  The "Server" is actually the
-%% plugin handler server, which acts as an intermediary between the
-%% actual server application.
-%%
-%% <img src="contract_manager-01.png"></img>
+%%% The MIT License
+%%%
+%%% Copyright (C) 2011 by Joseph Wayne Norton <norton@alum.mit.edu>
+%%% Copyright (C) 2002 by Joe Armstrong
+%%%
+%%% Permission is hereby granted, free of charge, to any person obtaining a copy
+%%% of this software and associated documentation files (the "Software"), to deal
+%%% in the Software without restriction, including without limitation the rights
+%%% to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+%%% copies of the Software, and to permit persons to whom the Software is
+%%% furnished to do so, subject to the following conditions:
+%%%
+%%% The above copyright notice and this permission notice shall be included in
+%%% all copies or substantial portions of the Software.
+%%%
+%%% THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+%%% IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+%%% FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+%%% AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+%%% LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+%%% OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+%%% THE SOFTWARE.
 
--module(contract_manager).
-
--export([start/1, start/3]).
-
--export([do_rpcIn/4, do_rpcOut/9]).
--export([do_rpcOutError/5, do_rpcOutError/6]).
-
--export([do_lpcIn/4, do_lpcOut/9]).
--export([do_lpcOutError/6]).
-
--export([do_eventOut/4, do_eventIn/4]).
-
--import(contracts, [checkRPCIn/3, checkRPCOut/4, checkEventOut/3, checkEventIn/3]).
--import(lists, [map/2]).
-
--include("ubf.hrl").
-
-
+%%% @doc Contract manager server
+%%%
+%%% This module implements the contract manager server process, which
+%%% runs on the Erlang server side, between the UBF driver (or the
+%%% driver for whatever protocol is being used "over the wire",
+%%% e.g. JSON-RPC) and the plugin handler server.
+%%%
+%%% image:ubf-flow-01.png[UBF Flow]
+%%%
+%%% == Message Passing
+%%%
+%%% In the diagram below, the "Client" is actually the UBF driver
+%%% (using UBF, EBF, JSON, JSON-RPC, or other transport protocol) that
+%%% acts on behalf of the remote client.  The "Server" is actually the
+%%% plugin handler server, which acts as an intermediary between the
+%%% actual server application.
+%%%
+%%% ------
 %%%  Client                     Contract                    Server
 %%%    |                           |                          |
 %%%    |                           |                          |
@@ -63,15 +67,30 @@
 %%%    |                           |      {event_in,M}        |
 %%%    |                           +------------->------------+
 %%%    |                           |                          |
+%%% ------
 
+-module(contract_manager).
 
-%%%  @spec (list()) -> pid()
+-export([start/1, start/3]).
 
+-export([do_rpcIn/4, do_rpcOut/9]).
+-export([do_rpcOutError/5, do_rpcOutError/6]).
+
+-export([do_lpcIn/4, do_lpcOut/9]).
+-export([do_lpcOutError/6]).
+
+-export([do_eventOut/4, do_eventIn/4]).
+
+-import(contracts, [checkRPCIn/3, checkRPCOut/4, checkEventOut/3, checkEventIn/3]).
+-import(lists, [map/2]).
+
+-include("ubf.hrl").
+
+-spec start(list()) -> pid().
 start(SpawnOpts) when is_list(SpawnOpts) ->
     start(false, false, SpawnOpts).
 
-%%%  @spec (bool(), bool(), list()) -> pid()
-
+-spec start(boolean(), boolean(), list()) -> pid().
 start(SimpleRPC, VerboseRPC, SpawnOpts) ->
     proc_utils:spawn_link_opt_debug(fun() -> wait(SimpleRPC, VerboseRPC) end, SpawnOpts, ?MODULE).
 
@@ -85,14 +104,12 @@ wait(SimpleRPC, VerboseRPC) ->
 
 %% @doc Main loop for contract manager process.
 %%
-%% <ul>
-%%      <li> Client is the process that sens up messages </li>
-%%      <li> State is our state </li>
-%%      <li> Contract is our contract </li>
-%%      <li> Mod is our callback module </li>
-%%      <li> SimpleRPC is a boolean </li>
-%%      <li> VerboseRPC is a boolean </li>
-%% </ul>
+%% - Client is the process that sens up messages
+%% - State is our state
+%% - Contract is our contract
+%% - Mod is our callback module
+%% - SimpleRPC is a boolean
+%% - VerboseRPC is a boolean
 %%
 %% NOTE: The protocol manager terminates a protocol session.
 

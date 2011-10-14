@@ -6,18 +6,13 @@
 * [Function Details](#functions)
 
 
-Callbacks for stateless plugin implementations.
+<p>Callbacks for stateless plugin implementations.</p>.
 
 
 
 __This module defines the `ubf_plugin_stateless` behaviour.__
 <br></br>
- Required callback functions: `info/0`, `description/0`, `handlerStart/1`, `handlerStop/3`, `handlerRpc/1`.<a name="description"></a>
-
-##Description##
-
-
-![ubf-flow-01.png](ubf-flow-01.png)<a name="index"></a>
+ Required callback functions: `info/0`, `description/0`, `handlerStart/1`, `handlerStop/3`, `handlerRpc/1`.<a name="index"></a>
 
 ##Function Index##
 

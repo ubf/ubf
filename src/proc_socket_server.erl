@@ -1,22 +1,45 @@
-%% @doc Keeps track of a number of TCP sessions.
-%%
-%% This module will manage a collection of TCP sessions for the same
-%% server.  If `Port' is 0, the underlying OS assigns an available
-%% port number.  If a `Name' is not specified, the server will be
-%% named `picoSocketServer_' ++ the TCP port number that the service
-%% listens to, e.g. `picoSocketServer_9923'.
-%%
-%% A managed server can be started, stopped, enumerate child sessions,
-%% and limit the maximum number of child sessions.
-%%
-%% The conventions used by this module look quite different than
-%% OTP-based services, due to its origin.
+%%% The MIT License
+%%%
+%%% Copyright (C) 2011 by Joseph Wayne Norton <norton@alum.mit.edu>
+%%% Copyright (C) 2002 by Joe Armstrong
+%%%
+%%% Permission is hereby granted, free of charge, to any person obtaining a copy
+%%% of this software and associated documentation files (the "Software"), to deal
+%%% in the Software without restriction, including without limitation the rights
+%%% to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+%%% copies of the Software, and to permit persons to whom the Software is
+%%% furnished to do so, subject to the following conditions:
+%%%
+%%% The above copyright notice and this permission notice shall be included in
+%%% all copies or substantial portions of the Software.
+%%%
+%%% THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+%%% IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+%%% FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+%%% AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+%%% LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+%%% OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+%%% THE SOFTWARE.
+
+%%% @doc Keeps track of a number of TCP sessions.
+%%%
+%%% This module will manage a collection of TCP sessions for the same
+%%% server.  If +Port+ is 0, the underlying OS assigns an available
+%%% port number.  If a +Name+ is not specified, the server will be
+%%% named +picoSocketServer_+ plus the TCP port number that the
+%%% service listens to, e.g. +picoSocketServer_9923+.
+%%%
+%%% A managed server can be started, stopped, enumerate child
+%%% sessions, and limit the maximum number of child sessions.
+%%%
+%%% The conventions used by this module look quite different than
+%%% OTP-based services, due to its origin.
 
 -module(proc_socket_server).
 
-%% Copyright (C) 1999, Bluetail AB
-%% File    : proc_socket_server.erl
-%% Author  : Joe Armstrong (joe@bluetail.com)
+%%% Copyright (C) 1999, Bluetail AB
+%%% File    : proc_socket_server.erl
+%%% Author  : Joe Armstrong (joe@bluetail.com)
 
 -export([start_raw_server/5, start_raw_server/7, start_server/3, start_server/4, stop_server/1]).
 
@@ -28,16 +51,16 @@
 
 %% @doc Start a new UBF contract-using server.
 %%
-%% <ul>
-%%   <li> This server accepts up to Max connections on TCP port Port </li>
-%%   <li> SpawnOpts are the erlang garbage collection options for the spawned process.</li>
-%%   <li> Each time a new connection is made, Fun(Socket) is called. </li>
-%% </ul>
+%% - This server accepts up to Max connections on TCP port Port.
+%% - SpawnOpts are the erlang garbage collection options for the spawned process.
+%% - Each time a new connection is made, Fun(Socket) is called.
 %%
+%% ------
 %% Fun = fun(Socket) -> exit(normal) | exit(socket_closed) |
 %%                      exit({socket_error, Reason}) | exit(timeout).
-%% This fun will handle all of the protocol communication for a single
-%% TCP session.
+%% ------
+%% Fun will handle all of the protocol communication for a single TCP
+%% session.
 %%
 %% A raw server uses packet length 0 (see start_raw_server/5 and
 %% start_raw_server/7).

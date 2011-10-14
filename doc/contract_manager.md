@@ -6,38 +6,65 @@
 * [Function Details](#functions)
 
 
-Contract manager server.
-
-<a name="description"></a>
-
-##Description##
+<p>Contract manager server</p>
 
 
-
-
-This module implements the contract manager server process, which  
-runs on the Erlang server side, between the UBF driver (or the  
-driver for whatever protocol is being used "over the wire",  
-e.g. JSON-RPC) and the plugin handler server.
+<pre><tt>This module implements the contract manager server process, which
+runs on the Erlang server side, between the UBF driver (or the
+driver for whatever protocol is being used "over the wire",
+e.g. JSON-RPC) and the plugin handler server.</tt></pre>
 
 
 
-![ubf-flow-01.png](ubf-flow-01.png)
+<pre><tt>image:ubf-flow-01.png[UBF Flow]</tt></pre>
 
 
 
-###<a name="Message_Passing">Message Passing</a>##
+<pre><tt>== Message Passing</tt></pre>
 
 
 
+<pre><tt>In the diagram below, the "Client" is actually the UBF driver
+(using UBF, EBF, JSON, JSON-RPC, or other transport protocol) that
+acts on behalf of the remote client.  The "Server" is actually the
+plugin handler server, which acts as an intermediary between the
+actual server application.</tt></pre>
 
-In the diagram below, the "Client" is actually the UBF driver  
-(using UBF, EBF, JSON, JSON-RPC, or other transport protocol) that  
-acts on behalf of the remote client.  The "Server" is actually the  
-plugin handler server, which acts as an intermediary between the  
-actual server application.
 
-![contract_manager-01.png](contract_manager-01.png)<a name="index"></a>
+
+<pre><tt>------
+ Client                     Contract                    Server
+   |                           |                          |
+   |                           |                          |
+   |                           |                          |
+   |   {Driver,{rpc,Q}}        |                          |
+   +---------->----------------+     {Contract,Q}         |
+   |                           +------------->------------+
+   |                           |                          |
+   |                           |                          |
+   |                           |      {reply,R,S1}        |
+   |                           +-------------<------------+
+   |  {Contract,{reply,R,S1}}  |                          |
+   +----------<----------------+                          |
+   |                           |                          |
+ ............................................................
+   |                           |                          |
+   |                           |      {event_out,M}       |
+   |                           +-------------<------------+
+   |  {Contract,{event_out,M}} |                          |
+   +----------<----------------+                          |
+   |                           |                          |
+ ............................................................
+   |                           |                          |
+   |  {Contract,{event_in,M}}  |                          |
+   +---------->----------------+                          |
+   |                           |      {event_in,M}        |
+   |                           +------------->------------+
+   |                           |                          |
+------</tt></pre>
+.
+
+<a name="index"></a>
 
 ##Function Index##
 
@@ -148,7 +175,7 @@ actual server application.
 
 
 
-<pre>start(SimpleRPC::bool(), VerboseRPC::bool(), SpawnOpts::list()) -&gt; pid()</pre>
+<pre>start(SimpleRPC::boolean(), VerboseRPC::boolean(), SpawnOpts::list()) -&gt; pid()</pre>
 <br></br>
 
 

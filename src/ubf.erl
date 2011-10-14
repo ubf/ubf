@@ -1,34 +1,40 @@
-%% @doc Low-level functions for encoding and decoding the UBF(A)
-%% protocol.
-%%
-%%   UBF is a family of languages for transporting and describing
-%%   complex data structures across a network.  It has three
-%%   components.  In terms of a protocol stack, UBF(A) is a data
-%%   transport format, roughly equivalent to well-formed XML.
-%%
-%% == Quick Summary ==
-%%
-%%   UBF(A) is the transport format, it was designed to be easy to
-%%   parse and to be easy to write with a text editor. UBF(A) is based
-%%   on a byte encoded virtual machine, 26 byte codes are
-%%   reserved. Instead of allocating the byte codes from 0 we use the
-%%   printable character codes to make the format easy to read.
-%%
-%% For more information, please see the following:
-%% <ul>
-%% <li> <a href="doc/site/ubfa.html">Joe Armstrong's UBF(A) summary</a>  </li>
-%% <li> <a href="doc/site/ubfa_quick.html">Joe Armstrong's UBF(A) quick-reference summary</a>  </li>
-%% </ul>
-%%
-%% == Hint: Decoding rules ==
-%%
-%% <ul>
-%% <li> {'#S', String} -> String </li>
-%% <li> Int            -> Int </li>
-%% <li> [ ]            -> List </li>
-%% <li> {...}          -> Tuple </li>
-%% </ul>
-%%
+%%% The MIT License
+%%%
+%%% Copyright (C) 2011 by Joseph Wayne Norton <norton@alum.mit.edu>
+%%% Copyright (C) 2002 by Joe Armstrong
+%%%
+%%% Permission is hereby granted, free of charge, to any person obtaining a copy
+%%% of this software and associated documentation files (the "Software"), to deal
+%%% in the Software without restriction, including without limitation the rights
+%%% to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+%%% copies of the Software, and to permit persons to whom the Software is
+%%% furnished to do so, subject to the following conditions:
+%%%
+%%% The above copyright notice and this permission notice shall be included in
+%%% all copies or substantial portions of the Software.
+%%%
+%%% THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+%%% IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+%%% FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+%%% AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+%%% LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+%%% OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+%%% THE SOFTWARE.
+
+%%% @doc Low-level functions for encoding and decoding the UBF(a)
+%%% protocol.
+%%%
+%%% UBF is a family of languages for transporting and describing
+%%% complex data structures across a network.  It has three
+%%% components.  In terms of a protocol stack, UBF(a) is a data
+%%% transport format, roughly equivalent to well-formed XML.
+%%%
+%%% UBF(a) is the transport format, it was designed to be easy to
+%%% parse and to be easy to write with a text editor. UBF(a) is based
+%%% on a byte encoded virtual machine, 26 byte codes are
+%%% reserved. Instead of allocating the byte codes from 0 we use the
+%%% printable character codes to make the format easy to read.
+%%%
 
 -module(ubf).
 -behaviour(contract_proto).

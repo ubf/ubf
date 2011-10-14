@@ -1,23 +1,43 @@
-%%% -*- mode: erlang -*-
-%%% @doc Implement the UBF(C) meta-protocol for UBF(B) "stateful" contracts.
+%%% The MIT License
+%%%
+%%% Copyright (C) 2011 by Joseph Wayne Norton <norton@alum.mit.edu>
+%%% Copyright (C) 2002 by Joe Armstrong
+%%%
+%%% Permission is hereby granted, free of charge, to any person obtaining a copy
+%%% of this software and associated documentation files (the "Software"), to deal
+%%% in the Software without restriction, including without limitation the rights
+%%% to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+%%% copies of the Software, and to permit persons to whom the Software is
+%%% furnished to do so, subject to the following conditions:
+%%%
+%%% The above copyright notice and this permission notice shall be included in
+%%% all copies or substantial portions of the Software.
+%%%
+%%% THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+%%% IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+%%% FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+%%% AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+%%% LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+%%% OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+%%% THE SOFTWARE.
+
+%%% @doc Implement the UBF(c) meta-protocol for UBF(b) "stateful"
+%%% contracts.
 %%%
 %%% The metaprotocol is used at the beginning of a UBF session to
-%%% select one of the UBF(B) contracts that the TCP listener is
+%%% select one of the UBF(b) contracts that the TCP listener is
 %%% capable of offering.  The list of contracts (or more precisely,
 %%% the Erlang modules that implement the contract(s)) is passed via
-%%% the `ubf_server:start_link()' function, in the `PluginModule'
+%%% the +ubf_server:start_link()+ function, in the +PluginModule+
 %%% list.
 %%%
-%%% Code in this module is executed by the "Plugin Handler" process
-%%% in the Process Structure Diagram in the Overview.
+%%% Code in this module is executed by the "Plugin Handler" process in
+%%% the Process Structure Diagram in the Overview.
 %%%
 %%% For the purposes of this module, the list of modules that
 %%% implement contracts is passed using Erlang parameterized module
-%%% `Module:new(ModuleList)' syntax.  See the Erlang/OTP documentation
+%%% +Module:new(ModuleList)+ syntax.  See the Erlang/OTP documentation
 %%% for more information on parameterized module syntax and usage.
-%%% For code examples, look in the
-%%% "<a href="../test/unit">../test/unit</a>"
-%%% directory for several examples (see files with "_plugin.erl" suffix).
 %%%
 
 -module(ubf_plugin_meta_stateful, [MODULES]).
@@ -105,8 +125,6 @@ Commands:
 See http://www.sics.se/~joe/ubf.html
 ".
 
-%% @spec (Args::term()) ->
-%%       {ok, State::term()}
 %% @doc Required UBF contract implementation callback: start manager
 %%      process(es).
 
@@ -114,16 +132,12 @@ managerStart(Args) ->
     {ok, [ {Service, {Module, ubf_plugin_handler:start_manager(Module, Args)}}
            || {Service, {Module, undefined}} <- modules() ]}.
 
-%% @spec (Args::term(), Manager::pid()) ->
-%%       ok | {error, Reason::term()}
 %% @doc Required UBF contract implementation callback: restart a manager
 %%      process.
 
 managerRestart(Args,Manager) ->
     ask_manager(Manager,{restartManager, Args}).
 
-%% @spec (Args::term(), Manager::pid()) ->
-%%       ok | {error, Reason::term()}
 %% @doc Required UBF contract implementation callback: call a manager\'s RPC
 %%      function.
 
@@ -138,27 +152,18 @@ managerRpc({restartManager,Args}, _S) ->
     managerStart(Args).
 
 
-%% @spec (Arg_From_UBF_Client::term(), ManagerProc::pid()) ->
-%%       {accept, Reply::term(), StateName::atom(), StateData::term()} |
-%%       {reject, Reply::term()}
 %% @doc Required UBF contract implementation callback: start a new session
 %%      handler process.
 
 handlerStart(_, _) ->
     unused.
 
-%% @spec (Env::term(), Reason::term(), StateData::term()) ->
-%%       void()
 %% @doc Required UBF contract implementation callback: stop a session
 %%      handler process.
 
 handlerStop(_Pid, _Reason, State) ->
     State.
 
-%% @spec (StateName::atom(), RpcCall::term(), StateData::term(), ManagerPid::pid()) ->
-%%    {Reply::term(), NewStateName::atom(), NewStateData::term()} |
-%%    {changeContract, Reply::term(), NewStateData::term(), HandlerMod::atom(),
-%%     State1::term(), Data1::term(), ManagerPid::pid()}
 %% @doc Required UBF contract implementation callback: call an RPC function.
 
 handlerRpc(start=State, {startSession, ?S(Name), Args}, Data, Manager) ->

@@ -6,33 +6,63 @@
 * [Function Details](#functions)
 
 
-Keeps track of a number of TCP sessions.
-
-<a name="description"></a>
-
-##Description##
+<p>Keeps track of a number of TCP sessions.</p>
 
 
-
-
-This module will manage a collection of TCP sessions for the same
-server.  If `Port` is 0, the underlying OS assigns an available
-port number.  If a `Name` is not specified, the server will be
-named `picoSocketServer_` ++ the TCP port number that the service
-listens to, e.g. `picoSocketServer_9923`.
+<pre><tt>This module will manage a collection of TCP sessions for the same
+server.  If +Port+ is 0, the underlying OS assigns an available
+port number.  If a +Name+ is not specified, the server will be
+named +picoSocketServer_+ plus the TCP port number that the
+service listens to, e.g. +picoSocketServer_9923+.</tt></pre>
 
 
 
-A managed server can be started, stopped, enumerate child sessions,  
-and limit the maximum number of child sessions.
+<pre><tt>A managed server can be started, stopped, enumerate child
+sessions, and limit the maximum number of child sessions.</tt></pre>
 
-The conventions used by this module look quite different than
-OTP-based services, due to its origin.<a name="index"></a>
+
+
+<pre><tt>The conventions used by this module look quite different than
+OTP-based services, due to its origin.</tt></pre>
+.
+
+<a name="index"></a>
 
 ##Function Index##
 
 
-<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#cold_start-7">cold_start/7</a></td><td></td></tr><tr><td valign="top"><a href="#server_children-1">server_children/1</a></td><td></td></tr><tr><td valign="top"><a href="#server_children-2">server_children/2</a></td><td></td></tr><tr><td valign="top"><a href="#server_port-1">server_port/1</a></td><td></td></tr><tr><td valign="top"><a href="#server_port-2">server_port/2</a></td><td></td></tr><tr><td valign="top"><a href="#server_status-1">server_status/1</a></td><td></td></tr><tr><td valign="top"><a href="#server_status-2">server_status/2</a></td><td></td></tr><tr><td valign="top"><a href="#start_child-3">start_child/3</a></td><td></td></tr><tr><td valign="top"><a href="#start_raw_server-5">start_raw_server/5</a></td><td></td></tr><tr><td valign="top"><a href="#start_raw_server-7">start_raw_server/7</a></td><td></td></tr><tr><td valign="top"><a href="#start_server-3">start_server/3</a></td><td>Start a new UBF contract-using server.</td></tr><tr><td valign="top"><a href="#start_server-4">start_server/4</a></td><td></td></tr><tr><td valign="top"><a href="#stop_server-1">stop_server/1</a></td><td></td></tr></table>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#cold_start-7">cold_start/7</a></td><td></td></tr><tr><td valign="top"><a href="#server_children-1">server_children/1</a></td><td></td></tr><tr><td valign="top"><a href="#server_children-2">server_children/2</a></td><td></td></tr><tr><td valign="top"><a href="#server_port-1">server_port/1</a></td><td></td></tr><tr><td valign="top"><a href="#server_port-2">server_port/2</a></td><td></td></tr><tr><td valign="top"><a href="#server_status-1">server_status/1</a></td><td></td></tr><tr><td valign="top"><a href="#server_status-2">server_status/2</a></td><td></td></tr><tr><td valign="top"><a href="#start_child-3">start_child/3</a></td><td></td></tr><tr><td valign="top"><a href="#start_raw_server-5">start_raw_server/5</a></td><td></td></tr><tr><td valign="top"><a href="#start_raw_server-7">start_raw_server/7</a></td><td></td></tr><tr><td valign="top"><a href="#start_server-3">start_server/3</a></td><td><p>Start a new UBF contract-using server.</p>
+<ul>
+<li>
+<p>
+This server accepts up to Max connections on TCP port Port.
+</p>
+</li>
+<li>
+<p>
+SpawnOpts are the erlang garbage collection options for the spawned process.
+</p>
+</li>
+<li>
+<p>
+Each time a new connection is made, Fun(Socket) is called.
+</p>
+
+
+<pre><tt>------
+Fun = fun(Socket) -> exit(normal) | exit(socket_closed) |
+                     exit({socket_error, Reason}) | exit(timeout).
+------
+Fun will handle all of the protocol communication for a single TCP
+session.</tt></pre>
+
+
+
+<pre><tt>A raw server uses packet length 0 (see start_raw_server/5 and
+start_raw_server/7).</tt></pre>
+
+</li>
+</ul>.</td></tr><tr><td valign="top"><a href="#start_server-4">start_server/4</a></td><td></td></tr><tr><td valign="top"><a href="#stop_server-1">stop_server/1</a></td><td></td></tr></table>
 
 
 <a name="functions"></a>
@@ -140,28 +170,39 @@ OTP-based services, due to its origin.<a name="index"></a>
 
 
 
+<p>Start a new UBF contract-using server.</p>
+<ul>
+<li>
+<p>
+This server accepts up to Max connections on TCP port Port.
+</p>
+</li>
+<li>
+<p>
+SpawnOpts are the erlang garbage collection options for the spawned process.
+</p>
+</li>
+<li>
+<p>
+Each time a new connection is made, Fun(Socket) is called.
+</p>
 
 
-Start a new UBF contract-using server.
-
-
-* This server accepts up to Max connections on TCP port Port
-
-* SpawnOpts are the erlang garbage collection options for the spawned process.
-
-* Each time a new connection is made, Fun(Socket) is called.
-
+<pre><tt>------
+Fun = fun(Socket) -> exit(normal) | exit(socket_closed) |
+                     exit({socket_error, Reason}) | exit(timeout).
+------
+Fun will handle all of the protocol communication for a single TCP
+session.</tt></pre>
 
 
 
+<pre><tt>A raw server uses packet length 0 (see start_raw_server/5 and
+start_raw_server/7).</tt></pre>
 
-Fun = fun(Socket) -> exit(normal) | exit(socket_closed) |                       
-exit({socket_error, Reason}) | exit(timeout).  
-This fun will handle all of the protocol communication for a single  
-TCP session.
-
-A raw server uses packet length 0 (see start_raw_server/5 and
-start_raw_server/7).<a name="start_server-4"></a>
+</li>
+</ul>
+<a name="start_server-4"></a>
 
 ###start_server/4##
 

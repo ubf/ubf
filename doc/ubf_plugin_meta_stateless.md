@@ -6,45 +6,41 @@
 * [Function Details](#functions)
 
 
-Implement the UBF(C) meta-protocol for UBF(B) "stateless" contracts.
-
-<a name="description"></a>
-
-##Description##
+<p>Implement the UBF(c) meta-protocol for UBF(b) "stateless"
+contracts.</p>
 
 
-
-
-The metaprotocol is used at the beginning of a UBF session to
-select one of the UBF(B) contracts that the TCP listener is
+<pre><tt>The metaprotocol is used at the beginning of a UBF session to
+select one of the UBF(b) contracts that the TCP listener is
 capable of offering.  The list of contracts (or more precisely,
 the Erlang modules that implement the contract(s)) is passed via
-the `ubf_server:start_link()` function, in the `PluginModule`   
-list.
+the +ubf_server:start_link()+ function, in the +PluginModule+
+list.</tt></pre>
 
 
 
-Code in this module is executed by the "Plugin Handler" process   
-in the Process Structure Diagram in the Overview.
+<pre><tt>Code in this module is executed by the "Plugin Handler" process in
+the Process Structure Diagram in the Overview.</tt></pre>
 
-For the purposes of this module, the list of modules that
+
+
+<pre><tt>For the purposes of this module, the list of modules that
 implement contracts is passed using Erlang parameterized module
-`Module:new(ModuleList)` syntax.  See the Erlang/OTP documentation
-for more information on parameterized module syntax and usage.
-For code examples, look in the
-"[../test/unit](../test/unit)"
-directory for several examples (see files with "_plugin.erl" suffix).
++Module:new(ModuleList)+ syntax.  See the Erlang/OTP documentation
+for more information on parameterized module syntax and usage.</tt></pre>
+.
+
 <a name="index"></a>
 
 ##Function Index##
 
 
-<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#description-0">description/0</a></td><td>Emit a description string.</td></tr><tr><td valign="top"><a href="#handlerRpc-1">handlerRpc/1</a></td><td>Required UBF contract implementation callback: call an RPC function.</td></tr><tr><td valign="top"><a href="#handlerStart-1">handlerStart/1</a></td><td>Required UBF contract implementation callback: start a new session
-handler process.</td></tr><tr><td valign="top"><a href="#handlerStop-3">handlerStop/3</a></td><td>Required UBF contract implementation callback: stop a session
-handler process.</td></tr><tr><td valign="top"><a href="#info-0">info/0</a></td><td>Emit an info string.</td></tr><tr><td valign="top"><a href="#managerRestart-2">managerRestart/2</a></td><td>Required UBF contract implementation callback: restart a manager
-process.</td></tr><tr><td valign="top"><a href="#managerRpc-2">managerRpc/2</a></td><td>Required UBF contract implementation callback: call a manager's RPC
-function.</td></tr><tr><td valign="top"><a href="#managerStart-1">managerStart/1</a></td><td>Required UBF contract implementation callback: start manager
-process(es).</td></tr></table>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#description-0">description/0</a></td><td><p>Emit a description string.</p>.</td></tr><tr><td valign="top"><a href="#handlerRpc-1">handlerRpc/1</a></td><td><p>Required UBF contract implementation callback: call an RPC function.</p>.</td></tr><tr><td valign="top"><a href="#handlerStart-1">handlerStart/1</a></td><td><p>Required UBF contract implementation callback: start a new session
+handler process.</p>.</td></tr><tr><td valign="top"><a href="#handlerStop-3">handlerStop/3</a></td><td><p>Required UBF contract implementation callback: stop a session
+handler process.</p>.</td></tr><tr><td valign="top"><a href="#info-0">info/0</a></td><td><p>Emit an info string.</p>.</td></tr><tr><td valign="top"><a href="#managerRestart-2">managerRestart/2</a></td><td><p>Required UBF contract implementation callback: restart a manager
+process.</p>.</td></tr><tr><td valign="top"><a href="#managerRpc-2">managerRpc/2</a></td><td><p>Required UBF contract implementation callback: call a manager's RPC
+function.</p>.</td></tr><tr><td valign="top"><a href="#managerStart-1">managerStart/1</a></td><td><p>Required UBF contract implementation callback: start manager
+process(es).</p>.</td></tr></table>
 
 
 <a name="functions"></a>
@@ -62,48 +58,46 @@ process(es).</td></tr></table>
 
 
 
-Emit a description string.<a name="handlerRpc-1"></a>
+<p>Emit a description string.</p>
+<a name="handlerRpc-1"></a>
 
 ###handlerRpc/1##
 
 
 
 
-<pre>handlerRpc(RpcCall::term()) -&gt; Reply::term() | {changeContract, Reply::term(), HandlerMod::atom(), State1::term(), Data1::term()}</pre>
-<br></br>
+`handlerRpc(X1) -> any()`
 
 
 
-
-Required UBF contract implementation callback: call an RPC function.<a name="handlerStart-1"></a>
+<p>Required UBF contract implementation callback: call an RPC function.</p>
+<a name="handlerStart-1"></a>
 
 ###handlerStart/1##
 
 
 
 
-<pre>handlerStart(Arg_From_UBF_Client::term()) -&gt; {accept, Reply::term(), StateName::atom(), StateData::term()} | {reject, Reply::term()}</pre>
-<br></br>
+`handlerStart(X1) -> any()`
 
 
 
-
-Required UBF contract implementation callback: start a new session
-handler process.<a name="handlerStop-3"></a>
+<p>Required UBF contract implementation callback: start a new session
+handler process.</p>
+<a name="handlerStop-3"></a>
 
 ###handlerStop/3##
 
 
 
 
-<pre>handlerStop(Pid::pid(), Reason::term(), StateData::term()) -&gt; [void()](#type-void)</pre>
-<br></br>
+`handlerStop(Pid, Reason, State) -> any()`
 
 
 
-
-Required UBF contract implementation callback: stop a session
-handler process.<a name="info-0"></a>
+<p>Required UBF contract implementation callback: stop a session
+handler process.</p>
+<a name="info-0"></a>
 
 ###info/0##
 
@@ -114,46 +108,43 @@ handler process.<a name="info-0"></a>
 
 
 
-Emit an info string.<a name="managerRestart-2"></a>
+<p>Emit an info string.</p>
+<a name="managerRestart-2"></a>
 
 ###managerRestart/2##
 
 
 
 
-<pre>managerRestart(Args::term(), Manager::pid()) -&gt; ok | {error, Reason::term()}</pre>
-<br></br>
+`managerRestart(Args, Manager) -> any()`
 
 
 
-
-Required UBF contract implementation callback: restart a manager
-process.<a name="managerRpc-2"></a>
+<p>Required UBF contract implementation callback: restart a manager
+process.</p>
+<a name="managerRpc-2"></a>
 
 ###managerRpc/2##
 
 
 
 
-<pre>managerRpc(Args::term(), Manager::pid()) -&gt; ok | {error, Reason::term()}</pre>
-<br></br>
+`managerRpc(X1, S) -> any()`
 
 
 
-
-Required UBF contract implementation callback: call a manager's RPC
-function.<a name="managerStart-1"></a>
+<p>Required UBF contract implementation callback: call a manager's RPC
+function.</p>
+<a name="managerStart-1"></a>
 
 ###managerStart/1##
 
 
 
 
-<pre>managerStart(Args::term()) -&gt; {ok, State::term()}</pre>
-<br></br>
+`managerStart(Args) -> any()`
 
 
 
-
-Required UBF contract implementation callback: start manager
-process(es).
+<p>Required UBF contract implementation callback: start manager
+process(es).</p>

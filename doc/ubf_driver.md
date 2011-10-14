@@ -6,18 +6,11 @@
 * [Function Details](#functions)
 
 
-Protocol driver process for UBF(A) protocol sessions.
+<p>Protocol driver process for UBF(a) protocol sessions.</p>.
 
 
 
-__Behaviours:__ [`contract_driver`](contract_driver.md).<a name="description"></a>
-
-##Description##
-
-
-The process executing `loop()` in this module is represented in the
-diagram below by the "UBF Driver" circle.
-![ubf-flow-01.png](ubf-flow-01.png)<a name="index"></a>
+__Behaviours:__ [`contract_driver`](contract_driver.md).<a name="index"></a>
 
 ##Function Index##
 
