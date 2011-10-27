@@ -21,6 +21,7 @@ class Socket:
         self.SocketError = SocketError()
         try:
             self.sock = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+            self.sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
         except socket.error, msg:
             raise SocketError, 'Error in Socket Object Creation!!'
 
