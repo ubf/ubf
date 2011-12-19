@@ -26,17 +26,20 @@
 -module(contract_proto).
 
 %% Interface Functions
+-ifndef(old_callbacks).
+
+-callback proto_vsn() -> atom().
+-callback proto_driver() -> module().
+-callback proto_packet_type() -> 0 | 1 | 2 | 4.
+
+-else. % -ifndef(old_callbacks).
+
 -export([behaviour_info/1]).
 
 behaviour_info(callbacks) ->
     [{proto_vsn,0}
      , {proto_driver,0}
      , {proto_packet_type,0}
-     , {decode_init,0}
-     , {decode_init,1}
-     , {decode_init,2}
-     , {decode,1}
-     , {decode,2}
-     , {encode,1}
-     , {encode,2}
     ].
+
+-endif. % -ifndef(old_callbacks).

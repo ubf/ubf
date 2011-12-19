@@ -28,6 +28,25 @@
 -export([start/3, relay/3, loop/5, loop/6, loop/7]).
 
 %% Interface Functions
+-ifndef(old_callbacks).
+
+-type contract() :: module().
+-type options() :: list(term()).
+-type parsed_options() :: term().
+-type cont() :: term().
+-type io() :: any().
+
+-callback start(contract()) -> pid().
+-callback start(contract(), options()) -> pid().
+
+-callback init(contract()) -> {parsed_options(), cont()}.
+-callback init(contract(), options()) -> {parsed_options(), cont()}.
+
+-callback encode(contract(), parsed_options(), term()) -> io().
+-callback decode(contract(), parsed_options(), cont(), io(), fun((term()) -> any())) -> cont().
+
+-else. % -ifndef(old_callbacks).
+
 -export([behaviour_info/1]).
 
 behaviour_info(callbacks) ->
@@ -38,6 +57,8 @@ behaviour_info(callbacks) ->
      , {encode,3}
      , {decode,5}
     ].
+
+-endif. % -ifndef(old_callbacks).
 
 start(Module, Contract, Options) ->
     receive

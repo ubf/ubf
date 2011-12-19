@@ -26,6 +26,24 @@
 -module(ubf_plugin_stateless).
 
 %% Interface Functions
+-ifndef(old_callbacks).
+
+-type args() :: list().
+-type event() :: any().
+-type reply() :: any().
+-type statename() :: atom().
+-type statedata() :: term().
+-type reason() :: any().
+
+-callback info() -> string().
+-callback description() -> string().
+
+-callback handlerStart(args()) -> {accept, reply(), statename(), statedata()} | {reject, reason()}.
+-callback handlerStop(pid(), reason(), statedata()) -> any().
+-callback handlerRpc(event()) -> reply().
+
+-else. % -ifndef(old_callbacks).
+
 -export([behaviour_info/1]).
 
 behaviour_info(callbacks) ->
@@ -36,3 +54,4 @@ behaviour_info(callbacks) ->
      , {handlerRpc,1}
     ].
 
+-endif. % -ifndef(old_callbacks).
