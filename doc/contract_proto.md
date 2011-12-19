@@ -12,7 +12,7 @@
 
 __This module defines the `contract_proto` behaviour.__
 <br></br>
- Required callback functions: `proto_vsn/0`, `proto_driver/0`, `proto_packet_type/0`, `decode_init/0`, `decode_init/1`, `decode_init/2`, `decode/1`, `decode/2`, `encode/1`, `encode/2`.<a name="index"></a>
+ Required callback functions: `proto_vsn/0`, `proto_driver/0`, `proto_packet_type/0`.<a name="index"></a>
 
 ##Function Index##
 

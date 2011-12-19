@@ -135,13 +135,9 @@ $ git config \--global user.name "Your Name"
 +
 ------
 $ mkdir -p ~/bin
-$ wget -O - https://github.com/android/tools_repo/raw/master/repo > ~/bin/repo
-$ perl -i.bak -pe 's!git://android.git.kernel.org/tools/repo.git!git://github.com/android/tools_repo.git!;' ~/bin/repo
+$ wget -O - https://dl-ssl.google.com/dl/googlesource/git-repo/repo > ~/bin/repo
 $ chmod a+x ~/bin/repo
 ------
-+
-CAUTION: Since access to kernel.org has been shutdown due to hackers,
-fetch and replace repo tool with android\'s GitHub repository mirror.
 
 3. Create working directory
 +
@@ -170,9 +166,9 @@ For futher information and help for related tools, please refer to the
 following links:
 
 - Erlang - http://www.erlang.org/
-  * *R13B04 or newer, R14B04 has been tested most recently*
+  * *R13B04 or newer, R15B has been tested most recently*
 - Git - http://git-scm.com/
-  * *Git 1.5.4 or newer, Git 1.7.7 has been tested recently*
+  * *Git 1.5.4 or newer, Git 1.7.8 has been tested recently*
   * _required for Repo and GitHub_
 - GitHub - https://github.com
 - Python - http://www.python.org

@@ -1355,7 +1355,7 @@ Please install and setup as needed.
 
 Git (Mandatory)::
 - Git - http://git-scm.com/
-  * *Git 1.5.4 or newer, Git 1.7.6.1 has been tested recently*
+  * *Git 1.5.4 or newer, Git 1.7.8 has been tested recently*
   * _required for Repo and GitHub_
 - GitHub - https://github.com
   * Anonymous read-only access using the GIT protocol is default.
@@ -1363,7 +1363,7 @@ Git (Mandatory)::
     public key under your GitHub account.
 Erlang/OTP (Mandatory)::
 - Erlang - http://www.erlang.org/
-  * *R13B04 or newer, R14B03 has been tested most recently*
+  * *R13B04 or newer, R15B has been tested most recently*
   * If needed, see <<ErlangOTP>> for instructions to build Erlang/OTP
     from source.
 Python (Mandatory)::
@@ -1411,7 +1411,7 @@ $ git config --global user.name "Your Name"
 +
 ------
 $ mkdir -p ~/bin
-$ wget -O - http://android.git.kernel.org/repo > ~/bin/repo
+$ wget -O - https://dl-ssl.google.com/dl/googlesource/git-repo/repo > ~/bin/repo
 $ chmod a+x ~/bin/repo
 ------
 +

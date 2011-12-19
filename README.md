@@ -1,8 +1,5 @@
 
 
-#The ubf application#
-
-
 #Universal Binary Format#
 
 
@@ -163,18 +160,8 @@ Install Repo
 
 
 <pre><tt>$ mkdir -p ~/bin
-$ wget -O - https://github.com/android/tools_repo/raw/master/repo > ~/bin/repo
-$ perl -i.bak -pe 's!git://android.git.kernel.org/tools/repo.git!git://github.com/android/tools_repo.git!;' ~/bin/repo
+$ wget -O - https://dl-ssl.google.com/dl/googlesource/git-repo/repo > ~/bin/repo
 $ chmod a+x ~/bin/repo</tt></pre>
-
-
-<table><tr>
-<td class="icon">
-Caution
-</td>
-<td class="content">Since access to kernel.org has been shutdown due to hackers,
-fetch and replace repo tool with android's GitHub repository mirror.</td>
-</tr></table>
 
 </li>
 <li>
@@ -229,7 +216,7 @@ Erlang - <a href="http://www.erlang.org/">http://www.erlang.org/</a>
 <ul>
 <li>
 <p>
-<strong>R13B04 or newer, R14B04 has been tested most recently</strong>
+<strong>R13B04 or newer, R15B has been tested most recently</strong>
 </p>
 </li>
 </ul>
@@ -241,7 +228,7 @@ Git - <a href="http://git-scm.com/">http://git-scm.com/</a>
 <ul>
 <li>
 <p>
-<strong>Git 1.5.4 or newer, Git 1.7.7 has been tested recently</strong>
+<strong>Git 1.5.4 or newer, Git 1.7.8 has been tested recently</strong>
 </p>
 </li>
 <li>
