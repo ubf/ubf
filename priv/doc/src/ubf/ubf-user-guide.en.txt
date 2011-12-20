@@ -2,8 +2,8 @@
 // vim: set syntax=asciidoc:
 
 = UBF User's Guide _1st DRAFT_
-:Date: 2011/09/05
-:Revision: 0.3.3
+:Date: 2011/12/20
+:Revision: 0.3.4
 :Copyright: 2002 Joe Armstrong
 :Copyright: 2010-2011 Gemini Mobile Technologies, Inc.  All rights reserved.
 
@@ -1472,7 +1472,7 @@ $ make build-plt
 TIP: Check Makefile and dialyzer's documentation for further
 information.
 +
-  .. Dialyze without specs
+  .. Dialyze with specs
 +
 ------
 $ cd working-directory-name/src
@@ -1484,11 +1484,11 @@ CAUTION: If you manually run dialyzer with the "-r" option, execute
 underneath rebar's .eunit directory.  Check Makefile for further
 information.
 +
-  .. Dialyze with specs
+  .. Dialyze without specs
 +
 ------
 $ cd working-directory-name/src
-$ make dialyze-spec
+$ make dialyze-nospec
 ------
 +
 . To build the Java client and run its encoding/decoding unit test:
@@ -1582,35 +1582,35 @@ your own Erlang/OTP system.
 +
 ------
 $ cd working-directory-name
-$ wget http://www.erlang.org/download/otp_src_R14B01.tar.gz
+$ wget http://www.erlang.org/download/otp_src_R15B.tar.gz
 ------
 +
   .. Untar the source code for your Erlang/OTP system.
 +
 ------
 $ cd working-directory-name
-$ tar -xzf otp_src_R14B01.tar.gz
+$ tar -xzf otp_src_R15B.tar.gz
 ------
 +
 . Building _basic recipe_
   .. Change to your working directory and configure Erlang/OTP
 +
 ------
-$ cd working-directory-name/otp_src_R14B01
+$ cd working-directory-name/otp_src_R15B
 $ ./configure --prefix=otp-installing-directory-name
 ------
 +
   .. Build Erlang/OTP
 +
 ------
-$ cd working-directory-name/otp_src_R14B01
+$ cd working-directory-name/otp_src_R15B
 $ make
 ------
 +
 . Installing _basic recipe_
 +
 ------
-$ cd working-directory-name/otp_src_R14B01
+$ cd working-directory-name/otp_src_R15B
 $ sudo make install
 ------
 
