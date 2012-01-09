@@ -103,7 +103,7 @@ synchronous local procedure call to a contract\'s implementation.</tt></pre>
 
 
 
-<pre>plugins() = [[plugin()](#type-plugin)]</pre>
+<pre>plugins() = [<a href="#type-plugin">plugin()</a>]</pre>
 
 
 
@@ -111,7 +111,7 @@ synchronous local procedure call to a contract\'s implementation.</tt></pre>
 
 
 
-<pre>server() = [name()](#type-name) | pid()</pre>
+<pre>server() = <a href="#type-name">name()</a> | pid()</pre>
 
 
 
@@ -209,7 +209,7 @@ specified state.</p>.</td></tr><tr><td valign="top"><a href="#lpc-4">lpc/4</a></
 
 
 
-<pre>connect(Host::[host()](#type-host) | [plugins()](#type-plugins), Port::[ipport()](#type-ipport) | [server()](#type-server)) -&gt; {ok, Client::pid(), [service()](#type-service)} | {error, term()}</pre>
+<pre>connect(Host::<a href="#type-host">host()</a> | <a href="#type-plugins">plugins()</a>, Port::<a href="#type-ipport">ipport()</a> | <a href="#type-server">server()</a>) -> {ok, Client::pid(), <a href="#type-service">service()</a>} | {error, term()}</pre>
 <br></br>
 
 
@@ -223,7 +223,7 @@ specified state.</p>.</td></tr><tr><td valign="top"><a href="#lpc-4">lpc/4</a></
 
 
 
-<pre>connect(Host::[host()](#type-host) | [plugins()](#type-plugins), Port::[ipport()](#type-ipport) | [server()](#type-server), Timeout::timeout()) -&gt; {ok, Client::pid(), [service()](#type-service)} | {error, term()}</pre>
+<pre>connect(Host::<a href="#type-host">host()</a> | <a href="#type-plugins">plugins()</a>, Port::<a href="#type-ipport">ipport()</a> | <a href="#type-server">server()</a>, Timeout::timeout()) -> {ok, Client::pid(), <a href="#type-service">service()</a>} | {error, term()}</pre>
 <br></br>
 
 
@@ -237,7 +237,7 @@ specified state.</p>.</td></tr><tr><td valign="top"><a href="#lpc-4">lpc/4</a></
 
 
 
-<pre>connect(X::[host()](#type-host) | [plugins()](#type-plugins), Y::[ipport()](#type-ipport) | [server()](#type-server), Options::[options()](#type-options), Timeout::timeout()) -&gt; {ok, Client::pid(), [service()](#type-service)} | {error, term()}</pre>
+<pre>connect(X::<a href="#type-host">host()</a> | <a href="#type-plugins">plugins()</a>, Y::<a href="#type-ipport">ipport()</a> | <a href="#type-server">server()</a>, Options::<a href="#type-options">options()</a>, Timeout::timeout()) -> {ok, Client::pid(), <a href="#type-service">service()</a>} | {error, term()}</pre>
 <br></br>
 
 
@@ -326,7 +326,7 @@ the event loop processing function, +irc_client_gs:loop/6+.</tt></pre>
 
 
 
-<pre>lpc(Mod::[plugin()](#type-plugin), Call::term()) -&gt; term()</pre>
+<pre>lpc(Mod::<a href="#type-plugin">plugin()</a>, Call::term()) -> term()</pre>
 <br></br>
 
 
@@ -341,7 +341,7 @@ state <tt>none</tt>.</p>
 
 
 
-<pre>lpc(Mod::[plugin()](#type-plugin), Call::term(), State::[statename()](#type-statename)) -&gt; term()</pre>
+<pre>lpc(Mod::<a href="#type-plugin">plugin()</a>, Call::term(), State::<a href="#type-statename">statename()</a>) -> term()</pre>
 <br></br>
 
 
@@ -356,7 +356,7 @@ specified state.</p>
 
 
 
-<pre>lpc(Mod::[plugin()](#type-plugin), Call::term(), State::[statename()](#type-statename), TLogMod::[tlogger()](#type-tlogger)) -&gt; term()</pre>
+<pre>lpc(Mod::<a href="#type-plugin">plugin()</a>, Call::term(), State::<a href="#type-statename">statename()</a>, TLogMod::<a href="#type-tlogger">tlogger()</a>) -> term()</pre>
 <br></br>
 
 

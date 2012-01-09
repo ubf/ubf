@@ -242,7 +242,7 @@ Default: [].
 
 
 
-<pre>init(Name::[name()](#type-name), Parent::pid(), Plugins::[plugins()](#type-plugins), Port::[ipport()](#type-ipport), Options::[options()](#type-options)) -&gt; pid()</pre>
+<pre>init(Name::<a href="#type-name">name()</a>, Parent::pid(), Plugins::<a href="#type-plugins">plugins()</a>, Port::<a href="#type-ipport">ipport()</a>, Options::<a href="#type-options">options()</a>) -> pid()</pre>
 <br></br>
 
 
@@ -253,7 +253,7 @@ Default: [].
 
 
 
-<pre>start(Plugins::[plugins()](#type-plugins), Port::[ipport()](#type-ipport)) -&gt; true</pre>
+<pre>start(Plugins::<a href="#type-plugins">plugins()</a>, Port::<a href="#type-ipport">ipport()</a>) -> true</pre>
 <br></br>
 
 
@@ -272,7 +272,7 @@ all of the protocol implementation modules in the Plugins list.</p>
 
 
 
-<pre>start(Name::[name()](#type-name), Plugins::[plugins()](#type-plugins), Port::[ipport()](#type-ipport)) -&gt; true</pre>
+<pre>start(Name::<a href="#type-name">name()</a>, Plugins::<a href="#type-plugins">plugins()</a>, Port::<a href="#type-ipport">ipport()</a>) -> true</pre>
 <br></br>
 
 
@@ -292,7 +292,7 @@ list. If Name is undefined, the server is not registered.</p>
 
 
 
-<pre>start(Name::[name()](#type-name), Plugins::[plugins()](#type-plugins), Port::[ipport()](#type-ipport), Options::[options()](#type-options)) -&gt; true</pre>
+<pre>start(Name::<a href="#type-name">name()</a>, Plugins::<a href="#type-plugins">plugins()</a>, Port::<a href="#type-ipport">ipport()</a>, Options::<a href="#type-options">options()</a>) -> true</pre>
 <br></br>
 
 
@@ -418,7 +418,7 @@ Default: [].
 
 
 
-<pre>start_link(Plugins::[plugins()](#type-plugins), Port::[ipport()](#type-ipport)) -&gt; true</pre>
+<pre>start_link(Plugins::<a href="#type-plugins">plugins()</a>, Port::<a href="#type-ipport">ipport()</a>) -> true</pre>
 <br></br>
 
 
@@ -432,7 +432,7 @@ Default: [].
 
 
 
-<pre>start_link(Name::[name()](#type-name), Plugins::[plugins()](#type-plugins), Port::[ipport()](#type-ipport)) -&gt; true</pre>
+<pre>start_link(Name::<a href="#type-name">name()</a>, Plugins::<a href="#type-plugins">plugins()</a>, Port::<a href="#type-ipport">ipport()</a>) -> true</pre>
 <br></br>
 
 
@@ -446,7 +446,7 @@ Default: [].
 
 
 
-<pre>start_link(Name::[name()](#type-name), Plugins::[plugins()](#type-plugins), Port::[ipport()](#type-ipport), Options::[options()](#type-options)) -&gt; true</pre>
+<pre>start_link(Name::<a href="#type-name">name()</a>, Plugins::<a href="#type-plugins">plugins()</a>, Port::<a href="#type-ipport">ipport()</a>, Options::<a href="#type-options">options()</a>) -> true</pre>
 <br></br>
 
 
@@ -460,7 +460,7 @@ Default: [].
 
 
 
-<pre>start_term_listener(Server0::pid(), Plugins::[plugins()](#type-plugins), Options::[options()](#type-options)) -&gt; pid()</pre>
+<pre>start_term_listener(Server0::pid(), Plugins::<a href="#type-plugins">plugins()</a>, Options::<a href="#type-options">options()</a>) -> pid()</pre>
 <br></br>
 
 

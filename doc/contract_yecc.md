@@ -51,7 +51,7 @@
 
 
 
-<pre>parse(Tokens::list()) -&gt; [yecc_ret()](#type-yecc_ret)</pre>
+<pre>parse(Tokens::list()) -> <a href="#type-yecc_ret">yecc_ret()</a></pre>
 <br></br>
 
 
@@ -62,7 +62,7 @@
 
 
 
-<pre>parse_and_scan(X1::{function() | {atom(), atom()}, [term()]} | {atom(), atom(), [term()]}) -&gt; [yecc_ret()](#type-yecc_ret)</pre>
+<pre>parse_and_scan(X1::{function() | {atom(), atom()}, [term()]} | {atom(), atom(), [term()]}) -> <a href="#type-yecc_ret">yecc_ret()</a></pre>
 <br></br>
 
 
