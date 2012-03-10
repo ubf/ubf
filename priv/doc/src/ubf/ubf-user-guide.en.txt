@@ -2,11 +2,11 @@
 // vim: set syntax=asciidoc:
 
 = UBF User's Guide _1st DRAFT_
-:Date: 2011/12/20
-:Revision: 0.3.4
+:Date: 2012/03/12
+:Revision: 0.3.5
 :Copyright: 2002 Joe Armstrong
 :Copyright: 2010-2011 Gemini Mobile Technologies, Inc.  All rights reserved.
-
+:Copyright: 2012 by Joseph Wayne Norton <norton@alum.mit.edu>
 
 <<<
 == Preface
@@ -809,7 +809,7 @@ See <<UBF_JSONRPC>> for further information.
 
 TIP: Gemini Mobile Technologies, Inc. has implemented and open-sourced
 a module for classifying the input character set to detect non-UTF8
-JSON inputs <<GMTCHARSET>>.
+JSON inputs <<JSFCHARSET>>.
 
 ==== TBF / FTBF / NTBF / FNTBF:  Binary Format - Thrift / Framed Thrift / Native Thrift / Framed Native Thrift
 
@@ -1658,8 +1658,8 @@ _Under Construction - To Be Updated_
 
 - [[[GIT]]] "Fast Version Control System", http://git-scm.com.
 
-- [[[GMTCHARSET]]] "Gemini Mobile Technologies, Inc. charset module",
-  https://github.com/norton/gmt-util/blob/master/src/gmt_charset.erl.
+- [[[JSFCHARSET]]] "Gemini Mobile Technologies, Inc. charset module",
+  https://github.com/norton/ubf-jsonrpc/blob/master/src/jsf_charset.erl
 
 - [[[GITHUB]]] "Secure source code hosting and collaborative
   development ", https://github.com.
