@@ -8,7 +8,7 @@
   <g>
     <ellipse style="fill: #ffffff" cx="650.185" cy="-200.917" rx="46.2512" ry="46.2512"/>
     <ellipse style="fill: none; fill-opacity:0; stroke-width: 2; stroke-dasharray: 4; stroke: #0000ff" cx="650.185" cy="-200.917" rx="46.2512" ry="46.2512"/>
-    <text style="fill: #0000ff;text-anchor:middle;font-size:12.8;font-family:sanserif;font-style:normal;font-weight:normal" x="650.185" y="-213.017">
+    <text font-size="12.8" style="fill: #0000ff;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="650.185" y="-213.017">
       <tspan x="650.185" y="-213.017">UBF</tspan>
       <tspan x="650.185" y="-197.017">TCP/IP</tspan>
       <tspan x="650.185" y="-181.017">Listener</tspan>
@@ -17,7 +17,7 @@
   <g>
     <ellipse style="fill: #ffffff" cx="332.96" cy="-72.0218" rx="47.9782" ry="47.9782"/>
     <ellipse style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #ff0000" cx="332.96" cy="-72.0218" rx="47.9782" ry="47.9782"/>
-    <text style="fill: #ff0000;text-anchor:middle;font-size:12.8;font-family:sanserif;font-style:normal;font-weight:normal" x="332.96" y="-76.1218">
+    <text font-size="12.8" style="fill: #ff0000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="332.96" y="-76.1218">
       <tspan x="332.96" y="-76.1218">UBF</tspan>
       <tspan x="332.96" y="-60.1218">Client</tspan>
     </text>
@@ -30,7 +30,7 @@
   <g>
     <ellipse style="fill: #ffffff" cx="467.978" cy="-72.0218" rx="47.9782" ry="47.9782"/>
     <ellipse style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #ff0000" cx="467.978" cy="-72.0218" rx="47.9782" ry="47.9782"/>
-    <text style="fill: #ff0000;text-anchor:middle;font-size:12.8;font-family:sanserif;font-style:normal;font-weight:normal" x="467.978" y="-76.1218">
+    <text font-size="12.8" style="fill: #ff0000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="467.978" y="-76.1218">
       <tspan x="467.978" y="-76.1218">UBF</tspan>
       <tspan x="467.978" y="-60.1218">Driver</tspan>
     </text>
@@ -38,7 +38,7 @@
   <g>
     <ellipse style="fill: #ffffff" cx="650.186" cy="-71.3067" rx="43.0119" ry="43.0119"/>
     <ellipse style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #0000ff" cx="650.186" cy="-71.3067" rx="43.0119" ry="43.0119"/>
-    <text style="fill: #0000ff;text-anchor:middle;font-size:12.8;font-family:sanserif;font-style:normal;font-weight:normal" x="650.186" y="-75.4067">
+    <text font-size="12.8" style="fill: #0000ff;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="650.186" y="-75.4067">
       <tspan x="650.186" y="-75.4067">UBF</tspan>
       <tspan x="650.186" y="-59.4067">Driver</tspan>
     </text>
@@ -46,7 +46,7 @@
   <g>
     <ellipse style="fill: #ffffff" cx="769.838" cy="-71.3067" rx="43.0426" ry="43.0426"/>
     <ellipse style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #0000ff" cx="769.838" cy="-71.3067" rx="43.0426" ry="43.0426"/>
-    <text style="fill: #0000ff;text-anchor:middle;font-size:12.8;font-family:sanserif;font-style:normal;font-weight:normal" x="769.838" y="-75.4067">
+    <text font-size="12.8" style="fill: #0000ff;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="769.838" y="-75.4067">
       <tspan x="769.838" y="-75.4067">Contract</tspan>
       <tspan x="769.838" y="-59.4067">Manager</tspan>
     </text>
@@ -54,7 +54,7 @@
   <g>
     <ellipse style="fill: #ffffff" cx="892.73" cy="-71.3067" rx="43.0119" ry="43.0119"/>
     <ellipse style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #0000ff" cx="892.73" cy="-71.3067" rx="43.0119" ry="43.0119"/>
-    <text style="fill: #0000ff;text-anchor:middle;font-size:12.8;font-family:sanserif;font-style:normal;font-weight:normal" x="892.73" y="-75.4067">
+    <text font-size="12.8" style="fill: #0000ff;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="892.73" y="-75.4067">
       <tspan x="892.73" y="-75.4067">Plugin</tspan>
       <tspan x="892.73" y="-59.4067">Handler</tspan>
     </text>
@@ -62,7 +62,7 @@
   <g>
     <ellipse style="fill: #ffffff" cx="192.75" cy="-72.0217" rx="49.6638" ry="49.6638"/>
     <ellipse style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" cx="192.75" cy="-72.0217" rx="49.6638" ry="49.6638"/>
-    <text style="fill: #000000;text-anchor:middle;font-size:12.8;font-family:sanserif;font-style:normal;font-weight:normal" x="192.75" y="-76.1217">
+    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="192.75" y="-76.1217">
       <tspan x="192.75" y="-76.1217">Client</tspan>
       <tspan x="192.75" y="-60.1217">Application</tspan>
     </text>
@@ -70,7 +70,7 @@
   <g>
     <ellipse style="fill: #ffffff" cx="1029.89" cy="63.4179" rx="49.6638" ry="49.6638"/>
     <ellipse style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" cx="1029.89" cy="63.4179" rx="49.6638" ry="49.6638"/>
-    <text style="fill: #000000;text-anchor:middle;font-size:12.8;font-family:sanserif;font-style:normal;font-weight:normal" x="1029.89" y="59.3179">
+    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="1029.89" y="59.3179">
       <tspan x="1029.89" y="59.3179">Server</tspan>
       <tspan x="1029.89" y="75.3179">Application</tspan>
     </text>
@@ -130,7 +130,7 @@
     <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke-dasharray: 4; stroke: #000000" x1="693.198" y1="-71.3066" x2="726.016" y2="-85.9448"/>
     <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="720.962,-78.2158 728.058,-86.8557 716.888,-87.3485 "/>
   </g>
-  <text style="fill: #000000;text-anchor:start;font-size:16;font-family:sanserif;font-style:normal;font-weight:normal" x="539.306" y="-77.691">
+  <text font-size="16" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="539.306" y="-77.691">
     <tspan x="539.306" y="-77.691">TCP/IP</tspan>
   </text>
   <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke-dasharray: 20; stroke: #ff0000" x1="264.972" y1="-183.022" x2="265.972" y2="38.9782"/>
@@ -138,7 +138,7 @@
   <g>
     <ellipse style="fill: #ffffff" cx="467.978" cy="-202.632" rx="44.3344" ry="44.3344"/>
     <ellipse style="fill: none; fill-opacity:0; stroke-width: 2; stroke-dasharray: 4; stroke: #ff0000" cx="467.978" cy="-202.632" rx="44.3344" ry="44.3344"/>
-    <text style="fill: #ff0000;text-anchor:middle;font-size:12.8;font-family:sanserif;font-style:normal;font-weight:normal" x="467.978" y="-214.732">
+    <text font-size="12.8" style="fill: #ff0000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="467.978" y="-214.732">
       <tspan x="467.978" y="-214.732">UBF</tspan>
       <tspan x="467.978" y="-198.732">TCP/IP</tspan>
       <tspan x="467.978" y="-182.732">Client</tspan>
@@ -151,7 +151,7 @@
   <g>
     <ellipse style="fill: #ffffff" cx="332.98" cy="172.746" rx="47.9782" ry="47.9782"/>
     <ellipse style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #ff0000" cx="332.98" cy="172.746" rx="47.9782" ry="47.9782"/>
-    <text style="fill: #ff0000;text-anchor:middle;font-size:12.8;font-family:sanserif;font-style:normal;font-weight:normal" x="332.98" y="168.646">
+    <text font-size="12.8" style="fill: #ff0000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="332.98" y="168.646">
       <tspan x="332.98" y="168.646">JSON</tspan>
       <tspan x="332.98" y="184.646">Client</tspan>
     </text>
@@ -164,7 +164,7 @@
   <g>
     <ellipse style="fill: #ffffff" cx="467.998" cy="172.746" rx="47.9782" ry="47.9782"/>
     <ellipse style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #ff0000" cx="467.998" cy="172.746" rx="47.9782" ry="47.9782"/>
-    <text style="fill: #ff0000;text-anchor:middle;font-size:12.8;font-family:sanserif;font-style:normal;font-weight:normal" x="467.998" y="168.646">
+    <text font-size="12.8" style="fill: #ff0000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="467.998" y="168.646">
       <tspan x="467.998" y="168.646">JSON-RPC</tspan>
       <tspan x="467.998" y="184.646">Driver</tspan>
     </text>
@@ -172,7 +172,7 @@
   <g>
     <ellipse style="fill: #ffffff" cx="192.77" cy="172.746" rx="49.6638" ry="49.6638"/>
     <ellipse style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" cx="192.77" cy="172.746" rx="49.6638" ry="49.6638"/>
-    <text style="fill: #000000;text-anchor:middle;font-size:12.8;font-family:sanserif;font-style:normal;font-weight:normal" x="192.77" y="168.646">
+    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="192.77" y="168.646">
       <tspan x="192.77" y="168.646">Client</tspan>
       <tspan x="192.77" y="184.646">Application</tspan>
     </text>
@@ -197,7 +197,7 @@
     <polygon style="fill: #000000" points="229.414,209.42 239.986,213.058 234.666,214.775 232.847,220.061 "/>
     <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="229.414,209.42 239.986,213.058 234.666,214.775 232.847,220.061 "/>
   </g>
-  <text style="fill: #000000;text-anchor:start;font-size:16;font-family:sanserif;font-style:normal;font-weight:normal" x="543.532" y="163.077">
+  <text font-size="16" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="543.532" y="163.077">
     <tspan x="543.532" y="163.077">HTTP</tspan>
   </text>
   <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke-dasharray: 20; stroke: #ff0000" x1="264.992" y1="61.7462" x2="265.992" y2="283.746"/>
@@ -205,7 +205,7 @@
   <g>
     <ellipse style="fill: #ffffff" cx="467.996" cy="43.1359" rx="44.3344" ry="44.3344"/>
     <ellipse style="fill: none; fill-opacity:0; stroke-width: 2; stroke-dasharray: 4; stroke: #ff0000" cx="467.996" cy="43.1359" rx="44.3344" ry="44.3344"/>
-    <text style="fill: #ff0000;text-anchor:middle;font-size:12.8;font-family:sanserif;font-style:normal;font-weight:normal" x="467.996" y="39.0359">
+    <text font-size="12.8" style="fill: #ff0000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="467.996" y="39.0359">
       <tspan x="467.996" y="39.0359">HTTP</tspan>
       <tspan x="467.996" y="55.0359">Client</tspan>
     </text>
@@ -217,7 +217,7 @@
   <g>
     <ellipse style="fill: #ffffff" cx="650.811" cy="43.851" rx="44.5769" ry="44.5769"/>
     <ellipse style="fill: none; fill-opacity:0; stroke-width: 2; stroke-dasharray: 4; stroke: #0000ff" cx="650.811" cy="43.851" rx="44.5769" ry="44.5769"/>
-    <text style="fill: #0000ff;text-anchor:middle;font-size:12.8;font-family:sanserif;font-style:normal;font-weight:normal" x="650.811" y="39.751">
+    <text font-size="12.8" style="fill: #0000ff;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="650.811" y="39.751">
       <tspan x="650.811" y="39.751">HTTP</tspan>
       <tspan x="650.811" y="55.751">Listener</tspan>
     </text>
@@ -225,7 +225,7 @@
   <g>
     <ellipse style="fill: #ffffff" cx="650.809" cy="173.461" rx="45.4308" ry="45.4308"/>
     <ellipse style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #0000ff" cx="650.809" cy="173.461" rx="45.4308" ry="45.4308"/>
-    <text style="fill: #0000ff;text-anchor:middle;font-size:12.8;font-family:sanserif;font-style:normal;font-weight:normal" x="650.809" y="169.361">
+    <text font-size="12.8" style="fill: #0000ff;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="650.809" y="169.361">
       <tspan x="650.809" y="169.361">JSON-RPC</tspan>
       <tspan x="650.809" y="185.361">Driver</tspan>
     </text>
@@ -246,7 +246,7 @@
       <rect style="fill: #ffffff" x="789.112" y="260.484" width="89.7956" height="85.7599" rx="2.35099e-37" ry="2.35099e-37"/>
       <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke-linejoin: round; stroke: #000000" x="789.112" y="260.484" width="89.7956" height="85.7599" rx="2.35099e-37" ry="2.35099e-37"/>
     </g>
-    <text style="fill: #000000;text-anchor:middle;font-size:16;font-family:sanserif;font-style:normal;font-weight:normal" x="833.798" y="284.976">
+    <text font-size="16" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="833.798" y="284.976">
       <tspan x="833.798" y="284.976">Service</tspan>
       <tspan x="833.798" y="304.976">Contract</tspan>
       <tspan x="833.798" y="324.976">"B"</tspan>
@@ -257,7 +257,7 @@
       <rect style="fill: #ffffff" x="726.962" y="241.914" width="89.7956" height="85.7599" rx="2.35099e-37" ry="2.35099e-37"/>
       <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke-linejoin: round; stroke: #000000" x="726.962" y="241.914" width="89.7956" height="85.7599" rx="2.35099e-37" ry="2.35099e-37"/>
     </g>
-    <text style="fill: #000000;text-anchor:middle;font-size:16;font-family:sanserif;font-style:normal;font-weight:normal" x="771.648" y="266.406">
+    <text font-size="16" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="771.648" y="266.406">
       <tspan x="771.648" y="266.406">Service</tspan>
       <tspan x="771.648" y="286.406">Contract</tspan>
       <tspan x="771.648" y="306.406">"A"</tspan>
@@ -275,7 +275,7 @@
     <rect style="fill: #ffffff" x="812.41" y="131.954" width="89.7956" height="85.7599" rx="2.35099e-37" ry="2.35099e-37"/>
     <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke-linejoin: round; stroke: #0000ff" x="812.41" y="131.954" width="89.7956" height="85.7599" rx="2.35099e-37" ry="2.35099e-37"/>
   </g>
-  <text style="fill: #0000ff;text-anchor:middle;font-size:16;font-family:sanserif;font-style:normal;font-weight:normal" x="857.308" y="170.384">
+  <text font-size="16" style="fill: #0000ff;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="857.308" y="170.384">
     <tspan x="857.308" y="170.384">LPC</tspan>
     <tspan x="857.308" y="190.384">Client</tspan>
   </text>
