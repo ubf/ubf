@@ -3,7 +3,7 @@
 #Universal Binary Format#
 
 
-Copyright (c) 2011 by Joseph Wayne Norton
+Copyright (c) 2011-2012 by Joseph Wayne Norton
 
 __Authors:__ Joseph Wayne Norton ([`norton@alum.mit.edu`](mailto:norton@alum.mit.edu)).<p>This is UBF, a framework for getting Erlang to talk to the outside
 world.  This repository is based on Joe Armstrong's original UBF code
