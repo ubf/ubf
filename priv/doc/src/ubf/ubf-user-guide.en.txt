@@ -1355,7 +1355,7 @@ Please install and setup as needed.
 
 Git (Mandatory)::
 - Git - http://git-scm.com/
-  * *Git 1.5.4 or newer, Git 1.7.8 has been tested recently*
+  * *Git 1.5.4 or newer, Git 1.7.9.3 has been tested recently*
   * _required for Repo and GitHub_
 - GitHub - https://github.com
   * Anonymous read-only access using the GIT protocol is default.
@@ -1444,7 +1444,7 @@ $ repo sync
 . Build UBF
 +
 ------
-$ cd working-directory-name/src
+$ cd working-directory-name
 $ make compile
 ------
 +
@@ -1455,7 +1455,7 @@ is added to your $PATH environment.
 . Run the unit tests
 +
 ------
-$ cd working-directory-name/src
+$ cd working-directory-name
 $ make eunit
 ------
 
@@ -1465,7 +1465,7 @@ $ make eunit
   .. Build Dialyzer's PLT _(required once)_
 +
 ------
-$ cd working-directory-name/src
+$ cd working-directory-name
 $ make build-plt
 ------
 +
@@ -1475,7 +1475,7 @@ information.
   .. Dialyze with specs
 +
 ------
-$ cd working-directory-name/src
+$ cd working-directory-name
 $ make dialyze
 ------
 +
@@ -1487,14 +1487,14 @@ information.
   .. Dialyze without specs
 +
 ------
-$ cd working-directory-name/src
+$ cd working-directory-name
 $ make dialyze-nospec
 ------
 +
 . To build the Java client and run its encoding/decoding unit test:
 +
 ------
-$ cd working-directory-name/src
+$ cd working-directory-name
 $ make -C lib/ubf/priv/java
 ------
 +
@@ -1521,7 +1521,7 @@ UBF documentation.
 . Building UBF's "Guides" _basic recipe_
 +
 ------
-$ cd working-directory-name/src/lib/ubf/priv/doc/src/ubf
+$ cd working-directory-name/lib/ubf/priv/doc/src/ubf
 $ make clean -OR- make realclean
 $ make
 ------
@@ -1529,7 +1529,7 @@ $ make
 . Building UBF's "Website" _basic recipe_
 +
 ------
-$ cd working-directory-name/src/lib/ubf/priv/doc/src/ubf/website
+$ cd working-directory-name/lib/ubf/priv/doc/src/ubf/website
 $ make clean -OR- make realclean
 $ make
 ------

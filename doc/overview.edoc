@@ -168,7 +168,7 @@ following links:
 - Erlang - http://www.erlang.org/
   * *R13B04 or newer, R15B has been tested most recently*
 - Git - http://git-scm.com/
-  * *Git 1.5.4 or newer, Git 1.7.8 has been tested recently*
+  * *Git 1.5.4 or newer, Git 1.7.9.3 has been tested recently*
   * _required for Repo and GitHub_
 - GitHub - https://github.com
 - Python - http://www.python.org
@@ -185,14 +185,14 @@ following links:
 2. Build
 +
 ------
-$ cd working-directory-name/src
+$ cd working-directory-name
 $ make compile
 ------
 
 3. Run the unit tests
 +
 ------
-$ cd working-directory-name/src
+$ cd working-directory-name
 $ make eunit
 ------
 
@@ -202,7 +202,7 @@ A. Dialyzer Testing _basic recipe_
    1. Build Dialyzer\'s PLT _(required once)_
 +
 ------
-$ cd working-directory-name/src
+$ cd working-directory-name
 $ make build-plt
 ------
 +
@@ -212,7 +212,7 @@ information.
    2. Dialyze with specs
 +
 ------
-$ cd working-directory-name/src
+$ cd working-directory-name
 $ make dialyze
 ------
 +
@@ -224,14 +224,14 @@ information.
    3. Dialyze without specs
 +
 ------
-$ cd working-directory-name/src
+$ cd working-directory-name
 $ make dialyze-nospec
 ------
 
 B. To build the Java client and run its encoding/decoding unit test:
 +
 ------
-$ cd working-directory-name/src
+$ cd working-directory-name
 $ make -C lib/ubf/priv/java
 ------
 

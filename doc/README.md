@@ -228,7 +228,7 @@ Git - <a href="http://git-scm.com/">http://git-scm.com/</a>
 <ul>
 <li>
 <p>
-<strong>Git 1.5.4 or newer, Git 1.7.8 has been tested recently</strong>
+<strong>Git 1.5.4 or newer, Git 1.7.9.3 has been tested recently</strong>
 </p>
 </li>
 <li>
@@ -289,7 +289,7 @@ Build
 </p>
 
 
-<pre><tt>$ cd working-directory-name/src
+<pre><tt>$ cd working-directory-name
 $ make compile</tt></pre>
 
 </li>
@@ -299,7 +299,7 @@ Run the unit tests
 </p>
 
 
-<pre><tt>$ cd working-directory-name/src
+<pre><tt>$ cd working-directory-name
 $ make eunit</tt></pre>
 
 </li>
@@ -321,7 +321,7 @@ Build Dialyzer's PLT <em>(required once)</em>
 </p>
 
 
-<pre><tt>$ cd working-directory-name/src
+<pre><tt>$ cd working-directory-name
 $ make build-plt</tt></pre>
 
 
@@ -340,7 +340,7 @@ Dialyze with specs
 </p>
 
 
-<pre><tt>$ cd working-directory-name/src
+<pre><tt>$ cd working-directory-name
 $ make dialyze</tt></pre>
 
 
@@ -361,7 +361,7 @@ Dialyze without specs
 </p>
 
 
-<pre><tt>$ cd working-directory-name/src
+<pre><tt>$ cd working-directory-name
 $ make dialyze-nospec</tt></pre>
 
 </li>
@@ -373,7 +373,7 @@ To build the Java client and run its encoding/decoding unit test:
 </p>
 
 
-<pre><tt>$ cd working-directory-name/src
+<pre><tt>$ cd working-directory-name
 $ make -C lib/ubf/priv/java</tt></pre>
 
 </li>
