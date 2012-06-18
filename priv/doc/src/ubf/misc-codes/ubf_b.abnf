@@ -61,7 +61,7 @@ primtype       = (typeref [ "?" ])
                / STRING
                / (predefinedtype [ "?" ])
 
-typelist       = ("[" [type] "]" [ "?" / ("{" listrange "}") ])
+typelist       = ("[" [type] "]" [ "?" / "+" / ("{" listrange "}") ])
 
 typeref        = typename "()"
 
