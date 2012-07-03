@@ -56,7 +56,9 @@ behaviour_info(callbacks) ->
      , {init,2}
      , {encode,3}
      , {decode,5}
-    ].
+    ];
+behaviour_info(_Other) ->
+	undefined.
 
 -endif. % -ifndef(old_callbacks).
 

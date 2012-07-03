@@ -40,6 +40,8 @@ behaviour_info(callbacks) ->
     [{proto_vsn,0}
      , {proto_driver,0}
      , {proto_packet_type,0}
-    ].
+    ];
+behaviour_info(_Other) ->
+	undefined.
 
 -endif. % -ifndef(old_callbacks).

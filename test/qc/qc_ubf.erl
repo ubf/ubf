@@ -40,222 +40,164 @@
 %%% Purpose : QuickCheck wrappers for UBF
 %%%-------------------------------------------------------------------
 
--module(qc_ubf).
+-module(qc_ubf, [MOD, CONTRACTS]).
 
 -ifdef(QC).
 
--include_lib("qc/include/qc.hrl").
-
--include("ubf.hrl").
-
 %% API
--export([ubf_sample_commands/2, ubf_sample_commands/3]).
--export([ubf_run_commands/2, ubf_run_commands/3]).
--export([ubf_gen_command/5, ubf_gen_command_type/5]).
+-export([qc_run/2]).
+-export([qc_sample/1]).
+-export([qc_prop/1]).
+-export([qc_counterexample/2]).
+-export([qc_counterexample_read/2]).
+-export([qc_counterexample_write/2]).
 
-%% eqc_statem Callbacks
--export([command/1, initial_state/0, initial_state/1, next_state/3, precondition/2, postcondition/3]).
+%% Misc API
+-export([ubf_gen_command/5, ubf_gen_command_type/5]).
+-export([ubf_rpc/3]).
+
+%% qc_statem Callbacks
+-behaviour(qc_statem).
+-export([command_gen/2]).
+-export([initial_state/0, state_is_sane/1, next_state/3, precondition/2, postcondition/3]).
+-export([setup/1, teardown/1, teardown/2, aggregate/1]).
 
 %% Interface Functions
 -export([behaviour_info/1]).
+
+-include("qc_statem.hrl").
 
 %% Define the behaviour's required mods.
 behaviour_info(callbacks) ->
     [{ubf_command_contract,2}
      , {ubf_command_typename,3}
      , {ubf_command_typegen,6}
-     , {ubf_command,5}
-     , {ubf_command_custom,3}
+     , {ubf_command_gen,5}
+     , {ubf_command_gen_custom,3}
      , {ubf_rpc,3}
      , {ubf_initial_state,0}
      , {ubf_state_is_sane,1}
      , {ubf_next_state,3}
      , {ubf_precondition,2}
      , {ubf_postcondition,3}
-     , {ubf_commands_setup,1}
-     , {ubf_commands_teardown,1}
-     , {ubf_commands_teardown,2}
-    ].
+     , {ubf_setup,1}
+     , {ubf_teardown,1}
+     , {ubf_teardown,2}
+     , {ubf_aggregate,1}
+    ];
+behaviour_info(_Other) ->
+	undefined.
+
+%%%=========================================================================
+%%%  Records, Types, Macros
+%%%=========================================================================
 
 -define(UBF_DEFAULT_TYPENAMES,
         [info_req,description_req,contract_req,keepalive_req]).
 
-%%%----------------------------------------------------------------------
-%%% records
-%%%----------------------------------------------------------------------
+%%%=========================================================================
+%%%  API
+%%%=========================================================================
 
-%%%%%%
-%% state
--record(state,
-        {
-          %% mod
-              mod
-              %% mod state
-              , mod_state
-        }).
+qc_run(NumTests, Options) ->
+    qc_statem:qc_run(THIS, NumTests, Options).
 
-%%%----------------------------------------------------------------------
-%%% API
-%%%----------------------------------------------------------------------
+qc_sample(Options) ->
+    qc_statem:qc_sample(THIS, Options).
 
-ubf_sample_commands(Mod, Contracts) ->
-    ubf_sample_commands(Mod, Contracts, []).
+qc_prop(Options) ->
+    qc_statem:qc_prop(THIS, Options).
 
-ubf_sample_commands(Mod, Contracts, Options)
-  when is_atom(Mod), is_list(Contracts), is_list(Options) ->
-    %% commands - sample
-    Params = [{ubfmod,Mod},{ubfcontracts,Contracts},{ubfoptions,Options}],
-    ?QC_GEN:sample(with_parameters(Params,
-                                   ?LET(InitialState,initial_state(Mod),
-                                        command(InitialState)))).
+qc_counterexample(Options, CounterExample) ->
+    qc_statem:qc_counterexample(THIS, Options, CounterExample).
 
-ubf_run_commands(Mod, Contracts) ->
-    ubf_run_commands(Mod, Contracts, []).
+qc_counterexample_read(Options, FileName) ->
+    qc_statem:qc_counterexample_read(THIS, Options, FileName).
 
-ubf_run_commands(Mod, Contracts, Options)
-  when is_atom(Mod), is_list(Contracts), is_list(Options) ->
-    %% commands - setup and teardown
-    {ok,TestRefOnce} = Mod:ubf_commands_setup(true),
-    ok = Mod:ubf_commands_teardown(TestRefOnce),
+qc_counterexample_write(FileName, CounterExample) ->
+    qc_statem:qc_counterexample_write(FileName, CounterExample).
 
-    %% commands - loop
-    Parallel = proplists:get_bool(parallel, Options),
-    Params = [{parallel,Parallel},{ubfmod,Mod},{ubfcontracts,Contracts},{ubfoptions,Options}],
-    case Parallel of
-        false ->
-            ?FORALL(Cmds,with_parameters(Params,
-                                         ?LET(InitialState,initial_state(Mod),
-                                              commands(?MODULE,InitialState))),
-                    begin
-                        %% commands - setup
-                        {ok,TestRef} = Mod:ubf_commands_setup(false),
+ubf_gen_command(Mod, S, Contract, TypeName, TypeStack) ->
+    Gen = fun ubf_gen_command_type/5,
+    try_command_typegen(Gen, Mod, S, Contract, TypeName, TypeStack).
 
-                        %% commands - run
-                        {H,S,Res} = run_commands(?MODULE,Cmds,Params),
-
-                        %% whenfail
-                        ?WHENFAIL(
-                           begin
-                               %% commands
-                               FileName = write_commands(Cmds),
-                               io:format("~nCOMMANDS:~n\t~p~n",[FileName]),
-                               %% history
-                               io:format("~nHISTORY:"),
-                               if
-                                   length(H) < 1 ->
-                                       io:format(" none~n");
-                                   true ->
-                                       CmdsH = zip(tl(Cmds),H),
-                                       [ begin
-                                             {Cmd,{State,Reply}} = lists:nth(N,CmdsH),
-                                             io:format("~n #~p:~n\tCmd: ~p~n\tReply: ~p~n\tState: ~p~n",
-                                                       [N,Cmd,Reply,State])
-                                         end
-                                         || N <- lists:seq(1,length(CmdsH)) ]
-                               end,
-                               %% result
-                               io:format("~nRESULT:~n\t~p~n",[Res]),
-                               %% state
-                               io:format("~nSTATE:~n\t~p~n",[S]),
-                               %% state is sane
-                               io:format("~nSTATE IS SANE:~n\t~p~n",[state_is_sane(Mod, S)])
-                           end,
-                           (ok =:= Res
-                            andalso state_is_sane(Mod, S)
-                            %% commands - teardown
-                            andalso ok =:= Mod:ubf_commands_teardown(TestRef,S#state.mod_state)))
-                    end);
-        true ->
-            ?FORALL(_Repetitions,?SHRINK(1,[10]),
-                    ?FORALL(Cmds,with_parameters(Params,
-                                                 ?LET(InitialState,initial_state(Mod),
-                                                      parallel_commands(?MODULE,InitialState))),
-                            ?ALWAYS(_Repetitions,
-                                    begin
-                                        %% commands - setup
-                                        {ok,TestRef} = Mod:ubf_commands_setup(false),
-
-                                        %% commands - run
-                                        {H,HL,Res} = run_parallel_commands(?MODULE,Cmds,Params),
-
-                                        %% whenfail
-                                        ?WHENFAIL(
-                                           begin
-                                               %% commands
-                                               FileName = write_commands(Cmds),
-                                               io:format("~nCOMMANDS:~n\t~p~n",[FileName]),
-                                               %% history
-                                               io:format("~nHISTORY:~n\t~p~n",[H]),
-                                               %% history list
-                                               io:format("~nHISTORY LIST:~n\t~p~n",[HL]),
-                                               %% result
-                                               io:format("~nRESULT:~n\t~p~n",[Res])
-                                           end,
-                                           (ok =:= Res
-                                            %% commands - teardown
-                                            andalso ok =:= Mod:ubf_commands_teardown(TestRef,undefined)))
-                                    end)))
-    end;
-ubf_run_commands(_Mod, _Contracts, _Options) ->
-    exit(badarg).
-
-ubf_gen_command(Mod, ModState, Contract, TypeName, TypeStack) ->
-    Mod:ubf_command_typegen(fun ubf_gen_command_type/5, Mod, ModState, Contract, TypeName, TypeStack).
-
-ubf_gen_command_type(Mod, ModState, Contract, TypeName, TypeStack) ->
+ubf_gen_command_type(Mod, S, Contract, TypeName, TypeStack) ->
     Gen = fun(TN) ->
+                  G = fun ubf_gen_command_type/5,
                   case lists:member(TypeName, TypeStack) of
                       true ->
                           ?SIZED(Size,resize(round(math:sqrt(Size)),
-                                             Mod:ubf_command_typegen(fun ubf_gen_command_type/5, Mod, ModState, Contract, TN, [TypeName|TypeStack])));
+                                             try_command_typegen(G, Mod, S, Contract, TN, [TypeName|TypeStack])));
                       false ->
-                          Mod:ubf_command_typegen(fun ubf_gen_command_type/5, Mod, ModState, Contract, TN, [TypeName|TypeStack])
+                          try_command_typegen(G, Mod, S, Contract, TN, [TypeName|TypeStack])
                   end
           end,
     qc_ubf_types:type(Gen, Contract, TypeName).
 
+ubf_rpc(Contract,_TypeName,Type) ->
+    case ubf_client:lpc(Contract, Type) of
+        {reply,Reply,_State} ->
+            Reply;
+        Err ->
+            erlang:error(Err)
+    end.
 
-%%%----------------------------------------------------------------------
-%%% Callbacks - eqc_statem
-%%%----------------------------------------------------------------------
+%%%=========================================================================
+%%%  Callbacks - eqc_statem
+%%%=========================================================================
 
 %% initial state
 initial_state() ->
-    #state{}.
-
-initial_state(Mod) ->
-    #state{mod=Mod, mod_state=Mod:ubf_initial_state()}.
+    try
+        MOD:ubf_initial_state()
+    catch
+        error:undef ->
+            undefined
+    end.
 
 %% state is sane
-state_is_sane(Mod, S) ->
-    Mod:ubf_state_is_sane(S#state.mod_state).
+state_is_sane(S) ->
+    try
+        MOD:state_is_sane(S)
+    catch
+        error:undef ->
+            true
+    end.
 
 %% command generator
-command(S)
-  when is_record(S,state) ->
-    ?LET(Contracts,parameter(ubfcontracts),
-         %% (S::symbolic_state(),Contracts::list(atom())) -> atom()
-         ?LET(Contract,(S#state.mod):ubf_command_contract(S#state.mod_state, Contracts),
-              begin
-                  if Contract =/= undefined ->
-                          InputTypeNames = ubf_extract_input_typenames(Contract),
-                          %% (S::symbolic_state(),Contract::atom(),InputTypeNames::list(atom()) -> atom()
-                          ?LET(InputTypeName,(S#state.mod):ubf_command_typename(S#state.mod_state, Contract, InputTypeNames),
-                               %% (Gen, S::symbolic_state(),Contract::atom(),InputTypeName::atom()) -> gen()
-                               (S#state.mod):ubf_command(fun ubf_gen_command/5, S#state.mod, S#state.mod_state, Contract, InputTypeName));
-                     true ->
-                          (S#state.mod):ubf_command_custom(fun ubf_gen_command/5, S#state.mod, S#state.mod_state)
-                  end
-              end)).
+command_gen(Mod, S) ->
+    %% (S::symbolic_state(),Contracts::list(atom())) -> atom()
+    ?LET(Contract,try_command_contract(Mod, S, CONTRACTS),
+         begin
+             Gen = fun ubf_gen_command/5,
+             if Contract =/= undefined ->
+                     InputTypeNames = extract_input_typenames(Contract),
+                     %% (S::symbolic_state(),Contract::atom(),InputTypeNames::list(atom()) -> atom()
+                     ?LET(InputTypeName,try_command_typename(Mod, S, Contract, InputTypeNames),
+                          %% (Gen, S::symbolic_state(),Contract::atom(),InputTypeName::atom()) -> gen()
+                          try_command_gen(Gen, Mod, S, Contract, InputTypeName));
+                true ->
+                     Mod:ubf_command_gen_custom(Gen, Mod, S)
+             end
+         end).
 
 %% next state
 next_state(S,R,C) ->
-    NewModState = (S#state.mod):ubf_next_state(S#state.mod_state,R,C),
-    S#state{mod_state=NewModState}.
+    try
+        MOD:ubf_next_state(S,R,C)
+    catch
+        error:undef ->
+            S
+    end.
 
 %% precondition
 precondition(S,C) ->
-    (S#state.mod):ubf_precondition(S#state.mod_state,C).
+    try
+        MOD:ubf_precondition(S,C)
+    catch
+        error:undef ->
+            true
+    end.
 
 %% postcondition
 postcondition(_S,_C,{clientBrokeContract,_,_}) ->
@@ -263,26 +205,87 @@ postcondition(_S,_C,{clientBrokeContract,_,_}) ->
 postcondition(_S,_C,{serverBrokeContract,_,_}) ->
     false;
 postcondition(S,C,R) ->
-    (S#state.mod):ubf_postcondition(S#state.mod_state,C,R).
+    try
+        MOD:ubf_postcondition(S,C,R)
+    catch
+        error:undef ->
+            true
+    end.
 
+%% setup
+setup(Hard) ->
+    try
+        MOD:setup(Hard)
+    catch
+        error:undef ->
+            {ok,undefined}
+    end.
 
-%%%----------------------------------------------------------------------
-%%% Internal
-%%%----------------------------------------------------------------------
+%% teardown
+teardown(Ref) ->
+    try
+        MOD:teardown(Ref)
+    catch
+        error:undef ->
+            ok
+    end.
 
-ubf_extract_input_typenames(Contract) ->
+teardown(Ref, State) ->
+    try
+        MOD:teardown(Ref, State)
+    catch
+        error:undef ->
+            ok
+    end.
+
+%% aggregate
+aggregate(L) ->
+    try
+        MOD:aggregate(L)
+    catch
+        error:undef ->
+            []
+    end.
+
+%%%========================================================================
+%%% Internal functions
+%%%========================================================================
+
+extract_input_typenames(Contract) ->
     [ Input || {{prim,1,1,Input},{prim,1,1,_Output}}
                    <- Contract:contract_anystate(), not lists:member(Input, ?UBF_DEFAULT_TYPENAMES) ].
 
-write_commands(Cmds) ->
-    Module = ?MODULE,
-    {{Year,Month,Day},{Hour,Minute,Second}} = calendar:local_time(),
-    FileName = lists:flatten(io_lib:format("~s-~4..0B~2..0B~2..0B-~2..0B~2..0B~2..0B.erl",
-                                           [Module,Year,Month,Day,Hour,Minute,Second])),
-    write_commands(Cmds,FileName).
+try_command_typegen(Gen, Mod, S, Contract, TypeName, TypeStack) ->
+    try
+        Mod:ubf_command_typegen(Gen, Mod, S, Contract, TypeName, TypeStack)
+    catch
+        error:undef ->
+            Gen(Mod,S,Contract,TypeName,TypeStack)
+    end.
 
-write_commands(Cmds,FileName) ->
-    ok = file:write_file(FileName, io_lib:format("~p.", [Cmds])),
-    FileName.
+try_command_contract(Mod, S, Contracts) ->
+    try
+        Mod:ubf_command_contract(Mod, S, Contracts)
+    catch
+        error:undef ->
+            oneof(Contracts)
+    end.
+
+try_command_typename(Mod, S, Contract, InputTypeNames) ->
+    try
+        Mod:ubf_command_typename(Mod, S, Contract, InputTypeNames)
+    catch
+        error:undef ->
+            oneof(InputTypeNames)
+    end.
+
+try_command_gen(Gen, Mod, S, Contract, InputTypeName) ->
+    try
+        Mod:ubf_command_gen(Gen, Mod, S, Contract, InputTypeName)
+    catch
+        error:undef ->
+            ?LET(Type,Gen(Mod,S,Contract,InputTypeName,[]),
+                 {call,THIS,ubf_rpc,[Contract,InputTypeName,Type]})
+    end.
 
 -endif. %% -ifdef(QC).

@@ -125,7 +125,7 @@ type1(_Gen,{string,Value}) when is_list(Value) ->
 type1(_Gen,{predef,atom}) ->
     qc_gen:qc_atom();
 type1(_Gen,{predef,integer}) ->
-    int();
+    oneof([int(),largeint()]);
 type1(_Gen,{predef,float}) ->
     real();
 type1(_Gen,{predef,binary}) ->

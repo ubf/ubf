@@ -54,6 +54,8 @@ behaviour_info(callbacks) ->
      , {handlerStart,2}
      , {handlerStop,3}
      , {handlerRpc,4}
-    ].
+    ];
+behaviour_info(_Other) ->
+	undefined.
 
 -endif. % -ifndef(old_callbacks).
