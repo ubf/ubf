@@ -39,7 +39,7 @@ event          = 'EVENT' *c-wsp ("=>" / "<=") *c-wsp typeref *c-wsp
 type           = primtype
                / (primtype *c-wsp "|" *c-wsp type)
 
-annotation     = STRING / BINARY
+annotation     = TAG / STRING / BINARY
 
 outputs        = output
                / (output *c-wsp "|" *c-wsp outputs)
@@ -87,6 +87,10 @@ FLOAT          = ["-"] 1*DIGIT "." 1*DIGIT
 
 INTEGER        = (["-"] 1*DIGIT)
                / (1*DIGIT "#" 1*(DIGIT / 'a' / 'b' / 'c' / 'd' / 'e' / 'f'))
+
+BTICK          = %x60
+
+TAG            = BTICK *(%x20-5F / %x61-7E) BTICK
 
 STRING         = DQUOTE *(%x20-21 / %x23-7E) DQUOTE
 

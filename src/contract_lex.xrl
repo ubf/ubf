@@ -58,6 +58,8 @@ EVENT              :     {token,{eventkwd,TokenLine}}.
                          {token,{binary,TokenLine,B}}.
 "[^"]*"            :     S = lists:sublist(TokenChars, 2, length(TokenChars) - 2),
                          {token,{string,TokenLine,S}}.
+`[^`]*`            :     S = lists:sublist(TokenChars, 2, length(TokenChars) - 2),
+                         {token,{tag,TokenLine,S}}.
 =>                 :     {token,{'=>',TokenLine}}.
 <=                 :     {token,{'<=',TokenLine}}.
 \.\.               :     {token,{'..',TokenLine}}.

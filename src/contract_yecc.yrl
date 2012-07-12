@@ -27,7 +27,7 @@ transitions transition outputs types responseAndState
 form type typeDef typeRef primType typeAttr typeSeq typeRec.
 
 Terminals
-namekwd vsnkwd typekwd statekwd anystatekwd eventkwd atom binary float integer string
+namekwd vsnkwd typekwd statekwd anystatekwd eventkwd atom binary float integer string tag
  '+' '|'  '=' '#' '{}' '{' '}' '&' ';' ',' '[]' '[' ']' '(' ')' ']?' ']+' ')?' '..' '##' '=>' '<=' dot.
 
 Rootsymbol form.
@@ -43,6 +43,7 @@ types -> typeDef                            : ['$1'].
 
 typeDef -> atom '(' ')' '=' type annotation : {unwrap('$1'), '$5', '$6'}.
 
+annotation -> tag                           : unwrap('$1').
 annotation -> string                        : unwrap('$1').
 annotation -> binary                        : unwrap('$1').
 annotation -> '$empty'                      : "".
