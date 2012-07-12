@@ -58,7 +58,7 @@
 
 %% qc_statem Callbacks
 -behaviour(qc_statem).
--export([command_gen/2]).
+-export([command_gen/2, command_gen/3]).
 -export([initial_state/0, state_is_sane/1, next_state/3, precondition/2, postcondition/3]).
 -export([setup/1, teardown/1, teardown/2, aggregate/1]).
 
@@ -92,8 +92,11 @@ behaviour_info(_Other) ->
 %%%  Records, Types, Macros
 %%%=========================================================================
 
--define(UBF_DEFAULT_TYPENAMES,
-        [info_req,description_req,contract_req,keepalive_req]).
+-define(UBF_DEFAULT_INPUT_TYPENAMES,
+        [ubf_info_req,ubf_description_req,ubf_contract_req,ubf_keepalive_req]).
+
+-define(UBF_DEFAULT_OUTPUT_TYPENAMES,
+        [ubf_info_res,ubf_description_res,ubf_contract_res,ubf_keepalive_res]).
 
 %%%=========================================================================
 %%%  API
@@ -166,16 +169,19 @@ state_is_sane(S) ->
 
 %% command generator
 command_gen(Mod, S) ->
+    command_gen(Mod, S, input).
+
+command_gen(Mod, S, IO) ->
     %% (S::symbolic_state(),Contracts::list(atom())) -> atom()
     ?LET(Contract,try_command_contract(Mod, S, CONTRACTS),
          begin
              Gen = fun ubf_gen_command/5,
              if Contract =/= undefined ->
-                     InputTypeNames = extract_input_typenames(Contract),
-                     %% (S::symbolic_state(),Contract::atom(),InputTypeNames::list(atom()) -> atom()
-                     ?LET(InputTypeName,try_command_typename(Mod, S, Contract, InputTypeNames),
-                          %% (Gen, S::symbolic_state(),Contract::atom(),InputTypeName::atom()) -> gen()
-                          try_command_gen(Gen, Mod, S, Contract, InputTypeName));
+                     TypeNames = extract_typenames(Contract, IO),
+                     %% (S::symbolic_state(),Contract::atom(),TypeNames::list(atom()) -> atom()
+                     ?LET(TypeName,try_command_typename(Mod, S, Contract, TypeNames),
+                          %% (Gen, S::symbolic_state(),Contract::atom(),TypeName::atom()) -> gen()
+                          try_command_gen(Gen, Mod, S, Contract, TypeName));
                 true ->
                      Mod:ubf_command_gen_custom(Gen, Mod, S)
              end
@@ -251,9 +257,14 @@ aggregate(L) ->
 %%% Internal functions
 %%%========================================================================
 
-extract_input_typenames(Contract) ->
-    [ Input || {{prim,1,1,Input},{prim,1,1,_Output}}
-                   <- Contract:contract_anystate(), not lists:member(Input, ?UBF_DEFAULT_TYPENAMES) ].
+extract_typenames(Contract,input) ->
+    [ Input
+      || {{prim,1,1,Input},{prim,1,1,_Output}} <- Contract:contract_anystate(),
+         not lists:member(Input, ?UBF_DEFAULT_INPUT_TYPENAMES) ];
+extract_typenames(Contract,output) ->
+    [ Output
+      || {{prim,1,1,_Input},{prim,1,1,Output}} <- Contract:contract_anystate(),
+         not lists:member(Output, ?UBF_DEFAULT_OUTPUT_TYPENAMES) ].
 
 try_command_typegen(Gen, Mod, S, Contract, TypeName, TypeStack) ->
     try
@@ -271,21 +282,21 @@ try_command_contract(Mod, S, Contracts) ->
             oneof(Contracts)
     end.
 
-try_command_typename(Mod, S, Contract, InputTypeNames) ->
+try_command_typename(Mod, S, Contract, TypeNames) ->
     try
-        Mod:ubf_command_typename(Mod, S, Contract, InputTypeNames)
+        Mod:ubf_command_typename(Mod, S, Contract, TypeNames)
     catch
         error:undef ->
-            oneof(InputTypeNames)
+            oneof(TypeNames)
     end.
 
-try_command_gen(Gen, Mod, S, Contract, InputTypeName) ->
+try_command_gen(Gen, Mod, S, Contract, TypeName) ->
     try
-        Mod:ubf_command_gen(Gen, Mod, S, Contract, InputTypeName)
+        Mod:ubf_command_gen(Gen, Mod, S, Contract, TypeName)
     catch
         error:undef ->
-            ?LET(Type,Gen(Mod,S,Contract,InputTypeName,[]),
-                 {call,THIS,ubf_rpc,[Contract,InputTypeName,Type]})
+            ?LET(Type,Gen(Mod,S,Contract,TypeName,[]),
+                 {call,THIS,ubf_rpc,[Contract,TypeName,Type]})
     end.
 
 -endif. %% -ifdef(QC).

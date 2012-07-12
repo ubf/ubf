@@ -77,17 +77,17 @@ restart_res()           = restart_res;
 
 %%%%%
 %%% keepalive
-keepalive_req()         = keepalive;
-keepalive_res()         = ok;
+ubf_keepalive_req()     = keepalive;
+ubf_keepalive_res()     = ok;
 
 
 %%%%%
 %%% meta methods
-info_req()              = info;
-info_res()              = string();
+ubf_info_req()          = info;
+ubf_info_res()          = string();
 
-description_req()       = description;
-description_res()       = string();
+ubf_description_req()   = description;
+ubf_description_res()   = string();
 
-contract_req()          = contract;
-contract_res()          = term().
+ubf_contract_req()      = contract;
+ubf_contract_res()      = term().

@@ -1055,8 +1055,8 @@ mandatory for all stateless plugins.
 
 ------
 %% common callback API
--spec info() -> string().
--spec description() -> string().
+-spec ubf_info() -> string().
+-spec ubf_description() -> string().
 -spec handlerStop(Handler::pid(), Reason::term(), StateData::term()) ->
                   NewStateData::term().
 
@@ -1067,7 +1067,7 @@ mandatory for all stateless plugins.
 -spec handlerRpc(Call::term()) -> Reply::term().
 ------
 
-The info/0 and description/0 functions provide short and long
+The ubf_info/0 and ubf_description/0 functions provide short and long
 information about the plugin's service, respectively.
 
 The handlerStart/1 function is called when starting a new session for
@@ -1129,8 +1129,8 @@ mandatory for all stateful plugins.
 
 ------
 %% common callback API
--spec info() -> string().
--spec description() -> string().
+-spec ubf_info() -> string().
+-spec ubf_description() -> string().
 -spec handlerStop(Handler::pid(), Reason::term(), StateData::term()) ->
                   NewStateData::term().
 
@@ -1149,7 +1149,7 @@ mandatory for all stateful plugins.
                  {ok, NewManagerData::term()} | {error, Reason::term()}.
 ------
 
-The info/0 and description/0 functions provide short and long
+The ubf_info/0 and ubf_description/0 functions provide short and long
 information about the plugin's service, respectively.
 
 The handlerStart/2 function is called when starting a new session for

@@ -36,8 +36,8 @@
 %% NOTE the following two lines
 -compile({parse_transform,contract_parser}).
 -add_contract("./test/eunit/stateless_plugin").
--add_types({types_plugin, [contract_res,contract_req,description_res,description_req,info_res,info_req]}).
--add_types({types_plugin, [keepalive_res,keepalive_req]}).
+-add_types({types_plugin, [ubf_contract_res,ubf_contract_req,ubf_description_res,ubf_description_req,ubf_info_res,ubf_info_req]}).
+-add_types({types_plugin, [ubf_keepalive_res,ubf_keepalive_req]}).
 -add_types({types_plugin, [timeout]}).
 -add_types({types_plugin, [server_crash_res05,server_crash_req05,
                            server_timeout_res03,server_timeout_req03,
