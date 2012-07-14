@@ -161,8 +161,8 @@ handlerStart(_, _) ->
 %% @doc Required UBF contract implementation callback: stop a session
 %%      handler process.
 
-handlerStop(_Pid, _Reason, State) ->
-    State.
+handlerStop(_Pid, _Reason, ManagerData) ->
+    ManagerData.
 
 %% @doc Required UBF contract implementation callback: call an RPC function.
 

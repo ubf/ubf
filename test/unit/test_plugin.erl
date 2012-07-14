@@ -86,9 +86,9 @@ handlerRpc(funny, List, State, _Env) when is_list(List) ->
 handlerRpc(funny, stop, State, _Env) ->
     {ack, start, State}.
 
-handlerStop(Pid, Reason, State) ->
+handlerStop(Pid, Reason, ManagerData) ->
     io:format("Client stopped:~p ~p~n",[Pid, Reason]),
-    State.
+    ManagerData.
 
 handlerEvent({callback, X}) ->
     sendEvent(self(), {callback, X}),

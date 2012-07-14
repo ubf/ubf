@@ -35,8 +35,8 @@
 %% common callback API
 -spec info() -> string().
 -spec description() -> string().
--spec handlerStop(Handler::pid(), Reason::term(), StateData::term()) ->
-                  NewStateData::term().
+-spec handlerStop(Handler::pid(), Reason::term(), ManagerData::term()) ->
+                  NewManagerData::term().
 
 %% stateful callback API
 -spec handlerStart(Args::term(), Manager::pid()) ->
