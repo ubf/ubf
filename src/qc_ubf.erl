@@ -161,7 +161,7 @@ initial_state() ->
 %% state is sane
 state_is_sane(S) ->
     try
-        MOD:state_is_sane(S)
+        MOD:ubf_state_is_sane(S)
     catch
         error:undef ->
             true
@@ -221,7 +221,7 @@ postcondition(S,C,R) ->
 %% setup
 setup(Hard) ->
     try
-        MOD:setup(Hard)
+        MOD:ubf_setup(Hard)
     catch
         error:undef ->
             {ok,undefined}
@@ -230,7 +230,7 @@ setup(Hard) ->
 %% teardown
 teardown(Ref) ->
     try
-        MOD:teardown(Ref)
+        MOD:ubf_teardown(Ref)
     catch
         error:undef ->
             ok
@@ -238,7 +238,7 @@ teardown(Ref) ->
 
 teardown(Ref, State) ->
     try
-        MOD:teardown(Ref, State)
+        MOD:ubf_teardown(Ref, State)
     catch
         error:undef ->
             ok
@@ -247,7 +247,7 @@ teardown(Ref, State) ->
 %% aggregate
 aggregate(L) ->
     try
-        MOD:aggregate(L)
+        MOD:ubf_aggregate(L)
     catch
         error:undef ->
             []
