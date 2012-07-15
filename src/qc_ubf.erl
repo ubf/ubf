@@ -103,7 +103,7 @@ behaviour_info(_Other) ->
 %%%=========================================================================
 
 qc_run(NumTests, Options) ->
-    qc_statem:qc_run(THIS, NumTests, Options).
+    qc_statem:qc_run(THIS, NumTests, Options ++ [{name,MOD}]).
 
 qc_sample(Options) ->
     qc_statem:qc_sample(THIS, Options).
@@ -183,7 +183,7 @@ command_gen(Mod, S, IO) ->
                           %% (Gen, S::symbolic_state(),Contract::atom(),TypeName::atom()) -> gen()
                           try_command_gen(Gen, Mod, S, Contract, TypeName));
                 true ->
-                     Mod:ubf_command_gen_custom(Gen, Mod, S)
+                     MOD:ubf_command_gen_custom(Gen, Mod, S)
              end
          end).
 
@@ -268,7 +268,7 @@ extract_typenames(Contract,output) ->
 
 try_command_typegen(Gen, Mod, S, Contract, TypeName, TypeStack) ->
     try
-        Mod:ubf_command_typegen(Gen, Mod, S, Contract, TypeName, TypeStack)
+        MOD:ubf_command_typegen(Gen, Mod, S, Contract, TypeName, TypeStack)
     catch
         error:undef ->
             Gen(Mod,S,Contract,TypeName,TypeStack)
@@ -276,7 +276,7 @@ try_command_typegen(Gen, Mod, S, Contract, TypeName, TypeStack) ->
 
 try_command_contract(Mod, S, Contracts) ->
     try
-        Mod:ubf_command_contract(Mod, S, Contracts)
+        MOD:ubf_command_contract(Mod, S, Contracts)
     catch
         error:undef ->
             oneof(Contracts)
@@ -284,7 +284,7 @@ try_command_contract(Mod, S, Contracts) ->
 
 try_command_typename(Mod, S, Contract, TypeNames) ->
     try
-        Mod:ubf_command_typename(Mod, S, Contract, TypeNames)
+        MOD:ubf_command_typename(Mod, S, Contract, TypeNames)
     catch
         error:undef ->
             oneof(TypeNames)
@@ -292,7 +292,7 @@ try_command_typename(Mod, S, Contract, TypeNames) ->
 
 try_command_gen(Gen, Mod, S, Contract, TypeName) ->
     try
-        Mod:ubf_command_gen(Gen, Mod, S, Contract, TypeName)
+        MOD:ubf_command_gen(Gen, Mod, S, Contract, TypeName)
     catch
         error:undef ->
             ?LET(Type,Gen(Mod,S,Contract,TypeName,[]),
