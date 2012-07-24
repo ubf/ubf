@@ -44,7 +44,7 @@
 
 -ifdef(QC).
 
--include_lib("qc/include/qc.hrl").
+-include("qc.hrl").
 
 -include("ubf.hrl").
 
