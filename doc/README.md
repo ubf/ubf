@@ -38,7 +38,7 @@ please read further.</p>
 <h3 id="_where_should_i_start">Where should I start?</h3>
 <p>This README is a good first step.</p>
 <p>The UBF User's Guide is the best next step.  Check out
-<a href="http://norton.github.com/ubf/ubf-user-guide.en.md">http://norton.github.com/ubf/ubf-user-guide.en.html</a> for further
+<a href="http://ubf.github.com/ubf/ubf-user-guide.en.md">http://ubf.github.com/ubf/ubf-user-guide.en.html</a> for further
 detailed information.</p>
 <p>One of the better places to start is to look in the "doc" directory.
 See the "Reference Documentation" section for suggestions on where to
