@@ -12,6 +12,6 @@ public-html-hack:
 
 stage-gh-pages: html
 	-rm -rf gh-pages
-	git clone -b gh-pages git@github.com:norton/ubf.git gh-pages
+	git clone -b gh-pages git@github.com:ubf/ubf.git gh-pages
 	rsync -aL --delete --exclude=.git public_html/ gh-pages/
 	(cd gh-pages && git status)

@@ -47,7 +47,7 @@ TO BE ADDED
 
 $ mkdir working-directory-name
 $ cd working-directory-name
-$ git clone git://github.com/norton/ubf.git
+$ git clone git://github.com/ubf/ubf.git
 
 
 == Build UBF's documentation guides

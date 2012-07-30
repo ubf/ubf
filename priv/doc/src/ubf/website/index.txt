@@ -26,13 +26,9 @@ structures across a network.  It has three components:
 
 *Documentation*
 
-The link:http://github.com/norton/ubf[UBF GitHub README] is a good
-first step to get started quickly.  Check the download, the build, and
-the install instructions.
+The link:http://github.com/ubf/ubf[UBF GitHub README] is a good first
+step to get started quickly.  Check the download, the build, and the
+install instructions.
 
-A new document link:ubf-user-guide.en.html[UBF User's Guide] is
-currently under construction.  Reading the UBF User's Guide is
+Reading the link:ubf-user-guide.en.html[UBF User's Guide] is
 _STRONGLY_ recommended.
-
-The documentation is in a state of change and improvement.
-Contributions from the wider world are welcome.  :-)

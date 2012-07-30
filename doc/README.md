@@ -20,7 +20,7 @@ follow this recipe:</p>
 
 <pre><tt>$ mkdir working-directory-name
 $ cd working-directory-name
-$ git clone git://github.com/norton/ubf.git ubf
+$ git clone git://github.com/ubf/ubf.git ubf
 $ cd ubf
 $ ./rebar get-deps
 $ ./rebar clean
@@ -116,25 +116,25 @@ Terms are framed using the <tt>gen_tcp</tt> <tt>{packet, 4}</tt> format: a 32-bi
 
 <h3 id="_what_about_jsf_and_json_rpc">What about JSF and JSON-RPC?</h3>
 <p>See the ubf-jsonrpc open source repository
-<a href="https://github.com/norton/ubf-jsonrpc">https://github.com/norton/ubf-jsonrpc</a> for details.  ubf-jsonrpc is a
+<a href="https://github.com/ubf/ubf-jsonrpc">https://github.com/ubf/ubf-jsonrpc</a> for details.  ubf-jsonrpc is a
 framework for integrating UBF, JSF, and JSON-RPC.</p>
 
 
 <h3 id="_what_about_tbf_and_thrift">What about TBF and Thrift?</h3>
 <p>See the ubf-thrift open source repository
-<a href="https://github.com/norton/ubf-thrift">https://github.com/norton/ubf-thrift</a> for details.  ubf-thrift is a
+<a href="https://github.com/ubf/ubf-thrift">https://github.com/ubf/ubf-thrift</a> for details.  ubf-thrift is a
 framework for integrating UBF, TBF, and Thrift.</p>
 
 
 <h3 id="_what_about_abnf">What about ABNF?</h3>
 <p>See the ubf-abnf open source repository
-<a href="https://github.com/norton/ubf-abnf">https://github.com/norton/ubf-abnf</a> for details.  ubf-abnf is a
+<a href="https://github.com/ubf/ubf-abnf">https://github.com/ubf/ubf-abnf</a> for details.  ubf-abnf is a
 framework for integrating UBF and ABNF.</p>
 
 
 <h3 id="_what_about_eep8">What about EEP8?</h3>
 <p>See the ubf-eep8 open source repository
-<a href="https://github.com/norton/ubf-eep8">https://github.com/norton/ubf-eep8</a> for details.  ubf-eep8 is a
+<a href="https://github.com/ubf/ubf-eep8">https://github.com/ubf/ubf-eep8</a> for details.  ubf-eep8 is a
 framework for integrating UBF and EEP8.</p>
 
 
@@ -172,7 +172,7 @@ Create working directory
 
 <pre><tt>$ mkdir working-directory-name
 $ cd working-directory-name
-$ repo init -u git://github.com/norton/manifests.git -m ubf-default.xml</tt></pre>
+$ repo init -u git://github.com/ubf/manifests.git -m ubf-default.xml</tt></pre>
 
 
 <table><tr>
@@ -182,7 +182,7 @@ Note
 <td class="content">Your "Git" identity is needed during the init step.  Please
 enter the name and email of your GitHub account if you have one.  Team
 members having read-write access are recommended to use "repo init -u
-<a href="mailto:git@github.com">git@github.com</a>:norton/manifests.git -m ubf-default-rw.xml".</td>
+<a href="mailto:git@github.com">git@github.com</a>:ubf/manifests.git -m ubf-default-rw.xml".</td>
 </tr></table>
 
 

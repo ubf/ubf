@@ -671,7 +671,7 @@ TIP: Create a new ubf_bertrpc_client.erl implementation by
 For UBF, please check UBF's GitHub repository and webpage for updates.
 
 [horizontal]
-UBF:: https://github.com/norton/ubf
+UBF:: https://github.com/ubf/ubf
 
 For Hibari - an open-source key-value implemented in Erlang, please
 check one or more of the following links for updates.

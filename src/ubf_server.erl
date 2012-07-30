@@ -288,7 +288,7 @@ start_term_listener(Server0, Plugins, Options) ->
 
 help() ->
     ?S("\n\n See http://www.sics.se/~joe/ubf/ for details of this service.\n"
-       " See http://github.com/norton/ubf for source code\n"
+       " See http://github.com/ubf/ubf for source code\n"
        "     extensions available as part of the larger OSS community.\n"
        " Type 'info'$ for information\n\n").
 

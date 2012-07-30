@@ -85,7 +85,7 @@ help() ->
 This server speaks Universal Binary Format 1.0
 
                 See http://www.sics.se/~joe/ubf.html
-                See http://github.com/norton/ubf/tree/master for some
+                See http://github.com/ubf/ubf/tree/master for some
                 source code extensions available as part of the larger
                 OSS community.
 

@@ -20,7 +20,7 @@ follow this recipe:
 ------
 $ mkdir working-directory-name
 $ cd working-directory-name
-$ git clone git://github.com/norton/ubf.git ubf
+$ git clone git://github.com/ubf/ubf.git ubf
 $ cd ubf
 $ ./rebar get-deps
 $ ./rebar clean
@@ -101,25 +101,25 @@ The name "EBF" is short for "Erlang Binary Format".
 === What about JSF and JSON-RPC?
 
 See the ubf-jsonrpc open source repository
-https://github.com/norton/ubf-jsonrpc for details.  ubf-jsonrpc is a
+https://github.com/ubf/ubf-jsonrpc for details.  ubf-jsonrpc is a
 framework for integrating UBF, JSF, and JSON-RPC.
 
 === What about TBF and Thrift?
 
 See the ubf-thrift open source repository
-https://github.com/norton/ubf-thrift for details.  ubf-thrift is a
+https://github.com/ubf/ubf-thrift for details.  ubf-thrift is a
 framework for integrating UBF, TBF, and Thrift.
 
 === What about ABNF?
 
 See the ubf-abnf open source repository
-https://github.com/norton/ubf-abnf for details.  ubf-abnf is a
+https://github.com/ubf/ubf-abnf for details.  ubf-abnf is a
 framework for integrating UBF and ABNF.
 
 === What about EEP8?
 
 See the ubf-eep8 open source repository
-https://github.com/norton/ubf-eep8 for details.  ubf-eep8 is a
+https://github.com/ubf/ubf-eep8 for details.  ubf-eep8 is a
 framework for integrating UBF and EEP8.
 
 == To download
@@ -144,13 +144,13 @@ $ chmod a+x ~/bin/repo
 ------
 $ mkdir working-directory-name
 $ cd working-directory-name
-$ repo init -u git://github.com/norton/manifests.git -m ubf-default.xml
+$ repo init -u git://github.com/ubf/manifests.git -m ubf-default.xml
 ------
 +
 NOTE: Your "Git" identity is needed during the init step.  Please
 enter the name and email of your GitHub account if you have one.  Team
 members having read-write access are recommended to use "repo init -u
-git@github.com:norton/manifests.git -m ubf-default-rw.xml".
+git@github.com:ubf/manifests.git -m ubf-default-rw.xml".
 +
 TIP: If you want to checkout the latest development version, please
 append " -b dev" to the repo init command.

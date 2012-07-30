@@ -2,11 +2,11 @@
 // vim: set syntax=asciidoc:
 
 = UBF User's Guide _1st DRAFT_
-:Date: 2012/03/12
-:Revision: 0.3.5
-:Copyright: 2002 Joe Armstrong
-:Copyright: 2010-2011 Gemini Mobile Technologies, Inc.  All rights reserved.
+:Date: 2012/07/30
+:Revision: 0.3.6
 :Copyright: 2012 by Joseph Wayne Norton <norton@alum.mit.edu>
+:Copyright: 2010-2011 Gemini Mobile Technologies, Inc.  All rights reserved.
+:Copyright: 2002 Joe Armstrong
 
 <<<
 == Preface
@@ -1330,7 +1330,7 @@ follow this recipe:
 ------
 $ mkdir working-directory-name
 $ cd working-directory-name
-$ git clone git://github.com/norton/ubf.git ubf
+$ git clone git://github.com/ubf/ubf.git ubf
 $ cd ubf
 $ ./rebar get-deps
 $ ./rebar compile
@@ -1420,13 +1420,13 @@ $ chmod a+x ~/bin/repo
 ------
 $ mkdir working-directory-name
 $ cd working-directory-name
-$ repo init -u git://github.com/norton/manifests.git -m ubf-default.xml
+$ repo init -u git://github.com/ubf/manifests.git -m ubf-default.xml
 ------
 +
 NOTE: Your "Git" identity is needed during the init step.  Please
 enter the name and email of your GitHub account if you have one.  Team
 members having read-write access are recommended to use "repo init -u
-git@github.com:norton/manifests.git -m ubf-default-rw.xml".
+git@github.com:ubf/manifests.git -m ubf-default-rw.xml".
 +
 TIP: If you want to checkout the latest development version of UBF,
 please append " -b dev" to the repo init command.
@@ -1659,7 +1659,7 @@ _Under Construction - To Be Updated_
 - [[[GIT]]] "Fast Version Control System", http://git-scm.com.
 
 - [[[JSFCHARSET]]] "Gemini Mobile Technologies, Inc. charset module",
-  https://github.com/norton/ubf-jsonrpc/blob/master/src/jsf_charset.erl
+  https://github.com/ubf/ubf-jsonrpc/blob/master/src/jsf_charset.erl
 
 - [[[GITHUB]]] "Secure source code hosting and collaborative
   development ", https://github.com.
@@ -1690,22 +1690,22 @@ _Under Construction - To Be Updated_
 - [[[THRIFT]]] "A software framework for scalable cross-language
   services development.", http://incubator.apache.org/thrift.
 
-- [[[UBF]]] "Universal Binary Format", https://github.com/norton/ubf.
+- [[[UBF]]] "Universal Binary Format", https://github.com/ubf/ubf.
 
 - [[[UBF_ABNF]]] "Universal Binary Format and Augmented Backus-Naur
-  Form", https://github.com/norton/ubf-abnf.
+  Form", https://github.com/ubf/ubf-abnf.
 
 - [[[UBF_BERTRPC]]] "Universal Binary Format and Binary ERlang Term
-  RPC", https://github.com/norton/ubf-bertrpc.
+  RPC", https://github.com/ubf/ubf-bertrpc.
 
 - [[[UBF_EEP8]]] "Universal Binary Format and Erlang Enhancement
-  Proposal 8", https://github.com/norton/ubf-eep8.
+  Proposal 8", https://github.com/ubf/ubf-eep8.
 
 - [[[UBF_JSONRPC]]] "Universal Binary Format and JavaScript Object
-  Notation RPC", https://github.com/norton/ubf-jsonrpc.
+  Notation RPC", https://github.com/ubf/ubf-jsonrpc.
 
 - [[[UBF_THRIFT]]] "Universal Binary Format and Thrift",
-  https://github.com/norton/ubf-thrift.
+  https://github.com/ubf/ubf-thrift.
 
 - [[[UBFPAPER]]] Joe Armstrong, "Getting Erlang to talk to the outside
   world", Proceedings of the 2002 ACM SIGPLAN workshop on Erlang,
