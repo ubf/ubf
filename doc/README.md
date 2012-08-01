@@ -350,7 +350,7 @@ Caution
 </td>
 <td class="content">If you manually run dialyzer with the "-r" option, execute
 "make clean compile" first to avoid finding duplicate beam files
-underneath rebar's .eunit directory.  Check Makefile for further
+underneath rebar's .test directory.  Check Makefile for further
 information.</td>
 </tr></table>
 
@@ -485,6 +485,8 @@ has also given his blessing to Gemini's license choice.</p>
 <tr><td><a href="ebf_driver.md" class="module">ebf_driver</a></td></tr>
 <tr><td><a href="proc_socket_server.md" class="module">proc_socket_server</a></td></tr>
 <tr><td><a href="proc_utils.md" class="module">proc_utils</a></td></tr>
+<tr><td><a href="qc_ubf.md" class="module">qc_ubf</a></td></tr>
+<tr><td><a href="qc_ubf_types.md" class="module">qc_ubf_types</a></td></tr>
 <tr><td><a href="ubf.md" class="module">ubf</a></td></tr>
 <tr><td><a href="ubf_client.md" class="module">ubf_client</a></td></tr>
 <tr><td><a href="ubf_driver.md" class="module">ubf_driver</a></td></tr>

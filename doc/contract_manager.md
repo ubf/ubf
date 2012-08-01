@@ -81,15 +81,11 @@ actual server application.</tt></pre>
 ###do_eventIn/4##
 
 
-
-
 `do_eventIn(Msg, State, Mod, TLogMod) -> any()`
 
 <a name="do_eventOut-4"></a>
 
 ###do_eventOut/4##
-
-
 
 
 `do_eventOut(Msg, State, Mod, TLogMod) -> any()`
@@ -99,15 +95,11 @@ actual server application.</tt></pre>
 ###do_lpcIn/4##
 
 
-
-
 `do_lpcIn(Q, State, Mod, TLogMod) -> any()`
 
 <a name="do_lpcOut-9"></a>
 
 ###do_lpcOut/9##
-
-
 
 
 `do_lpcOut(Ref, Q, State, Mod, Reply, ReplyState, NewState, NewMod, TLogMod) -> any()`
@@ -117,15 +109,11 @@ actual server application.</tt></pre>
 ###do_lpcOutError/6##
 
 
-
-
 `do_lpcOutError(Ref, Q, State, Mod, Error, TLogMod) -> any()`
 
 <a name="do_rpcIn-4"></a>
 
 ###do_rpcIn/4##
-
-
 
 
 `do_rpcIn(Q, State, Mod, TLogMod) -> any()`
@@ -135,15 +123,11 @@ actual server application.</tt></pre>
 ###do_rpcOut/9##
 
 
-
-
 `do_rpcOut(Ref, Q, State, Mod, Reply, ReplyState, NewState, NewMod, TLogMod) -> any()`
 
 <a name="do_rpcOutError-5"></a>
 
 ###do_rpcOutError/5##
-
-
 
 
 `do_rpcOutError(Q, State, Mod, Error, TLogMod) -> any()`
@@ -153,15 +137,11 @@ actual server application.</tt></pre>
 ###do_rpcOutError/6##
 
 
-
-
 `do_rpcOutError(Ref, Q, State, Mod, Error, TLogMod) -> any()`
 
 <a name="start-1"></a>
 
 ###start/1##
-
-
 
 
 <pre>start(SpawnOpts::list()) -&gt; pid()</pre>
@@ -171,8 +151,6 @@ actual server application.</tt></pre>
 <a name="start-3"></a>
 
 ###start/3##
-
-
 
 
 <pre>start(SimpleRPC::boolean(), VerboseRPC::boolean(), SpawnOpts::list()) -&gt; pid()</pre>

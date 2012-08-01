@@ -61,8 +61,6 @@ the event loop processing function, +irc_client_gs:loop/6+.</tt></pre>
 ###ask_manager/2##
 
 
-
-
 <pre>ask_manager(Manager::pid(), Call::term()) -&gt; Reply::term()</pre>
 <br></br>
 
@@ -72,12 +70,8 @@ the event loop processing function, +irc_client_gs:loop/6+.</tt></pre>
 ###install_default_handler/1##
 
 
-
-
 <pre>install_default_handler(Handler::pid()) -&gt; ack</pre>
 <br></br>
-
-
 
 
 <p>Install a default handler function (callback-style) for
@@ -91,12 +85,8 @@ asynchronous UBF messages.</p>
 ###install_handler/2##
 
 
-
-
 <pre>install_handler(Handler::pid(), Fun::function()) -&gt; ack</pre>
 <br></br>
-
-
 
 
 <p>Install a handler function (callback-style) for asynchronous
@@ -124,8 +114,6 @@ the event loop processing function, +irc_client_gs:loop/6+.</tt></pre>
 ###manager/3##
 
 
-
-
 `manager(ExitPid, Mod, Args) -> any()`
 
 <a name="sendEvent-2"></a>
@@ -133,12 +121,8 @@ the event loop processing function, +irc_client_gs:loop/6+.</tt></pre>
 ###sendEvent/2##
 
 
-
-
 <pre>sendEvent(Handler::pid(), Cast::term()) -&gt; ok | no_return()</pre>
 <br></br>
-
-
 
 
 <p>Send an asynchronous UBF message.</p>
@@ -147,15 +131,11 @@ the event loop processing function, +irc_client_gs:loop/6+.</tt></pre>
 ###start_handler/5##
 
 
-
-
 `start_handler(MetaMod, Mod, Server, StatelessRPC, SpawnOpts) -> any()`
 
 <a name="start_manager-2"></a>
 
 ###start_manager/2##
-
-
 
 
 `start_manager(Mod, Args) -> any()`

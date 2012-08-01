@@ -240,8 +240,6 @@ Default: [].
 ###init/5##
 
 
-
-
 <pre>init(Name::<a href="#type-name">name()</a>, Parent::pid(), Plugins::<a href="#type-plugins">plugins()</a>, Port::<a href="#type-ipport">ipport()</a>, Options::<a href="#type-options">options()</a>) -> pid()</pre>
 <br></br>
 
@@ -251,12 +249,8 @@ Default: [].
 ###start/2##
 
 
-
-
 <pre>start(Plugins::<a href="#type-plugins">plugins()</a>, Port::<a href="#type-ipport">ipport()</a>) -> true</pre>
 <br></br>
-
-
 
 
 <p>Start a server and a TCP listener on port Port and register
@@ -270,12 +264,8 @@ all of the protocol implementation modules in the Plugins list.</p>
 ###start/3##
 
 
-
-
 <pre>start(Name::<a href="#type-name">name()</a>, Plugins::<a href="#type-plugins">plugins()</a>, Port::<a href="#type-ipport">ipport()</a>) -> true</pre>
 <br></br>
-
-
 
 
 <p>Start a registered server and a TCP listener on port Port and
@@ -290,12 +280,8 @@ list. If Name is undefined, the server is not registered.</p>
 ###start/4##
 
 
-
-
 <pre>start(Name::<a href="#type-name">name()</a>, Plugins::<a href="#type-plugins">plugins()</a>, Port::<a href="#type-ipport">ipport()</a>, Options::<a href="#type-options">options()</a>) -> true</pre>
 <br></br>
-
-
 
 
 <p>Start a registered server and a TCP listener on port Port with
@@ -416,12 +402,8 @@ Default: [].
 ###start_link/2##
 
 
-
-
 <pre>start_link(Plugins::<a href="#type-plugins">plugins()</a>, Port::<a href="#type-ipport">ipport()</a>) -> true</pre>
 <br></br>
-
-
 
 
 <p>See start/2, but also link the server processs to the caller.</p>
@@ -430,12 +412,8 @@ Default: [].
 ###start_link/3##
 
 
-
-
 <pre>start_link(Name::<a href="#type-name">name()</a>, Plugins::<a href="#type-plugins">plugins()</a>, Port::<a href="#type-ipport">ipport()</a>) -> true</pre>
 <br></br>
-
-
 
 
 <p>See start/3, but also link the server processs to the caller.</p>
@@ -444,20 +422,14 @@ Default: [].
 ###start_link/4##
 
 
-
-
 <pre>start_link(Name::<a href="#type-name">name()</a>, Plugins::<a href="#type-plugins">plugins()</a>, Port::<a href="#type-ipport">ipport()</a>, Options::<a href="#type-options">options()</a>) -> true</pre>
 <br></br>
-
-
 
 
 <p>See start/4, but also link the server processs to the caller.</p>
 <a name="start_term_listener-3"></a>
 
 ###start_term_listener/3##
-
-
 
 
 <pre>start_term_listener(Server0::pid(), Plugins::<a href="#type-plugins">plugins()</a>, Options::<a href="#type-options">options()</a>) -> pid()</pre>

@@ -8,8 +8,6 @@
 
 <p>Protocol driver process for UBF(a) protocol sessions.</p>.
 
-
-
 __Behaviours:__ [`contract_driver`](contract_driver.md).<a name="index"></a>
 
 ##Function Index##
@@ -27,15 +25,11 @@ __Behaviours:__ [`contract_driver`](contract_driver.md).<a name="index"></a>
 ###decode/5##
 
 
-
-
 `decode(Contract, Safe, Cont, Binary, CallBack) -> any()`
 
 <a name="encode-3"></a>
 
 ###encode/3##
-
-
 
 
 `encode(Contract, Safe, Term) -> any()`
@@ -45,15 +39,11 @@ __Behaviours:__ [`contract_driver`](contract_driver.md).<a name="index"></a>
 ###init/1##
 
 
-
-
 `init(Contract) -> any()`
 
 <a name="init-2"></a>
 
 ###init/2##
-
-
 
 
 `init(Contract, Options) -> any()`
@@ -63,15 +53,11 @@ __Behaviours:__ [`contract_driver`](contract_driver.md).<a name="index"></a>
 ###start/1##
 
 
-
-
 `start(Contract) -> any()`
 
 <a name="start-2"></a>
 
 ###start/2##
-
-
 
 
 `start(Contract, Options) -> any()`

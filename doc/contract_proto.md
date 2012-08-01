@@ -8,8 +8,6 @@
 
 <p>Generic protocol encoder/decoder for protocol sessions.</p>.
 
-
-
 __This module defines the `contract_proto` behaviour.__
 <br></br>
  Required callback functions: `proto_vsn/0`, `proto_driver/0`, `proto_packet_type/0`.<a name="index"></a>
@@ -29,7 +27,5 @@ __This module defines the `contract_proto` behaviour.__
 ###behaviour_info/1##
 
 
-
-
-`behaviour_info(X1) -> any()`
+`behaviour_info(Other) -> any()`
 

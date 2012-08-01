@@ -33,15 +33,11 @@ error and event handling capabilities.</tt></pre>
 ###eventIn/5##
 
 
-
-
 `eventIn(TLogMod_x, Msg, State, Mod, Status) -> any()`
 
 <a name="eventOut-5"></a>
 
 ###eventOut/5##
-
-
 
 
 `eventOut(TLogMod_x, Msg, State, Mod, Status) -> any()`
@@ -51,15 +47,11 @@ error and event handling capabilities.</tt></pre>
 ###lpcIn/4##
 
 
-
-
 `lpcIn(TLogMod_x, Q, State, Mod) -> any()`
 
 <a name="lpcOut-9"></a>
 
 ###lpcOut/9##
-
-
 
 
 `lpcOut(TLogMod_x, StartTime, Q, State, Mod, Reply, NewState, NewMod, Status) -> any()`
@@ -69,15 +61,11 @@ error and event handling capabilities.</tt></pre>
 ###lpcOutError/6##
 
 
-
-
 `lpcOutError(TLogMod_x, StartTime, Q, State, Mod, Error) -> any()`
 
 <a name="rpcFinish-1"></a>
 
 ###rpcFinish/1##
-
-
 
 
 `rpcFinish(TLog) -> any()`
@@ -87,15 +75,11 @@ error and event handling capabilities.</tt></pre>
 ###rpcIn/4##
 
 
-
-
 `rpcIn(TLogMod_x, Q, State, Mod) -> any()`
 
 <a name="rpcOut-9"></a>
 
 ###rpcOut/9##
-
-
 
 
 `rpcOut(TLogMod_x, StartTime, Q, State, Mod, Reply, NewState, NewMod, Status) -> any()`
@@ -105,15 +89,11 @@ error and event handling capabilities.</tt></pre>
 ###rpcOutError/5##
 
 
-
-
 `rpcOutError(TLogMod_x, Q, State, Mod, Error) -> any()`
 
 <a name="rpcOutError-6"></a>
 
 ###rpcOutError/6##
-
-
 
 
 `rpcOutError(TLogMod_x, StartTime, Q, State, Mod, Error) -> any()`

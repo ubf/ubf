@@ -52,11 +52,7 @@ process(es).</p>.</td></tr></table>
 ###description/0##
 
 
-
-
 `description() -> any()`
-
-
 
 <p>Emit a description string.</p>
 <a name="handlerRpc-4"></a>
@@ -64,11 +60,7 @@ process(es).</p>.</td></tr></table>
 ###handlerRpc/4##
 
 
-
-
 `handlerRpc(State, X2, Data, Manager) -> any()`
-
-
 
 <p>Required UBF contract implementation callback: call an RPC function.</p>
 <a name="handlerStart-2"></a>
@@ -76,11 +68,7 @@ process(es).</p>.</td></tr></table>
 ###handlerStart/2##
 
 
-
-
 `handlerStart(X1, X2) -> any()`
-
-
 
 <p>Required UBF contract implementation callback: start a new session
 handler process.</p>
@@ -89,11 +77,7 @@ handler process.</p>
 ###handlerStop/3##
 
 
-
-
-`handlerStop(Pid, Reason, State) -> any()`
-
-
+`handlerStop(Pid, Reason, ManagerData) -> any()`
 
 <p>Required UBF contract implementation callback: stop a session
 handler process.</p>
@@ -102,11 +86,7 @@ handler process.</p>
 ###info/0##
 
 
-
-
 `info() -> any()`
-
-
 
 <p>Emit an info string.</p>
 <a name="managerRestart-2"></a>
@@ -114,11 +94,7 @@ handler process.</p>
 ###managerRestart/2##
 
 
-
-
 `managerRestart(Args, Manager) -> any()`
-
-
 
 <p>Required UBF contract implementation callback: restart a manager
 process.</p>
@@ -127,11 +103,7 @@ process.</p>
 ###managerRpc/2##
 
 
-
-
 `managerRpc(X1, S) -> any()`
-
-
 
 <p>Required UBF contract implementation callback: call a manager's RPC
 function.</p>
@@ -140,11 +112,7 @@ function.</p>
 ###managerStart/1##
 
 
-
-
 `managerStart(Args) -> any()`
-
-
 
 <p>Required UBF contract implementation callback: start manager
 process(es).</p>

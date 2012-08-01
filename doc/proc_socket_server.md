@@ -74,15 +74,11 @@ start_raw_server/7).</tt></pre>
 ###cold_start/7##
 
 
-
-
 `cold_start(Parent, Name, Port, Max, Fun, PacketType, PacketSize) -> any()`
 
 <a name="server_children-1"></a>
 
 ###server_children/1##
-
-
 
 
 `server_children(Name) -> any()`
@@ -92,15 +88,11 @@ start_raw_server/7).</tt></pre>
 ###server_children/2##
 
 
-
-
 `server_children(Pid, Timeout) -> any()`
 
 <a name="server_port-1"></a>
 
 ###server_port/1##
-
-
 
 
 `server_port(Name) -> any()`
@@ -110,15 +102,11 @@ start_raw_server/7).</tt></pre>
 ###server_port/2##
 
 
-
-
 `server_port(Pid, Timeout) -> any()`
 
 <a name="server_status-1"></a>
 
 ###server_status/1##
-
-
 
 
 `server_status(Name) -> any()`
@@ -128,15 +116,11 @@ start_raw_server/7).</tt></pre>
 ###server_status/2##
 
 
-
-
 `server_status(Pid, Timeout) -> any()`
 
 <a name="start_child-3"></a>
 
 ###start_child/3##
-
-
 
 
 `start_child(Parent, Listen, Fun) -> any()`
@@ -146,15 +130,11 @@ start_raw_server/7).</tt></pre>
 ###start_raw_server/5##
 
 
-
-
 `start_raw_server(Port, Max, Fun, PacketType, PacketSize) -> any()`
 
 <a name="start_raw_server-7"></a>
 
 ###start_raw_server/7##
-
-
 
 
 `start_raw_server(Name, Port, Max, SpawnOpts, Fun, PacketType, PacketSize) -> any()`
@@ -164,11 +144,7 @@ start_raw_server/7).</tt></pre>
 ###start_server/3##
 
 
-
-
 `start_server(Port, Max, Fun) -> any()`
-
-
 
 <p>Start a new UBF contract-using server.</p>
 <ul>
@@ -207,15 +183,11 @@ start_raw_server/7).</tt></pre>
 ###start_server/4##
 
 
-
-
 `start_server(Name, Port, Max, Fun) -> any()`
 
 <a name="stop_server-1"></a>
 
 ###stop_server/1##
-
-
 
 
 `stop_server(Pid) -> any()`

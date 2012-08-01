@@ -24,8 +24,6 @@ reserved. Instead of allocating the byte codes from 0 we use the
 printable character codes to make the format easy to read.</tt></pre>
 .
 
-
-
 __Behaviours:__ [`contract_proto`](contract_proto.md).<a name="index"></a>
 
 ##Function Index##
@@ -43,15 +41,11 @@ __Behaviours:__ [`contract_proto`](contract_proto.md).<a name="index"></a>
 ###deabstract/1##
 
 
-
-
 `deabstract(T) -> any()`
 
 <a name="decode-1"></a>
 
 ###decode/1##
-
-
 
 
 `decode(String) -> any()`
@@ -61,15 +55,11 @@ __Behaviours:__ [`contract_proto`](contract_proto.md).<a name="index"></a>
 ###decode/2##
 
 
-
-
 `decode(String, Mod) -> any()`
 
 <a name="decode-3"></a>
 
 ###decode/3##
-
-
 
 
 `decode(S, Mod, X3) -> any()`
@@ -79,15 +69,11 @@ __Behaviours:__ [`contract_proto`](contract_proto.md).<a name="index"></a>
 ###decode_init/0##
 
 
-
-
 `decode_init() -> any()`
 
 <a name="decode_init-1"></a>
 
 ###decode_init/1##
-
-
 
 
 `decode_init(Safe) -> any()`
@@ -97,15 +83,11 @@ __Behaviours:__ [`contract_proto`](contract_proto.md).<a name="index"></a>
 ###decode_init/2##
 
 
-
-
 `decode_init(Safe, String) -> any()`
 
 <a name="encode-1"></a>
 
 ###encode/1##
-
-
 
 
 `encode(X) -> any()`
@@ -115,15 +97,11 @@ __Behaviours:__ [`contract_proto`](contract_proto.md).<a name="index"></a>
 ###encode/2##
 
 
-
-
 `encode(X, Mod) -> any()`
 
 <a name="proto_driver-0"></a>
 
 ###proto_driver/0##
-
-
 
 
 `proto_driver() -> any()`
@@ -133,15 +111,11 @@ __Behaviours:__ [`contract_proto`](contract_proto.md).<a name="index"></a>
 ###proto_packet_type/0##
 
 
-
-
 `proto_packet_type() -> any()`
 
 <a name="proto_vsn-0"></a>
 
 ###proto_vsn/0##
-
-
 
 
 `proto_vsn() -> any()`

@@ -7,8 +7,6 @@
 
 
 
-
-
 <a name="types"></a>
 
 ##Data Types##
@@ -38,8 +36,6 @@
 ###format_error/1##
 
 
-
-
 <pre>format_error(Message::any()) -&gt; [char() | list()]</pre>
 <br></br>
 
@@ -49,8 +45,6 @@
 ###parse/1##
 
 
-
-
 <pre>parse(Tokens::list()) -> <a href="#type-yecc_ret">yecc_ret()</a></pre>
 <br></br>
 
@@ -58,8 +52,6 @@
 <a name="parse_and_scan-1"></a>
 
 ###parse_and_scan/1##
-
-
 
 
 <pre>parse_and_scan(X1::{function() | {atom(), atom()}, [term()]} | {atom(), atom(), [term()]}) -> <a href="#type-yecc_ret">yecc_ret()</a></pre>

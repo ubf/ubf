@@ -26,15 +26,11 @@
 ###ubf_contract/1##
 
 
-
-
 `ubf_contract(Mod) -> any()`
 
 <a name="ubf_contract-2"></a>
 
 ###ubf_contract/2##
-
-
 
 
 `ubf_contract(Mod, FileName) -> any()`

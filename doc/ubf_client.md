@@ -207,12 +207,8 @@ specified state.</p>.</td></tr><tr><td valign="top"><a href="#lpc-4">lpc/4</a></
 ###connect/2##
 
 
-
-
 <pre>connect(Host::<a href="#type-host">host()</a> | <a href="#type-plugins">plugins()</a>, Port::<a href="#type-ipport">ipport()</a> | <a href="#type-server">server()</a>) -> {ok, Client::pid(), <a href="#type-service">service()</a>} | {error, term()}</pre>
 <br></br>
-
-
 
 
 <p>Connect to a UBF server at address Host + TCP port Port.</p>
@@ -221,12 +217,8 @@ specified state.</p>.</td></tr><tr><td valign="top"><a href="#lpc-4">lpc/4</a></
 ###connect/3##
 
 
-
-
 <pre>connect(Host::<a href="#type-host">host()</a> | <a href="#type-plugins">plugins()</a>, Port::<a href="#type-ipport">ipport()</a> | <a href="#type-server">server()</a>, Timeout::timeout()) -> {ok, Client::pid(), <a href="#type-service">service()</a>} | {error, term()}</pre>
 <br></br>
-
-
 
 
 <p>Connect to a UBF server at address Host + TCP port Port.</p>
@@ -235,12 +227,8 @@ specified state.</p>.</td></tr><tr><td valign="top"><a href="#lpc-4">lpc/4</a></
 ###connect/4##
 
 
-
-
 <pre>connect(X::<a href="#type-host">host()</a> | <a href="#type-plugins">plugins()</a>, Y::<a href="#type-ipport">ipport()</a> | <a href="#type-server">server()</a>, Options::<a href="#type-options">options()</a>, Timeout::timeout()) -> {ok, Client::pid(), <a href="#type-service">service()</a>} | {error, term()}</pre>
 <br></br>
-
-
 
 
 <p>Connect to a UBF server at address Host + TCP port Port, or at
@@ -272,12 +260,8 @@ name <tt>(atom())</tt> for an already-started UBF server.
 ###install_default_handler/1##
 
 
-
-
 <pre>install_default_handler(Client::pid()) -&gt; ack</pre>
 <br></br>
-
-
 
 
 <p>Install a default handler function (callback-style) for
@@ -291,12 +275,8 @@ asynchronous UBF messages.</p>
 ###install_handler/2##
 
 
-
-
 <pre>install_handler(Client::pid(), Fun::function()) -&gt; ack</pre>
 <br></br>
-
-
 
 
 <p>Install a handler function (callback-style) for asynchronous
@@ -324,12 +304,8 @@ the event loop processing function, +irc_client_gs:loop/6+.</tt></pre>
 ###lpc/2##
 
 
-
-
 <pre>lpc(Mod::<a href="#type-plugin">plugin()</a>, Call::term()) -> term()</pre>
 <br></br>
-
-
 
 
 <p>Perform a synchronous LPC (local procedure) call with the
@@ -339,12 +315,8 @@ state <tt>none</tt>.</p>
 ###lpc/3##
 
 
-
-
 <pre>lpc(Mod::<a href="#type-plugin">plugin()</a>, Call::term(), State::<a href="#type-statename">statename()</a>) -> term()</pre>
 <br></br>
-
-
 
 
 <p>Perform a synchronous LPC (local procedure) call with the
@@ -352,8 +324,6 @@ specified state.</p>
 <a name="lpc-4"></a>
 
 ###lpc/4##
-
-
 
 
 <pre>lpc(Mod::<a href="#type-plugin">plugin()</a>, Call::term(), State::<a href="#type-statename">statename()</a>, TLogMod::<a href="#type-tlogger">tlogger()</a>) -> term()</pre>
@@ -365,12 +335,8 @@ specified state.</p>
 ###rpc/2##
 
 
-
-
 <pre>rpc(Client::pid(), Call::term()) -&gt; timeout | term() | no_return()</pre>
 <br></br>
-
-
 
 
 <p>Perform a synchronous RPC call.</p>
@@ -384,12 +350,8 @@ specified state.</p>
 ###rpc/3##
 
 
-
-
 <pre>rpc(Client::pid(), Call::term(), Timeout::timeout()) -&gt; timeout | term() | no_return()</pre>
 <br></br>
-
-
 
 
 <p>Perform a synchronous RPC call.</p>
@@ -398,12 +360,8 @@ specified state.</p>
 ###sendEvent/2##
 
 
-
-
 <pre>sendEvent(Handler::pid(), Cast::term()) -&gt; ok | no_return()</pre>
 <br></br>
-
-
 
 
 <p>Send an asynchronous UBF message.</p>
@@ -412,12 +370,8 @@ specified state.</p>
 ###stop/1##
 
 
-
-
 <pre>stop(Client::pid()) -&gt; ok</pre>
 <br></br>
-
-
 
 
 <p>Stop a UBF client process.</p>

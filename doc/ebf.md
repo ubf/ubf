@@ -9,8 +9,6 @@
 <p>Low-level functions for encoding and decoding the UBF(a)
 protocol for EBF.</p>.
 
-
-
 __Behaviours:__ [`contract_proto`](contract_proto.md).<a name="index"></a>
 
 ##Function Index##
@@ -28,8 +26,6 @@ __Behaviours:__ [`contract_proto`](contract_proto.md).<a name="index"></a>
 ###decode/1##
 
 
-
-
 <pre>decode(X::binary()) -&gt; no_return()</pre>
 <br></br>
 
@@ -37,8 +33,6 @@ __Behaviours:__ [`contract_proto`](contract_proto.md).<a name="index"></a>
 <a name="decode-2"></a>
 
 ###decode/2##
-
-
 
 
 <pre>decode(X::binary(), Mod::module()) -&gt; no_return()</pre>
@@ -50,8 +44,6 @@ __Behaviours:__ [`contract_proto`](contract_proto.md).<a name="index"></a>
 ###decode/3##
 
 
-
-
 <pre>decode(X::binary(), Mod::module(), Cont::term()) -&gt; no_return()</pre>
 <br></br>
 
@@ -59,8 +51,6 @@ __Behaviours:__ [`contract_proto`](contract_proto.md).<a name="index"></a>
 <a name="decode_init-0"></a>
 
 ###decode_init/0##
-
-
 
 
 <pre>decode_init() -&gt; no_return()</pre>
@@ -72,8 +62,6 @@ __Behaviours:__ [`contract_proto`](contract_proto.md).<a name="index"></a>
 ###decode_init/1##
 
 
-
-
 <pre>decode_init(Safe::boolean()) -&gt; no_return()</pre>
 <br></br>
 
@@ -81,8 +69,6 @@ __Behaviours:__ [`contract_proto`](contract_proto.md).<a name="index"></a>
 <a name="decode_init-2"></a>
 
 ###decode_init/2##
-
-
 
 
 <pre>decode_init(Safe::boolean(), Binary::binary()) -&gt; no_return()</pre>
@@ -94,8 +80,6 @@ __Behaviours:__ [`contract_proto`](contract_proto.md).<a name="index"></a>
 ###encode/1##
 
 
-
-
 <pre>encode(X::term()) -&gt; no_return()</pre>
 <br></br>
 
@@ -103,8 +87,6 @@ __Behaviours:__ [`contract_proto`](contract_proto.md).<a name="index"></a>
 <a name="encode-2"></a>
 
 ###encode/2##
-
-
 
 
 <pre>encode(X::term(), Mod::module()) -&gt; no_return()</pre>
@@ -116,8 +98,6 @@ __Behaviours:__ [`contract_proto`](contract_proto.md).<a name="index"></a>
 ###proto_driver/0##
 
 
-
-
 `proto_driver() -> any()`
 
 <a name="proto_packet_type-0"></a>
@@ -125,15 +105,11 @@ __Behaviours:__ [`contract_proto`](contract_proto.md).<a name="index"></a>
 ###proto_packet_type/0##
 
 
-
-
 `proto_packet_type() -> any()`
 
 <a name="proto_vsn-0"></a>
 
 ###proto_vsn/0##
-
-
 
 
 `proto_vsn() -> any()`

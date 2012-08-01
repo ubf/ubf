@@ -30,11 +30,7 @@ feature is beyond the current scope and goals of this package.</p>.</td></tr></t
 ###check_binary/4##
 
 
-
-
 `check_binary(Check, X, Level, Mod) -> any()`
-
-
 
 <p>Parse (and validate) the given binary against abnf contract
 types.  It is straightforward to extend this implementation to

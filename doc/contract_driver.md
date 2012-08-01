@@ -8,8 +8,6 @@
 
 <p>Generic protocol driver process for protocol sessions.</p>.
 
-
-
 __This module defines the `contract_driver` behaviour.__
 <br></br>
  Required callback functions: `start/1`, `start/2`, `init/1`, `init/2`, `encode/3`, `decode/5`.<a name="index"></a>
@@ -57,15 +55,11 @@ If one side dies the process dies
 ###behaviour_info/1##
 
 
-
-
-`behaviour_info(X1) -> any()`
+`behaviour_info(Other) -> any()`
 
 <a name="loop-5"></a>
 
 ###loop/5##
-
-
 
 
 `loop(Module, Contract, Options, Pid, Socket) -> any()`
@@ -75,8 +69,6 @@ If one side dies the process dies
 ###loop/6##
 
 
-
-
 `loop(Module, Contract, Options, Pid, Socket, Timeout) -> any()`
 
 <a name="loop-7"></a>
@@ -84,11 +76,7 @@ If one side dies the process dies
 ###loop/7##
 
 
-
-
 `loop(Module, Contract, Options, Pid, Socket, Timeout, Cont) -> any()`
-
-
 
 <p>Driver main loop.</p>
 <ul>
@@ -124,15 +112,11 @@ If one side dies the process dies
 ###relay/3##
 
 
-
-
 `relay(Module, Pid, Pid1) -> any()`
 
 <a name="start-3"></a>
 
 ###start/3##
-
-
 
 
 `start(Module, Contract, Options) -> any()`

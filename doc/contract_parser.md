@@ -30,15 +30,11 @@ during the usual compilation of an Erlang source module.</tt></pre>
 ###make/0##
 
 
-
-
 `make() -> any()`
 
 <a name="make_lex-0"></a>
 
 ###make_lex/0##
-
-
 
 
 `make_lex() -> any()`
@@ -48,15 +44,11 @@ during the usual compilation of an Erlang source module.</tt></pre>
 ###make_yecc/0##
 
 
-
-
 `make_yecc() -> any()`
 
 <a name="parse_file-1"></a>
 
 ###parse_file/1##
-
-
 
 
 `parse_file(F) -> any()`
@@ -66,15 +58,11 @@ during the usual compilation of an Erlang source module.</tt></pre>
 ###parse_transform/2##
 
 
-
-
 `parse_transform(In, Opts) -> any()`
 
 <a name="parse_transform_contract-2"></a>
 
 ###parse_transform_contract/2##
-
-
 
 
 `parse_transform_contract(In, Contract) -> any()`
@@ -84,15 +72,11 @@ during the usual compilation of an Erlang source module.</tt></pre>
 ###preDefinedTypes/0##
 
 
-
-
 `preDefinedTypes() -> any()`
 
 <a name="preDefinedTypesWithAttrs-0"></a>
 
 ###preDefinedTypesWithAttrs/0##
-
-
 
 
 `preDefinedTypesWithAttrs() -> any()`
@@ -102,8 +86,6 @@ during the usual compilation of an Erlang source module.</tt></pre>
 ###preDefinedTypesWithoutAttrs/0##
 
 
-
-
 `preDefinedTypesWithoutAttrs() -> any()`
 
 <a name="tags-1"></a>
@@ -111,15 +93,11 @@ during the usual compilation of an Erlang source module.</tt></pre>
 ###tags/1##
 
 
-
-
 `tags(P1) -> any()`
 
 <a name="tags-2"></a>
 
 ###tags/2##
-
-
 
 
 `tags(P1, Imports) -> any()`

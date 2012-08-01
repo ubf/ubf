@@ -52,15 +52,11 @@ output is meant only for human eyes.</tt></pre>
 ###checkEventIn/3##
 
 
-
-
 `checkEventIn(Msg, ThisState, Mod) -> any()`
 
 <a name="checkEventOut-3"></a>
 
 ###checkEventOut/3##
-
-
 
 
 `checkEventOut(Msg, ThisState, Mod) -> any()`
@@ -70,15 +66,11 @@ output is meant only for human eyes.</tt></pre>
 ###checkRPCIn/3##
 
 
-
-
 `checkRPCIn(Msg, State, Mod) -> any()`
 
 <a name="checkRPCOut-4"></a>
 
 ###checkRPCOut/4##
-
-
 
 
 `checkRPCOut(MsgOut, StateOut, FSM2, Mod) -> any()`
@@ -88,12 +80,8 @@ output is meant only for human eyes.</tt></pre>
 ###checkType/3##
 
 
-
-
 <pre>checkType(HumanType::atom(), Term::term(), Mod::module()) -&gt; yup | term()</pre>
 <br></br>
-
-
 
 
 <p>Given a contract type name, a term to check against that
@@ -124,15 +112,11 @@ output is meant only for human eyes.</tt></pre>
 ###isType/3##
 
 
-
-
 `isType(Type, X, Mod) -> any()`
 
 <a name="isTypeAttr-2"></a>
 
 ###isTypeAttr/2##
-
-
 
 
 `isTypeAttr(X1, X2) -> any()`

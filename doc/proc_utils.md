@@ -25,15 +25,11 @@
 ###debug/0##
 
 
-
-
 `debug() -> any()`
 
 <a name="debug-1"></a>
 
 ###debug/1##
-
-
 
 
 `debug(X) -> any()`
@@ -43,15 +39,11 @@
 ###spawn_link_debug/2##
 
 
-
-
 `spawn_link_debug(Fun, Term) -> any()`
 
 <a name="spawn_link_opt_debug-3"></a>
 
 ###spawn_link_opt_debug/3##
-
-
 
 
 `spawn_link_opt_debug(Fun, SpawnOpts, Term) -> any()`

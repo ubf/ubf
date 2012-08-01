@@ -8,8 +8,6 @@
 
 <p>Callbacks for stateless plugin implementations.</p>.
 
-
-
 __This module defines the `ubf_plugin_stateless` behaviour.__
 <br></br>
  Required callback functions: `info/0`, `description/0`, `handlerStart/1`, `handlerStop/3`, `handlerRpc/1`.<a name="index"></a>
@@ -29,7 +27,5 @@ __This module defines the `ubf_plugin_stateless` behaviour.__
 ###behaviour_info/1##
 
 
-
-
-`behaviour_info(X1) -> any()`
+`behaviour_info(Other) -> any()`
 
