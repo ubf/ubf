@@ -44,7 +44,7 @@
 
 -ifdef(QC).
 
--include("qc.hrl").
+-include_lib("qc/include/qc.hrl").
 
 -export([run/0]).
 -compile(export_all).

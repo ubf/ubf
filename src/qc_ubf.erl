@@ -65,7 +65,7 @@
 %% Interface Functions
 -export([behaviour_info/1]).
 
--include("qc_statem.hrl").
+-include_lib("qc/include/qc_statem.hrl").
 
 %% Define the behaviour's required mods.
 behaviour_info(callbacks) ->

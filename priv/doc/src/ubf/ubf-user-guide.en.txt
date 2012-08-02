@@ -2,8 +2,8 @@
 // vim: set syntax=asciidoc:
 
 = UBF User's Guide _1st DRAFT_
-:Date: 2012/07/30
-:Revision: 0.3.6
+:Date: 2012/08/02
+:Revision: 0.3.7
 :Copyright: 2012 by Joseph Wayne Norton <norton@alum.mit.edu>
 :Copyright: 2010-2011 Gemini Mobile Technologies, Inc.  All rights reserved.
 :Copyright: 2002 Joe Armstrong
@@ -1330,7 +1330,7 @@ follow this recipe:
 ------
 $ mkdir working-directory-name
 $ cd working-directory-name
-$ git clone git://github.com/ubf/ubf.git ubf
+$ git clone https://github.com/ubf/ubf.git ubf
 $ cd ubf
 $ ./rebar get-deps
 $ ./rebar compile
@@ -1420,7 +1420,7 @@ $ chmod a+x ~/bin/repo
 ------
 $ mkdir working-directory-name
 $ cd working-directory-name
-$ repo init -u git://github.com/ubf/manifests.git -m ubf-default.xml
+$ repo init -u https://github.com/ubf/manifests.git -m ubf-default.xml
 ------
 +
 NOTE: Your "Git" identity is needed during the init step.  Please
@@ -1521,7 +1521,7 @@ UBF documentation.
 . Building UBF's "Guides" _basic recipe_
 +
 ------
-$ cd working-directory-name/lib/ubf/priv/doc/src/ubf
+$ cd working-directory-name/deps/ubf/priv/doc/src/ubf
 $ make clean -OR- make realclean
 $ make
 ------
@@ -1529,7 +1529,7 @@ $ make
 . Building UBF's "Website" _basic recipe_
 +
 ------
-$ cd working-directory-name/lib/ubf/priv/doc/src/ubf/website
+$ cd working-directory-name/deps/ubf/priv/doc/src/ubf/website
 $ make clean -OR- make realclean
 $ make
 ------

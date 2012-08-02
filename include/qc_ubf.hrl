@@ -29,7 +29,7 @@
 %% -export([qc_counterexample/0, qc_counterexample/1, qc_counterexample/2]).
 %% -export([qc_counterexample_read/1]).
 
--include("qc_statem.hrl").
+-include_lib("qc/include/qc_statem.hrl").
 -include("ubf.hrl").
 
 %%%=========================================================================

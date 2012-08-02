@@ -5,7 +5,7 @@
 * [Function Details](#functions)
 
 
-__Behaviours:__ [`qc_statem`](/Users/norton/chibihub/dev/ubf-all/lib/qc/doc/qc_statem.md).<a name="index"></a>
+__Behaviours:__ [`qc_statem`](https://github.com/norton/qc/blob/master/doc/qc_statem.md).<a name="index"></a>
 
 ##Function Index##
 
