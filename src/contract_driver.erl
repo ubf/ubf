@@ -80,6 +80,7 @@ loop(Module, Contract, Options, Pid, Socket) ->
 
 loop(Module, Contract, Options, Pid, Socket, Timeout) ->
     ok = inet:setopts(Socket, [{active, true}]),
+    put('ubf_proto', tcp),
     put('ubf_socket', Socket),
     {ParsedOptions, Cont} = Module:init(Contract, Options),
     loop(Module, Contract, ParsedOptions, Pid, Socket, Timeout, Cont).
