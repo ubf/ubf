@@ -69,11 +69,13 @@ EVENT              :     {token,{eventkwd,TokenLine}}.
 \]\+               :     {token,{']+',TokenLine}}.
 \{\}               :     {token,{'{}',TokenLine}}.
 \[\]               :     {token,{'[]',TokenLine}}.
+\:\:               :     {token,{'::',TokenLine}}.
 [;&,=+()[\]|<>{}#] :     {token,{list_to_atom(TokenChars),TokenLine}}.
 \.{WS}             :     {end_token,{dot,TokenLine}}.
 \.%.*              :     {end_token,{dot,TokenLine}}. % Must special case this
 {WS}+              :     .                            % No token returned,equivalent
 \%.*               :     skip_token.                  % to 'skip_token'
+
 
 Erlang code.
 

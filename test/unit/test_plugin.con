@@ -36,7 +36,7 @@ contract()     = contract;
 serviceList()  = [string()];
 
 dummy()        = {dummy, dummyrecord()};
-dummyrecord()  = #dummyrecord{foo=integer(), bar=binary()};
+dummyrecord()  = #dummyrecord{foo::integer(), bar::binary()};
 dummy1a()      = atom(ascii,nonempty,nonundefined);
 dummy1b()      = atom(asciiprintable,nonempty,nonundefined);
 dummy2a()      = string(ascii,nonempty);
@@ -44,7 +44,7 @@ dummy2b()      = string(asciiprintable,nonempty);
 dummy3a()      = binary(ascii,nonempty);
 dummy3b()      = binary(asciiprintable,nonempty);
 dummy4()       = term(nonempty,nonundefined);
-dummy5()       = #dummy5{hoge1=1, hoge2=two, hoge3=3.0, hoge4=<<"4">>};
+dummy5()       = #dummy5{hoge1::1, hoge2::two, hoge3::3.0, hoge4::<<"4">>};
 
 password()     = string();
 file()         = string();
@@ -64,42 +64,42 @@ error()        = error;
 ok()           = ok;
 intList()      = [integer()];
 propList()     = proplist();
-testAmbiguities()  = testAmbiguities;
-foo()          = #foo{attribute1 = term()};
+testAmbiguities() = testAmbiguities;
+foo()          = #foo{attribute1::term()};
 callbackOnItsWay() = callbackOnItsWay.
 
 +STATE start
-	logon()          => ok()    & active
-	                 |  error() & stop.
+    logon()          => ok()    & active
+                     |  error() & stop.
 
 +STATE active
-       ls()              => files() & active;
-       callback()        => callbackOnItsWay() & active;
-       getFile()         => okFile() & active
-		         |  noSuchFile() & stop;
-       stop()            => void() & stop;
-       testAmbiguities() => yes() & funny;
-       EVENT 		 => callback();
-       EVENT 		 <= callback().
+    ls()             => files() & active;
+    callback()       => callbackOnItsWay() & active;
+    getFile()        => okFile() & active
+                     |  noSuchFile() & stop;
+    stop()           => void() & stop;
+    testAmbiguities() => yes() & funny;
+    EVENT            => callback();
+    EVENT            <= callback().
 
 +STATE funny
-	string()         => upCase() & funny;
-	intList()        => doubleInt() & funny;
-	propList()       => propList() & funny;
-	stop()           => ack() & start.
+    string()         => upCase() & funny;
+    intList()        => doubleInt() & funny;
+    propList()       => propList() & funny;
+    stop()           => ack() & start.
 
 +ANYSTATE
-	dummy()          => dummy();
-	dummy1a()        => dummy1a();
-	dummy1b()        => dummy1b();
-	dummy2a()        => dummy2a();
-	dummy2b()        => dummy2b();
-	dummy3a()        => dummy3a();
-	dummy3b()        => dummy3b();
-	dummy4()         => dummy4();
-	dummy5()         => dummy5();
-	foo()            => term();
-	info()           => string();
-	description()    => string();
-	services()       => serviceList();
-	contract()       => term().
+    dummy()          => dummy();
+    dummy1a()        => dummy1a();
+    dummy1b()        => dummy1b();
+    dummy2a()        => dummy2a();
+    dummy2b()        => dummy2b();
+    dummy3a()        => dummy3a();
+    dummy3b()        => dummy3b();
+    dummy4()         => dummy4();
+    dummy5()         => dummy5();
+    foo()            => term();
+    info()           => string();
+    description()    => string();
+    services()       => serviceList();
+    contract()       => term().

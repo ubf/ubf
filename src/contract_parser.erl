@@ -67,20 +67,20 @@ parse_transform(In, Opts) ->
 %%%
 \n"]
                         ++ ["-ifndef('", File ++ ".huc", "').\n"]
-                        ++ ["-define('", File ++ ".huc", "', true).\n"]
-                        ++ [Header|"\n"]
-                        ++ ["-endif.\n"],
+                         ++ ["-define('", File ++ ".huc", "', true).\n"]
+                         ++ [Header|"\n"]
+                         ++ ["-endif.\n"],
                     %% DEBUG io:format("Contract Header written: ~p~n", [HeaderFile]),
-                    ok = file:write_file(HeaderFile, TermHUC),
+                         ok = file:write_file(HeaderFile, TermHUC),
                     %% DEBUG io:format("Contract added:~n"),
-                    parse_transform_contract(In, Contract);
-                {error, Reason} ->
-                    io:format("Error in contract:~p~n", [Reason]),
-                    erlang:error(Reason)
-            end;
-        [] ->
-            In
-    end.
+                         parse_transform_contract(In, Contract);
+                             {error, Reason} ->
+                                io:format("Error in contract:~p~n", [Reason]),
+                                erlang:error(Reason)
+                        end;
+                             [] ->
+                                In
+                        end.
 
 parse_transform_contract(In, Contract) ->
     {Export, Fns} = make_code(Contract),
@@ -247,25 +247,19 @@ tags(P1, Imports) ->
                     LeafTypeNames = pass6(Contract),
                     %% create Records
                     AllRecords =
-                        lists:keysort(1, [ {{Name,length(FieldsNValues)},FieldsNValues}
-                                           || {Name,FieldsNValues} <- Records ]
-                                      ++ [ {{Name,length(FieldsNValues)+2},[{'$fields',undefined}|[{'$extra',undefined}|FieldsNValues]]}
-                                           || {Name,FieldsNValues} <- RecordExts ]),
+                        lists:keysort(1, [ {{Name,length(FDTs)},FDTs}
+                                           || {Name,FDTs} <- Records ]
+                                      ++ [ {{Name,length(FDTs)},FDTs}
+                                           || {Name,FDTs} <- RecordExts ]),
                     %% create Header
                     Header =
-                        lists:flatten(foldl(fun({{Name,_}, FieldsNValues},L) ->
-                                                    FieldStrs = [
-                                                                 case Value of
-                                                                     {Type,X} when Type =:= atom;
-                                                                                   Type =:= binary;
-                                                                                   Type =:= float;
-                                                                                   Type =:= integer;
-                                                                                   Type =:= string ->
-                                                                         io_lib:format("'~s'= ~p", [atom_to_list(Field), X]);
-                                                                     _ ->
-                                                                         io_lib:format("'~s'", [atom_to_list(Field)])
-                                                                 end
-                                                                 || {Field,Value} <- FieldsNValues ],
+                        lists:flatten(foldl(fun({{Name,_}, FDTs},L) ->
+                                                    FieldStrs = [ case Default of
+                                                                      [] ->
+                                                                          io_lib:format("'~s'", [atom_to_list(Field)]);
+                                                                      [X] ->
+                                                                          io_lib:format("'~s'= ~p", [atom_to_list(Field), X])
+                                                                  end || {Field,Default,_Type} <- FDTs ],
                                                     FStr = join(FieldStrs, $,),
                                                     NameStr = atom_to_list(Name),
                                                     IfNdef = io_lib:format("-ifndef('~s').~n",[NameStr]),
@@ -277,8 +271,8 @@ tags(P1, Imports) ->
                                             , "\n", AllRecords)),
                     %% filter Records
                     FilterRecords =
-                        [ {{Name,Arity}, [ Fields || {Fields,_Values} <- FieldsNValues ]}
-                          || {{Name,Arity}, FieldsNValues} <- AllRecords ],
+                        [ {{Name,Arity}, [ Field || {Field,_Default,_Type} <- FDTs ]}
+                          || {{Name,Arity}, FDTs} <- AllRecords ],
                     {ok, Contract#contract{leaftypenames=LeafTypeNames, records=FilterRecords}, Header}
             end
     end.
@@ -321,26 +315,26 @@ pass2(P, Imports) ->
 
     ImportTypes = lists:flatten(
                     [
-                      begin
-                          case Import of
-                              Mod when is_atom(Mod) ->
-                                  Mod = Mod,
-                                  TL = Mod:contract_types();
-                              {Mod, TL} when is_atom(Mod), is_list(TL) ->
-                                  Mod = Mod,
-                                  TL = TL;
-                              {Mod, {except, ETL}} when is_atom(Mod), is_list(ETL) ->
-                                  Mod = Mod,
-                                  TL = Mod:contract_types() -- ETL;
-                              X ->
-                                  Mod = unused,
-                                  TL = unused,
-                                  exit({invalid_import, X})
-                          end,
-                          [ begin {TDef, TTag} = Mod:contract_type(T), {T, TDef, TTag} end
-                            || T <- TL ]
-                      end
-                      || Import <- Imports ]
+                     begin
+                         case Import of
+                             Mod when is_atom(Mod) ->
+                                 Mod = Mod,
+                                 TL = Mod:contract_types();
+                             {Mod, TL} when is_atom(Mod), is_list(TL) ->
+                                 Mod = Mod,
+                                 TL = TL;
+                             {Mod, {except, ETL}} when is_atom(Mod), is_list(ETL) ->
+                                 Mod = Mod,
+                                 TL = Mod:contract_types() -- ETL;
+                             X ->
+                                 Mod = unused,
+                                 TL = unused,
+                                 exit({invalid_import, X})
+                         end,
+                         [ begin {TDef, TTag} = Mod:contract_type(T), {T, TDef, TTag} end
+                           || T <- TL ]
+                     end
+                     || Import <- Imports ]
                    ),
     ImportTypeNames = [ T || {T, _, _} <- ImportTypes ],
 
@@ -494,8 +488,8 @@ extract_prims(_T, L) ->
     L.
 
 %% ignore nested records
-extract_records({record, Name, [Fields|Values]}, L) ->
-    X = {Name,lists:zip(extract_fields(Fields),tl(Values))},
+extract_records({record, Name, Fields, Defaults, Types}, L) ->
+    X = {Name,lists:zip3(Fields,Defaults,Types)},
     case member(X, L) of
         true  -> L;
         false -> [X|L]
@@ -508,8 +502,8 @@ extract_records(_T, L) ->
     L.
 
 %% ignore nested record_exts
-extract_record_exts({record_ext, Name, [Fields|Values]}, L) ->
-    X = {Name,lists:zip(extract_fields(Fields),tl(Values))},
+extract_record_exts({record_ext, Name, Fields, Defaults, Types}, L) ->
+    X = {Name,lists:zip3(Fields,Defaults,Types)},
     case member(X, L) of
         true  -> L;
         false -> [X|L]
@@ -520,11 +514,6 @@ extract_record_exts(T, L) when is_list(T) ->
     foldl(fun extract_record_exts/2, L, T);
 extract_record_exts(_T, L) ->
     L.
-
-extract_fields({atom,undefined}) ->
-    [];
-extract_fields({alt,{atom,undefined},{tuple,T}}) ->
-    [Field || {atom,Field} <- T].
 
 handle(Stream, LineNo, L, NErrors) ->
     handle1(io:requests(Stream, [{get_until,foo,contract_lex,
