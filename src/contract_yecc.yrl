@@ -66,10 +66,11 @@ primType -> '##' atom '{' typeRec '}'       : {record_ext, unwrap('$2'),
 primType -> '[' type ']'                    : {list, 0, infinity, '$2'}.
 primType -> '[' type ']+'                   : {list, 1, infinity, '$2'}.
 primType -> '[' type ']?'                   : {list, 0, 1, '$2'}.
-primType -> '[' type ']' '{' integer '}'    : {list, '$5', '$5', '$2'}.
-primType -> '[' type ']' '{' integer ',' '}': {list, '$5', infinity, '$2'}.
+primType -> '[' type ']' '{' integer '}'    : {list, unwrap('$5'), unwrap('$5'), '$2'}.
+primType -> '[' type ']' '{' integer ',' '}': {list, unwrap('$5'), infinity, '$2'}.
+primType -> '[' type ']' '{' ',' integer '}': {list, infinity, unwrap('$6'), '$2'}.
 primType -> '[' type ']' '{' integer ',' integer '}'
-                                            : {list, '$5', '$6', '$2'}.
+                                            : {list, unwrap('$5'), unwrap('$7'), '$2'}.
 
 primType -> '{}'                            : {tuple, []}.
 primType -> '#' atom '{}'                   : {record, unwrap('$2'),

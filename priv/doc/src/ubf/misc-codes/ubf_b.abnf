@@ -73,6 +73,7 @@ typerec        = (fieldname *WSP "=" *WSP type)
 
 listrange      = (1*DIGIT)
                / (1*DIGIT *WSP ",")
+               / ("," *WSP 1*DIGIT)
                / (1*DIGIT *WSP "," *WSP 1*DIGIT)
 
 ATOM           = (%x61-7A *(ALPHA / DIGIT / "_" / "@")) ;; a-z
