@@ -68,7 +68,7 @@ primType -> '[' type ']+'                   : {list, 1, infinity, '$2'}.
 primType -> '[' type ']?'                   : {list, 0, 1, '$2'}.
 primType -> '[' type ']' '{' integer '}'    : {list, unwrap('$5'), unwrap('$5'), '$2'}.
 primType -> '[' type ']' '{' integer ',' '}': {list, unwrap('$5'), infinity, '$2'}.
-primType -> '[' type ']' '{' ',' integer '}': {list, infinity, unwrap('$6'), '$2'}.
+primType -> '[' type ']' '{' ',' integer '}': {list, 0, unwrap('$6'), '$2'}.
 primType -> '[' type ']' '{' integer ',' integer '}'
                                             : {list, unwrap('$5'), unwrap('$7'), '$2'}.
 
