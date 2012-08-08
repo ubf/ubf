@@ -3,7 +3,6 @@
 *.boot
 ebin/
 erl_crash.dump
-*.huc
 *.log
 *.script
 src/contract_lex.erl

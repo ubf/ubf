@@ -22,15 +22,12 @@
 %%% THE SOFTWARE.
 
 %%% @doc Contract implementation: compare a term against a contract.
-%%%
-%%% See the function checkType/3 for assistance on checking if a term
-%%% does/does not break a contract.
 
 -module(contracts).
 
 %%-compile(export_all).
 -export([checkEventOut/3, checkEventIn/3, checkRPCIn/3, checkRPCOut/4]).
--export([isTypeAttr/2, isType/3, checkType/3]).
+-export([isTypeAttr/2, isType/3]).
 -include("ubf.hrl").
 
 
@@ -60,7 +57,7 @@ checkRPCIn(Msg, State, Mod) ->
             [] ->
                 [ {InType,OutType,State}
                   || {InType,OutType} <- T1, isType(InType,Msg,Mod) ];
-           _ ->
+            _ ->
                 lists:append(Outs)
         end,
     %% io:format("FSM2=~p~n",[FSM2]),
@@ -70,10 +67,10 @@ checkRPCOut(MsgOut, StateOut, FSM2, Mod) ->
     %% NOTE: ignore input type since tuple size will always be of size
     %% three
     lists:any(fun({_,Type,S2}) when S2 == StateOut ->
-                isType(Type,MsgOut,Mod);
-           (_) ->
-                false
-        end, FSM2).
+                      isType(Type,MsgOut,Mod);
+                 (_) ->
+                      false
+              end, FSM2).
 
 checkEventOut(Msg, ThisState, Mod) ->
     T = Mod:contract_state(ThisState),
@@ -148,31 +145,58 @@ check_term({prim, Min, Max, Type}=_Check, X, Level, Mod) ->
     end;
 %% tuple
 check_term({tuple,Args}=_Check, X, Level, Mod) ->
-    if length(Args) =:= tuple_size(X) ->
-            case check_term_seq(Args, tuple_to_list(X), Level, Mod) of
-                true ->
-                    true;
-                false ->
+    if is_tuple(X) ->
+            N = tuple_size(X),
+            if tuple_size(Args) =:= N ->
+                    case check_term_tuple(Args, X, Level, Mod, N) of
+                        true ->
+                            true;
+                        false ->
+                            ?FAIL({Check,X})
+                    end;
+               true ->
                     ?FAIL({Check,X})
             end;
        true ->
             ?FAIL({Check,X})
     end;
 %% record
-check_term({record,Name,_,_,Args}=_Check, X, Level, Mod) ->
-    if length(Args)+1 =:= tuple_size(X) ->
-            case check_term_seq([{atom,Name}|Args], tuple_to_list(X), Level, Mod) of
-                true ->
-                    true;
-                false ->
+check_term({record,_,_,_,Args}=_Check, X, Level, Mod) ->
+    if is_tuple(X) ->
+            N = tuple_size(X),
+            if tuple_size(Args) =:= N ->
+                    case check_term_tuple(Args, X, Level, Mod, N) of
+                        true ->
+                            true;
+                        false ->
+                            ?FAIL({Check,X})
+                    end;
+               true ->
                     ?FAIL({Check,X})
             end;
        true ->
             ?FAIL({Check,X})
     end;
-check_term({record_ext,Name,_,_,Args}=_Check, X, Level, Mod) ->
-    if length(Args)+1 =:= tuple_size(X) ->
-            case check_term_seq([{atom,Name}|Args], tuple_to_list(X), Level, Mod) of
+check_term({record_ext,_,_,_,Args}=_Check, X, Level, Mod) ->
+    if is_tuple(X) ->
+            N = tuple_size(X),
+            if tuple_size(Args) =:= N ->
+                    case check_term_tuple(Args, X, Level, Mod, N) of
+                        true ->
+                            true;
+                        false ->
+                            ?FAIL({Check,X})
+                    end;
+               true ->
+                    ?FAIL({Check,X})
+            end;
+       true ->
+            ?FAIL({Check,X})
+    end;
+%% list (default case)
+check_term({list,0,infinity,Args}=_Check, X, Level, Mod) ->
+    if is_list(X) ->
+            case check_term_list(Args, X, Level, Mod) of
                 true ->
                     true;
                 false ->
@@ -288,15 +312,12 @@ check_term_prim(0, 0, _TypeDef, X, _Level, _Mod) ->
     X =:= undefined.
 
 
-%% check_term_seq
-check_term_seq([], [], _Level, _Mod) ->
+%% check_term_tuple
+check_term_tuple(_T1, _T2, _Level, _Mod, 0) ->
     true;
-check_term_seq(_Args, [], _Level, _Mod) ->
-    false;
-check_term_seq([], _L, _Level, _Mod) ->
-    false;
-check_term_seq([H1|T1], [H2|T2], Level, Mod) ->
-    check_term(H1, H2, Level, Mod) andalso check_term_seq(T1, T2, Level, Mod).
+check_term_tuple(T1, T2, Level, Mod, N) ->
+    check_term(element(N, T1), element(N, T2), Level, Mod)
+        andalso check_term_tuple(T1, T2, Level, Mod, N-1).
 
 
 %% check_term_list
@@ -441,118 +462,3 @@ is_nonempty(_) -> true.
 %% is_nonundefined
 is_nonundefined(undefined) -> false;
 is_nonundefined(_) -> true.
-
-
-%% @doc Given a contract type name, a term to check against that
-%% contract type, and a contract module name, verify the term against
-%% that contract\'s type.
-%%
-%% Example usage from the irc_plugin.con contract:
-%%
-%% ------
-%% 1> contracts:checkType(ok, ok, irc_plugin).
-%% 2> contracts:checkType(bool, true, irc_plugin).
-%% 3> contracts:checkType(nick, {'#S', "foo"}, irc_plugin).
-%% 4> contracts:checkType(joinEvent, {joins, {'#S', "nck"}, {'#S', "grp"}}, irc_plugin).
-%% 5> contracts:checkType(joinEvent, {joins, {'#S', "nck"}, {'#S', bad_atom}}, irc_plugin).
-%% ------
-%%
-%% NOTE: This is a brute-force function, but it works, mostly.  Don\'t
-%% try to have a computer parse the output in error cases: the failure
-%% output is meant only for human eyes.
-
-%% @TODO implementation needs updating for new primitives?
-
--spec checkType(atom(), term(), module()) -> yup | term().
-checkType(HumanType, Term, Mod) ->
-    case (catch Mod:contract_type(HumanType)) of
-        {'EXIT', {function_clause, _}} ->
-            type_not_in_contract;
-        {{record, _, _}, []} ->
-            checkType2({prim, 1, 1, HumanType}, Term, Mod);
-        {{tuple, _}, []} ->
-            checkType2({prim, 1, 1, HumanType}, Term, Mod);
-        {{alt, TypeA, TypeB}, []} ->
-            ResA = checkType2(TypeA, Term, Mod),
-            ResB = checkType2(TypeB, Term, Mod),
-            if ResA == yup; ResB == yup ->
-                    yup;
-               true ->
-                    {bad_alternative, HumanType, Term}
-            end;
-        {ContractTypeMaybe, []} ->
-            checkType2(ContractTypeMaybe, Term, Mod);
-        _ ->
-            case checkType2(HumanType, Term, Mod) of
-                yup ->
-                    yup;
-                Res ->
-                    {badType, bug_or_bad_input, Res}
-            end
-    end.
-
-checkType2({prim, _, _, HumanType} = Type, Term, Mod) ->
-    case (catch Mod:contract_type(HumanType)) of
-        {{record, HumanType, Elements}, []} ->
-            case isType(Type, Term, Mod) of
-                true ->
-                    yup;
-                false ->
-                    RecTypes = [{atom, HumanType}|tl(tl(Elements))],
-                    bad_zip(RecTypes, tuple_to_list(Term), Mod)
-            end;
-        {{alt, TypeA, TypeB}, []} ->
-            ResA = checkType2(TypeA, Term, Mod),
-            ResB = checkType2(TypeB, Term, Mod),
-            if ResA == yup; ResB == yup ->
-                    yup;
-               true ->
-                    {badType, HumanType, Term}
-            end;
-        {Something, []} ->
-            checkType2(Something, Term, Mod);
-        {'EXIT', {function_clause, _}} ->
-            case isType(Type, Term, Mod) of
-                true ->
-                    yup;
-                false ->
-                    {badType, {type_wanted, Type, Term}}
-            end
-    end;
-checkType2({tuple, TupleTypes} = _Type, Term, _Mod)
-  when length(TupleTypes) =/= size(Term); not is_tuple(Term) ->
-    {badTupleSize, Term, expected, length(TupleTypes)};
-checkType2({tuple, TupleTypes} = Type, Term, Mod) ->
-    case isType(Type, Term, Mod) of
-        true ->
-            yup;
-        false ->
-            bad_zip(TupleTypes, tuple_to_list(Term), Mod)
-    end;
-checkType2(Type, Term, Mod) ->
-    case isType(Type, Term, Mod) of
-        true ->
-            yup;
-        false ->
-            checkType_investigate_deeper(Type, Term, Mod)
-    end.
-
-bad_zip(TypesList, TermList, Mod) ->
-    TpsTrm = lists:zip3(TypesList, TermList, lists:seq(1, length(TermList))),
-    Items = [{isType(Type, Part, Mod), Type, _Pos} ||
-                {Type, Part, _Pos} <- TpsTrm],
-    [{badType, WantedType,
-      checkType2(WantedType, lists:nth(Pos, TermList), Mod)} ||
-        {false, WantedType, Pos} <- Items].
-
-%% checkType_investigate_deeper({prim, _} = Type, Term, Mod) ->
-%%     INFINITE LOOP, don\'t do this....
-%%     checkType2(Type, Term, Mod);
-checkType_investigate_deeper({list, _Min, _Max, Type}, TermL, Mod) ->
-    if is_list(TermL) ->
-            bad_zip([Type || _ <- TermL], TermL, Mod);
-       true ->
-            {expecting_list_but_got, TermL}
-    end;
-checkType_investigate_deeper(Type, Term, _Mod) ->
-    {badType, Type, Term}.

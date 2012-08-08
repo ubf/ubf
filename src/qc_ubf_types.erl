@@ -86,12 +86,12 @@ type1(_Gen,{prim,0,0,_Tag}) ->
     undefined;
 %% tuple
 type1(Gen,{tuple,Elements}) ->
-    list_to_tuple([type1(Gen,E) || E <- Elements]);
+    list_to_tuple([type1(Gen,E) || E <- tuple_to_list(Elements)]);
 %% record
 type1(Gen,{record,Name,_,_,Elements}) when is_atom(Name) ->
-    list_to_tuple([Name|[type1(Gen,E) || E <- Elements]]);
+    list_to_tuple([Name|[type1(Gen,E) || E <- tl(tuple_to_list(Elements))]]);
 type1(Gen,{record_ext,Name,_,_,Elements}) when is_atom(Name) ->
-    list_to_tuple([Name|[type1(Gen,E) || E <- Elements]]);
+    list_to_tuple([Name|[type1(Gen,E) || E <- tl(tuple_to_list(Elements))]]);
 %% list
 type1(Gen,{list,Min,Max,Element}) ->
     repeat(Gen,Min,Max,infinity,Element);

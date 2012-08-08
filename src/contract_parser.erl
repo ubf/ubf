@@ -489,7 +489,7 @@ extract_prims(_T, L) ->
 
 %% ignore nested records
 extract_records({record, Name, Fields, Defaults, Types}, L) ->
-    X = {Name,lists:zip3(Fields,Defaults,Types)},
+    X = {Name,lists:zip3(Fields,Defaults,tl(tuple_to_list(Types)))},
     case member(X, L) of
         true  -> L;
         false -> [X|L]
@@ -503,7 +503,7 @@ extract_records(_T, L) ->
 
 %% ignore nested record_exts
 extract_record_exts({record_ext, Name, Fields, Defaults, Types}, L) ->
-    X = {Name,lists:zip3(Fields,Defaults,Types)},
+    X = {Name,lists:zip3(Fields,Defaults,tl(tuple_to_list(Types)))},
     case member(X, L) of
         true  -> L;
         false -> [X|L]

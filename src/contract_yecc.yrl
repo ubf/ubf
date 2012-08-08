@@ -56,7 +56,7 @@ primType -> atom '(' ')?'                   : {prim, 0, 1, unwrap_prim('$1')}.
 primType -> atom '(' typeAttr ')'           : {prim, 1, 1, unwrap_prim('$1', '$3')}.
 primType -> atom '(' typeAttr ')?'          : {prim, 0, 1, unwrap_prim('$1', '$3')}.
 
-primType -> '{' typeSeq '}'                 : {tuple, '$2'}.
+primType -> '{' typeSeq '}'                 : {tuple, list_to_tuple('$2')}.
 
 primType -> '#' atom '{' typeRec '}'        : rec(unwrap('$2'), '$4').
 primType -> '##' atom '{' typeRec '}'       : rec_ext(unwrap('$2'), '$4').
@@ -70,7 +70,7 @@ primType -> '[' type ']' '{' ',' integer '}': {list, 0, unwrap('$6'), '$2'}.
 primType -> '[' type ']' '{' integer ',' integer '}'
                 : {list, unwrap('$5'), unwrap('$7'), '$2'}.
 
-primType -> '{}'                            : {tuple, []}.
+primType -> '{}'                            : {tuple, {}}.
 primType -> '#' atom '{}'                   : rec(unwrap('$2'), []).
 primType -> '##' atom '{}'                  : rec_ext(unwrap('$2'), []).
 
@@ -178,22 +178,24 @@ unwrap_prim(Prim,L) ->
 rec(Name, Args) ->
     Fields = rec_fields(Args),
     Defaults = rec_defaults(Args),
-    Types = rec_types(Args),
+    Types = list_to_tuple([{atom,Name}|rec_types(Args)]),
     {record, Name, Fields, Defaults, Types}.
 
 rec_ext(Name, Args) ->
     Fields = ['$fields','$extra'|rec_fields(Args)],
     Defaults = [[Fields],[]|rec_defaults(Args)],
     Types = rec_types(Args),
-    Types1 =
-        if Types == [] ->
-                [{atom,undefined},
-                 {predef,term}];
-           true ->
-                [eor({atom,undefined}, {tuple, [ {atom,X} || X <- Fields ]}),
-                 {predef,term}|Types]
-        end,
-    {record, Name, Fields, Defaults, Types1}.
+    Types1 = list_to_tuple(
+               if Types == [] ->
+                       [{atom,Name},
+                        {atom,undefined},
+                        {predef,term}];
+                  true ->
+                       [{atom,Name},
+                        eor({atom,undefined}, {tuple, [ {atom,X} || X <- Fields ]}),
+                        {predef,term}|Types]
+               end),
+    {record_ext, Name, Fields, Defaults, Types1}.
 
 rec_fields(L) ->
     L1 = [ rec_field(X) || X <- L ],
