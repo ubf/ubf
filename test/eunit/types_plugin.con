@@ -33,61 +33,61 @@
 
 %%%%%
 %%% well-known primitives
-bool()                  = true | false;
-expires()               = {integer(), integer(), integer()}; %% erlang-style timestamp
-opaque()                = binary();
-time_t()                = integer();
-timeout()               = infinity | integer(); %% milliseconds
-timeout_or_expires()    = timeout() | expires();
-ts()                    = integer();
-utf8()                  = binary();
+bool()                  :: true | false;
+expires()               :: {integer(), integer(), integer()}; %% erlang-style timestamp
+opaque()                :: binary();
+time_t()                :: integer();
+timeout()               :: infinity | integer(); %% milliseconds
+timeout_or_expires()    :: timeout() | expires();
+ts()                    :: integer();
+utf8()                  :: binary();
 
 
 %%%%%
 %%% common primitives
 
-client_breaks_req01()   = client_breaks_req01;
-client_breaks_res01()   = client_breaks_res01;
-client_breaks_req02()   = client_breaks_req02;
-client_breaks_res02()   = client_breaks_res02;
-client_timeout_req03()  = {client_timeout_req03,timeout()};
-client_timeout_res03()  = client_timeout_res03;
-client_timeout_req04()  = {client_timeout_req04,timeout()};
-client_timeout_res04()  = client_timeout_res04;
+client_breaks_req01()   :: client_breaks_req01;
+client_breaks_res01()   :: client_breaks_res01;
+client_breaks_req02()   :: client_breaks_req02;
+client_breaks_res02()   :: client_breaks_res02;
+client_timeout_req03()  :: {client_timeout_req03,timeout()};
+client_timeout_res03()  :: client_timeout_res03;
+client_timeout_req04()  :: {client_timeout_req04,timeout()};
+client_timeout_res04()  :: client_timeout_res04;
 
-server_breaks_req01()   = server_breaks_req01;
-server_breaks_res01()   = server_breaks_res01;
-server_breaks_req02()   = server_breaks_req02;
-server_breaks_res02()   = server_breaks_res02;
-server_timeout_req03()  = {server_timeout_req03,timeout()};
-server_timeout_res03()  = server_timeout_res03;
-server_timeout_req04()  = {server_timeout_req04,timeout()};
-server_timeout_res04()  = server_timeout_res04;
-server_crash_req05()    = server_crash_req05;
-server_crash_res05()    = server_crash_res05;
-server_crash_req06()    = server_crash_req06;
-server_crash_res06()    = server_crash_res06;
+server_breaks_req01()   :: server_breaks_req01;
+server_breaks_res01()   :: server_breaks_res01;
+server_breaks_req02()   :: server_breaks_req02;
+server_breaks_res02()   :: server_breaks_res02;
+server_timeout_req03()  :: {server_timeout_req03,timeout()};
+server_timeout_res03()  :: server_timeout_res03;
+server_timeout_req04()  :: {server_timeout_req04,timeout()};
+server_timeout_res04()  :: server_timeout_res04;
+server_crash_req05()    :: server_crash_req05;
+server_crash_res05()    :: server_crash_res05;
+server_crash_req06()    :: server_crash_req06;
+server_crash_res06()    :: server_crash_res06;
 
-not_implemented_req99() = not_implemented_req99;
-not_implemented_res99() = not_implemented_res99;
+not_implemented_req99() :: not_implemented_req99;
+not_implemented_res99() :: not_implemented_res99;
 
-restart_req()           = restart_req;
-restart_res()           = restart_res;
+restart_req()           :: restart_req;
+restart_res()           :: restart_res;
 
 
 %%%%%
 %%% keepalive
-ubf_keepalive_req()     = keepalive;
-ubf_keepalive_res()     = ok;
+ubf_keepalive_req()     :: keepalive;
+ubf_keepalive_res()     :: ok;
 
 
 %%%%%
 %%% meta methods
-ubf_info_req()          = info;
-ubf_info_res()          = string();
+ubf_info_req()          :: info;
+ubf_info_res()          :: string();
 
-ubf_description_req()   = description;
-ubf_description_res()   = string();
+ubf_description_req()   :: description;
+ubf_description_res()   :: string();
 
-ubf_contract_req()      = contract;
-ubf_contract_res()      = term().
+ubf_contract_req()      :: contract;
+ubf_contract_res()      :: term().

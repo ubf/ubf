@@ -308,18 +308,18 @@ and Reference.  The complex types are Alternative, Tuple, Record,
 Extended Record, and List.  User-defined "complex types" are defined
 recursively.
 
-===== Definition: X() = T
+===== Definition: X() :: T
 
 New types are defined by the notation:
 
 ------
-X() = T;
+X() :: T;
 ------
 
 and the last type of new types must be defined by the notation:
 
 ------
-X() = T.
+X() :: T.
 ------
 
 The name of the type is 'X' and the type's definition 'T' is either a
@@ -380,16 +380,20 @@ T2.
 A type {X1, X2, ..., Xn} is of type "{T1, T2, ..., Tn}" if X1 is of
 type T1, X2 is of type T2, ... and Xn is of type Tn.
 
-===== Record: name#{x=T1, y=T2, ..., z=Tn}
+===== Record: name#{x::T1, y::T2, ..., z::Tn} _or_ name#{x=D1::T1, y=D2::T2, ..., z=Dn::Tn}
 
 A record type is syntactic sugar for a tuple of type "{name, T1, T2,
 ..., Tn}" where name, x, y, ..., and z are atoms.
 
-===== Extended Record: name##{x=T1, y=T2, ..., z=Tn}
+Optionally, the default value of a record field can be specified.
+
+===== Extended Record: name##{x::T1, y::T2, ..., z::Tn} _or_ name##{x=D1::T1, y=D2::T2, ..., z=Dn::Tn}
 
 An extended record type is syntactic sugar for a tuple of type "{name,
-T1, T2, ..., Tn, '$fields'=[x,y,...,z], '$extra'=Extra}" where name,
+T1, T2, ..., Tn, '$fields'::[x,y,...,z], '$extra'::Extra}" where name,
 x, y, ..., and z are atoms and Extra is any valid term.
+
+Optionally, the default value of a record field can be specified.
 
 ===== List: [T] _or_ [T]{[0-9]+} _or_ [T]{[0-9]+,} _or_ [T]{,[0-9]+} _or_ [T]{[0-9]+,[0-9]+}
 
@@ -711,11 +715,11 @@ where L is an Erlang list.
 As a by-product of a plugin's compilation and if one or more "record"
 or "extended record" types were declared in a plugin's contract, an
 Erlang "header" file containing the plugin's record definitions is
-automatically created.  This Erlang "header" file can be included by
-the plugin module itself or by other Erlang modules used by the
-server's application.  By convention, this Erlang "header" file has
-the same base filename as the plugin but having a ".huc" as the suffix
-part.
+automatically created in an application's ebin directoy.  This Erlang
+"header" file can be included by the plugin module itself or by other
+Erlang modules used by the server's application.  By convention, this
+Erlang "header" file has the same base filename as the plugin but
+having a ".hrl" as the suffix part.
 
 TIP: There are 2 experimental prototypes for extending UBF's type and
 plugin framework.  <<UBF_ABNF>> is a framework for integrating UBF and
@@ -796,7 +800,7 @@ Erlang record {foo, 42} and the general tuple {bar, 42} would look
 like this:
 
 ------
-   record (defined in the contract as "foo() = #foo{attribute1 = term()};")
+   record (defined in the contract as "foo() :: #foo{attribute1 :: term()};")
 
       {"$R":"foo", "attribute1":42}
 

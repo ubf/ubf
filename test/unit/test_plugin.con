@@ -29,44 +29,44 @@
 
 +TYPES
 
-info()         = info;
-description()  = description;
-services()     = services;
-contract()     = contract;
-serviceList()  = [string()];
+info()         :: info;
+description()  :: description;
+services()     :: services;
+contract()     :: contract;
+serviceList()  :: [string()];
 
-dummy()        = {dummy, dummyrecord()};
-dummyrecord()  = #dummyrecord{foo::integer(), bar::binary()};
-dummy1a()      = atom(ascii,nonempty,nonundefined);
-dummy1b()      = atom(asciiprintable,nonempty,nonundefined);
-dummy2a()      = string(ascii,nonempty);
-dummy2b()      = string(asciiprintable,nonempty);
-dummy3a()      = binary(ascii,nonempty);
-dummy3b()      = binary(asciiprintable,nonempty);
-dummy4()       = term(nonempty,nonundefined);
-dummy5()       = #dummy5{hoge1::1, hoge2::two, hoge3::3.0, hoge4::<<"4">>};
+dummy()        :: {dummy, dummyrecord()};
+dummyrecord()  :: #dummyrecord{foo::integer(), bar::binary()};
+dummy1a()      :: atom(ascii,nonempty,nonundefined);
+dummy1b()      :: atom(asciiprintable,nonempty,nonundefined);
+dummy2a()      :: string(ascii,nonempty);
+dummy2b()      :: string(asciiprintable,nonempty);
+dummy3a()      :: binary(ascii,nonempty);
+dummy3b()      :: binary(asciiprintable,nonempty);
+dummy4()       :: term(nonempty,nonundefined);
+dummy5()       :: #dummy5{hoge1::1, hoge2::two, hoge3::3.0, hoge4::<<"4">>};
 
-password()     = string();
-file()         = string();
-noSuchFile()   = {error, noSuchFile};
-doubleInt()    = [integer()];
-upCase()       = string();
-logon()        = {logon, password()};
-ls()           = ls;
-files()        = {files, [string()]} "request a list of file";
-callback()     = {callback, void()};
-getFile()      = {get, file()};
-okFile()       = {ok, binary()};
-stop()         = stop;
-yes()          = yes;
-ack()          = ack;
-error()        = error;
-ok()           = ok;
-intList()      = [integer()];
-propList()     = proplist();
-testAmbiguities() = testAmbiguities;
-foo()          = #foo{attribute1::term()};
-callbackOnItsWay() = callbackOnItsWay.
+password()     :: string();
+file()         :: string();
+noSuchFile()   :: {error, noSuchFile};
+doubleInt()    :: [integer()];
+upCase()       :: string();
+logon()        :: {logon, password()};
+ls()           :: ls;
+files()        :: {files, [string()]} "request a list of file";
+callback()     :: {callback, void()};
+getFile()      :: {get, file()};
+okFile()       :: {ok, binary()};
+stop()         :: stop;
+yes()          :: yes;
+ack()          :: ack;
+error()        :: error;
+ok()           :: ok;
+intList()      :: [integer()];
+propList()     :: proplist();
+testAmbiguities() :: testAmbiguities;
+foo()          :: #foo{attribute1::term()};
+callbackOnItsWay() :: callbackOnItsWay.
 
 +STATE start
     logon()          => ok()    & active

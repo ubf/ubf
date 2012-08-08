@@ -88,9 +88,9 @@ type1(_Gen,{prim,0,0,_Tag}) ->
 type1(Gen,{tuple,Elements}) ->
     list_to_tuple([type1(Gen,E) || E <- Elements]);
 %% record
-type1(Gen,{record,Name,Elements}) when is_atom(Name) ->
-    list_to_tuple([Name|[type1(Gen,E) || E <- tl(tl(Elements))]]);
-type1(Gen,{record_ext,Name,_,Elements}) when is_atom(Name) ->
+type1(Gen,{record,Name,_,_,Elements}) when is_atom(Name) ->
+    list_to_tuple([Name|[type1(Gen,E) || E <- Elements]]);
+type1(Gen,{record_ext,Name,_,_,Elements}) when is_atom(Name) ->
     list_to_tuple([Name|[type1(Gen,E) || E <- Elements]]);
 %% list
 type1(Gen,{list,Min,Max,Element}) ->

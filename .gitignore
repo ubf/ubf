@@ -1,10 +1,11 @@
 *.app
 *.beam
 *.boot
+ebin/
+erl_crash.dump
 *.huc
 *.log
 *.script
-.test/
-erl_crash.dump
 src/contract_lex.erl
 src/contract_yecc.erl
+.test/

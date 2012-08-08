@@ -3,27 +3,27 @@
 +VSN("ubf1.0").
 
 +TYPES
-info()            = info;
-description()     = description;
-contract()        = contract;
+info()            :: info;
+description()     :: description;
+contract()        :: contract;
 
-ok()              = ok;
-bool()            = true | false;
-nick()            = string();
-oldnick()         = nick();
-newnick()         = nick();
-group()           = string();
-groups()          = [group()];
+ok()              :: ok;
+bool()            :: true | false;
+nick()            :: string();
+oldnick()         :: nick();
+newnick()         :: nick();
+group()           :: string();
+groups()          :: [group()];
 
-logon()           = logon;
-proceed()         = {ok, nick()};
-listGroups()      = groups;
-joinGroup()       = {join, group()};
-leaveGroup()      = {leave, group()};
-changeNick()      = {nick, nick()};
-msg()             = {msg, group(), string()};
+logon()           :: logon;
+proceed()         :: {ok, nick()};
+listGroups()      :: groups;
+joinGroup()       :: {join, group()};
+leaveGroup()      :: {leave, group()};
+changeNick()      :: {nick, nick()};
+msg()             :: {msg, group(), string()};
 
-msgEvent()        = {msg, nick(), group(), string()};
-joinEvent()       = {joins, nick(), group()};
-leaveEvent()      = {leaves, nick(), group()};
-changeNameEvent() = {changesName, oldnick(), newnick(), group()}.
+msgEvent()        :: {msg, nick(), group(), string()};
+joinEvent()       :: {joins, nick(), group()};
+leaveEvent()      :: {leaves, nick(), group()};
+changeNameEvent() :: {changesName, oldnick(), newnick(), group()}.

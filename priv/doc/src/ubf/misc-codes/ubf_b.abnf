@@ -20,7 +20,7 @@ fieldname      = NONEMTPYATOM
 types          = typedef
                / (typedef semi types)
 
-typedef        = typeref *c-wsp "=" *c-wsp type [1*WSP annotation] *c-wsp
+typedef        = typeref *c-wsp "::" *c-wsp type [1*WSP annotation] *c-wsp
 
 transitions    = transition
                / (transition semi transitions)
@@ -68,8 +68,20 @@ typeref        = typename "()"
 typeseq        = type
                / (type *WSP "," *WSP typeseq)
 
-typerec        = (fieldname *WSP "=" *WSP type)
-               / (fieldname *WSP "=" *WSP type "," *WSP typerec)
+typerec        = (fieldname *WSP "::" *WSP type)
+               / (fieldname *WSP "::" *WSP type "," *WSP typerec)
+               / (fieldname *WSP "=" *WSP default *WSP "::" *WSP type)
+               / (fieldname *WSP "=" *WSP default *WSP "::" *WSP type "," *WSP typerec)
+
+default        = ("{" [defaultseq] "}")
+               /  ("[" [defaultseq] "]")
+               / ATOM
+               / BINARY
+               / FLOAT
+               / INTEGER
+               / STRING
+defaultseq     = default
+               / (default *WSP "," *WSP defaultseq)
 
 listrange      = (1*DIGIT)
                / (1*DIGIT *WSP ",")

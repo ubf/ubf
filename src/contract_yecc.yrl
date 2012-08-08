@@ -41,7 +41,7 @@ form -> '+' anystatekwd anyrules dot        : {anystate, '$3'}.
 types -> typeDef ';' types                  : ['$1'|'$3'].
 types -> typeDef                            : ['$1'].
 
-typeDef -> atom '(' ')' '=' type annotation : {unwrap('$1'), '$5', '$6'}.
+typeDef -> atom '(' ')' '::' type annotation : {unwrap('$1'), '$5', '$6'}.
 
 annotation -> tag                           : unwrap('$1').
 annotation -> string                        : unwrap('$1').

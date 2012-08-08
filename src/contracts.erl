@@ -159,9 +159,9 @@ check_term({tuple,Args}=_Check, X, Level, Mod) ->
             ?FAIL({Check,X})
     end;
 %% record
-check_term({record,Name,Args}=_Check, X, Level, Mod) ->
-    if length(Args)+(1-2) =:= tuple_size(X) ->
-            case check_term_seq([{atom,Name}|tl(tl(Args))], tuple_to_list(X), Level, Mod) of
+check_term({record,Name,_,_,Args}=_Check, X, Level, Mod) ->
+    if length(Args)+1 =:= tuple_size(X) ->
+            case check_term_seq([{atom,Name}|Args], tuple_to_list(X), Level, Mod) of
                 true ->
                     true;
                 false ->
@@ -170,7 +170,7 @@ check_term({record,Name,Args}=_Check, X, Level, Mod) ->
        true ->
             ?FAIL({Check,X})
     end;
-check_term({record_ext,Name,Args}=_Check, X, Level, Mod) ->
+check_term({record_ext,Name,_,_,Args}=_Check, X, Level, Mod) ->
     if length(Args)+1 =:= tuple_size(X) ->
             case check_term_seq([{atom,Name}|Args], tuple_to_list(X), Level, Mod) of
                 true ->

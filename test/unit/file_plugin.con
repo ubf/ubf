@@ -29,15 +29,15 @@
 
 +TYPES
 
-info()         = info;
-description()  = description;
-contract()     = contract;
+info()         :: info;
+description()  :: description;
+contract()     :: contract;
 
-file()         = string();
-ls()           = ls;
-files()        = {files, [file()]};
-getFile()      = {get, file()};
-noSuchFile()   = noSuchFile.
+file()         :: string();
+ls()           :: ls;
+files()        :: {files, [file()]};
+getFile()      :: {get, file()};
+noSuchFile()   :: noSuchFile.
 
 
 +STATE start

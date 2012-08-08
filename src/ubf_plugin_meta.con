@@ -29,18 +29,18 @@
 
 +TYPES
 
-info()           = info;
-description()    = description;
-services()       = services;
-contract()       = contract;
-serviceList()    = [string()] "Names of the offered services";
+info()           :: info;
+description()    :: description;
+services()       :: services;
+contract()       :: contract;
+serviceList()    :: [string()] "Names of the offered services";
 
-help()           = help;
-restartService() = {restartService, string(), term()};
-startSession()   = {startSession, string(), term()};
-ok()             = {ok, term()};
-error()          = {error, term()};
-ok_or_error()    = ok() | error().
+help()           :: help;
+restartService() :: {restartService, string(), term()};
+startSession()   :: {startSession, string(), term()};
+ok()             :: {ok, term()};
+error()          :: {error, term()};
+ok_or_error()    :: ok() | error().
 
 
 +ANYSTATE
