@@ -54,7 +54,7 @@
 
 %% qc_statem Callbacks
 -behaviour(qc_statem).
--export([scenario_gen/0, command_gen/1, command_gen/2]).
+-export([scenario_gen/0, command_gen/1, command_gen/2, command_typegen/4]).
 -export([initial_state/1, state_is_sane/1, next_state/3, precondition/2, postcondition/3]).
 -export([setup/0, setup/1, teardown/2, aggregate/1]).
 
@@ -135,7 +135,7 @@ try_command_gen(Gen, S, Contract, TypeName) ->
     end.
 
 try_command_typegen(S, Contract, TypeName, TypeStack) ->
-    Gen = fun ubf_command_gen_type/4,
+    Gen = fun command_typegen/4,
     try
         MOD:command_typegen(Gen, S, Contract, TypeName, TypeStack)
     catch
@@ -143,7 +143,7 @@ try_command_typegen(S, Contract, TypeName, TypeStack) ->
             Gen(S, Contract, TypeName, TypeStack)
     end.
 
-ubf_command_gen_type(S, Contract, TypeName, TypeStack) ->
+command_typegen(S, Contract, TypeName, TypeStack) ->
     Fun = fun(TN) -> try_command_typegen(S, Contract, TN, [TypeName|TypeStack]) end,
     Gen =
         fun(TN) ->
