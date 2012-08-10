@@ -153,6 +153,7 @@ ubf_client(Parent, Host, Port, Options, Timeout)
         [binary, {nodelay, true}, {active, false}],
     ServerHello = proplists:get_value(serverhello, Options, defined),
     SimpleRPC = proplists:get_value(simplerpc, Options, false),
+    StartPlugin = proplists:get_value(startplugin, Options, undefined),
     case proplists:get_value(proto, Options, ubf) of
         Proto when is_atom(Proto) ->
             DriverOptions = [];
@@ -174,7 +175,7 @@ ubf_client(Parent, Host, Port, Options, Timeout)
     case gen_tcp:connect(Host, Port, ConnectOptions) of
         {ok, Socket} ->
             %% start a driver
-            Driver = DriverMod:start(Proto, DriverOptions),
+            Driver = DriverMod:start(StartPlugin, DriverOptions),
             %% get the socket to send messages to the driver
             ok = gen_tcp:controlling_process(Socket, Driver),
             %% Kick off the driver
