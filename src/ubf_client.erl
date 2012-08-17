@@ -150,7 +150,15 @@ ubf_client(Parent, Host, Port, Options, Timeout)
   when is_list(Host) andalso is_integer(Port) andalso is_list(Options) ->
     process_flag(trap_exit, true),
     DefaultConnectOptions =
-        [binary, {nodelay, true}, {active, false}],
+        case proplists:get_value(clientport, Options, undefined) of
+            ClientPort when is_integer(ClientPort) ->
+                [binary, {nodelay, true}, {active, false}, {port, ClientPort}];
+            {MinCP, MaxCP}=ClientPort when is_integer(MinCP), is_integer(MaxCP) ->
+                [binary, {nodelay, true}, {active, false}, {port, MinCP}];
+            _ ->
+                ClientPort = undefined,
+                [binary, {nodelay, true}, {active, false}]
+        end,
     ServerHello = proplists:get_value(serverhello, Options, defined),
     SimpleRPC = proplists:get_value(simplerpc, Options, false),
     StartPlugin = proplists:get_value(startplugin, Options, undefined),
@@ -201,6 +209,15 @@ ubf_client(Parent, Host, Port, Options, Timeout)
                true ->
                     Parent ! {self(), {ok, undefined}},
                     ubf_client_loop(Parent, Driver, SimpleRPC)
+            end;
+        {error, eaddrinuse} when is_tuple(ClientPort) ->
+            %% Try next port if current one is in use
+            case ClientPort of
+                {MinCP1, MaxCP1} when MinCP1 < MaxCP1 ->
+                    Options1 = [{clientport, {MinCP1+1,MaxCP1}}|proplists:delete(clientport, Options)],
+                    ubf_client(Parent, Host, Port, Options1, Timeout);
+                _ ->
+                    Parent ! {self(), {error, socket}}
             end;
         {error, _E} ->
             Parent ! {self(), {error, socket}}
