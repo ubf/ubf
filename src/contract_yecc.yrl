@@ -67,8 +67,7 @@ primType -> '[' type ']?'                   : {list, 0, 1, '$2'}.
 primType -> '[' type ']' '{' integer '}'    : {list, unwrap('$5'), unwrap('$5'), '$2'}.
 primType -> '[' type ']' '{' integer ',' '}': {list, unwrap('$5'), infinity, '$2'}.
 primType -> '[' type ']' '{' ',' integer '}': {list, 0, unwrap('$6'), '$2'}.
-primType -> '[' type ']' '{' integer ',' integer '}'
-                : {list, unwrap('$5'), unwrap('$7'), '$2'}.
+primType -> '[' type ']' '{' integer ',' integer '}' : {list, unwrap('$5'), unwrap('$7'), '$2'}.
 
 primType -> '{}'                            : {tuple, {}}.
 primType -> '#' atom '{}'                   : rec(unwrap('$2'), []).
@@ -92,9 +91,9 @@ typeAttr -> atom ',' typeAttr               : [unwrap('$1')|'$3'].
 typeSeq -> type                             : ['$1'].
 typeSeq -> type ',' typeSeq                 : ['$1'|'$3'].
 
-typeRec -> atom '::' type                         : [{unwrap('$1'),[],'$3'}].
-typeRec -> atom '::' type ',' typeRec             : [{unwrap('$1'),[],'$3'}|'$5'].
-typeRec -> atom '=' default '::' type             : [{unwrap('$1'),['$3'],'$5'}].
+typeRec -> atom '::' type                   : [{unwrap('$1'),[],'$3'}].
+typeRec -> atom '::' type ',' typeRec       : [{unwrap('$1'),[],'$3'}|'$5'].
+typeRec -> atom '=' default '::' type       : [{unwrap('$1'),['$3'],'$5'}].
 typeRec -> atom '=' default '::' type ',' typeRec : [{unwrap('$1'),['$3'],'$5'}|'$7'].
 
 typeRef -> atom '(' ')'                     : {prim, 1, 1, unwrap_prim('$1')}.
