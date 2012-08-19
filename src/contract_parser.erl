@@ -286,7 +286,7 @@ tags(P1, Imports) ->
 preDefinedTypes() -> preDefinedTypesWithoutAttrs() ++ preDefinedTypesWithAttrs().
 
 preDefinedTypesWithoutAttrs() ->
-    [atom, binary, float, integer, list, proplist, string, term, tuple, void].
+    [atom, boolean, binary, float, integer, list, proplist, string, term, tuple, void].
 
 preDefinedTypesWithAttrs() ->
     [

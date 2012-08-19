@@ -217,6 +217,13 @@ check_term({atom, Y}=_Check, X, _Level, _Mod) ->
        true ->
             ?FAIL({Check,X})
     end;
+%% boolean
+check_term({boolean, Y}=_Check, X, _Level, _Mod) ->
+    if Y =:= X andalso is_boolean(Y) ->
+            true;
+       true ->
+            ?FAIL({Check,X})
+    end;
 %% binary
 check_term({binary, Y}=_Check, X, _Level, _Mod) ->
     if Y =:= X andalso is_binary(Y) ->
@@ -309,6 +316,8 @@ check_term_range(Min, Max, X) ->
 %% check_term_predef
 check_term_predef(atom, X) ->
     is_atom(X);
+check_term_predef(boolean, X) ->
+    is_boolean(X);
 check_term_predef(binary, X) ->
     is_binary(X);
 check_term_predef(float, X) ->
@@ -339,6 +348,8 @@ check_term_predef(void, _X) ->
     true;
 check_term_predef({atom,Attrs}, X) ->
     is_atom(X) andalso check_term_attrlist(atom,Attrs,X);
+check_term_predef({boolean,Attrs}, X) ->
+    is_boolean(X) andalso check_term_attrlist(boolean,Attrs,X);
 check_term_predef({binary,Attrs}, X) ->
     is_binary(X) andalso check_term_attrlist(binary,Attrs,X);
 check_term_predef({list,Attrs}, X) ->

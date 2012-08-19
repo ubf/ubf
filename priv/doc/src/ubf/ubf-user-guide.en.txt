@@ -423,6 +423,7 @@ and thus more specific when matching objects.
 | binary   |   O   |       O        |    O     |      X
 | string   |   O   |       O        |    O     |      X
 | atom     |   O   |       O        |    O     |      O
+| boolean  |   X   |       X        |    X     |      X
 | tuple    |   X   |       X        |    O     |      X
 | list     |   X   |       X        |    O     |      X
 | proplist |   X   |       X        |    O     |      X
@@ -433,9 +434,9 @@ and thus more specific when matching objects.
 The above table summarizes the set of supported predefined types and
 their respective optional attributes.
 
-The "integer", "float", "binary", "string", "atom", "tuple", and
-"list" predefined types match directly to the corresponding primitive
-or complex type.
+The "integer", "float", "binary", "string", "atom", "boolean",
+"tuple", and "list" predefined types match directly to the
+corresponding primitive or complex type.
 
 The "term" predefined type matches any object.
 

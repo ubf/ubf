@@ -98,6 +98,7 @@ STRING         = DQUOTE *(%x20-21 / %x23-7E) DQUOTE
 NONEMTPYSTRING = DQUOTE 1*(%x20-21 / %x23-7E) DQUOTE
 
 predefinedtype = ('atom' "(" [atomattrs] ")")
+               / ('boolean' "(" [booleanattrs] ")")
                / ('binary' "(" [binaryattrs] ")")
                / ('float' "(" [floatattrs] ")")
                / ('integer' "(" [integerattrs] ")")
@@ -110,6 +111,8 @@ predefinedtype = ('atom' "(" [atomattrs] ")")
 
 atomattrs      = atomattr
                / (atomattr *WSP "," *WSP atomattrs)
+
+booleanattrs   = *WSP
 
 binaryattrs    = binaryattr
                / (binaryattr *WSP "," *WSP binaryattrs)

@@ -109,6 +109,9 @@ type1(_Gen,{range,Lo,Hi}) ->
 %% atom
 type1(_Gen,{atom,Value}) when is_atom(Value) ->
     Value;
+%% boolean
+type1(_Gen,{boolean,Value}) when is_boolean(Value) ->
+    Value;
 %% binary
 type1(_Gen,{binary,Value}) when is_binary(Value) ->
     Value;
@@ -124,6 +127,8 @@ type1(_Gen,{string,Value}) when is_list(Value) ->
 %% predef
 type1(_Gen,{predef,atom}) ->
     qc_gen:qc_atom();
+type1(_Gen,{predef,boolean}) ->
+    bool();
 type1(_Gen,{predef,integer}) ->
     oneof([int(),largeint()]);
 type1(_Gen,{predef,float}) ->
