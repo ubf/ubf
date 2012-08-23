@@ -28,12 +28,12 @@
 -include("ubf_plugin_stateful.hrl").
 
 -export([info/0, description/0, keepalive/0]).
+-export([managerStart/1, managerRestart/2, managerRpc/2]).
 -export([handlerStart/2, handlerStop/3, handlerRpc/4, handlerRpc/1]).
 
 -export([client_breaks_req01/0, client_timeout_req03/1]).
 -export([server_breaks_req01/0, server_timeout_req03/1, server_crash_req05/0]).
 
--export([managerStart/1, managerRestart/2, managerRpc/2]).
 -import(ubf_plugin_handler, [ask_manager/2]).
 
 %% NOTE the following two lines
@@ -74,6 +74,28 @@ description() ->
 
 keepalive() ->
     ok.
+
+
+%% @spec managerStart(Args::list(any())) ->
+%%          {ok, ManagerStateData::term()} | {error, Reason::any()}
+%% @doc start manager
+managerStart(_) ->
+    ManagerStateData = #managerState{},
+    {ok,ManagerStateData}.
+
+%% @spec managerRestart(Args::list(any()), ManagerPid::pid()) ->
+%%          ok | {error, Reason::any()}
+%% @doc restart manager
+managerRestart(Args,ManagerPid) ->
+    ask_manager(ManagerPid,{restartManager, Args}).
+
+
+%% @spec managerRpc(Event::any(), ManagerStateData::term()) ->
+%%          {ok | {ok,term()} | error | {error, Reason::any()}, NewManagerStateData::term()}
+%% @doc rpc manager
+managerRpc({restartManager,Args},ManagerStateData)
+  when is_record(ManagerStateData,managerState) ->
+    managerStart(Args).
 
 
 %% @spec handlerStart(Args::list(any()), ManagerPid::pid()) ->
@@ -140,29 +162,3 @@ server_timeout_req03(Timeout) ->
 
 server_crash_req05() ->
     exit(server_crash_res05_with_this_response).
-
-
-%%%----------------------------------------------------------------------
-%%% Manager functions
-%%%----------------------------------------------------------------------
-
-%% @spec managerStart(Args::list(any())) ->
-%%          {ok, ManagerStateData::term()} | {error, Reason::any()}
-%% @doc start manager
-managerStart(_) ->
-    ManagerStateData = #managerState{},
-    {ok,ManagerStateData}.
-
-%% @spec managerRestart(Args::list(any()), ManagerPid::pid()) ->
-%%          {accept, Reply::any(), StateName::atom(), StateData::term()} | {reject, Reason::any()}
-%% @doc restart manager
-managerRestart(Args,ManagerPid) ->
-    ask_manager(ManagerPid,{restartManager, Args}).
-
-
-%% @spec managerRpc(Event::any(), ManagerStateData::term()) ->
-%%          {ok | {ok,term()} | error | {error, Reason::any()}, NewManagerStateData::term()}
-%% @doc rpc manager
-managerRpc({restartManager,Args},ManagerStateData)
-  when is_record(ManagerStateData,managerState) ->
-    managerStart(Args).

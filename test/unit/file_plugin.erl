@@ -54,9 +54,12 @@
 
 %% Mandatory callback functions
 -export([info/0, description/0,
-         managerStart/1, handlerStop/3,
+         managerStart/1,
+         managerRestart/2,
+         managerRpc/2,
+         handlerStop/3,
          handlerStart/2,
-         managerRpc/2, handlerRpc/4]).
+         handlerRpc/4]).
 
 -import(lists, [map/2, member/2]).
 
@@ -93,6 +96,10 @@ Commands:
 managerStart(_ArgFromMetaManager) ->
     {ok, myManagerState}.
 
+managerRestart(_ArgFromMetaManager, _Pid) ->
+    %% noop
+    ok.
+
 %% @spec (term(), term()) -> term()
 %% @doc Mandatory callback function: Manager call handler.
 %%
@@ -102,9 +109,9 @@ managerStart(_ArgFromMetaManager) ->
 %% is not used.
 
 managerRpc(secret, State) ->
-    {accept, welcomeToFTP, State};
+    {{ok, welcomeToFTP}, State};
 managerRpc(_, State) ->
-    {reject, badPassword, State}.
+    {{error, badPassword}, State}.
 
 %% @spec (term(), pid()) -> {accept, term(), atom(), term()} | {reject, term()}
 %% @doc Mandatory callback function: New UBF connection handler.

@@ -128,8 +128,10 @@ See http://www.sics.se/~joe/ubf.html
 %% @doc Required UBF contract implementation callback: start manager
 %%      process(es).
 
-managerStart(_Args) ->
-    {ok, modules()}.
+managerStart(Args) ->
+    Modules = modules(),
+    _ = [ Module:moduleStart(Args) || {_, {Module, undefined}} <- Modules ],
+    {ok, Modules}.
 
 %% @doc Required UBF contract implementation callback: restart a manager
 %%      process.
@@ -148,7 +150,9 @@ managerRpc({service,Service}, S) ->
             {error, S}
     end;
 managerRpc({restartManager,Args}, _S) ->
-    managerStart(Args).
+    Modules = modules(),
+    _ = [ Module:moduleStart(Args) || {_, {Module, undefined}} <- Modules ],
+    {ok, Modules}.
 
 
 %% @doc Required UBF contract implementation callback: start a new session

@@ -48,7 +48,7 @@
 -spec managerStart(Args::term()) ->
                    {ok, ManagerData::term()}.
 -spec managerRestart(Args::term(), Manager::pid()) ->
-                     {ok, ManagerData::term()} | {error, Reason::term()}.
+                     ok | {error, Reason::term()}.
 -spec managerRpc(Args::term(), ManagerData::term()) ->
                  {ok, NewManagerData::term()} | {error, Reason::term()}.
 

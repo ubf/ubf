@@ -40,6 +40,10 @@
 -callback info() -> string().
 -callback description() -> string().
 
+-callback managerStart(args()) -> {ok, managerdata()} | {error, reason()}.
+-callback managerRestart(args(), pid()) -> ok | {error, reason()}.
+-callback managerRpc(event(), managerdata()) -> {reply(), managerdata()}.
+
 -callback handlerStart(args(), manager()) -> {accept, reply(), statename(), statedata()} | {reject, reason()}.
 -callback handlerStop(pid(), reason(), managerdata()) -> managerdata().
 -callback handlerRpc(statename(), event(), statedata(), manager()) -> {reply(), statename(), statedata()}.
@@ -51,6 +55,9 @@
 behaviour_info(callbacks) ->
     [{info,0}
      , {description,0}
+     , {managerStart,1}
+     , {managerRestart,2}
+     , {managerRpc,2}
      , {handlerStart,2}
      , {handlerStop,3}
      , {handlerRpc,4}

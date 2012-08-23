@@ -38,6 +38,9 @@
 -callback info() -> string().
 -callback description() -> string().
 
+-callback moduleStart(args()) -> any().
+-callback moduleRestart(args()) -> any().
+
 -callback handlerStart(args()) -> {accept, reply(), statename(), statedata()} | {reject, reason()}.
 -callback handlerStop(pid(), reason(), statedata()) -> any().
 -callback handlerRpc(event()) -> reply().
@@ -49,6 +52,8 @@
 behaviour_info(callbacks) ->
     [{info,0}
      , {description,0}
+     , {moduleStart,1}
+     , {moduleRestart,1}
      , {handlerStart,1}
      , {handlerStop,3}
      , {handlerRpc,1}

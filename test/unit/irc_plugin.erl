@@ -46,8 +46,9 @@ managerStart(_) ->
     new_seed(),
     {ok, ets:new(irc, [])}.
 
-managerRestart(X, _) ->
-    managerStart(X).
+managerRestart(_, _) ->
+    %% noop
+    ok.
 
 handlerStart(_, _ManagerPid) ->
     {accept, yes, start, []}.

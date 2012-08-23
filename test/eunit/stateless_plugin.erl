@@ -28,6 +28,7 @@
 -include("ubf_plugin_stateless.hrl").
 
 -export([info/0, description/0, keepalive/0]).
+-export([moduleStart/1, moduleRestart/1]).
 -export([handlerStart/1, handlerStop/3, handlerRpc/1]).
 
 -export([client_breaks_req01/0, client_timeout_req03/1]).
@@ -54,6 +55,18 @@ description() ->
 
 keepalive() ->
     ok.
+
+
+%% @spec moduleStart(Args::list(any())) -> Ignored::any()
+%% @doc start module
+moduleStart(_Args) ->
+    unused.
+
+%% @spec moduleRestart(Args::list(any())) -> Ignored::any()
+%% @doc restart module
+moduleRestart(Args) ->
+    moduleStart(Args).
+
 
 
 %% @spec handlerStart(Args::list(any())) ->

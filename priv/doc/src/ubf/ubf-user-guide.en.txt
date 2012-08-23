@@ -1058,25 +1058,33 @@ The stateless server is helpful to applications that do not require
 explicit state management by the UBF server.
 
 The "ubf_plugin_stateless.hrl" Erlang header file defines the callback
-APIs to be implemented by a stateless plugin.  The five callbacks are
-mandatory for all stateless plugins.
+APIs to be implemented by a stateless plugin.  The sevent callbacks
+are mandatory for all stateless plugins.
 
 ------
 %% common callback API
--spec ubf_info() -> string().
--spec ubf_description() -> string().
+-spec info() -> string().
+-spec description() -> string().
 -spec handlerStop(Handler::pid(), Reason::term(), StateData::term()) ->
                   NewStateData::term().
 
 %% stateless callback API
+-spec moduleStart(args()::term()) -> any().
+-spec moduleRestart(args()::term()) -> any().
+
 -spec handlerStart(Args::term()) ->
                   {accept, Reply::term(), StateName::atom(), StateDate::term()} |
                   {reject, Reply::term()}.
 -spec handlerRpc(Call::term()) -> Reply::term().
 ------
 
-The ubf_info/0 and ubf_description/0 functions provide short and long
+The info/0 and description/0 functions provide short and long
 information about the plugin's service, respectively.
+
+The moduleStart/1 function is called once after the plugin's service
+is started.  The return value is ignored.  The moduleRestart/1
+function is called once after each time the plugin's service is
+restarted.  The return value is ignored.
 
 The handlerStart/1 function is called when starting a new session for
 the plugin's service.  The plugin may accept or reject the start
@@ -1089,7 +1097,8 @@ The handlerStop/3 function is called when stopping a session of the
 plugin's service.  The plugin may perform some cleanup inside the
 handlerStop function.
 
-The handlerRpc/1 function is called when processing a synchronous call.
+The handlerRpc/1 function is called when processing a synchronous
+call.
 
 For example, the following "skeleton" implementation of a <<BERTRPC>>
 server implemented by UBF illustrates a typical stateless server.  The
@@ -1137,8 +1146,8 @@ mandatory for all stateful plugins.
 
 ------
 %% common callback API
--spec ubf_info() -> string().
--spec ubf_description() -> string().
+-spec info() -> string().
+-spec description() -> string().
 -spec handlerStop(Handler::pid(), Reason::term(), ManagerData::term()) ->
                   NewManagerData::term().
 
@@ -1157,7 +1166,7 @@ mandatory for all stateful plugins.
                  {ok, NewManagerData::term()} | {error, Reason::term()}.
 ------
 
-The ubf_info/0 and ubf_description/0 functions provide short and long
+The info/0 and description/0 functions provide short and long
 information about the plugin's service, respectively.
 
 The handlerStart/2 function is called when starting a new session for
@@ -1178,6 +1187,8 @@ The managerStart/1 function is called once at the start of the
 server's initialization for each plugin's service.
 
 The managerRestart/2 function is called to restart a plugin's service.
+The callback function is expected to forward the request to the
+manager process and relay the manager's reply.
 
 The managerRpc/2 function is called when processing a call from
 handler.  A handler uses the ubf_plugin_handler:ask_manager/2 function
