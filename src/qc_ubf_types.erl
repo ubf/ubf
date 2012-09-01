@@ -145,7 +145,7 @@ type1(_Gen,{predef,tuple}) ->
     qc_gen:qc_tuple();
 type1(_Gen,{predef,term}) ->
     qc_gen:qc_term();
-type1(_Gen,{predef,void}) ->
+type1(_Gen,{predef,none}) ->
     %% not supported
     exit(fatal);
 %% predef with attributes

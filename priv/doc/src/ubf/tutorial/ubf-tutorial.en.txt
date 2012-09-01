@@ -117,7 +117,7 @@ Predefined:: P() _or_ P(A1, A2, ..., An)
 | list     |   X   |       X        |    O     |      X
 | proplist |   X   |       X        |    O     |      X
 | term     |   X   |       X        |    O     |      O
-| void     |   X   |       X        |    X     |      X
+| none     |   X   |       X        |    X     |      X
 |============
 
 NOTE: 'nonempty' does not match: \<<"">>, "", \'', {}, and [].

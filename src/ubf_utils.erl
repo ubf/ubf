@@ -107,8 +107,8 @@ ubf_contract2(C) ->
           , "% tuple()\n%\t\ttuple"
           , "% tuple()?\n%\t\ttuple | undefined"
           , "%"
-          , "% void()\n%\t\t /* no result is returned */"
-          , "% void()?\n%\t\t /* no result is returned */ | undefined"
+          , "% none()\n%\t\t /* no result is returned */"
+          , "% none()?\n%\t\t /* no result is returned */ | undefined"
           , "%"
           , "%% --------------------"
           , "%% type attributes"
@@ -402,8 +402,8 @@ typeref(_Style,{predef,term},_C) ->
     "term()";
 typeref(_Style,{predef,tuple},_C) ->
     "tuple()";
-typeref(_Style,{predef,void},_C) ->
-    erlang:exit(fatal);
+typeref(_Style,{predef,none},_C) ->
+    "none()";
 %% predef with attributes
 typeref(_Style,{predef,{atom,Attrs}},_C) ->
     io_lib:format("atom(~s)", [join([ atom_to_list(Attr) || Attr <- Attrs ], ",")]);

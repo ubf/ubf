@@ -54,7 +54,7 @@ upCase()       :: string();
 logon()        :: {logon, password()};
 ls()           :: ls;
 files()        :: {files, [string()]} "request a list of file";
-callback()     :: {callback, void()};
+callback()     :: {callback, none()};
 getFile()      :: {get, file()};
 okFile()       :: {ok, binary()};
 stop()         :: stop;
@@ -77,7 +77,7 @@ callbackOnItsWay() :: callbackOnItsWay.
     callback()       => callbackOnItsWay() & active;
     getFile()        => okFile() & active
                      |  noSuchFile() & stop;
-    stop()           => void() & stop;
+    stop()           => none() & stop;
     testAmbiguities() => yes() & funny;
     EVENT            => callback();
     EVENT            <= callback().

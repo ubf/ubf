@@ -73,7 +73,7 @@ parse_transform(In, Opts) ->
 parse_transform_contract(In, Contract) ->
     {Export, Fns} = make_code(Contract),
     In1 = merge_in_code(In, Export, Fns),
-    %% lists:foreach(fun(I) -> io:format(">>~s<<~n",[erl_pp:form(I)]) end, In1),
+    %% DEBUG lists:foreach(fun(I) -> io:format(">>~s<<~n",[erl_pp:form(I)]) end, In1),
     In1.
 
 make_code(C) ->
@@ -240,7 +240,7 @@ tags(P1, Imports) ->
 preDefinedTypes() -> preDefinedTypesWithoutAttrs() ++ preDefinedTypesWithAttrs().
 
 preDefinedTypesWithoutAttrs() ->
-    [atom, boolean, binary, float, integer, list, proplist, string, term, tuple, void].
+    [atom, boolean, binary, float, integer, list, proplist, string, term, tuple, none].
 
 preDefinedTypesWithAttrs() ->
     [

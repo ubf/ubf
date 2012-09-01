@@ -75,7 +75,7 @@ moduleRestart(Args) ->
 handlerStart(_Args) ->
     {accept,ok,none,unused}.
 
-%% @spec handlerStop(Pid::pid(), Reason::any(), StateData::term()) -> void()
+%% @spec handlerStop(Pid::pid(), Reason::any(), StateData::term()) -> none()
 %% @doc stop handler
 handlerStop(_Pid, _Reason, _StateData) ->
     unused.

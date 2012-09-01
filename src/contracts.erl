@@ -365,7 +365,7 @@ check_term_predef(term, _X) ->
     true;
 check_term_predef(tuple, X) ->
     is_tuple(X);
-check_term_predef(void, _X) ->
+check_term_predef(none, _X) ->
     true;
 check_term_predef({atom,Attrs}, X) ->
     is_atom(X) andalso check_term_attrlist(atom,Attrs,X);

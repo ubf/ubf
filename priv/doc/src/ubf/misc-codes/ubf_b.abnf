@@ -119,7 +119,7 @@ predefinedtype = ('atom' "(" [atomattrs] ")")
                / ('string' "(" [stringattrs] ")")
                / ('term' "(" [termattrs] ")")
                / ('tuple' "(" [tupleattrs] ")")
-               / ('void' "(" [voidattrs] ")")
+               / ('none' "(" [noneattrs] ")")
 
 atomattrs      = atomattr
                / (atomattr *WSP "," *WSP atomattrs)
@@ -148,7 +148,7 @@ termattrs      = termattr
 tupleattrs     = tupleattr
                / (tupleattr *WSP "," *WSP tupleattrs)
 
-voidattrs      = *WSP
+noneattrs      = *WSP
 
 atomattr       = 'ascii' / 'asciiprintable' / 'nonempty' / 'nonundefined'
 binaryattr     = 'ascii' / 'asciiprintable' / 'nonempty'

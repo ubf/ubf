@@ -432,7 +432,7 @@ and thus more specific when matching objects.
 | list     |   X   |       X        |    O     |      X
 | proplist |   X   |       X        |    O     |      X
 | term     |   X   |       X        |    O     |      O
-| void     |   X   |       X        |    X     |      X
+| none     |   X   |       X        |    X     |      X
 |============
 
 The above table summarizes the set of supported predefined types and
@@ -451,7 +451,7 @@ predefined type that matches the following types:
 [{term(), term()}]
 ------
 
-The "void" predefined type is a placeholder to describe the return
+The "none" predefined type is a placeholder to describe the return
 value of a function call that does not return to the caller.
 
 The "ascii" attribute permits matches with binaries, strings, and
