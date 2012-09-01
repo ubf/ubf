@@ -51,6 +51,7 @@
 -export([qc_sample/3]).
 -export([qc_prop/3]).
 -export([qc_counterexample_read/4]).
+-export([impl/2]).
 
 %% Interface Functions
 -export([behaviour_info/1]).
