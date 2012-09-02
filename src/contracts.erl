@@ -89,6 +89,8 @@ checkEventIn(Msg, ThisState, Mod) ->
 %%----------------------------------------------------------------------
 %% Check type attribute
 
+isTypeAttr(any,nonempty) -> true;
+isTypeAttr(any,nonundefined) -> true;
 isTypeAttr(atom,ascii) -> true;
 isTypeAttr(atom,asciiprintable) -> true;
 isTypeAttr(atom,nonempty) -> true;
@@ -97,12 +99,6 @@ isTypeAttr(binary,ascii) -> true;
 isTypeAttr(binary,asciiprintable) -> true;
 isTypeAttr(binary,nonempty) -> true;
 isTypeAttr(list,nonempty) -> true;
-isTypeAttr(proplist,nonempty) -> true;
-isTypeAttr(string,ascii) -> true;
-isTypeAttr(string,asciiprintable) -> true;
-isTypeAttr(string,nonempty) -> true;
-isTypeAttr(term,nonempty) -> true;
-isTypeAttr(term,nonundefined) -> true;
 isTypeAttr(tuple,nonempty) -> true;
 isTypeAttr(_,_) -> false.
 
@@ -241,13 +237,6 @@ check_term({atom, Y}=_Check, X, _Level, _Mod) ->
        true ->
             ?FAIL({Check,X})
     end;
-%% boolean
-check_term({boolean, Y}=_Check, X, _Level, _Mod) ->
-    if Y =:= X andalso is_boolean(Y) ->
-            true;
-       true ->
-            ?FAIL({Check,X})
-    end;
 %% binary
 check_term({binary, Y}=_Check, X, _Level, _Mod) ->
     if Y =:= X andalso is_binary(Y) ->
@@ -265,13 +254,6 @@ check_term({float, Y}=_Check, X, _Level, _Mod) ->
 %% integer
 check_term({integer, Y}=_Check, X, _Level, _Mod) ->
     if Y =:= X andalso is_integer(Y) ->
-            true;
-       true ->
-            ?FAIL({Check,X})
-    end;
-%% string
-check_term({string, {'#S', Y0}=Y}=_Check, X, _Level, _Mod) ->
-    if Y =:= X andalso is_list(Y0) ->
             true;
        true ->
             ?FAIL({Check,X})
@@ -335,10 +317,12 @@ check_term_range(Min, Max, X) ->
 
 
 %% check_term_predef
+check_term_predef(any, _X) ->
+    true;
+check_term_predef(none, _X) ->
+    true;
 check_term_predef(atom, X) ->
     is_atom(X);
-check_term_predef(boolean, X) ->
-    is_boolean(X);
 check_term_predef(binary, X) ->
     is_binary(X);
 check_term_predef(float, X) ->
@@ -347,53 +331,18 @@ check_term_predef(integer, X) ->
     is_integer(X);
 check_term_predef(list, X) ->
     is_list(X);
-check_term_predef(proplist, X) ->
-    case X of
-        {'#P', Y} when is_list(Y) ->
-            is_proplist(Y);
-        _ ->
-            false
-    end;
-check_term_predef(string, X) ->
-    case X of
-        {'#S', Y} when is_list(Y) ->
-            is_string(Y);
-        _ ->
-            false
-    end;
-check_term_predef(term, _X) ->
-    true;
 check_term_predef(tuple, X) ->
     is_tuple(X);
-check_term_predef(none, _X) ->
-    true;
+check_term_predef({any,Attrs}, X) ->
+    check_term_attrlist(any,Attrs,X);
 check_term_predef({atom,Attrs}, X) ->
     is_atom(X) andalso check_term_attrlist(atom,Attrs,X);
-check_term_predef({boolean,Attrs}, X) ->
-    is_boolean(X) andalso check_term_attrlist(boolean,Attrs,X);
 check_term_predef({binary,Attrs}, X) ->
     is_binary(X) andalso check_term_attrlist(binary,Attrs,X);
 check_term_predef({list,Attrs}, X) ->
     is_list(X) andalso check_term_attrlist(list,Attrs,X);
-check_term_predef({proplist,Attrs}, X) ->
-    case X of
-        {'#P', Y} when is_list(Y) ->
-            is_proplist(Y) andalso check_term_attrlist(proplist,Attrs,X);
-        _ ->
-            false
-    end;
-check_term_predef({string,Attrs}, X) ->
-    case X of
-        {'#S', Y} when is_list(Y) ->
-            is_string(Y) andalso check_term_attrlist(string,Attrs,X);
-        _ ->
-            false
-    end;
-check_term_predef({term,Attrs}, X) ->
-    check_term_attrlist(term,Attrs,X);
 check_term_predef({tuple,Attrs}, X) ->
     is_tuple(X) andalso check_term_attrlist(tuple,Attrs,X).
-
 
 %% check_term_attrlist
 check_term_attrlist(Type, Attrs, Val) ->
@@ -411,21 +360,6 @@ check_term_attr(Type,nonundefined,Val) ->
     isTypeAttr(Type,nonundefined) andalso is_nonundefined(Val);
 check_term_attr(_,_,_) ->
     false.
-
-
-%% is_string
-is_string([H|T]) when is_integer(H), H < 256, H > -1 ->
-    is_string(T);
-is_string([]) -> true;
-is_string(_)  -> false.
-
-
-%% is_proplist
-is_proplist([P|T]) when tuple_size(P) =:= 2 ->
-    is_proplist(T);
-is_proplist([]) -> true;
-is_proplist(_)  -> false.
-
 
 %% is_ascii
 is_ascii(A) when is_atom(A) ->

@@ -25,7 +25,7 @@
 
 +NAME("test").
 
-+VSN("ubf1.0").
++VSN("ubf2.0").
 
 +TYPES
 
@@ -33,27 +33,25 @@ info()         :: info;
 description()  :: description;
 services()     :: services;
 contract()     :: contract;
-serviceList()  :: [string()];
+serviceList()  :: [ubfstring()];
 
 dummy()        :: {dummy, dummyrecord()};
 dummyrecord()  :: #dummyrecord{foo::integer(), bar::binary()};
 dummy1a()      :: atom(ascii,nonempty,nonundefined);
 dummy1b()      :: atom(asciiprintable,nonempty,nonundefined);
-dummy2a()      :: string(ascii,nonempty);
-dummy2b()      :: string(asciiprintable,nonempty);
 dummy3a()      :: binary(ascii,nonempty);
 dummy3b()      :: binary(asciiprintable,nonempty);
-dummy4()       :: term(nonempty,nonundefined);
+dummy4()       :: any(nonempty,nonundefined);
 dummy5()       :: #dummy5{hoge1::1, hoge2::two, hoge3::3.0, hoge4::<<"4">>};
 
-password()     :: string();
-file()         :: string();
+password()     :: ubfstring();
+file()         :: ubfstring();
 noSuchFile()   :: {error, noSuchFile};
 doubleInt()    :: [integer()];
-upCase()       :: string();
+upCase()       :: ubfstring();
 logon()        :: {logon, password()};
 ls()           :: ls;
-files()        :: {files, [string()]} "request a list of file";
+files()        :: {files, [ubfstring()]} "request a list of file";
 callback()     :: {callback, none()};
 getFile()      :: {get, file()};
 okFile()       :: {ok, binary()};
@@ -63,7 +61,7 @@ ack()          :: ack;
 error()        :: error;
 ok()           :: ok;
 intList()      :: [integer()];
-propList()     :: proplist();
+propList()     :: ubfproplist();
 testAmbiguities() :: testAmbiguities;
 foo()          :: #foo{attribute1::term()};
 callbackOnItsWay() :: callbackOnItsWay.
@@ -83,7 +81,7 @@ callbackOnItsWay() :: callbackOnItsWay.
     EVENT            <= callback().
 
 +STATE funny
-    string()         => upCase() & funny;
+    ubfstring()      => upCase() & funny;
     intList()        => doubleInt() & funny;
     propList()       => propList() & funny;
     stop()           => ack() & start.
@@ -92,14 +90,12 @@ callbackOnItsWay() :: callbackOnItsWay.
     dummy()          => dummy();
     dummy1a()        => dummy1a();
     dummy1b()        => dummy1b();
-    dummy2a()        => dummy2a();
-    dummy2b()        => dummy2b();
     dummy3a()        => dummy3a();
     dummy3b()        => dummy3b();
     dummy4()         => dummy4();
     dummy5()         => dummy5();
     foo()            => term();
-    info()           => string();
-    description()    => string();
+    info()           => ubfstring();
+    description()    => ubfstring();
     services()       => serviceList();
     contract()       => term().

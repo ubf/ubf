@@ -109,22 +109,22 @@ STRING         = DQUOTE *(%x20-21 / %x23-7E) DQUOTE
 
 NONEMTPYSTRING = DQUOTE 1*(%x20-21 / %x23-7E) DQUOTE
 
-predefinedtype = ('atom' "(" [atomattrs] ")")
-               / ('boolean' "(" [booleanattrs] ")")
+predefinedtype = ('any' "(" [anyattrs] ")")
+               / ('none' "(" [noneattrs] ")")
+               / ('atom' "(" [atomattrs] ")")
                / ('binary' "(" [binaryattrs] ")")
                / ('float' "(" [floatattrs] ")")
                / ('integer' "(" [integerattrs] ")")
                / ('list' "(" [listattrs] ")")
-               / ('proplist' "(" [proplistattrs] ")")
-               / ('string' "(" [stringattrs] ")")
-               / ('term' "(" [termattrs] ")")
                / ('tuple' "(" [tupleattrs] ")")
-               / ('none' "(" [noneattrs] ")")
+
+anyattrs       = anyattr
+               / (anyattr *WSP "," *WSP anyattrs)
+
+noneattrs      = *WSP
 
 atomattrs      = atomattr
                / (atomattr *WSP "," *WSP atomattrs)
-
-booleanattrs   = *WSP
 
 binaryattrs    = binaryattr
                / (binaryattr *WSP "," *WSP binaryattrs)
@@ -136,24 +136,11 @@ integerattrs   = *WSP
 listattrs      = listattr
                / (listattr *WSP "," *WSP listattrs)
 
-proplistattrs  = proplistattr
-               / (proplistattr *WSP "," *WSP proplistattrs)
-
-stringattrs    = stringattr
-               / (stringattr *WSP "," *WSP stringattrs)
-
-termattrs      = termattr
-               / (termattr *WSP "," *WSP termattrs)
-
 tupleattrs     = tupleattr
                / (tupleattr *WSP "," *WSP tupleattrs)
 
-noneattrs      = *WSP
-
+anyattr        = 'nonempty' / 'nonundefined'
 atomattr       = 'ascii' / 'asciiprintable' / 'nonempty' / 'nonundefined'
 binaryattr     = 'ascii' / 'asciiprintable' / 'nonempty'
 listattr       = 'nonempty'
-proplistattr   = 'nonempty'
-stringattr     = 'ascii' / 'asciiprintable' / 'nonempty'
-termattr       = 'nonempty' / 'nonundefined'
 tupleattr      = 'nonempty' / 'nonundefined'

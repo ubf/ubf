@@ -109,9 +109,6 @@ type1(_Gen,{range,Lo,Hi}) ->
 %% atom
 type1(_Gen,{atom,Value}) when is_atom(Value) ->
     Value;
-%% boolean
-type1(_Gen,{boolean,Value}) when is_boolean(Value) ->
-    Value;
 %% binary
 type1(_Gen,{binary,Value}) when is_binary(Value) ->
     Value;
@@ -125,10 +122,13 @@ type1(_Gen,{integer,Value}) when is_integer(Value) ->
 type1(_Gen,{string,Value}) when is_list(Value) ->
     Value;
 %% predef
+type1(_Gen,{predef,any}) ->
+    qc_gen:qc_term();
+type1(_Gen,{predef,none}) ->
+    %% not supported
+    exit(fatal);
 type1(_Gen,{predef,atom}) ->
     qc_gen:qc_atom();
-type1(_Gen,{predef,boolean}) ->
-    bool();
 type1(_Gen,{predef,integer}) ->
     oneof([int(),largeint()]);
 type1(_Gen,{predef,float}) ->
@@ -137,30 +137,17 @@ type1(_Gen,{predef,binary}) ->
     qc_gen:qc_binary();
 type1(_Gen,{predef,list}) ->
     qc_gen:qc_list();
-type1(_Gen,{predef,proplist}) ->
-    ?P(qc_gen:qc_proplist());
-type1(_Gen,{predef,string}) ->
-    ?S(qc_gen:qc_string());
 type1(_Gen,{predef,tuple}) ->
     qc_gen:qc_tuple();
-type1(_Gen,{predef,term}) ->
-    qc_gen:qc_term();
-type1(_Gen,{predef,none}) ->
-    %% not supported
-    exit(fatal);
 %% predef with attributes
+type1(_Gen,{predef,{any,Attrs}}) ->
+    qc_gen:qc_term(Attrs);
 type1(_Gen,{predef,{atom,Attrs}}) ->
     qc_gen:qc_atom(Attrs);
 type1(_Gen,{predef,{binary,Attrs}}) ->
     qc_gen:qc_binary(Attrs);
 type1(_Gen,{predef,{list,Attrs}}) ->
     qc_gen:qc_list(Attrs);
-type1(_Gen,{predef,{proplist,Attrs}}) ->
-    ?P(qc_gen:qc_proplist(Attrs));
-type1(_Gen,{predef,{string,Attrs}}) ->
-    ?S(qc_gen:qc_string(Attrs));
-type1(_Gen,{predef,{term,Attrs}}) ->
-    qc_gen:qc_term(Attrs);
 type1(_Gen,{predef,{tuple,Attrs}}) ->
     qc_gen:qc_tuple(Attrs);
 %% abnf

@@ -1,9 +1,9 @@
 // -*- Doc -*-
 // vim: set syntax=asciidoc:
 
-= UBF User's Guide _1st DRAFT_
-:Date: 2012/08/02
-:Revision: 0.3.7
+= UBF User's Guide
+:Date: 2012/09/02
+:Revision: 1.0.0
 :Copyright: 2012 by Joseph Wayne Norton <norton@alum.mit.edu>
 :Copyright: 2010-2011 Gemini Mobile Technologies, Inc.  All rights reserved.
 :Copyright: 2002 Joe Armstrong
@@ -299,14 +299,14 @@ The version of the contract is specified as a double-quoted string.
 
 ==== Types: +TYPES.
 
-The UBF(b) type system has user-defined types and predefined types.
-User-defined types and predefined types are either primitive types or
-complex types.
+The UBF(b) type system has user-defined types, builtin types, and
+predefined types.  All types are either primitive types or complex
+types.
 
 The primitive types are Integer, Range, Float, Binary, String, Atom,
 and Reference.  The complex types are Alternative, Tuple, Record,
-Extended Record, and List.  User-defined "complex types" are defined
-recursively.
+Extended Record, and List.  Builtin and User-defined "complex types"
+are defined recursively.
 
 ===== Definition: X() :: T
 
@@ -402,6 +402,50 @@ A type [X1, X2, ..., Xn] is of type [T] if all of Xi are of type T.
 Unbounded, bounded, left unbounded, and right unbounded lists are
 supported.
 
+===== Builtin: B()
+
+Builtin types are referenced by the notation:
+
+------
+B()
+------
+
+The name of the builtin type is 'B' and builtin types are of 2
+categories: +Erlang+ and +UBF+.  The names used for builtin types are
+reserved and cannot be used for user-defined types.
+
+Erlang builtin types are a subset of the types defined by EEP8
+<<EEP8>>.  EEP8 types are used for authoring Erlang +types+ and
++specs+ definitions.
+
+|============
+| nil()             | []
+| term()            | any()
+| boolean()         | 'false' | 'true'
+| byte()            | 0..255
+| char()            | 0..16#10ffff
+| non_neg_integer() | 0..
+| pos_integer()     | 1..
+| neg_integer()     | ..-1
+| number()          | integer() | float()
+| string()          | [char()]
+| nonempty_string() | [char()]+
+| module()          | atom()
+| mfa()             | {atom(), atom(), byte()}
+| node()            | atom()
+| timeout()         | 'infinity' | non_neg_integer()
+| no_return()       | none()
+|
+|============
+
+UBF builtin types are types particular to UBF that can be helpful for
+encoding and decoding proplists and strings.
+
+|============
+| ubfproplist()     | {'#P', [{term(), term()}]}
+| ubfstring()       | {'#S', [byte()]}
+|============
+
 ===== Predefined: P() _or_ P(A1, A2, ..., An)
 
 Predefined types are referenced by the notation:
@@ -416,57 +460,48 @@ or by the notation:
 P(A1, A2, ..., An)
 ------
 
-The name of the predefined type is 'P'.  Using the second notation,
-attributes can be specified to make the predefined type less general
-and thus more specific when matching objects.
+The name of the predefined type is 'P'.  The names used for predefined
+types are reserved and cannot be used for user-defined types.
+
+Using the second notation, attributes can be specified to make the
+predefined type less general and thus more specific when matching
+objects.
 
 |============
 |          | ascii | asciiprintable | nonempty | nonundefined
+| any      |   X   |       X        |    O     |      O
+| none     |   X   |       X        |    X     |      X
 | integer  |   X   |       X        |    X     |      X
 | float    |   X   |       X        |    X     |      X
 | binary   |   O   |       O        |    O     |      X
-| string   |   O   |       O        |    O     |      X
 | atom     |   O   |       O        |    O     |      O
-| boolean  |   X   |       X        |    X     |      X
 | tuple    |   X   |       X        |    O     |      X
 | list     |   X   |       X        |    O     |      X
-| proplist |   X   |       X        |    O     |      X
-| term     |   X   |       X        |    O     |      O
-| none     |   X   |       X        |    X     |      X
 |============
 
 The above table summarizes the set of supported predefined types and
 their respective optional attributes.
 
-The "integer", "float", "binary", "string", "atom", "boolean",
-"tuple", and "list" predefined types match directly to the
-corresponding primitive or complex type.
-
-The "term" predefined type matches any object.
-
-The "proplist" predefined type is a specialized version of the "list"
-predefined type that matches the following types:
-
-------
-[{term(), term()}]
-------
+The "any" predefined type matches any object.
 
 The "none" predefined type is a placeholder to describe the return
 value of a function call that does not return to the caller.
 
-The "ascii" attribute permits matches with binaries, strings, and
-atoms containing only ASCII values <<RFC20>>.  Similarly, the
+The "integer", "float", "binary", "atom", "boolean", "tuple", and
+"list" predefined types match directly to the corresponding primitive
+or complex type.
+
+The "ascii" attribute permits matches with binaries and atoms
+containing only ASCII values <<RFC20>>.  Similarly, the
 "asciiprintable" attribute permits matches with only printable ASCII
 values.
 
-The "nonempty" attribute permits matches with binaries, strings,
-atoms, tuples, lists, proplists, and terms that are of length greater
-than zero.  The following objects would not be matched with the
-"nonempty" attribute:
+The "nonempty" attribute permits matches with binaries, atoms, tuples,
+lists, and any that are of length greater than zero.  The following
+objects would not be matched with the "nonempty" attribute:
 
 ------
 <<"">>
-""
 ''
 {}
 []
@@ -995,8 +1030,7 @@ follows:
 {\'proto', {\'ubf' | \'ebf' | \'jsf' | \'tbf' |  \'ftbf' | atom()}}::
   Enable the UBF, EBF, JSF, TBF, FTBF, or an alternative protocol wire
   format. Default: \'ubf'.
-
-{\'proto', {\'ubf' | \'ebf' | \'jsf' | \'tbf' |  \'ftbf' | atom(), proplist()}}::
+{\'proto', {\'ubf' | \'ebf' | \'jsf' | \'tbf' |  \'ftbf' | atom(), [atom() | tuple()]}}::
   Enable the UBF, EBF, JSF, TBF, FTBF, or an alternative protocol wire
   format with options. Default: {\'ubf', []}. Supported options:
     \'safe';;
@@ -1015,7 +1049,7 @@ follows:
   Set the starting plugin, set after a client first connects to the
   server.  If not set, client may select the service using the
   startSession() API.  There is no default setting.
-{\'serverhello', string() | \'undefined'}::
+{\'serverhello', ubfstring() | \'undefined'}::
   Meta contract greeting string, sent when a client first connects to
   the server.  If \'undefined', server hello is not sent to the
   client.  Default: "meta_server".
@@ -1063,8 +1097,8 @@ are mandatory for all stateless plugins.
 
 ------
 %% common callback API
--spec info() -> string().
--spec description() -> string().
+-spec info() -> ubfstring().
+-spec description() -> ubfstring().
 -spec handlerStop(Handler::pid(), Reason::term(), StateData::term()) ->
                   NewStateData::term().
 
@@ -1128,10 +1162,10 @@ The above example also introduces three new concepts:
 
 - The "?S(X)" macro definition plus other helpers are located in the
   "ubf.hrl" Erlang header file.  For Erlang, the implementation of a
-  UBF string is a two tuple having \'#S' as the first element and a
-  list of integers as the second element.  A similar technique is also
-  used for the implementation of a UBF proplist (i.e. \'#P' and
-  "?P(X)).
+  UBF +ubfstring()+ is a two tuple having \'#S' as the first element
+  and a list of bytes as the second element.  A similar technique is
+  also used for the implementation of a UBF +ubfproplist()+
+  (i.e. \'#P' and "?P(X)).
 
 === Stateful
 
@@ -1146,8 +1180,8 @@ mandatory for all stateful plugins.
 
 ------
 %% common callback API
--spec info() -> string().
--spec description() -> string().
+-spec info() -> ubfstring().
+-spec description() -> ubfstring().
 -spec handlerStop(Handler::pid(), Reason::term(), ManagerData::term()) ->
                   NewManagerData::term().
 
@@ -1257,8 +1291,37 @@ known) is returned.  For TCP/IP transports, the default method is to
 connect to the specified host() and TCP ipport().  For the ETF
 transport, the alternative method is to connect to server() using the
 specified plugins().  The server() is either the process id or process
-registered name for an already-started UBF server.  See <<Servers>>
-for a description of options().
+registered name for an already-started UBF server.
+
+The list of supported options() are as follows:
+
+{\'clientport', ipport() | {ipport(), ipport()}}::
+  Specifies the TCP port to be used by the client.  If tuple format, a
+  port is automatically selected within the specifed range.  If
+  \'undefined', a random port is automatically selected.  Default:
+  \'undefined'.
+{\'proto', {\'ubf' | \'ebf' | \'jsf' | \'tbf' |  \'ftbf' | atom()}}::
+  Enable the UBF, EBF, JSF, TBF, FTBF, or an alternative protocol wire
+  format. Default: \'ubf'.
+{\'proto', {\'ubf' | \'ebf' | \'jsf' | \'tbf' |  \'ftbf' | atom(), [atom() | tuple()]}}::
+  Enable the UBF, EBF, JSF, TBF, FTBF, or an alternative protocol wire
+  format with options. Default: {\'ubf', []}. Supported options:
+    \'safe';;
+    Prevents decoding data that may be used to attack the Erlang
+    system.  In the event of receiving unsafe data, decoding fails
+    with a badarg error.
+{\'startplugin', module()}::
+  Set the starting plugin, set after a client first connects to the
+  server.  If not set, client's caller may select the service using
+  the startSession() API. Default: \'undefined'.
+{\'serverhello', true | 'undefined'}::
+  Meta contract greeting string, sent to a client when it first connects to
+  the server.  If \'undefined', client does not expect server hello to
+  be sent by the server. Default: \'true'.
+{\'simplerpc', boolean()}::
+  Set the simple RPC mode.  If \'true', client expects only the rpc
+  reply from the server.  If \'false', server returns the rpc reply and next
+  state to client.  Default: \'false'.
 
 The rpc/{2,3} functions make a synchronous call to the server.
 
@@ -1571,8 +1634,8 @@ created by making a symlink to the lang-en.conf file.
 
 ------
 diff -r -u 8.6.4-orig/bin/a2x.py 8.6.4/bin/a2x.py
---- 8.6.4-orig/bin/a2x.py	2011-04-24 00:50:26.000000000 +0900
-+++ 8.6.4/bin/a2x.py	2011-04-24 00:35:55.000000000 +0900
+--- 8.6.4-orig/bin/a2x.py   2011-04-24 00:50:26.000000000 +0900
++++ 8.6.4/bin/a2x.py    2011-04-24 00:35:55.000000000 +0900
 @@ -156,7 +156,10 @@
  def shell_copy(src, dst):
      verbose('copying "%s" to "%s"' % (src,dst))
@@ -1674,6 +1737,9 @@ _Under Construction - To Be Updated_
 
 - [[[ERLANG]]] "A general-purpose programming language and runtime
   environment", http://www.erlang.org.
+
+- [[[EEP8]]] "EEP 8: Types and function specifications",
+  http://www.erlang.org/eeps/eep-0008.html.
 
 - [[[GIT]]] "Fast Version Control System", http://git-scm.com.
 

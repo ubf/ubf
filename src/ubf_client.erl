@@ -234,7 +234,7 @@ ubf_client(Parent, Plugins, Server, Options, Timeout)
   when is_list(Plugins) andalso length(Plugins) > 0 andalso is_pid(Server) andalso is_list(Options) ->
     process_flag(trap_exit, true),
     Driver = ubf_server:start_term_listener(Server, Plugins, Options),
-    ServerHello = proplists:get_value(serverhello, Options, defined),
+    ServerHello = proplists:get_value(serverhello, Options, true),
     SimpleRPC = proplists:get_value(simplerpc, Options, false),
     if ServerHello =/= undefined ->
             %% wait for a startup message

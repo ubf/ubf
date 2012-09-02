@@ -37,7 +37,9 @@
 -include("ubf_impl.hrl").
 
 -export([parse_transform/2,
-         make/0, make_lex/0, make_yecc/0, preDefinedTypes/0, preDefinedTypesWithoutAttrs/0, preDefinedTypesWithAttrs/0,
+         make/0, make_lex/0, make_yecc/0,
+         preDefinedTypes/0, preDefinedTypesWithoutAttrs/0, preDefinedTypesWithAttrs/0,
+         builtInTypes/0, builtInTypesErlang/0, builtInTypesUBF/0,
          tags/1, tags/2,
          parse_transform_contract/2,
          parse_file/1
@@ -237,15 +239,19 @@ tags(P1, Imports) ->
             end
     end.
 
-preDefinedTypes() -> preDefinedTypesWithoutAttrs() ++ preDefinedTypesWithAttrs().
+preDefinedTypes() ->
+    preDefinedTypesWithoutAttrs() ++ preDefinedTypesWithAttrs().
 
 preDefinedTypesWithoutAttrs() ->
-    [atom, boolean, binary, float, integer, list, proplist, string, term, tuple, none].
+    [any, none, atom, binary, float, integer, list, tuple].
 
 preDefinedTypesWithAttrs() ->
     [
+     %% any
+     {any,[nonempty]}, {any,[nonundefined]}
+     , {any,[nonempty,nonundefined]}
      %% atom
-     {atom,[ascii]}, {atom,[asciiprintable]}, {atom,[nonempty]}, {atom,[nonundefined]}
+     , {atom,[ascii]}, {atom,[asciiprintable]}, {atom,[nonempty]}, {atom,[nonundefined]}
      , {atom,[ascii,nonempty]}, {atom,[ascii,nonundefined]}, {atom,[asciiprintable,nonempty]}, {atom,[asciiprintable,nonundefined]}
      , {atom,[ascii,nonempty,nonundefined]}, {atom,[asciiprintable,nonempty,nonundefined]}
      , {atom,[nonempty,nonundefined]}
@@ -254,17 +260,18 @@ preDefinedTypesWithAttrs() ->
      , {binary,[ascii,nonempty]}, {binary,[asciiprintable,nonempty]}
      %% list
      , {list,[nonempty]}
-     %% proplist
-     , {proplist,[nonempty]}
-     %% string
-     , {string,[ascii]}, {string,[asciiprintable]}, {string,[nonempty]}
-     , {string,[ascii,nonempty]}, {string,[asciiprintable,nonempty]}
-     %% term
-     , {term,[nonempty]}, {term,[nonundefined]}
-     , {term,[nonempty,nonundefined]}
      %% tuple
      , {tuple,[nonempty]}
     ].
+
+builtInTypes() ->
+    builtInTypesErlang() ++ builtInTypesUBF().
+
+builtInTypesErlang() ->
+    [nil, term, boolean, byte, char, non_neg_integer, pos_integer, neg_integer, number, string, nonempty_string, module, mfa, node, timeout, no_return].
+
+builtInTypesUBF() ->
+    [ubfproplist, ubfstring].
 
 pass2(P, Imports) ->
     Name = require(one, name, P),
@@ -272,6 +279,8 @@ pass2(P, Imports) ->
     Types = require(zero_or_one, types, P),
     Any = require(zero_or_one, anystate, P),
     Trans = require(many, transition, P),
+
+    AllImports = if Name =/= "ubf_types_builtin" -> [ubf_types_builtin|Imports]; true -> Imports end,
 
     ImportTypes = lists:flatten(
                     [
@@ -294,7 +303,7 @@ pass2(P, Imports) ->
                          [ begin {TDef, TTag} = Mod:contract_type(T), {T, TDef, TTag} end
                            || T <- TL ]
                      end
-                     || Import <- Imports ]
+                     || Import <- AllImports ]
                    ),
     ImportTypeNames = [ T || {T, _, _} <- ImportTypes ],
 

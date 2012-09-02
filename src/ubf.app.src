@@ -32,6 +32,7 @@
   {modules, [contract_parser
              , contract_lex
              , contract_yecc
+             , ubf_types_builtin
              , ubf_client
              , ubf_server
              , ubf_plugin_handler

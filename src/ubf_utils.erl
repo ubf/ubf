@@ -77,11 +77,14 @@ ubf_contract2(C) ->
           , "% false\n%\t\tfalse"
           , "% undefined\n%\t\tundefined"
           , "%"
+          , "% any()\n%\t\tany"
+          , "% any()?\n%\t\tany | undefined"
+          , "%"
+          , "% none()\n%\t\t /* no result is returned */"
+          , "% none()?\n%\t\t /* no result is returned */ | undefined"
+          , "%"
           , "% atom()\n%\t\tatom"
           , "% atom()?\n%\t\tatom | undefined"
-          , "%"
-          , "% boolean()\n%\t\tboolean"
-          , "% boolean()?\n%\t\tboolean | undefined"
           , "%"
           , "% binary()\n%\t\tbinary"
           , "% binary()?\n%\t\tbinary | undefined"
@@ -95,24 +98,15 @@ ubf_contract2(C) ->
           , "% list()\n%\t\tlist"
           , "% list()?\n%\t\tlist | undefined"
           , "%"
-          , "% proplist()\n%\t\t{'#P',proplist}"
-          , "% proplist()?\n%\t\t{'#P',proplist} | undefined"
-          , "%"
-          , "% string()\n%\t\t{'#S',string}"
-          , "% string()?\n%\t\t{'#S',string} | undefined"
-          , "%"
-          , "% term()\n%\t\tterm"
-          , "% term()?\n%\t\tterm | undefined"
-          , "%"
           , "% tuple()\n%\t\ttuple"
           , "% tuple()?\n%\t\ttuple | undefined"
-          , "%"
-          , "% none()\n%\t\t /* no result is returned */"
-          , "% none()?\n%\t\t /* no result is returned */ | undefined"
           , "%"
           , "%% --------------------"
           , "%% type attributes"
           , "%%"
+          , "%"
+          , "% any(AnyAttrs)\n%\t\tany"
+          , "% any(AnyAttrs)?\n%\t\tany | undefined"
           , "%"
           , "% atom(AtomAttrs)\n%\t\tatom"
           , "% atom(AtomAttrs)?\n%\t\tatom | undefined"
@@ -123,17 +117,13 @@ ubf_contract2(C) ->
           , "% list(ListAttrs)\n%\t\tlist"
           , "% list(ListAttrs)?\n%\t\tlist | undefined"
           , "%"
-          , "% proplist(PropListAttrs)\n%\t\t{'#P',proplist}"
-          , "% proplist(PropListAttrs)?\n%\t\t{'#P',proplist} | undefined"
-          , "%"
-          , "% string(StringAttrs)\n%\t\t{'#S',string}"
-          , "% string(StringAttrs)?\n%\t\t{'#S',string} | undefined"
-          , "%"
           , "% tuple(TupleAttrs)\n%\t\ttuple"
           , "% tuple(TupleAttrs)?\n%\t\ttuple | undefined"
           , "%"
-          , "% term(TermAttrs)\n%\t\tterm"
-          , "% term(TermAttrs)?\n%\t\tterm | undefined"
+          , "%"
+          , "% AnyAttrs"
+          , "% \t nonempty"
+          , "% \t nonundefined"
           , "%"
           , "% AtomAttrs"
           , "% \t ascii | asciiprintable"
@@ -146,17 +136,6 @@ ubf_contract2(C) ->
           , "%"
           , "% ListAttrs"
           , "% \t nonempty"
-          , "%"
-          , "% PropListAttrs"
-          , "% \t nonempty"
-          , "%"
-          , "% StringAttrs"
-          , "% \t ascii | asciiprintable"
-          , "% \t nonempty"
-          , "%"
-          , "% TermAttrs"
-          , "% \t nonempty"
-          , "% \t nonundefined"
           , "%"
           , "% TupleAttrs"
           , "% \t nonempty"
@@ -366,9 +345,6 @@ typeref(_Style,{range,Lo,Hi},_C) ->
 %% atom
 typeref(_Style,{atom,Value},_C) ->
     io_lib:format("~p", [Value]);
-%% boolean
-typeref(_Style,{boolean,Value},_C) ->
-    io_lib:format("~p", [Value]);
 %% binary
 typeref(_Style,{binary,Value},_C) ->
     io_lib:format("~p", [Value]);
@@ -382,10 +358,12 @@ typeref(_Style,{integer,Value},_C) ->
 typeref(_Style,{string,Value},_C) ->
     io_lib:format("~p", [Value]);
 %% predef
+typeref(_Style,{predef,any},_C) ->
+    "any()";
+typeref(_Style,{predef,none},_C) ->
+    "none()";
 typeref(_Style,{predef,atom},_C) ->
     "atom()";
-typeref(_Style,{predef,boolean},_C) ->
-    "boolean()";
 typeref(_Style,{predef,binary},_C) ->
     "binary()";
 typeref(_Style,{predef,float},_C) ->
@@ -394,31 +372,17 @@ typeref(_Style,{predef,integer},_C) ->
     "integer()";
 typeref(_Style,{predef,list},_C) ->
     "list()";
-typeref(_Style,{predef,proplist},_C) ->
-    "proplist()";
-typeref(_Style,{predef,string},_C) ->
-    "string()";
-typeref(_Style,{predef,term},_C) ->
-    "term()";
 typeref(_Style,{predef,tuple},_C) ->
     "tuple()";
-typeref(_Style,{predef,none},_C) ->
-    "none()";
 %% predef with attributes
+typeref(_Style,{predef,{any,Attrs}},_C) ->
+    io_lib:format("any(~s)", [join([ atom_to_list(Attr) || Attr <- Attrs ], ",")]);
 typeref(_Style,{predef,{atom,Attrs}},_C) ->
     io_lib:format("atom(~s)", [join([ atom_to_list(Attr) || Attr <- Attrs ], ",")]);
-typeref(_Style,{predef,{boolean,Attrs}},_C) ->
-    io_lib:format("boolean(~s)", [join([ atom_to_list(Attr) || Attr <- Attrs ], ",")]);
 typeref(_Style,{predef,{binary,Attrs}},_C) ->
     io_lib:format("binary(~s)", [join([ atom_to_list(Attr) || Attr <- Attrs ], ",")]);
 typeref(_Style,{predef,{list,Attrs}},_C) ->
     io_lib:format("list(~s)", [join([ atom_to_list(Attr) || Attr <- Attrs ], ",")]);
-typeref(_Style,{predef,{proplist,Attrs}},_C) ->
-    io_lib:format("proplist(~s)", [join([ atom_to_list(Attr) || Attr <- Attrs ], ",")]);
-typeref(_Style,{predef,{string,Attrs}},_C) ->
-    io_lib:format("string(~s)", [join([ atom_to_list(Attr) || Attr <- Attrs ], ",")]);
-typeref(_Style,{predef,{term,Attrs}},_C) ->
-    io_lib:format("term(~s)", [join([ atom_to_list(Attr) || Attr <- Attrs ], ",")]);
 typeref(_Style,{predef,{tuple,Attrs}},_C) ->
     io_lib:format("tuple(~s)", [join([ atom_to_list(Attr) || Attr <- Attrs ], ",")]);
 %% otherwise

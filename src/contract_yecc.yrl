@@ -188,11 +188,11 @@ rec_ext(Name, Args) ->
                if Types == [] ->
                        [{atom,Name},
                         {atom,undefined},
-                        {predef,term}];
+                        {predef,any}];
                   true ->
                        [{atom,Name},
                         eor({atom,undefined}, {tuple, [ {atom,X} || X <- Fields ]}),
-                        {predef,term}|Types]
+                        {predef,any}|Types]
                end),
     {record_ext, Name, Fields, Defaults, Types1}.
 

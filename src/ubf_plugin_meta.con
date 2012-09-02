@@ -25,7 +25,7 @@
 
 +NAME("meta_server").
 
-+VSN("ubf1.0").
++VSN("ubf2.0").
 
 +TYPES
 
@@ -33,11 +33,11 @@ info()           :: info;
 description()    :: description;
 services()       :: services;
 contract()       :: contract;
-serviceList()    :: [string()] "Names of the offered services";
+serviceList()    :: [ubfstring()] "Names of the offered services";
 
 help()           :: help;
-restartService() :: {restartService, string(), term()};
-startSession()   :: {startSession, string(), term()};
+restartService() :: {restartService, ubfstring(), term()};
+startSession()   :: {startSession, ubfstring(), term()};
 ok()             :: {ok, term()};
 error()          :: {error, term()};
 ok_or_error()    :: ok() | error().

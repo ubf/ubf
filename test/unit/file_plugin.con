@@ -25,7 +25,7 @@
 
 +NAME("file_server").
 
-+VSN("ubf1.0").
++VSN("ubf2.0").
 
 +TYPES
 
@@ -33,7 +33,7 @@ info()         :: info;
 description()  :: description;
 contract()     :: contract;
 
-file()         :: string();
+file()         :: ubfstring();
 ls()           :: ls;
 files()        :: {files, [file()]};
 getFile()      :: {get, file()};

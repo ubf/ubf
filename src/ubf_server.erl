@@ -104,7 +104,7 @@ start(Name, Plugins, Port) ->
 %% - +{proto, {ubf | ebf | atom()}}+ Enable the UBF, EBF, or
 %%   an alternative protocol wire format.
 %%   Default: ubf.
-%% - +{proto, {ubf | ebf | atom(), proplist()}}+ Enable the UBF,
+%% - +{proto, {ubf | ebf | atom(), [atom() | tuple()]}}+ Enable the UBF,
 %%   EBF, or an alternative protocol wire format with options.
 %%   Default: +{ubf, []}+.
 %%
@@ -125,7 +125,7 @@ start(Name, Plugins, Port) ->
 %%   client first connects to the server.  If not set, client may
 %%   select the service using the startSession() API.  There is
 %%   no default setting.
-%% - +{serverhello, string() | undefined}+ Meta contract greeting
+%% - +{serverhello, ubfstring() | undefined}+ Meta contract greeting
 %%   string, sent when a client first connects to the server.  If
 %%   undefined, server hello is not sent to the client.
 %%   Default: "meta_server".
