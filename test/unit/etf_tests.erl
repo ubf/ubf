@@ -41,13 +41,13 @@ defaultServer() ->  [Server] = [ Child || {Id,Child,_Type,_Module} <- supervisor
 test_etf() ->
     ss(),
     run(),
-    application:stop(test),
+    ok = application:stop(test),
     true.
 
 
 ss() ->
-    application:start(sasl),
-    application:stop(test),
+    _ = application:start(sasl),
+    _ = application:stop(test),
     ok = application:start(test).
 
 run() ->

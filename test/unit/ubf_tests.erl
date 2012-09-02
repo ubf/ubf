@@ -49,13 +49,13 @@ server_port(Name) ->
 test_ubf() ->
     ss(),
     run(),
-    application:stop(test),
+    ok = application:stop(test),
     true.
 
 
 ss() ->
-    application:start(sasl),
-    application:stop(test),
+    _ = application:start(sasl),
+    _ = application:stop(test),
     ok = application:start(test).
 
 run() ->

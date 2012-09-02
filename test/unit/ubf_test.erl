@@ -48,7 +48,7 @@ test1() ->
 test2() ->
     L = encode(abc),
     L = "'abc'$",
-    L.
+    true.
 
 test9() ->
     test_ubf({abc,"kdjhkshfkhfkhsfkhaf", [a,c,d]}).
