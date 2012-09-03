@@ -30,7 +30,7 @@
 
 -callback proto_vsn() -> atom().
 -callback proto_driver() -> module().
--callback proto_packet_type() -> 0 | 1 | 2 | 4.
+-callback proto_packet_type() -> 0 | 1 | 2 | 4 | sunrm.
 
 -else. % -ifndef(old_callbacks).
 

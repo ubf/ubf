@@ -274,7 +274,7 @@ typeref(Style,{alt,Type1,Type2},C) ->
 typeref(Style,{prim,Min,Max,Tag},C) ->
     case Tag of
         {predef,_} ->
-            PrimTag = typeref(Style,Tag, C),
+            PrimTag = typeref(Style,Tag,C),
             case {Min,Max} of
                 {1,1} ->
                     io_lib:format("~s", [PrimTag]);
@@ -297,9 +297,9 @@ typeref(Style,{prim,Min,Max,Tag},C) ->
                     io_lib:format("~p()", [Tag]);
                 {0,1} ->
                     if Style =:= ubf ->
-                            io_lib:format("~s?", [Tag]);
+                            io_lib:format("~s()?", [Tag]);
                        true ->
-                            io_lib:format("~s | undefined", [Tag])
+                            io_lib:format("~s() | undefined", [Tag])
                     end;
                 {0,0} ->
                     if Style =:= ubf ->
