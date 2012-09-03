@@ -207,7 +207,8 @@ ubf_contract2(C) ->
                , ".\n"
                , "-endif.\n\n"
               ]
-              || Name <- C#contract.leaftypenames ]
+              || Name <- C#contract.leaftypenames,
+                 not lists:member(Name, contract_parser:builtInTypesErlang()) ]
           , ""
           , ""
          ],

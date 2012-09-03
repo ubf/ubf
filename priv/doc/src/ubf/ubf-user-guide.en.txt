@@ -387,6 +387,9 @@ A record type is syntactic sugar for a tuple of type "{name, T1, T2,
 
 Optionally, the default value of a record field can be specified.
 
+CAUTION: Caution is required when using another record as the default
+value of a record field.  This feature has not been fully tested.
+
 ===== Extended Record: name##{x::T1, y::T2, ..., z::Tn} _or_ name##{x=D1::T1, y=D2::T2, ..., z=Dn::Tn}
 
 An extended record type is syntactic sugar for a tuple of type "{name,
@@ -394,6 +397,9 @@ T1, T2, ..., Tn, '$fields'::[x,y,...,z], '$extra'::Extra}" where name,
 x, y, ..., and z are atoms and Extra is any valid term.
 
 Optionally, the default value of a record field can be specified.
+
+CAUTION: Caution is required when using another record as the default
+value of a record field.  This feature has not been fully tested.
 
 ===== List: [T] _or_ [T]{[0-9]+} _or_ [T]{[0-9]+,} _or_ [T]{,[0-9]+} _or_ [T]{[0-9]+,[0-9]+}
 

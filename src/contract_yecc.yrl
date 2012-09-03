@@ -24,7 +24,7 @@
 Nonterminals
 anyrules anyrule annotation
 transitions transition outputs types responseAndState
-form type typeDef typeRef primType typeAttr typeSeq typeRec default defaultSeq.
+form type typeDef typeRef primType typeAttr typeSeq typeRec default.
 
 Terminals
 namekwd vsnkwd typekwd statekwd anystatekwd eventkwd atom binary float integer string tag
@@ -98,18 +98,7 @@ typeRec -> atom '=' default '::' type ',' typeRec : [{unwrap('$1'),['$3'],'$5'}|
 
 typeRef -> atom '(' ')'                     : {prim, 1, 1, unwrap_prim('$1')}.
 
-default -> atom                             : unwrap('$1').
-default -> binary                           : unwrap('$1').
-default -> float                            : unwrap('$1').
-default -> integer                          : unwrap('$1').
-default -> string                           : unwrap('$1').
-default -> '{' defaultSeq '}'               : list_to_tuple('$2').
-default -> '[' defaultSeq ']'               : '$2'.
-default -> '{}'                             : {}.
-default -> '[]'                             : [].
-
-defaultSeq -> default                       : ['$1'].
-defaultSeq -> default ',' defaultSeq        : ['$1'|'$3'].
+default -> type                             : '$1'.
 
 transitions -> transition ';' transitions   : ['$1'|'$3'].
 transitions -> transition                   : ['$1'].
