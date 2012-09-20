@@ -185,6 +185,8 @@ do_rpc(Client, Server, State, Mod, Q, SimpleRPC, VerboseRPC, TLogMod) ->
                                 Client ! {self(), {NewReply, NewState}}
                         end,
                     do_txlog(TLog),
+                    %% notify changed contract
+                    Client ! {changeContract, self(), NewMod},
                     loop(Client, Server, NewState, NewMod, SimpleRPC, VerboseRPC, TLogMod);
                 stop ->
                     exit(Server, stop)
