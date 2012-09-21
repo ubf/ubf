@@ -101,9 +101,6 @@ start(Name, Plugins, Port) ->
 %% - +{maxconn, integer()}+ Maximum number of simultaneous TCP
 %%   connections allowed.
 %%   Default: 10,000.
-%% - +{maxrpc, integer()}+ Maximum number of simultaneous RPC requests
-%%   allowed per TCP connection - only applicable to stateless rpc.
-%%   Default: 10.
 %% - +{proto, {ubf | ebf | atom()}}+ Enable the UBF, EBF, or
 %%   an alternative protocol wire format.
 %%   Default: ubf.
@@ -191,7 +188,7 @@ start_server(Plugins, Port, Options) ->
 
 start_ubf_listener(Server0, Plugins, Port, Options) ->
     {MetaPlugin, StartPlugin, Server
-     , IdleTimer, MaxConn, MaxRPC, Proto, DriverOptions, RegisteredName
+     , IdleTimer, MaxConn, Proto, DriverOptions, RegisteredName
      , StatelessRPC, ServerHello, SimpleRPC, VerboseRPC
      , TLogMod, ProcessOptions
     } = listener_options(Server0, Plugins, Options),
@@ -233,7 +230,7 @@ start_ubf_listener(Server0, Plugins, Port, Options) ->
                         %% swap the driver
                         contract_driver:relay(DriverMod, self(), ContractManager),
 
-                        case (catch contract_driver:loop(DriverMod, StartPlugin, DriverOptions, self(), Socket, MaxRPC, IdleTimer)) of
+                        case (catch contract_driver:loop(DriverMod, StartPlugin, DriverOptions, self(), Socket, IdleTimer)) of
                             {'EXIT', normal} ->
                                 exit(normal);
                             {'EXIT', Reason} ->
@@ -257,7 +254,7 @@ start_ubf_listener(Server0, Plugins, Port, Options) ->
 -spec start_term_listener(pid(), plugins(), options()) -> pid().
 start_term_listener(Server0, Plugins, Options) ->
     {MetaPlugin, StartPlugin, Server
-     , _IdleTimer, _MaxConn, _MaxRPC, _Proto, _DriverOptions_, _RegisteredName
+     , _IdleTimer, _MaxConn, _Proto, _DriverOptions_, _RegisteredName
      , StatelessRPC, ServerHello, SimpleRPC, VerboseRPC
      , TLogMod, ProcessOptions
     } = listener_options(Server0, Plugins, Options),
@@ -321,11 +318,6 @@ start_proc(Parent, Name, F) ->
 listener_options(Server0, Plugins, Options) ->
     SortedPlugins = lists:usort(Plugins),
     StatelessRPC = proplists:get_value(statelessrpc, Options, false),
-    MaxRPC = if StatelessRPC ->
-                     proplists:get_value(maxrpc, Options, 10);
-                true ->
-                     1
-             end,
 
     {MetaPlugin,Server} =
         case StatelessRPC of
@@ -358,7 +350,6 @@ listener_options(Server0, Plugins, Options) ->
      , Server
      , IdleTimer
      , proplists:get_value(maxconn, Options, 10000)
-     , MaxRPC
      , Proto
      , DriverOptions
      , proplists:get_value(registeredname, Options, undefined)

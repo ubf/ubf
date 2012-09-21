@@ -106,7 +106,7 @@ decode1([$&|T], [[H1,H2|T1] | Stack], State) ->
 decode1([$#|T], Stack, State) ->
     decode1(T, push([], Stack), State);
 decode1([$$|T], [[X]], _State) ->
-    {ok, X, T, undefined};
+    {done, X, T, undefined};
 decode1([$>], Stack, State) ->
     {more, fun(I) -> decode1([$>|I], Stack, State) end};
 decode1([$>,Key|T], [[Val|R]|Stack], #state{dict=Dict}=State) ->

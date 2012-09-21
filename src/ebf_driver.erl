@@ -45,10 +45,10 @@ init(Contract) ->
     init(Contract, []).
 
 init(_Contract, Options) ->
-    {Options, {ok, undefined, undefined, undefined}}.
+    {Options, {init, undefined, undefined}}.
 
 encode(_Contract, _Options, Term) ->
     erlang:term_to_binary(Term).
 
-decode(_Contract, Options, {ok, _, undefined, undefined}, Binary) ->
-    {ok, erlang:binary_to_term(Binary, Options), undefined, undefined}.
+decode(_Contract, Options, {init, undefined, undefined}, Binary) ->
+    {done, erlang:binary_to_term(Binary, Options), undefined, undefined}.

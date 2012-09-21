@@ -44,7 +44,7 @@ init(_Contract, Options) ->
 encode(Contract, _Safe, Term) ->
     [ubf:encode(Term, Contract), "\n"].
 
-decode(Contract, Safe, {ok, _, Rest, undefined}, Binary) ->
+decode(Contract, Safe, {init, Rest, undefined}, Binary) ->
     String = binary_to_list(Binary),
     Cont = ubf:decode_init(Safe, Rest),
     ubf:decode(String, Contract, Cont);
