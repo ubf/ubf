@@ -64,7 +64,7 @@ prop_ubf_gen_any() ->
     ?FORALL(X, qc_gen:qc_any(),
             begin
                 UBF = ubf:encode(X),
-                {ok, Y, ""} = ubf:decode(UBF),
+                {done, Y, "", undefined} = ubf:decode(UBF),
                 Res = X =:= Y,
                 ?WHENFAIL(io:format("~n~p:~p ~p -> ~p -> ~p~n",[?FILE, ?LINE, X, UBF, Y]), Res)
             end).

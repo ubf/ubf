@@ -33,8 +33,8 @@
 -type contract() :: module().
 -type options() :: list(term()).
 -type parsed_options() :: term().
--type cont_init() :: {init,Rest::term(),Extras::term()} | {more,More::fun()}.
--type cont_done() :: {done,Term::term(),Rest::term(),Extras::term()} | {more,More::fun()}.
+-type cont_init() :: {init,Rest::term(),Extras::term()} | {more,More::term()}.
+-type cont_done() :: {done,Term::term(),Rest::term(),Extras::term()} | {more,More::term()}.
 -type io() :: any().
 
 -callback start(contract()) -> pid().
