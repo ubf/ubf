@@ -436,7 +436,6 @@ lpc(Mod, Q, State, TLogMod) ->
                 Reply ->
                     %% check contract
                     {_, NewReply} = do_lpcOut(Ref, Q, State, Mod, Reply, State, State, Mod, TLogMod),
-                    erlang:garbage_collect(),
                     {reply,NewReply,State}
             end
     end.
