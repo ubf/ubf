@@ -350,7 +350,7 @@ Caution
 </td>
 <td class="content">If you manually run dialyzer with the "-r" option, execute
 "make clean compile" first to avoid finding duplicate beam files
-underneath rebar's .test directory.  Check Makefile for further
+underneath rebar's .eunit directory.  Check Makefile for further
 information.</td>
 </tr></table>
 

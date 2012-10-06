@@ -1,10 +1,6 @@
-*.app
-*.beam
-*.boot
+.eunit/
+deps/
 ebin/
 erl_crash.dump
-*.log
-*.script
 src/contract_lex.erl
 src/contract_yecc.erl
-.test/
