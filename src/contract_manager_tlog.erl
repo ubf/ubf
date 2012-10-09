@@ -41,7 +41,7 @@
 -export([eventOut/5, eventIn/5]).
 
 rpcIn(_TLogMod_x, _Q, _State, _Mod) ->
-    erlang:now().
+    os:timestamp().
 
 rpcOut(TLogMod_x, StartTime, Q, State, Mod, Reply, _NewState, _NewMod, Status) ->
     rpcOut2(tlm(TLogMod_x), StartTime, Q, State, Mod, Reply, _NewState, _NewMod, Status).
@@ -103,7 +103,7 @@ rpcFinish(TLog) ->
     TLog.
 
 lpcIn(_TLogMod_x, _Q, _State, _Mod) ->
-    erlang:now().
+    os:timestamp().
 
 lpcOut(TLogMod_x, StartTime, Q, State, Mod, Reply, _NewState, _NewMod, Status) ->
     lpcOut2(tlm(TLogMod_x), StartTime, Q, State, Mod, Reply, _NewState, _NewMod, Status).
