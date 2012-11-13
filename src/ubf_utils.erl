@@ -72,95 +72,95 @@ ubf_contract2(C) ->
           , "%%   - A()? means \"optional A()\""
           , "%%   - A(Attrs) means \"A() subject to the comma-delimited type attributes"
           , "%%"
-          , "%"
-          , "% true\n%\t\ttrue"
-          , "% false\n%\t\tfalse"
-          , "% undefined\n%\t\tundefined"
-          , "%"
-          , "% any()\n%\t\tany"
-          , "% any()?\n%\t\tany | undefined"
-          , "%"
-          , "% none()\n%\t\t /* no result is returned */"
-          , "% none()?\n%\t\t /* no result is returned */ | undefined"
-          , "%"
-          , "% atom()\n%\t\tatom"
-          , "% atom()?\n%\t\tatom | undefined"
-          , "%"
-          , "% binary()\n%\t\tbinary"
-          , "% binary()?\n%\t\tbinary | undefined"
-          , "%"
-          , "% float()\n%\t\tfloat"
-          , "% float()?\n%\t\tfloat | undefined"
-          , "%"
-          , "% integer()\n%\t\tinteger"
-          , "% integer()?\n%\t\tinteger | undefined"
-          , "%"
-          , "% list()\n%\t\tlist"
-          , "% list()?\n%\t\tlist | undefined"
-          , "%"
-          , "% tuple()\n%\t\ttuple"
-          , "% tuple()?\n%\t\ttuple | undefined"
-          , "%"
+          , "%%"
+          , "%% true\n%%\t\ttrue"
+          , "%% false\n%%\t\tfalse"
+          , "%% undefined\n%%\t\tundefined"
+          , "%%"
+          , "%% any()\n%%\t\tany"
+          , "%% any()?\n%%\t\tany | undefined"
+          , "%%"
+          , "%% none()\n%%\t\t /* no result is returned */"
+          , "%% none()?\n%%\t\t /* no result is returned */ | undefined"
+          , "%%"
+          , "%% atom()\n%%\t\tatom"
+          , "%% atom()?\n%%\t\tatom | undefined"
+          , "%%"
+          , "%% binary()\n%%\t\tbinary"
+          , "%% binary()?\n%%\t\tbinary | undefined"
+          , "%%"
+          , "%% float()\n%%\t\tfloat"
+          , "%% float()?\n%%\t\tfloat | undefined"
+          , "%%"
+          , "%% integer()\n%%\t\tinteger"
+          , "%% integer()?\n%%\t\tinteger | undefined"
+          , "%%"
+          , "%% list()\n%%\t\tlist"
+          , "%% list()?\n%%\t\tlist | undefined"
+          , "%%"
+          , "%% tuple()\n%%\t\ttuple"
+          , "%% tuple()?\n%%\t\ttuple | undefined"
+          , "%%"
           , "%% --------------------"
           , "%% type attributes"
           , "%%"
-          , "%"
-          , "% any(AnyAttrs)\n%\t\tany"
-          , "% any(AnyAttrs)?\n%\t\tany | undefined"
-          , "%"
-          , "% atom(AtomAttrs)\n%\t\tatom"
-          , "% atom(AtomAttrs)?\n%\t\tatom | undefined"
-          , "%"
-          , "% binary(BinaryAttrs)\n%\t\tbinary"
-          , "% binary(BinaryAttrs)?\n%\t\tbinary | undefined"
-          , "%"
-          , "% list(ListAttrs)\n%\t\tlist"
-          , "% list(ListAttrs)?\n%\t\tlist | undefined"
-          , "%"
-          , "% tuple(TupleAttrs)\n%\t\ttuple"
-          , "% tuple(TupleAttrs)?\n%\t\ttuple | undefined"
-          , "%"
-          , "%"
-          , "% AnyAttrs"
-          , "% \t nonempty"
-          , "% \t nonundefined"
-          , "%"
-          , "% AtomAttrs"
-          , "% \t ascii | asciiprintable"
-          , "% \t nonempty"
-          , "% \t nonundefined"
-          , "%"
-          , "% BinaryAttrs"
-          , "% \t ascii | asciiprintable"
-          , "% \t nonempty"
-          , "%"
-          , "% ListAttrs"
-          , "% \t nonempty"
-          , "%"
-          , "% TupleAttrs"
-          , "% \t nonempty"
-          , "%"
+          , "%%"
+          , "%% any(AnyAttrs)\n%%\t\tany"
+          , "%% any(AnyAttrs)?\n%%\t\tany | undefined"
+          , "%%"
+          , "%% atom(AtomAttrs)\n%%\t\tatom"
+          , "%% atom(AtomAttrs)?\n%%\t\tatom | undefined"
+          , "%%"
+          , "%% binary(BinaryAttrs)\n%%\t\tbinary"
+          , "%% binary(BinaryAttrs)?\n%%\t\tbinary | undefined"
+          , "%%"
+          , "%% list(ListAttrs)\n%%\t\tlist"
+          , "%% list(ListAttrs)?\n%%\t\tlist | undefined"
+          , "%%"
+          , "%% tuple(TupleAttrs)\n%%\t\ttuple"
+          , "%% tuple(TupleAttrs)?\n%%\t\ttuple | undefined"
+          , "%%"
+          , "%%"
+          , "%% AnyAttrs"
+          , "%% \t nonempty"
+          , "%% \t nonundefined"
+          , "%%"
+          , "%% AtomAttrs"
+          , "%% \t ascii | asciiprintable"
+          , "%% \t nonempty"
+          , "%% \t nonundefined"
+          , "%%"
+          , "%% BinaryAttrs"
+          , "%% \t ascii | asciiprintable"
+          , "%% \t nonempty"
+          , "%%"
+          , "%% ListAttrs"
+          , "%% \t nonempty"
+          , "%%"
+          , "%% TupleAttrs"
+          , "%% \t nonempty"
+          , "%%"
           , "%% --------------------"
           , "%% user-defined attributes"
           , "%%"
-          , "%"
-          , "% {type1() ...}\n%\t\ttuple"
-          , "% {type1() ...}?\n%\t\ttuple | undefined"
-          , "%"
-          , "% record()\n%\t\trecord"
-          , "% record()?\n%\t\trecord | undefined"
-          , "%"
-          , "% [type()]\n%\t\tlist of type()"
-          , "% [type()]?\n%\t\tlist of length 0 or length 1 of type()"
-          , "% [type()]+\n%\t\tlist of length greater than 0 of type()"
-          , "% [type()]{M}\n%\t\tlist of length M of type()"
-          , "% [type()]{M,}\n%\t\tlist of minimum length M of type()"
-          , "% [type()]{,M}\n%\t\tlist of maximum length M of type()"
-          , "% [type()]{M,N}\n%\t\tlist of minimum length M and maximum length N of type()"
-          , "%"
-          , "% integer()..integer()\n%\t\tinteger"
-          , "% ..integer()\n%\t\tinteger"
-          , "% integer()..\n%\t\tinteger"
+          , "%%"
+          , "%% {type1() ...}\n%%\t\ttuple"
+          , "%% {type1() ...}?\n%%\t\ttuple | undefined"
+          , "%%"
+          , "%% record()\n%%\t\trecord"
+          , "%% record()?\n%%\t\trecord | undefined"
+          , "%%"
+          , "%% [type()]\n%%\t\tlist of type()"
+          , "%% [type()]?\n%%\t\tlist of length 0 or length 1 of type()"
+          , "%% [type()]+\n%%\t\tlist of length greater than 0 of type()"
+          , "%% [type()]{M}\n%%\t\tlist of length M of type()"
+          , "%% [type()]{M,}\n%%\t\tlist of minimum length M of type()"
+          , "%% [type()]{,M}\n%%\t\tlist of maximum length M of type()"
+          , "%% [type()]{M,N}\n%%\t\tlist of minimum length M and maximum length N of type()"
+          , "%%"
+          , "%% integer()..integer()\n%%\t\tinteger"
+          , "%% ..integer()\n%%\t\tinteger"
+          , "%% integer()..\n%%\t\tinteger"
           , ""
           , ""
          ],
@@ -171,21 +171,21 @@ ubf_contract2(C) ->
           , ""
           , ""
           , [
-             ["% #'", atom_to_list(Name), "'{}", "\n%\t"
+             ["%% #'", atom_to_list(Name), "'{}", "\n%%\t"
               , join([ case Default of
                            [] ->
-                               io_lib:format("'~s'::~s", [Field, typeref(ubf,Type,C)]);
+                               io_lib:format("~p::~s", [Field, typeref(ubf,Type,C)]);
                            [D] ->
-                               io_lib:format("'~s'=~p::~s", [Field, D, typeref(ubf,Type,C)])
+                               io_lib:format("~p=~p::~s", [Field, D, typeref(ubf,Type,C)])
                        end || {Field,Default,Type} <- FDTs ], ", ")
               , "\n\n-ifndef('$ubf_record_", atom_to_list(Name), "').\n"
               , "-define('$ubf_record_", atom_to_list(Name), "', true).\n"
               , "-record('", atom_to_list(Name), "', {\n\t"
               , join([ case Default of
                            [] ->
-                               io_lib:format("'~s'::~s", [Field, typeref(erlang,Type,C)]);
+                               io_lib:format("~p::~s", [Field, typeref(erlang,Type,C)]);
                            [D] ->
-                               io_lib:format("'~s'=~p::~s", [Field, D, typeref(erlang,Type,C)])
+                               io_lib:format("~p=~p::~s", [Field, D, typeref(erlang,Type,C)])
                        end || {Field,Default,Type} <- FDTs ], ", ")
               , "}).\n"
               , "-endif.\n\n"
@@ -200,15 +200,15 @@ ubf_contract2(C) ->
           , "%%"
           , ""
           , ""
-          , [ ["% ", atom_to_list(Name), "()", "\n%\t", type(ubf,Name,C)
+          , [ ["%% ", atom_to_list(Name), "()", "\n%%\t", type(ubf,Name,C)
                , "\n\n-ifndef('$ubf_type_", atom_to_list(Name), "').\n"
                , "-define('$ubf_type_", atom_to_list(Name), "', true).\n"
-               , "-type ", atom_to_list(Name), "()", " :: ", "\n\t", type(erlang,Name,C)
+               , "-type '", atom_to_list(Name), "'()", " :: ", "\n\t", type(erlang,Name,C)
                , ".\n"
                , "-endif.\n\n"
               ]
               || Name <- C#contract.leaftypenames,
-                 not lists:member(Name, contract_parser:builtInTypesErlang()) ]
+                 not lists:member(Name, contract_parser:builtin_types(erlang)) ]
           , ""
           , ""
          ],
@@ -234,8 +234,8 @@ ubf_contract2(C) ->
                      , "%% ----------"
                      , io_lib:format("%% ~s", [Input])
                      , "%%"
-                     , io_lib:format("%~s =>", [Params])
-                     , io_lib:format("%   ~s;", [Result])
+                     , io_lib:format("%%~s =>", [Params])
+                     , io_lib:format("%%   ~s;", [Result])
                     ], "\n")
            end
            || {{prim,1,1,Input}, {prim,1,1,Output}} <- C#contract.anystate ],
@@ -286,7 +286,7 @@ typeref(Style,{prim,Min,Max,Tag},C) ->
                     end;
                 {0,0} ->
                     if Style =:= ubf ->
-                            io_lib:format("~s{0}", [PrimTag]);
+                            io_lib:format("~p{0}", [PrimTag]);
                        true ->
                             io_lib:format("undefined", [])
                     end
@@ -297,13 +297,13 @@ typeref(Style,{prim,Min,Max,Tag},C) ->
                     io_lib:format("~p()", [Tag]);
                 {0,1} ->
                     if Style =:= ubf ->
-                            io_lib:format("~s()?", [Tag]);
+                            io_lib:format("~p()?", [Tag]);
                        true ->
-                            io_lib:format("~s() | undefined", [Tag])
+                            io_lib:format("~p() | undefined", [Tag])
                     end;
                 {0,0} ->
                     if Style =:= ubf ->
-                            io_lib:format("~s{0}", [Tag]);
+                            io_lib:format("~p{0}", [Tag]);
                        true ->
                             io_lib:format("undefined", [])
                     end
@@ -318,7 +318,7 @@ typeref(Style,{Tag,Name,Fields,_Defaults,Elements0},C)
   when Tag=:=record;
        Tag=:=record_ext ->
     Elements = tl(tuple_to_list(Elements0)),
-    Definition = join([ io_lib:format("'~s'::~s", [Field, typeref(Style,Element,C)])
+    Definition = join([ io_lib:format("~p::~s", [Field, typeref(Style,Element,C)])
                         || {Field,Element} <- lists:zip(Fields,Elements) ], ", "),
     io_lib:format("#~s{ ~s }", [Name, Definition]);
 %% list
@@ -386,6 +386,36 @@ typeref(_Style,{predef,{list,Attrs}},_C) ->
     io_lib:format("list(~s)", [join([ atom_to_list(Attr) || Attr <- Attrs ], ",")]);
 typeref(_Style,{predef,{tuple,Attrs}},_C) ->
     io_lib:format("tuple(~s)", [join([ atom_to_list(Attr) || Attr <- Attrs ], ",")]);
+%% abnf
+typeref(ubf,{abnf_alt,_}=X,_C) ->
+    io_lib:format("~p", [X]);
+typeref(ubf,{abnf_seq,_}=X,_C) ->
+    io_lib:format("~p", [X]);
+typeref(ubf,{abnf_repeat,Min,Max,Type},C) ->
+    io_lib:format("{abnf_repeat,~s,~s,~s}",
+                  [typeref(ubf,Min,C), typeref(ubf,Max,C), typeref(ubf,Type,C)]);
+typeref(ubf,{abnf_byte_range,_,_}=X,_C) ->
+    io_lib:format("~p", [X]);
+typeref(ubf,{abnf_byte_alt,_}=X,_C) ->
+    io_lib:format("~p", [X]);
+typeref(ubf,{abnf_byte_seq,_}=X,_C) ->
+    io_lib:format("~p", [X]);
+typeref(ubf,{abnf_byte_val,_}=X,_C) ->
+    io_lib:format("~p", [X]);
+typeref(_Style,{abnf_alt,_},_C) ->
+    "binary()";
+typeref(_Style,{abnf_seq,_},_C) ->
+    "binary()";
+typeref(_Style,{abnf_repeat,_,_,_},_C) ->
+    "binary()";
+typeref(_Style,{abnf_byte_range,_,_},_C) ->
+    "binary()";
+typeref(_Style,{abnf_byte_alt,_},_C) ->
+    "binary()";
+typeref(_Style,{abnf_byte_seq,_},_C) ->
+    "binary()";
+typeref(_Style,{abnf_byte_val,_},_C) ->
+    "binary()";
 %% otherwise
 typeref(_Style,Type, _C) ->
     io_lib:format("~p()", [Type]).
