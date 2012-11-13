@@ -1,3 +1,4 @@
+%%% -*- mode: erlang -*-
 %%% The MIT License
 %%%
 %%% Copyright (C) 2011-2012 by Joseph Wayne Norton <norton@alum.mit.edu>
@@ -129,14 +130,14 @@ unwrap({_,_,V}) -> V;
 unwrap(X) -> erlang:error({invalid,X}).
 
 unwrap_prim({V,_}) ->
-    case lists:member(V, contract_parser:preDefinedTypesWithoutAttrs()) of
+    case lists:member(V, contract_parser:predefined_types(withoutattrs)) of
         false ->
             V;
         true ->
             {predef,V}
     end;
 unwrap_prim({_,_,V}) ->
-    case lists:member(V, contract_parser:preDefinedTypesWithoutAttrs()) of
+    case lists:member(V, contract_parser:predefined_types(withoutattrs)) of
         false ->
             V;
         true ->
@@ -156,7 +157,7 @@ unwrap_prim(Prim,L) ->
        true ->
             noop
     end,
-    case lists:member(Type, contract_parser:preDefinedTypesWithAttrs()) of
+    case lists:member(Type, contract_parser:predefined_types(withattrs)) of
         false ->
             erlang:error({invalidtype,Type});
         true ->

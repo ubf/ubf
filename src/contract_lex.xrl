@@ -1,3 +1,4 @@
+%%% -*- mode: erlang -*-
 %%% The MIT License
 %%%
 %%% Copyright (C) 2011-2012 by Joseph Wayne Norton <norton@alum.mit.edu>
