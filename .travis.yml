@@ -1,0 +1,6 @@
+language: erlang
+otp_release:
+  - R15B02
+  - R14B04
+  - R13B04
+script: "./rebar compile && ./rebar xref && ./rebar skip_deps=true eunit"
