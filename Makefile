@@ -20,6 +20,7 @@ xref:
 	$(REBAR) xref skip_deps=true
 
 doc:
+	@rm -rf doc
 	$(REBAR) -C rebar.config.doc get-deps compile
 	$(REBAR) -C rebar.config.doc doc skip_deps=true
 
