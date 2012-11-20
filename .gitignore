@@ -1,4 +1,6 @@
+.eqc-info
 .eunit/
+.qc/
 deps/
 ebin/
 erl_crash.dump
