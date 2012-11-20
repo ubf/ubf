@@ -77,7 +77,7 @@ data structures across a network.  It has three components:
 - UBF(c) is a meta-level protocol used between a UBF client and a UBF
   server.
 
-See http://norton.github.com/ubf for further details.
+See http://ubf.github.com/ubf for further details.
 
 === What is EBF?
 
