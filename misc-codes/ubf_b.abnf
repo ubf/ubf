@@ -20,7 +20,7 @@ fieldname      = NONEMTPYATOM
 types          = typedef
                / (typedef semi types)
 
-typedef        = typeref *c-wsp "=" *c-wsp type [1*WSP annotation] *c-wsp
+typedef        = typeref *c-wsp "::" *c-wsp type [1*WSP annotation] *c-wsp
 
 transitions    = transition
                / (transition semi transitions)
@@ -68,11 +68,24 @@ typeref        = typename "()"
 typeseq        = type
                / (type *WSP "," *WSP typeseq)
 
-typerec        = (fieldname *WSP "=" *WSP type)
-               / (fieldname *WSP "=" *WSP type "," *WSP typerec)
+typerec        = (fieldname *WSP "::" *WSP type)
+               / (fieldname *WSP "::" *WSP type "," *WSP typerec)
+               / (fieldname *WSP "=" *WSP default *WSP "::" *WSP type)
+               / (fieldname *WSP "=" *WSP default *WSP "::" *WSP type "," *WSP typerec)
+
+default        = ("{" [defaultseq] "}")
+               /  ("[" [defaultseq] "]")
+               / ATOM
+               / BINARY
+               / FLOAT
+               / INTEGER
+               / STRING
+defaultseq     = default
+               / (default *WSP "," *WSP defaultseq)
 
 listrange      = (1*DIGIT)
                / (1*DIGIT *WSP ",")
+               / ("," *WSP 1*DIGIT)
                / (1*DIGIT *WSP "," *WSP 1*DIGIT)
 
 ATOM           = (%x61-7A *(ALPHA / DIGIT / "_" / "@")) ;; a-z
@@ -96,16 +109,19 @@ STRING         = DQUOTE *(%x20-21 / %x23-7E) DQUOTE
 
 NONEMTPYSTRING = DQUOTE 1*(%x20-21 / %x23-7E) DQUOTE
 
-predefinedtype = ('atom' "(" [atomattrs] ")")
+predefinedtype = ('any' "(" [anyattrs] ")")
+               / ('none' "(" [noneattrs] ")")
+               / ('atom' "(" [atomattrs] ")")
                / ('binary' "(" [binaryattrs] ")")
                / ('float' "(" [floatattrs] ")")
                / ('integer' "(" [integerattrs] ")")
                / ('list' "(" [listattrs] ")")
-               / ('proplist' "(" [proplistattrs] ")")
-               / ('string' "(" [stringattrs] ")")
-               / ('term' "(" [termattrs] ")")
                / ('tuple' "(" [tupleattrs] ")")
-               / ('void' "(" [voidattrs] ")")
+
+anyattrs       = anyattr
+               / (anyattr *WSP "," *WSP anyattrs)
+
+noneattrs      = *WSP
 
 atomattrs      = atomattr
                / (atomattr *WSP "," *WSP atomattrs)
@@ -120,24 +136,11 @@ integerattrs   = *WSP
 listattrs      = listattr
                / (listattr *WSP "," *WSP listattrs)
 
-proplistattrs  = proplistattr
-               / (proplistattr *WSP "," *WSP proplistattrs)
-
-stringattrs    = stringattr
-               / (stringattr *WSP "," *WSP stringattrs)
-
-termattrs      = termattr
-               / (termattr *WSP "," *WSP termattrs)
-
 tupleattrs     = tupleattr
                / (tupleattr *WSP "," *WSP tupleattrs)
 
-voidattrs      = *WSP
-
+anyattr        = 'nonempty' / 'nonundefined'
 atomattr       = 'ascii' / 'asciiprintable' / 'nonempty' / 'nonundefined'
 binaryattr     = 'ascii' / 'asciiprintable' / 'nonempty'
 listattr       = 'nonempty'
-proplistattr   = 'nonempty'
-stringattr     = 'ascii' / 'asciiprintable' / 'nonempty'
-termattr       = 'nonempty' / 'nonundefined'
 tupleattr      = 'nonempty' / 'nonundefined'

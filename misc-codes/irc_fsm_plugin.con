@@ -1,6 +1,6 @@
 +NAME("irc").
 
-+VSN("ubf1.0").
++VSN("ubf2.0").
 
 +STATE start
    logon()       => proceed() & active. %% Nick randomly assigned
@@ -18,8 +18,8 @@
    EVENT         => changeNameEvent().  %% Nick changes name
 
 +ANYSTATE
-   info()        => string();
-   description() => string();
+   info()        => ubfstring();
+   description() => ubfstring();
    contract()    => term().
 
 

@@ -9,15 +9,16 @@
 %% Required (except keepalive/0) callback API for UBF stateless
 %% implementations.
 -export([info/0, description/0, keepalive/0]).
+-export([moduleStart/1, moduleRestart/1]).
 -export([handlerStart/1, handlerStop/3, handlerRpc/1, handlerEvent/1]).
 
 -import(ubf_plugin_handler, [sendEvent/2, install_handler/2]).
 
 -compile({parse_transform,contract_parser}).
--add_contract("ubf_bertrpc_plugin").
+-add_contract("src/ubf_bertrpc_plugin").
 
--include("ubf.hrl").
--include("ubf_plugin_stateless.hrl").
+-include_lib("ubf/include/ubf.hrl").
+-include_lib("ubf/include/ubf_plugin_stateless.hrl").
 
 info() ->
     "I am a BERT-RPC server".
@@ -27,6 +28,14 @@ description() ->
 
 keepalive() ->
     ok.
+
+%% @doc start module
+moduleStart(_Args) ->
+    unused.
+
+%% @doc restart module
+moduleRestart(Args) ->
+    moduleStart(Args).
 
 %% @doc start handler
 handlerStart(_Args) ->

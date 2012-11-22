@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>UBF User’s Guide 1st DRAFT</title><link rel="stylesheet" type="text/css" href="docbook-xsl.css" /><meta name="generator" content="DocBook XSL Stylesheets V1.76.1" /></head><body><div xml:lang="en" class="article" title="UBF User’s Guide 1st DRAFT" lang="en"><div class="titlepage"><div><div><h2 class="title"><a id="idp9806336"></a>UBF User’s Guide <span class="emphasis"><em>1st DRAFT</em></span></h2></div><div><div class="revhistory"><table border="1" width="100%" summary="Revision history"><tr><th align="left" valign="top" colspan="2"><strong>Revision History</strong></th></tr><tr><td align="left">Revision 0.3.7</td><td align="left">2012/08/02</td></tr></table></div></div></div><hr /></div><div class="toc"><p><strong>Table of Contents</strong></p><dl><dt><span class="section"><a href="#_preface">1. Preface</a></span></dt><dt><span class="section"><a href="#_introduction">2. Introduction</a></span></dt><dt><span class="section"><a href="#_specifications">3. Specifications</a></span></dt><dd><dl><dt><span class="section"><a href="#UBFa">3.1. UBF(a)</a></span></dt><dt><span class="section"><a href="#_ubf_b">3.2. UBF(b)</a></span></dt><dt><span class="section"><a href="#_ubf_c">3.3. UBF(c)</a></span></dt></dl></dd><dt><span class="section"><a href="#_contracts_amp_plugins">4. Contracts &amp; Plugins</a></span></dt><dd><dl><dt><span class="section"><a href="#_contract">4.1. Contract</a></span></dt><dt><span class="section"><a href="#_plugin">4.2. Plugin</a></span></dt><dt><span class="section"><a href="#_importing_types">4.3. Importing Types</a></span></dt><dt><span class="section"><a href="#_compilation_errors">4.4. Compilation Errors</a></span></dt><dt><span class="section"><a href="#_miscellaneous">4.5. Miscellaneous</a></span></dt></dl></dd><dt><span class="section"><a href="#_transports">5. Transports</a></span></dt><dd><dl><dt><span class="section"><a href="#_tcp_ip">5.1. TCP/IP</a></span></dt><dt><span class="section"><a href="#_http">5.2. HTTP</a></span></dt><dt><span class="section"><a href="#_miscellaneous_3">5.3. Miscellaneous</a></span></dt></dl></dd><dt><span class="section"><a href="#Servers">6. Servers</a></span></dt><dd><dl><dt><span class="section"><a href="#_stateless">6.1. Stateless</a></span></dt><dt><span class="section"><a href="#_stateful">6.2. Stateful</a></span></dt></dl></dd><dt><span class="section"><a href="#_clients">7. Clients</a></span></dt><dd><dl><dt><span class="section"><a href="#_erlang">7.1. Erlang</a></span></dt><dt><span class="section"><a href="#_python">7.2. Python</a></span></dt><dt><span class="section"><a href="#_java">7.3. Java</a></span></dt></dl></dd><dt><span class="section"><a href="#_miscellaneous_4">8. Miscellaneous</a></span></dt><dd><dl><dt><span class="section"><a href="#_testing">8.1. Testing</a></span></dt><dt><span class="section"><a href="#_utilities">8.2. Utilities</a></span></dt></dl></dd><dt><span class="section"><a href="#_building_ubf_from_source_option_1">9. Building UBF from Source - Option 1</a></span></dt><dt><span class="section"><a href="#_building_ubf_from_source_option_2">10. Building UBF from Source - Option 2</a></span></dt><dd><dl><dt><span class="section"><a href="#DOWNLOAD">10.1. Download</a></span></dt><dt><span class="section"><a href="#BUILD">10.2. Build - Mandatory</a></span></dt><dt><span class="section"><a href="#_build_optional">10.3. Build - Optional</a></span></dt><dt><span class="section"><a href="#UBFAsciiDoc">10.4. UBF Documentation</a></span></dt><dt><span class="section"><a href="#ErlangOTP">10.5. Erlang/OTP System</a></span></dt><dt><span class="section"><a href="#_github_forking_your_own_repositories">10.6. GitHub - Forking Your Own Repositories</a></span></dt></dl></dd><dt><span class="section"><a href="#_reference">11. Reference</a></span></dt><dt><span class="section"><a href="#_appendix">12. Appendix</a></span></dt><dd><dl><dt><span class="section"><a href="#_acknowledgments">12.1. Acknowledgments</a></span></dt><dt><span class="section"><a href="#_abnf_definition">12.2. ABNF Definition</a></span></dt></dl></dd></dl></div><p></p><div class="section" title="1. Preface"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_preface"></a>1. Preface</h2></div></div></div><p>UBF is a framework that permits the Erlang to talk to the outside
-world <a class="xref" href="#UBFPAPER">[UBFPAPER]</a>.  The acronym "UBF" stands for "Universal Binary
-Format", designed and implemented by Joe Armstrong.</p><p>This document and the corresponding open-source code repositories
-hosted on github <a class="xref" href="#UBF">[UBF]</a> are based on Joe Armstrong’s original UBF
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>UBF User’s Guide</title><link rel="stylesheet" type="text/css" href="docbook-xsl.css" /><meta name="generator" content="DocBook XSL Stylesheets V1.76.1" /></head><body><div xml:lang="en" class="article" title="UBF User’s Guide" lang="en"><div class="titlepage"><div><div><h2 class="title"><a id="idp25240400"></a>UBF User’s Guide</h2></div><div><div class="revhistory"><table border="1" width="100%" summary="Revision history"><tr><th align="left" valign="top" colspan="2"><strong>Revision History</strong></th></tr><tr><td align="left">Revision 1.0.1</td><td align="left">2012/11/22</td></tr></table></div></div></div><hr /></div><div class="toc"><p><strong>Table of Contents</strong></p><dl><dt><span class="section"><a href="#_preface">1. Preface</a></span></dt><dt><span class="section"><a href="#_introduction">2. Introduction</a></span></dt><dt><span class="section"><a href="#_specifications">3. Specifications</a></span></dt><dd><dl><dt><span class="section"><a href="#UBFa">3.1. UBF(a)</a></span></dt><dt><span class="section"><a href="#_ubf_b">3.2. UBF(b)</a></span></dt><dt><span class="section"><a href="#_ubf_c">3.3. UBF(c)</a></span></dt></dl></dd><dt><span class="section"><a href="#_contracts_amp_plugins">4. Contracts &amp; Plugins</a></span></dt><dd><dl><dt><span class="section"><a href="#_contract">4.1. Contract</a></span></dt><dt><span class="section"><a href="#_plugin">4.2. Plugin</a></span></dt><dt><span class="section"><a href="#_importing_types">4.3. Importing Types</a></span></dt><dt><span class="section"><a href="#_compilation_errors">4.4. Compilation Errors</a></span></dt><dt><span class="section"><a href="#_miscellaneous">4.5. Miscellaneous</a></span></dt></dl></dd><dt><span class="section"><a href="#_transports">5. Transports</a></span></dt><dd><dl><dt><span class="section"><a href="#_tcp_ip">5.1. TCP/IP</a></span></dt><dt><span class="section"><a href="#_http">5.2. HTTP</a></span></dt><dt><span class="section"><a href="#_miscellaneous_3">5.3. Miscellaneous</a></span></dt></dl></dd><dt><span class="section"><a href="#Servers">6. Servers</a></span></dt><dd><dl><dt><span class="section"><a href="#_stateless">6.1. Stateless</a></span></dt><dt><span class="section"><a href="#_stateful">6.2. Stateful</a></span></dt></dl></dd><dt><span class="section"><a href="#_clients">7. Clients</a></span></dt><dd><dl><dt><span class="section"><a href="#_erlang">7.1. Erlang</a></span></dt><dt><span class="section"><a href="#_python">7.2. Python</a></span></dt><dt><span class="section"><a href="#_java">7.3. Java</a></span></dt></dl></dd><dt><span class="section"><a href="#_miscellaneous_4">8. Miscellaneous</a></span></dt><dd><dl><dt><span class="section"><a href="#_testing">8.1. Testing</a></span></dt><dt><span class="section"><a href="#_utilities">8.2. Utilities</a></span></dt></dl></dd><dt><span class="section"><a href="#_building_ubf_from_source_option_1">9. Building UBF from Source - Option 1</a></span></dt><dt><span class="section"><a href="#_building_ubf_from_source_option_2">10. Building UBF from Source - Option 2</a></span></dt><dd><dl><dt><span class="section"><a href="#DOWNLOAD">10.1. Download</a></span></dt><dt><span class="section"><a href="#BUILD">10.2. Build - Mandatory</a></span></dt><dt><span class="section"><a href="#_build_optional">10.3. Build - Optional</a></span></dt><dt><span class="section"><a href="#UBFAsciiDoc">10.4. UBF Documentation</a></span></dt><dt><span class="section"><a href="#ErlangOTP">10.5. Erlang/OTP System</a></span></dt><dt><span class="section"><a href="#_github_forking_your_own_repositories">10.6. GitHub - Forking Your Own Repositories</a></span></dt></dl></dd><dt><span class="section"><a href="#_reference">11. Reference</a></span></dt><dt><span class="section"><a href="#_appendix">12. Appendix</a></span></dt><dd><dl><dt><span class="section"><a href="#_acknowledgments">12.1. Acknowledgments</a></span></dt><dt><span class="section"><a href="#_abnf_definition">12.2. ABNF Definition</a></span></dt></dl></dd></dl></div><p></p><div class="section" title="1. Preface"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_preface"></a>1. Preface</h2></div></div></div><p>UBF is a framework that permits Erlang and the outside world
+<a class="xref" href="#UBFPAPER">[UBFPAPER]</a> to talk with each other.  The acronym "UBF" stands for
+"Universal Binary Format", designed and implemented by Joe Armstrong.</p><p>This document and the corresponding open-source code repositories
+hosted on GitHub <a class="xref" href="#UBF">[UBF]</a> are based on Joe Armstrong’s original UBF
 site <a class="xref" href="#UBFSITE">[UBFSITE]</a> and UBF code with an MIT license file added to the
 distribution.  Since then, a large number of enhancements and
 improvements have been added.</p></div><div class="section" title="2. Introduction"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_introduction"></a>2. Introduction</h2></div></div></div><p>UBF is a language for transporting and describing complex data
@@ -20,7 +20,7 @@ UBF(c) is a meta-level protocol used between a UBF client and a UBF
   server.
 </li></ul></div><p>While the XML series of languages had the goal of having a human
 readable format the UBF languages take the opposite view and provide a
-"machine friendly" format.  UBF is designed to be easy to implement.</p><div class="figure"><a id="idp9818800"></a><p class="title"><strong>Figure 1. Programming By Contract</strong></p><div class="figure-contents"><a class="ulink" href="images/ubf-flow-01.svg" target="_top">
+"machine friendly" format.  UBF is designed to be easy to implement.</p><div class="figure"><a id="idp28172512"></a><p class="title"><strong>Figure 1. Programming By Contract</strong></p><div class="figure-contents"><a class="ulink" href="images/ubf-flow-01.svg" target="_top">
   <div class="mediaobject"><img src="images/ubf-flow-01.png" alt="Programming By Contract" /></div>
 </a></div></div><br class="figure-break" /><p>Central to UBF is the idea of a "Contract" which regulates the set of
 legal conversations that can take place between a client and a server.
@@ -122,7 +122,7 @@ upon this semantic information.</p></td></tr></table></div></div><div class="sec
 %"~'`{}#&amp;\s\n\t\r,-01234567890</p><p>This leaves us with 230 unallocated byte codes.  These are used as
 follows:</p><pre class="screen">&gt;C</pre><p>Where <span class="emphasis"><em>C</em></span> is not one of the reserved byte codes, &gt; means store the top
 of the recognition stack in the register <span class="emphasis"><em>C</em></span> and pop the recognition
-stack.  For caching optimizations, subsequent reuse of the single
+stack.  For caching optimization, subsequent reuse of the single
 character <span class="emphasis"><em>C</em></span> means push register <span class="emphasis"><em>C</em></span> onto the recognition stack.</p></div><div class="section" title="Object"><div class="titlepage"><div><div><h4 class="title"><a id="_object"></a>Object</h4></div></div></div><p>Objects represent either a Term, a Register push, or a Register pop
 with an optional Tag.  The operator <span class="emphasis"><em>$</em></span> signifies "end of object".
 When <span class="emphasis"><em>$</em></span> is encountered there should be only one item on the
@@ -142,33 +142,33 @@ of the contract.  The optional sections are the "+TYPES", the
 "irc_plugin.con" defines a simple IRC (Internet Relay Chat) protocol
 between clients and a server:</p><pre class="programlisting">+NAME("irc").
 
-+VSN("ubf1.0").
++VSN("ubf2.0").
 
 +TYPES
-info()            = info;
-description()     = description;
-contract()        = contract;
+info()            :: info;
+description()     :: description;
+contract()        :: contract;
 
-ok()              = ok;
-bool()            = true | false;
-nick()            = string();
-oldnick()         = nick();
-newnick()         = nick();
-group()           = string();
-groups()          = [group()];
+ok()              :: ok;
+bool()            :: true | false;
+nick()            :: ubfstring();
+oldnick()         :: nick();
+newnick()         :: nick();
+group()           :: ubfstring();
+groups()          :: [group()];
 
-logon()           = logon;
-proceed()         = {ok, nick()};
-listGroups()      = groups;
-joinGroup()       = {join, group()};
-leaveGroup()      = {leave, group()};
-changeNick()      = {nick, nick()};
-msg()             = {msg, group(), string()};
+logon()           :: logon;
+proceed()         :: {ok, nick()};
+listGroups()      :: groups;
+joinGroup()       :: {join, group()};
+leaveGroup()      :: {leave, group()};
+changeNick()      :: {nick, nick()};
+msg()             :: {msg, group(), ubfstring()};
 
-msgEvent()        = {msg, nick(), group(), string()};
-joinEvent()       = {joins, nick(), group()};
-leaveEvent()      = {leaves, nick(), group()};
-changeNameEvent() = {changesName, oldnick(), newnick(), group()}.
+msgEvent()        :: {msg, nick(), group(), ubfstring()};
+joinEvent()       :: {joins, nick(), group()};
+leaveEvent()      :: {leaves, nick(), group()};
+changeNameEvent() :: {changesName, oldnick(), newnick(), group()}.
 
 +STATE start
    logon()       =&gt; proceed() &amp; active. %% Nick randomly assigned
@@ -186,8 +186,8 @@ changeNameEvent() = {changesName, oldnick(), newnick(), group()}.
    EVENT         =&gt; changeNameEvent().  %% Nick changes name
 
 +ANYSTATE
-   info()        =&gt; string();
-   description() =&gt; string();
+   info()        =&gt; ubfstring();
+   description() =&gt; ubfstring();
    contract()    =&gt; term().</pre><p>See <a class="xref" href="#ABNF-UBFb" title="UBF(b)">the section called “UBF(b)”</a> for a formal definition of the UBF(b) syntax.</p><div class="note" title="Note" style="margin-left: 0; margin-right: 10%;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/icons/note.png" /></td><th align="left"></th></tr><tr><td align="left" valign="top"><p>The astute reader (and otherwise :) ) may notice that UBF(a) and
 UBF(b) are Erlang-centric.  By design, the two languages are supposed
 to be language neutral and yet <span class="emphasis"><em>by design</em></span> the two are highly
@@ -195,12 +195,12 @@ influenced by Erlang.  For example, the difference between a string
 type and a binary type is directly due to Erlang’s implementation of
 binaries and strings.  Similarly, the reason for supporting a record
 type and extended record type is also directly due to Erlang’s
-implementation of records.</p></td></tr></table></div><div class="section" title="Name: +NAME(&quot;…&quot;)."><div class="titlepage"><div><div><h4 class="title"><a id="_name_name_8230"></a>Name: +NAME("…").</h4></div></div></div><p>The name of the contract is specified as a double-quoted string.</p></div><div class="section" title="Version: +VSN(&quot;…&quot;)."><div class="titlepage"><div><div><h4 class="title"><a id="_version_vsn_8230"></a>Version: +VSN("…").</h4></div></div></div><p>The version of the contract is specified as a double-quoted string.</p></div><div class="section" title="Types: +TYPES."><div class="titlepage"><div><div><h4 class="title"><a id="_types_types"></a>Types: +TYPES.</h4></div></div></div><p>The UBF(b) type system has user-defined types and predefined types.
-User-defined types and predefined types are either primitive types or
-complex types.</p><p>The primitive types are Integer, Range, Float, Binary, String, Atom,
+implementation of records.</p></td></tr></table></div><div class="section" title="Name: +NAME(&quot;…&quot;)."><div class="titlepage"><div><div><h4 class="title"><a id="_name_name_8230"></a>Name: +NAME("…").</h4></div></div></div><p>The name of the contract is specified as a double-quoted string.</p></div><div class="section" title="Version: +VSN(&quot;…&quot;)."><div class="titlepage"><div><div><h4 class="title"><a id="_version_vsn_8230"></a>Version: +VSN("…").</h4></div></div></div><p>The version of the contract is specified as a double-quoted string.</p></div><div class="section" title="Types: +TYPES."><div class="titlepage"><div><div><h4 class="title"><a id="_types_types"></a>Types: +TYPES.</h4></div></div></div><p>The UBF(b) type system has user-defined types, builtin types, and
+predefined types.  All types are either primitive types or complex
+types.</p><p>The primitive types are Integer, Range, Float, Binary, String, Atom,
 and Reference.  The complex types are Alternative, Tuple, Record,
-Extended Record, and List.  User-defined "complex types" are defined
-recursively.</p><div class="section" title="Definition: X() = T"><div class="titlepage"><div><div><h5 class="title"><a id="_definition_x_t"></a>Definition: X() = T</h5></div></div></div><p>New types are defined by the notation:</p><pre class="screen">X() = T;</pre><p>and the last type of new types must be defined by the notation:</p><pre class="screen">X() = T.</pre><p>The name of the type is <span class="emphasis"><em>X</em></span> and the type’s definition <span class="emphasis"><em>T</em></span> is either a
+Extended Record, and List.  Builtin and User-defined "complex types"
+are defined recursively.</p><div class="section" title="Definition: X() :: T"><div class="titlepage"><div><div><h5 class="title"><a id="_definition_x_t"></a>Definition: X() :: T</h5></div></div></div><p>New types are defined by the notation:</p><pre class="screen">X() :: T;</pre><p>and the last type of new types must be defined by the notation:</p><pre class="screen">X() :: T.</pre><p>The name of the type is <span class="emphasis"><em>X</em></span> and the type’s definition <span class="emphasis"><em>T</em></span> is either a
 user-defined type or a predefined type.</p></div><div class="section" title="Integer: [-][0-9]+ or [0-9]+#[0-9a-f]+"><div class="titlepage"><div><div><h5 class="title"><a id="_integer_0_9_emphasis_or_emphasis_0_9_0_9a_f"></a>Integer: [-][0-9]+ <span class="emphasis"><em>or</em></span> [0-9]+#[0-9a-f]+</h5></div></div></div><p>Positive and negative integer constants are expressed as in UBF(a).
 Integer constants may also be expressed in other bases using Erlang
 syntax.</p></div><div class="section" title="Range: [-][0-9]+..[-][0-9]+ or [-][0-9]+.. or ..[-][0-9]+"><div class="titlepage"><div><div><h5 class="title"><a id="_range_0_9_0_9_emphasis_or_emphasis_0_9_emphasis_or_emphasis_0_9"></a>Range: [-][0-9]+..[-][0-9]+ <span class="emphasis"><em>or</em></span> [-][0-9]+.. <span class="emphasis"><em>or</em></span> ..[-][0-9]+</h5></div></div></div><p>Bounded, left unbounded, and right unbounded integer ranges are
@@ -212,24 +212,30 @@ having two leading "less than brackets" and two following "greater
 than brackets".</p></div><div class="section" title="String: &quot;…&quot;"><div class="titlepage"><div><div><h5 class="title"><a id="_string_8230_2"></a>String: "…"</h5></div></div></div><p>String constants are expressed as in UBF(a).</p></div><div class="section" title="Atom: '…' or [a-z][a-zA-Z0-9_]*"><div class="titlepage"><div><div><h5 class="title"><a id="_atom_8230_emphasis_or_emphasis_a_z_a_za_z0_9"></a>Atom: '…' <span class="emphasis"><em>or</em></span> [a-z][a-zA-Z0-9_]*</h5></div></div></div><p>Atom constants are expressed as UBF(a) atoms.  Atom constants starting
 with lowercase letters do not require single quotes.</p></div><div class="section" title="Reference: R()"><div class="titlepage"><div><div><h5 class="title"><a id="_reference_r"></a>Reference: R()</h5></div></div></div><p>Defined types are referenced by the notation:</p><pre class="screen">R()</pre><p>The name of the type is <span class="emphasis"><em>R</em></span>.</p></div><div class="section" title="Alternative: T1 | T2"><div class="titlepage"><div><div><h5 class="title"><a id="_alternative_t1_t2"></a>Alternative: T1 | T2</h5></div></div></div><p>A type X is of type "T1 | T2" if X is of type T1 or if X is of type
 T2.</p></div><div class="section" title="Tuple: {T1, T2, …, Tn}"><div class="titlepage"><div><div><h5 class="title"><a id="_tuple_t1_t2_8230_tn"></a>Tuple: {T1, T2, …, Tn}</h5></div></div></div><p>A type {X1, X2, …, Xn} is of type "{T1, T2, …, Tn}" if X1 is of
-type T1, X2 is of type T2, … and Xn is of type Tn.</p></div><div class="section" title="Record: name#T1, y=T2, …, z=Tn"><div class="titlepage"><div><div><h5 class="title"><a id="_record_name_t1_y_t2_8230_z_tn"></a>Record: name#T1, y=T2, …, z=Tn</h5></div></div></div><p>A record type is syntactic sugar for a tuple of type "{name, T1, T2,
-…, Tn}" where name, x, y, …, and z are atoms.</p></div><div class="section" title="Extended Record: name##T1, y=T2, …, z=Tn"><div class="titlepage"><div><div><h5 class="title"><a id="_extended_record_name_t1_y_t2_8230_z_tn"></a>Extended Record: name##T1, y=T2, …, z=Tn</h5></div></div></div><p>An extended record type is syntactic sugar for a tuple of type "{name,
-T1, T2, …, Tn, <span class="emphasis"><em>$fields</em></span>=[x,y,…,z], <span class="emphasis"><em>$extra</em></span>=Extra}" where name,
-x, y, …, and z are atoms and Extra is any valid term.</p></div><div class="section" title="List: [T]"><div class="titlepage"><div><div><h5 class="title"><a id="_list_t"></a>List: [T]</h5></div></div></div><p>A type [X1, X2, …, Xn] is of type [T] if all of Xi are of type T.</p></div><div class="section" title="Predefined: P() or P(A1, A2, …, An)"><div class="titlepage"><div><div><h5 class="title"><a id="_predefined_p_emphasis_or_emphasis_p_a1_a2_8230_an"></a>Predefined: P() <span class="emphasis"><em>or</em></span> P(A1, A2, …, An)</h5></div></div></div><p>Predefined types are referenced by the notation:</p><pre class="screen">P()</pre><p>or by the notation:</p><pre class="screen">P(A1, A2, ..., An)</pre><p>The name of the predefined type is <span class="emphasis"><em>P</em></span>.  Using the second notation,
-attributes can be specified to make the predefined type less general
-and thus more specific when matching objects.</p><div class="informaltable"><table cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; border-left: 3px solid #527bbd; border-right: 3px solid #527bbd; "><colgroup><col class="col_1" /><col class="col_2" /><col class="col_3" /><col class="col_4" /><col class="col_5" /></colgroup><tbody><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p></p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>ascii</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>asciiprintable</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>nonempty</p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>nonundefined</p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>integer</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>X</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>X</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>X</p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>X</p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>float</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>X</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>X</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>X</p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>X</p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>binary</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>O</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>O</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>O</p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>X</p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>string</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>O</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>O</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>O</p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>X</p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>atom</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>O</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>O</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>O</p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>O</p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>tuple</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>X</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>X</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>O</p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>X</p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>list</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>X</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>X</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>O</p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>X</p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>proplist</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>X</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>X</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>O</p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>X</p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>term</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>X</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>X</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>O</p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>O</p></td></tr><tr><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p>void</p></td><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p>X</p></td><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p>X</p></td><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p>X</p></td><td style="" align="left" valign="top"><p>X</p></td></tr></tbody></table></div><p>The above table summarizes the set of supported predefined types and
-their respective optional attributes.</p><p>The "integer", "float", "binary", "string", "atom", "tuple", and
+type T1, X2 is of type T2, … and Xn is of type Tn.</p></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_"></a></h5></div></div></div><p>A record type is syntactic sugar for a tuple of type "{name, T1, T2,
+…, Tn}" where name, x, y, …, and z are atoms.</p><p>Optionally, the default value of a record field can be specified.</p><div class="caution" title="Caution" style="margin-left: 0; margin-right: 10%;"><table border="0" summary="Caution"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Caution]" src="images/icons/caution.png" /></td><th align="left"></th></tr><tr><td align="left" valign="top"><p>Caution is required when using another record as the default
+value of a record field.  This feature has not been fully tested.</p></td></tr></table></div></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="__2"></a></h5></div></div></div><p>An extended record type is syntactic sugar for a tuple of type "{name,
+T1, T2, …, Tn, <span class="emphasis"><em>$fields</em></span>::[x,y,…,z], <span class="emphasis"><em>$extra</em></span>::Extra}" where name,
+x, y, …, and z are atoms and Extra is any valid term.</p><p>Optionally, the default value of a record field can be specified.</p><div class="caution" title="Caution" style="margin-left: 0; margin-right: 10%;"><table border="0" summary="Caution"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Caution]" src="images/icons/caution.png" /></td><th align="left"></th></tr><tr><td align="left" valign="top"><p>Caution is required when using another record as the default
+value of a record field.  This feature has not been fully tested.</p></td></tr></table></div></div><div class="section" title="List: [T] or [T]{} or [T]{[0-9],} or [T]{,} or [T]{[0-9],[0-9]+}"><div class="titlepage"><div><div><h5 class="title"><a id="_list_t_emphasis_or_emphasis_t_literal_phrase_role_0_9_emphasis_or_emphasis_t_0_9_phrase_literal_emphasis_or_emphasis_t_literal_phrase_role_0_9_emphasis_or_emphasis_t_0_9_phrase_literal_0_9"></a>List: [T] <span class="emphasis"><em>or</em></span> [T]{<code class="literal"><span class="0-9">} <span class="emphasis"><em>or</em></span> [T]{[0-9]</span></code>,} <span class="emphasis"><em>or</em></span> [T]{,<code class="literal"><span class="0-9">} <span class="emphasis"><em>or</em></span> [T]{[0-9]</span></code>,[0-9]+}</h5></div></div></div><p>A type [X1, X2, …, Xn] is of type [T] if all of Xi are of type T.</p><p>Unbounded, bounded, left unbounded, and right unbounded lists are
+supported.</p></div><div class="section" title="Builtin: B()"><div class="titlepage"><div><div><h5 class="title"><a id="_builtin_b"></a>Builtin: B()</h5></div></div></div><p>Builtin types are referenced by the notation:</p><pre class="screen">B()</pre><p>The name of the builtin type is <span class="emphasis"><em>B</em></span> and builtin types are of 2
+categories: <code class="literal">Erlang</code> and <code class="literal">UBF</code>.  The names used for builtin types are
+reserved and cannot be used for user-defined types.</p><p>Erlang builtin types are a subset of the types defined by EEP8
+<a class="xref" href="#EEP8">[EEP8]</a>.  EEP8 types are used for authoring Erlang <code class="literal">types</code> and
+<code class="literal">specs</code> definitions.</p><div class="informaltable"><table cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; border-left: 3px solid #527bbd; border-right: 3px solid #527bbd; "><colgroup><col class="col_1" /><col class="col_2" /></colgroup><tbody><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>nil()</p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>[]</p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>term()</p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>any()</p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>boolean()</p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><span class="emphasis"><em>false</em></span></p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><span class="emphasis"><em>true</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>byte()</p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>0..255</p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>char()</p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>0..16#10ffff</p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>non_neg_integer()</p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>0..</p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>pos_integer()</p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>1..</p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>neg_integer()</p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>..-1</p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>number()</p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>integer()</p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>float()</p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>string()</p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>[char()]</p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>nonempty_string()</p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>[char()]+</p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>module()</p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>atom()</p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>mfa()</p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>{atom(), atom(), byte()}</p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>node()</p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>atom()</p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>timeout()</p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><span class="emphasis"><em>infinity</em></span></p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>non_neg_integer()</p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>no_return()</p></td></tr><tr><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p>none()</p></td><td style="" align="left" valign="top"><p></p></td></tr></tbody></table></div><p>UBF builtin types are types particular to UBF that can be helpful for
+encoding and decoding proplists and strings.</p><div class="informaltable"><table cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; border-left: 3px solid #527bbd; border-right: 3px solid #527bbd; "><colgroup><col class="col_1" /><col class="col_2" /></colgroup><tbody><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>ubfproplist()</p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>{<span class="emphasis"><em>#P</em></span>, [{term(), term()}]}</p></td></tr><tr><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p>ubfstring()</p></td><td style="" align="left" valign="top"><p>{<span class="emphasis"><em>#S</em></span>, [byte()]}</p></td></tr></tbody></table></div></div><div class="section" title="Predefined: P() or P(A1, A2, …, An)"><div class="titlepage"><div><div><h5 class="title"><a id="_predefined_p_emphasis_or_emphasis_p_a1_a2_8230_an"></a>Predefined: P() <span class="emphasis"><em>or</em></span> P(A1, A2, …, An)</h5></div></div></div><p>Predefined types are referenced by the notation:</p><pre class="screen">P()</pre><p>or by the notation:</p><pre class="screen">P(A1, A2, ..., An)</pre><p>The name of the predefined type is <span class="emphasis"><em>P</em></span>.  The names used for predefined
+types are reserved and cannot be used for user-defined types.</p><p>Using the second notation, attributes can be specified to make the
+predefined type less general and thus more specific when matching
+objects.</p><div class="informaltable"><table cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; border-left: 3px solid #527bbd; border-right: 3px solid #527bbd; "><colgroup><col class="col_1" /><col class="col_2" /><col class="col_3" /><col class="col_4" /><col class="col_5" /></colgroup><tbody><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p></p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>ascii</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>asciiprintable</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>nonempty</p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>nonundefined</p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>any</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>X</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>X</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>O</p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>O</p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>none</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>X</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>X</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>X</p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>X</p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>integer</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>X</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>X</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>X</p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>X</p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>float</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>X</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>X</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>X</p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>X</p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>binary</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>O</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>O</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>O</p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>X</p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>atom</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>O</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>O</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>O</p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>O</p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>tuple</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>X</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>X</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>O</p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>X</p></td></tr><tr><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p>list</p></td><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p>X</p></td><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p>X</p></td><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p>O</p></td><td style="" align="left" valign="top"><p>X</p></td></tr></tbody></table></div><p>The above table summarizes the set of supported predefined types and
+their respective optional attributes.</p><p>The "any" predefined type matches any object.</p><p>The "none" predefined type is a placeholder to describe the return
+value of a function call that does not return to the caller.</p><p>The "integer", "float", "binary", "atom", "boolean", "tuple", and
 "list" predefined types match directly to the corresponding primitive
-or complex type.</p><p>The "term" predefined type matches any object.</p><p>The "proplist" predefined type is a specialized version of the "list"
-predefined type that matches the following types:</p><pre class="screen">[{term(), term()}]</pre><p>The "void" predefined type is a placeholder to describe the return
-value of a function call that does not return to the caller.</p><p>The "ascii" attribute permits matches with binaries, strings, and
-atoms containing only ASCII values <a class="xref" href="#RFC20">[RFC20]</a>.  Similarly, the
+or complex type.</p><p>The "ascii" attribute permits matches with binaries and atoms
+containing only ASCII values <a class="xref" href="#RFC20">[RFC20]</a>.  Similarly, the
 "asciiprintable" attribute permits matches with only printable ASCII
-values.</p><p>The "nonempty" attribute permits matches with binaries, strings,
-atoms, tuples, lists, proplists, and terms that are of length greater
-than zero.  The following objects would not be matched with the
-"nonempty" attribute:</p><pre class="screen">&lt;&lt;""&gt;&gt;
-""
+values.</p><p>The "nonempty" attribute permits matches with binaries, atoms, tuples,
+lists, and any that are of length greater than zero.  The following
+objects would not be matched with the "nonempty" attribute:</p><pre class="screen">&lt;&lt;""&gt;&gt;
 ''
 {}
 []</pre><p>The "nonundefined" attribute permits matches with atoms and terms that
@@ -279,36 +285,36 @@ contracts, "+STATE" only contracts, "+ANYSTATE" only contracts, or any
 combination of such contracts.</p><p>For example, a "+TYPES" only contract having the filename
 "irc_types_plugin.con" is as follows:</p><pre class="programlisting">+NAME("irc_types").
 
-+VSN("ubf1.0").
++VSN("ubf2.0").
 
 +TYPES
-info()            = info;
-description()     = description;
-contract()        = contract;
+info()            :: info;
+description()     :: description;
+contract()        :: contract;
 
-ok()              = ok;
-bool()            = true | false;
-nick()            = string();
-oldnick()         = nick();
-newnick()         = nick();
-group()           = string();
-groups()          = [group()];
+ok()              :: ok;
+bool()            :: true | false;
+nick()            :: ubfstring();
+oldnick()         :: nick();
+newnick()         :: nick();
+group()           :: ubfstring();
+groups()          :: [group()];
 
-logon()           = logon;
-proceed()         = {ok, nick()};
-listGroups()      = groups;
-joinGroup()       = {join, group()};
-leaveGroup()      = {leave, group()};
-changeNick()      = {nick, nick()};
-msg()             = {msg, group(), string()};
+logon()           :: logon;
+proceed()         :: {ok, nick()};
+listGroups()      :: groups;
+joinGroup()       :: {join, group()};
+leaveGroup()      :: {leave, group()};
+changeNick()      :: {nick, nick()};
+msg()             :: {msg, group(), ubfstring()};
 
-msgEvent()        = {msg, nick(), group(), string()};
-joinEvent()       = {joins, nick(), group()};
-leaveEvent()      = {leaves, nick(), group()};
-changeNameEvent() = {changesName, oldnick(), newnick(), group()}.</pre><p>For example, a "+STATE" and "+ANYSTATE" contract having the filename
+msgEvent()        :: {msg, nick(), group(), ubfstring()};
+joinEvent()       :: {joins, nick(), group()};
+leaveEvent()      :: {leaves, nick(), group()};
+changeNameEvent() :: {changesName, oldnick(), newnick(), group()}.</pre><p>For example, a "+STATE" and "+ANYSTATE" contract having the filename
 "irc_fsm_plugin.con" is as follows:</p><pre class="programlisting">+NAME("irc").
 
-+VSN("ubf1.0").
++VSN("ubf2.0").
 
 +STATE start
    logon()       =&gt; proceed() &amp; active. %% Nick randomly assigned
@@ -326,8 +332,8 @@ changeNameEvent() = {changesName, oldnick(), newnick(), group()}.</pre><p>For ex
    EVENT         =&gt; changeNameEvent().  %% Nick changes name
 
 +ANYSTATE
-   info()        =&gt; string();
-   description() =&gt; string();
+   info()        =&gt; ubfstring();
+   description() =&gt; ubfstring();
    contract()    =&gt; term().</pre></div><div class="section" title="4.2. Plugin"><div class="titlepage"><div><div><h3 class="title"><a id="_plugin"></a>4.2. Plugin</h3></div></div></div><p>A plugin is just a "normal" Erlang module that follows a few simple
 rules.  For a "+TYPES" only contract, the plugin contains just the
 name of it’s contract.  Otherwise, the plugin contains the name of
@@ -396,11 +402,11 @@ occurs:</p><div class="variablelist"><dl><dt><span class="term">
 </dd></dl></div><p>where L is an Erlang list.</p></div><div class="section" title="4.5. Miscellaneous"><div class="titlepage"><div><div><h3 class="title"><a id="_miscellaneous"></a>4.5. Miscellaneous</h3></div></div></div><p>As a by-product of a plugin’s compilation and if one or more "record"
 or "extended record" types were declared in a plugin’s contract, an
 Erlang "header" file containing the plugin’s record definitions is
-automatically created.  This Erlang "header" file can be included by
-the plugin module itself or by other Erlang modules used by the
-server’s application.  By convention, this Erlang "header" file has
-the same base filename as the plugin but having a ".huc" as the suffix
-part.</p><div class="tip" title="Tip" style="margin-left: 0; margin-right: 10%;"><table border="0" summary="Tip"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Tip]" src="images/icons/tip.png" /></td><th align="left"></th></tr><tr><td align="left" valign="top"><p>There are 2 experimental prototypes for extending UBF’s type and
+automatically created in an application’s ebin directory.  This Erlang
+"header" file can be included by the plugin module itself or by other
+Erlang modules used by the server’s application.  By convention, this
+Erlang "header" file has the same base filename as the plugin but
+having a ".hrl" as the suffix part.</p><div class="tip" title="Tip" style="margin-left: 0; margin-right: 10%;"><table border="0" summary="Tip"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Tip]" src="images/icons/tip.png" /></td><th align="left"></th></tr><tr><td align="left" valign="top"><p>There are 2 experimental prototypes for extending UBF’s type and
 plugin framework.  <a class="xref" href="#UBF_ABNF">[UBF_ABNF]</a> is a framework for integrating UBF and
 ABNF specifications.  <a class="xref" href="#UBF_EEP8">[UBF_EEP8]</a> is a framework for integrating UBF
 and EEP8 types.</p></td></tr></table></div><p></p></div></div><div class="section" title="5. Transports"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_transports"></a>5. Transports</h2></div></div></div><p>The original "UBF" network transport is UBF(a) over TCP/IP.  Since
@@ -445,7 +451,7 @@ For the skeptics, the contract author has the option of having the
 </li></ul></div><p>This extra convention creates something slightly messy-looking, if you
 look at the raw JSON passed back-and-forth.  The examples of the
 Erlang record {foo, 42} and the general tuple {bar, 42} would look
-like this:</p><pre class="screen">   record (defined in the contract as "foo() = #foo{attribute1 = term()};")
+like this:</p><pre class="screen">   record (defined in the contract as "foo() :: #foo{attribute1 :: term()};")
 
       {"$R":"foo", "attribute1":42}
 
@@ -480,7 +486,7 @@ servers.</p></td></tr></table></div><p>NTBF follows all of the conventions set f
 by re-using Thrift’s binary wire-protocol.  A standard Thrift client
 can communicate with a UBF "NTBF" server and a UBF "NTBF" client can
 communicate with a standard Thrift server.</p><p>NTBF <span class="strong"><strong>cannot</strong></span> encode and decode all UBF(b) objects.  There is no
-straigthforward convention for converting Erlang terms to Thrift
+straightforward convention for converting Erlang terms to Thrift
 messages.  Synchronous calls are implemented as Thrift <span class="emphasis"><em>T-CALL</em></span> and
 <span class="emphasis"><em>T-REPLY</em></span> message pairs or <span class="emphasis"><em>T-CALL</em></span> and <span class="emphasis"><em>T-EXCEPTION</em></span> message pairs.
 Asynchronous casts are implemented as Thrift <span class="emphasis"><em>T-ONEWAY</em></span> messages.</p><p>The NTBF transport is under active development to enhance, to improve,
@@ -495,7 +501,7 @@ Protocol Buffers Format" <a class="xref" href="#PROTOBUF">[PROTOBUF]</a>.  The n
 "Avro Binary Format" <a class="xref" href="#AVRO">[AVRO]</a>.</p></div></div><div class="section" title="5.2. HTTP"><div class="titlepage"><div><div><h3 class="title"><a id="_http"></a>5.2. HTTP</h3></div></div></div><div class="section" title="JSON-RPC"><div class="titlepage"><div><div><h4 class="title"><a id="_json_rpc"></a>JSON-RPC</h4></div></div></div><p>JSON-RPC <a class="xref" href="#JSONRPC">[JSONRPC]</a> is a lightweight remote procedure call protocol
 similar to XML-RPC.  The UBF framework implementation of JSON-RPC
 brings together JSF’s encoder/decoder, UBF(b)'s contract checking, and
-an HTTP transport.</p><div class="figure"><a id="idp10097216"></a><p class="title"><strong>Figure 2. Programming By Contract w/ Multiple Transports</strong></p><div class="figure-contents"><a class="ulink" href="images/ubf-flow-02.svg" target="_top">
+an HTTP transport.</p><div class="figure"><a id="idp30870096"></a><p class="title"><strong>Figure 2. Programming By Contract w/ Multiple Transports</strong></p><div class="figure-contents"><a class="ulink" href="images/ubf-flow-02.svg" target="_top">
   <div class="mediaobject"><img src="images/ubf-flow-02.png" alt="Programming By Contract w/ Multiple Transports" /></div>
 </a></div></div><br class="figure-break" /><p>As previously stated, central to UBF is the idea of a "Contract" which
 regulates the set of legal conversations that can take place between a
@@ -582,7 +588,7 @@ follows:</p><div class="variablelist"><dl><dt><span class="term">
   Enable the UBF, EBF, JSF, TBF, FTBF, or an alternative protocol wire
   format. Default: 'ubf'.
 </dd><dt><span class="term">
-{'proto', {'ubf' | 'ebf' | 'jsf' | 'tbf' |  'ftbf' | atom(), proplist()}}
+{'proto', {'ubf' | 'ebf' | 'jsf' | 'tbf' |  'ftbf' | atom(), [atom() | tuple()]}}
 </span></dt><dd><p class="simpara">
   Enable the UBF, EBF, JSF, TBF, FTBF, or an alternative protocol wire
   format with options. Default: {'ubf', []}. Supported options:
@@ -611,7 +617,7 @@ follows:</p><div class="variablelist"><dl><dt><span class="term">
   server.  If not set, client may select the service using the
   startSession() API.  There is no default setting.
 </dd><dt><span class="term">
-{'serverhello', string() | 'undefined'}
+{'serverhello', ubfstring() | 'undefined'}
 </span></dt><dd>
   Meta contract greeting string, sent when a client first connects to
   the server.  If 'undefined', server hello is not sent to the
@@ -651,31 +657,38 @@ specifying the following options: [{'proto', 'tbf'},
 {'serverhello', 'undefined'}, {'simplerpc', 'true'}] or
 [{'proto', 'ftbf'}, {'serverhello', 'undefined'}, {'simplerpc',
 'true'}].</p></td></tr></table></div><div class="section" title="6.1. Stateless"><div class="titlepage"><div><div><h3 class="title"><a id="_stateless"></a>6.1. Stateless</h3></div></div></div><p>The stateless server provides a simplified callback API and
-implementation in comparision to Joe Armstrong’s original UBF server.
+implementation in comparison to Joe Armstrong’s original UBF server.
 The stateless server is helpful to applications that do not require
 explicit state management by the UBF server.</p><p>The "ubf_plugin_stateless.hrl" Erlang header file defines the callback
-APIs to be implemented by a stateless plugin.  The five callbacks are
-mandatory for all stateless plugins.</p><pre class="screen">%% common callback API
--spec ubf_info() -&gt; string().
--spec ubf_description() -&gt; string().
+APIs to be implemented by a stateless plugin.  The seven callbacks
+are mandatory for all stateless plugins.</p><pre class="screen">%% common callback API
+-spec info() -&gt; ubfstring().
+-spec description() -&gt; ubfstring().
 -spec handlerStop(Handler::pid(), Reason::term(), StateData::term()) -&gt;
                   NewStateData::term().
 
 %% stateless callback API
+-spec moduleStart(args()::term()) -&gt; any().
+-spec moduleRestart(args()::term()) -&gt; any().
+
 -spec handlerStart(Args::term()) -&gt;
                   {accept, Reply::term(), StateName::atom(), StateDate::term()} |
                   {reject, Reply::term()}.
--spec handlerRpc(Call::term()) -&gt; Reply::term().</pre><p>The ubf_info/0 and ubf_description/0 functions provide short and long
-information about the plugin’s service, respectively.</p><p>The handlerStart/1 function is called when starting a new session for
+-spec handlerRpc(Call::term()) -&gt; Reply::term().</pre><p>The info/0 and description/0 functions provide short and long
+information about the plugin’s service, respectively.</p><p>The moduleStart/1 function is called once after the plugin’s service
+is started.  The return value is ignored.  The moduleRestart/1
+function is called once after each time the plugin’s service is
+restarted.  The return value is ignored.</p><p>The handlerStart/1 function is called when starting a new session for
 the plugin’s service.  The plugin may accept or reject the start
 session request.  When accepted, the plugin returns the reply for the
 client, the name of the state to be used for the entire session, and
 optional data for the state.  When rejected, the plugin returns the
 error for the client.</p><p>The handlerStop/3 function is called when stopping a session of the
 plugin’s service.  The plugin may perform some cleanup inside the
-handlerStop function.</p><p>The handlerRpc/1 function is called when processing a synchronous call.</p><p>For example, the following "skeleton" implementation of a <a class="xref" href="#BERTRPC">[BERTRPC]</a>
+handlerStop function.</p><p>The handlerRpc/1 function is called when processing a synchronous
+call.</p><p>For example, the following "skeleton" implementation of a <a class="xref" href="#BERTRPC">[BERTRPC]</a>
 server implemented by UBF illustrates a typical stateless server.  The
-source code for this implementation can be found on github
+source code for this implementation can be found on GitHub
 <a class="xref" href="#UBF_BERTRPC">[UBF_BERTRPC]</a>.</p><pre class="programlisting">%%% -*- mode: erlang -*-
 %%% @doc Sample BERT-RPC plugin.
 %%%
@@ -687,15 +700,16 @@ source code for this implementation can be found on github
 %% Required (except keepalive/0) callback API for UBF stateless
 %% implementations.
 -export([info/0, description/0, keepalive/0]).
+-export([moduleStart/1, moduleRestart/1]).
 -export([handlerStart/1, handlerStop/3, handlerRpc/1, handlerEvent/1]).
 
 -import(ubf_plugin_handler, [sendEvent/2, install_handler/2]).
 
 -compile({parse_transform,contract_parser}).
--add_contract("ubf_bertrpc_plugin").
+-add_contract("src/ubf_bertrpc_plugin").
 
--include("ubf.hrl").
--include("ubf_plugin_stateless.hrl").
+-include_lib("ubf/include/ubf.hrl").
+-include_lib("ubf/include/ubf_plugin_stateless.hrl").
 
 info() -&gt;
     "I am a BERT-RPC server".
@@ -705,6 +719,14 @@ description() -&gt;
 
 keepalive() -&gt;
     ok.
+
+%% @doc start module
+moduleStart(_Args) -&gt;
+    unused.
+
+%% @doc restart module
+moduleRestart(Args) -&gt;
+    moduleStart(Args).
 
 %% @doc start handler
 handlerStart(_Args) -&gt;
@@ -744,18 +766,18 @@ The sendEvent/2 function illustrates how to send asynchronous casts
 </li><li class="listitem">
 The "?S(X)" macro definition plus other helpers are located in the
   "ubf.hrl" Erlang header file.  For Erlang, the implementation of a
-  UBF string is a two tuple having '#S' as the first element and a
-  list of integers as the second element.  A similar technique is also
-  used for the implementation of a UBF proplist (i.e. '#P' and
-  "?P(X)).
+  UBF <code class="literal">ubfstring()</code> is a two tuple having '#S' as the first element
+  and a list of bytes as the second element.  A similar technique is
+  also used for the implementation of a UBF <code class="literal">ubfproplist()</code>
+  (i.e. '#P' and "?P(X)).
 </li></ul></div></div><div class="section" title="6.2. Stateful"><div class="titlepage"><div><div><h3 class="title"><a id="_stateful"></a>6.2. Stateful</h3></div></div></div><p>The stateful server is Joe Armstrong’s original UBF server.  The
 stateful server permits a plugin to transition from one state to
 another and also supports a manager framework for managing application
 state between multiple clients.</p><p>The "ubf_plugin_stateless.hrl" Erlang header file defines the callback
 APIs to be implemented by a stateful plugin.  The eight callbacks are
 mandatory for all stateful plugins.</p><pre class="screen">%% common callback API
--spec ubf_info() -&gt; string().
--spec ubf_description() -&gt; string().
+-spec info() -&gt; ubfstring().
+-spec description() -&gt; ubfstring().
 -spec handlerStop(Handler::pid(), Reason::term(), ManagerData::term()) -&gt;
                   NewManagerData::term().
 
@@ -771,7 +793,7 @@ mandatory for all stateful plugins.</p><pre class="screen">%% common callback AP
 -spec managerRestart(Args::term(), Manager::pid()) -&gt;
                      ok | {error, Reason::term()}.
 -spec managerRpc(Args::term(), ManagerData::term()) -&gt;
-                 {ok, NewManagerData::term()} | {error, Reason::term()}.</pre><p>The ubf_info/0 and ubf_description/0 functions provide short and long
+                 {ok, NewManagerData::term()} | {error, Reason::term()}.</pre><p>The info/0 and description/0 functions provide short and long
 information about the plugin’s service, respectively.</p><p>The handlerStart/2 function is called when starting a new session for
 the plugin’s service.  The plugin may accept or reject the start
 session request.  When accepted, the plugin returns the reply for the
@@ -781,7 +803,9 @@ error for the client.</p><p>The handlerStop/3 function is called when stopping a
 plugin’s service.  The plugin may perform some cleanup inside the
 handlerStop function.</p><p>The handlerRpc/1 function is called when processing a synchronous
 call.</p><p>The managerStart/1 function is called once at the start of the
-server’s initialization for each plugin’s service.</p><p>The managerRestart/2 function is called to restart a plugin’s service.</p><p>The managerRpc/2 function is called when processing a call from
+server’s initialization for each plugin’s service.</p><p>The managerRestart/2 function is called to restart a plugin’s service.
+The callback function is expected to forward the request to the
+manager process and relay the manager’s reply.</p><p>The managerRpc/2 function is called when processing a call from
 handler.  A handler uses the ubf_plugin_handler:ask_manager/2 function
 API to make a synchronous call to the manager.</p><p>For an example stateful server plugin, please see the
 "test/unit/irc_plugin.erl" Erlang module in the <a class="xref" href="#UBF">[UBF]</a>
@@ -830,8 +854,48 @@ known) is returned.  For TCP/IP transports, the default method is to
 connect to the specified host() and TCP ipport().  For the ETF
 transport, the alternative method is to connect to server() using the
 specified plugins().  The server() is either the process id or process
-registered name for an already-started UBF server.  See <a class="xref" href="#Servers" title="6. Servers">Section 6, “Servers”</a>
-for a description of options().</p><p>The rpc/{2,3} functions make a synchronous call to the server.</p><p>The stop/1 function closes the connection with the server and stops
+registered name for an already-started UBF server.</p><p>The list of supported options() are as follows:</p><div class="variablelist"><dl><dt><span class="term">
+{'clientport', ipport() | {ipport(), ipport()}}
+</span></dt><dd>
+  Specifies the TCP port to be used by the client.  If tuple format, a
+  port is automatically selected within the specified range.  If
+  'undefined', a random port is automatically selected.  Default:
+  'undefined'.
+</dd><dt><span class="term">
+{'proto', {'ubf' | 'ebf' | 'jsf' | 'tbf' |  'ftbf' | atom()}}
+</span></dt><dd>
+  Enable the UBF, EBF, JSF, TBF, FTBF, or an alternative protocol wire
+  format. Default: 'ubf'.
+</dd><dt><span class="term">
+{'proto', {'ubf' | 'ebf' | 'jsf' | 'tbf' |  'ftbf' | atom(), [atom() | tuple()]}}
+</span></dt><dd><p class="simpara">
+  Enable the UBF, EBF, JSF, TBF, FTBF, or an alternative protocol wire
+  format with options. Default: {'ubf', []}. Supported options:
+</p><div class="variablelist"><dl><dt><span class="term">
+'safe'
+</span></dt><dd>
+    Prevents decoding data that may be used to attack the Erlang
+    system.  In the event of receiving unsafe data, decoding fails
+    with a badarg error.
+</dd></dl></div></dd><dt><span class="term">
+{'startplugin', module()}
+</span></dt><dd>
+  Set the starting plugin, set after a client first connects to the
+  server.  If not set, client’s caller may select the service using
+  the startSession() API. Default: 'undefined'.
+</dd><dt><span class="term">
+{'serverhello', true | <span class="emphasis"><em>undefined</em></span>}
+</span></dt><dd>
+  Meta contract greeting string, sent to a client when it first connects to
+  the server.  If 'undefined', client does not expect server hello to
+  be sent by the server. Default: 'true'.
+</dd><dt><span class="term">
+{'simplerpc', boolean()}
+</span></dt><dd>
+  Set the simple RPC mode.  If 'true', client expects only the rpc
+  reply from the server.  If 'false', server returns the rpc reply and next
+  state to client.  Default: 'false'.
+</dd></dl></div><p>The rpc/{2,3} functions make a synchronous call to the server.</p><p>The stop/1 function closes the connection with the server and stops
 the client.</p><p>The sendEvent/2, install_default_handler/1, and install_handler/2
 functions behave in the same way as the server-side implementation to
 send and receive asynchronous casts.</p><p>The lpc/{2,3,4} functions make a synchronous local procedure call to a
@@ -841,8 +905,11 @@ how to use all of the public API.  In particular, the *client*.erl
 files contain comments at the top with a list of prerequisites and
 small examples, recipe-style, for starting each server and using the
 client.</p></div><div class="section" title="EUnit Tests"><div class="titlepage"><div><div><h4 class="title"><a id="_eunit_tests"></a>EUnit Tests</h4></div></div></div><p>The eunit tests in the "test/eunit" directory perform several smoke
-and error handling uses cases.</p></div><div class="section" title="QuickCheck Tests"><div class="titlepage"><div><div><h4 class="title"><a id="_quickcheck_tests"></a>QuickCheck Tests</h4></div></div></div><p>The quickcheck tests and related helper libaries in the "test/eqc"
-directory have not been open sourced yet.  Please stay tuned!</p><p>See <a class="xref" href="#QUVIQ">[QUVIQ]</a> for further information about quickcheck.</p></div></div><div class="section" title="8.2. Utilities"><div class="titlepage"><div><div><h3 class="title"><a id="_utilities"></a>8.2. Utilities</h3></div></div></div><div class="section" title="Transaction Logging"><div class="titlepage"><div><div><h4 class="title"><a id="TLOG"></a>Transaction Logging</h4></div></div></div><p>For Erlang, the UBF server and the UBF "LPC" client can be configured
+and error handling uses cases.  The stateless_plugin and
+stateful_plugin test applications are concrete examples on how to
+integrate one or more UBF listeners into an Erlang/OTP application.</p></div><div class="section" title="QuickCheck Tests"><div class="titlepage"><div><div><h4 class="title"><a id="_quickcheck_tests"></a>QuickCheck Tests</h4></div></div></div><p>The quickcheck tests and related helper libraries in the "test/eqc"
+directory have been open sourced.  Please stay tuned for further
+documentation in the future.</p><p>See <a class="xref" href="#QUVIQ">[QUVIQ]</a> for further information about quickcheck.</p></div></div><div class="section" title="8.2. Utilities"><div class="titlepage"><div><div><h3 class="title"><a id="_utilities"></a>8.2. Utilities</h3></div></div></div><div class="section" title="Transaction Logging"><div class="titlepage"><div><div><h4 class="title"><a id="TLOG"></a>Transaction Logging</h4></div></div></div><p>For Erlang, the UBF server and the UBF "LPC" client can be configured
 to generate a transaction log.  The transaction log module must
 implement the following tlog/6 callback API.</p><pre class="screen">-type op() :: rpc | lpc | event_in | event_out.
 -type now() :: {pos_integer(), pos_integer(), pos_integer()}.
@@ -857,9 +924,7 @@ follow this recipe:</p><pre class="screen">$ mkdir working-directory-name
 $ cd working-directory-name
 $ git clone https://github.com/ubf/ubf.git ubf
 $ cd ubf
-$ ./rebar get-deps
-$ ./rebar compile
-$ ./rebar eunit</pre><p>For an alternative recipe with other "features" albeit more complex,
+$ make deps clean compile test</pre><p>For an alternative recipe with other "features" albeit more complex,
 please read further.</p></div><div class="section" title="10. Building UBF from Source - Option 2"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_building_ubf_from_source_option_2"></a>10. Building UBF from Source - Option 2</h2></div></div></div><p>This section describes the basic recipes for the following items:</p><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem">
 UBF Downloading
 </li><li class="listitem">
@@ -872,11 +937,20 @@ Erlang/OTP System
 GitHub - Forking Your Own Repositories
 </li></ul></div><p>Before getting started, review this checklist of tools and software.
 Please install and setup as needed.</p><div class="variablelist"><dl><dt><span class="term">
+Erlang/OTP (Mandatory)
+</span></dt><dd><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem"><p class="simpara">
+Erlang - <a class="ulink" href="http://www.erlang.org/" target="_top">http://www.erlang.org/</a>
+</p><div class="itemizedlist"><ul class="itemizedlist" type="circle"><li class="listitem">
+<span class="strong"><strong>R13B04 or newer, R15B02 has been tested most recently</strong></span>
+</li><li class="listitem">
+If needed, see <a class="xref" href="#ErlangOTP" title="10.5. Erlang/OTP System">Section 10.5, “Erlang/OTP System”</a> for instructions to build Erlang/OTP
+    from source.
+</li></ul></div></li></ul></div></dd><dt><span class="term">
 Git (Mandatory)
 </span></dt><dd><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem"><p class="simpara">
 Git - <a class="ulink" href="http://git-scm.com/" target="_top">http://git-scm.com/</a>
 </p><div class="itemizedlist"><ul class="itemizedlist" type="circle"><li class="listitem">
-<span class="strong"><strong>Git 1.5.4 or newer, Git 1.7.9.3 has been tested recently</strong></span>
+<span class="strong"><strong>Git 1.5.4 or newer, Git 1.8.0 has been tested most recently</strong></span>
 </li><li class="listitem">
 <span class="emphasis"><em>required for Repo and GitHub</em></span>
 </li></ul></div></li><li class="listitem"><p class="simpara">
@@ -887,20 +961,11 @@ Anonymous read-only access using the GIT protocol is default.
 Team members having read-write access should add his/her ssh
     public key under your GitHub account.
 </li></ul></div></li></ul></div></dd><dt><span class="term">
-Erlang/OTP (Mandatory)
-</span></dt><dd><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem"><p class="simpara">
-Erlang - <a class="ulink" href="http://www.erlang.org/" target="_top">http://www.erlang.org/</a>
-</p><div class="itemizedlist"><ul class="itemizedlist" type="circle"><li class="listitem">
-<span class="strong"><strong>R13B04 or newer, R15B has been tested most recently</strong></span>
-</li><li class="listitem">
-If needed, see <a class="xref" href="#ErlangOTP" title="10.5. Erlang/OTP System">Section 10.5, “Erlang/OTP System”</a> for instructions to build Erlang/OTP
-    from source.
-</li></ul></div></li></ul></div></dd><dt><span class="term">
-Python (Mandatory)
+Python (Optional)
 </span></dt><dd><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem"><p class="simpara">
 Python - <a class="ulink" href="http://www.python.org" target="_top">http://www.python.org</a>
 </p><div class="itemizedlist"><ul class="itemizedlist" type="circle"><li class="listitem">
-<span class="strong"><strong>Python 2.4 or newer, Python 2.7.1 has been tested most recently
+<span class="strong"><strong>Python 2.4 or newer, Python 2.7.2 has been tested most recently
      (CAUTION: Python 3.x might be too new)</strong></span>
 </li><li class="listitem">
 <span class="emphasis"><em>required for Repo and AsciiDoc</em></span>
@@ -911,7 +976,7 @@ AsciiDoc - <a class="ulink" href="http://www.methods.co.nz/asciidoc/index.html" 
 </p><div class="itemizedlist"><ul class="itemizedlist" type="circle"><li class="listitem"><p class="simpara">
 Must be version 8.6.1 or newer
 </p><div class="itemizedlist"><ul class="itemizedlist" type="square"><li class="listitem">
-8.6.6 is the version most recently tested for UBF
+8.6.8 is the version most recently tested for UBF
 </li></ul></div></li><li class="listitem"><p class="simpara">
 Plus the following support tools:
 </p><div class="itemizedlist"><ul class="itemizedlist" type="square"><li class="listitem">
@@ -932,9 +997,9 @@ w3m - <a class="ulink" href="http://w3m.sourceforge.net/" target="_top">http://w
 Optional for building a text version of UBF’s documentation.
 </li></ul></div></li></ul></div></dd></dl></div><p>In addition to the above list, UBF also depends on two tools to
 automate the downloading and the packaging steps.</p><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem">
-Repo - <a class="ulink" href="http://source.android.com/source/git-repo.html" target="_top">http://source.android.com/source/git-repo.html</a>
+Rebar - <a class="ulink" href="https://github.com/rebar/rebar/wiki" target="_top">https://github.com/rebar/rebar/wiki</a>
 </li><li class="listitem">
-Rebar - <a class="ulink" href="https://github.com/basho/rebar/wiki" target="_top">https://github.com/basho/rebar/wiki</a>
+Repo - <a class="ulink" href="http://source.android.com/source/git-repo.html" target="_top">http://source.android.com/source/git-repo.html</a>
 </li></ul></div><p>Instructions for downloading the Repo tool are described next.  The
 Rebar tool is included in UBF’s git repositories so there is no need
 to download it separately.  Please refer to the above sites for
@@ -975,7 +1040,7 @@ Dialyze with specs
 </p><pre class="screen">$ cd working-directory-name
 $ make dialyze</pre><div class="caution" title="Caution" style="margin-left: 0; margin-right: 10%;"><table border="0" summary="Caution"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Caution]" src="images/icons/caution.png" /></td><th align="left"></th></tr><tr><td align="left" valign="top"><p>If you manually run dialyzer with the "-r" option, execute
 "make clean compile" first to avoid finding duplicate beam files
-underneath rebar’s .test directory.  Check Makefile for further
+underneath rebar’s .eunit directory.  Check Makefile for further
 information.</p></td></tr></table></div></li><li class="listitem"><p class="simpara">
 Dialyze without specs
 </p><pre class="screen">$ cd working-directory-name
@@ -999,7 +1064,7 @@ $ make</pre></li><li class="listitem"><p class="simpara">
 Building UBF’s "Website" <span class="emphasis"><em>basic recipe</em></span>
 </p><pre class="screen">$ cd working-directory-name/deps/ubf/priv/doc/src/ubf/website
 $ make clean -OR- make realclean
-$ make</pre><div class="note" title="Note" style="margin-left: 0; margin-right: 10%;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/icons/note.png" /></td><th align="left"></th></tr><tr><td align="left" valign="top"><p>HTML documentation is written in the "./public_html" directory.</p></td></tr></table></div></li></ol></div><p>UBF’s documentation is authored using AsciiDoc and a few auxillary
+$ make</pre><div class="note" title="Note" style="margin-left: 0; margin-right: 10%;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/icons/note.png" /></td><th align="left"></th></tr><tr><td align="left" valign="top"><p>HTML documentation is written in the "./public_html" directory.</p></td></tr></table></div></li></ol></div><p>UBF’s documentation is authored using AsciiDoc and a few auxiliary
 tools:</p><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem">
 ImageMagick
 </li><li class="listitem">
@@ -1015,7 +1080,7 @@ w3m
 </li></ul></div><p>UBF’s documentation is generated with AsciiDoc and a manually modified
 version of the a2x tool.  A fake lang-ja.conf file can be easily
 created by making a symlink to the lang-en.conf file.</p><pre class="screen">diff -r -u 8.6.4-orig/bin/a2x.py 8.6.4/bin/a2x.py
---- 8.6.4-orig/bin/a2x.py       2011-04-24 00:50:26.000000000 +0900
+--- 8.6.4-orig/bin/a2x.py   2011-04-24 00:50:26.000000000 +0900
 +++ 8.6.4/bin/a2x.py    2011-04-24 00:35:55.000000000 +0900
 @@ -156,7 +156,10 @@
  def shell_copy(src, dst):
@@ -1053,7 +1118,7 @@ Installing <span class="emphasis"><em>basic recipe</em></span>
 </p><pre class="screen">$ cd working-directory-name/otp_src_R15B
 $ sudo make install</pre></li></ol></div><div class="caution" title="Caution" style="margin-left: 0; margin-right: 10%;"><table border="0" summary="Caution"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Caution]" src="images/icons/caution.png" /></td><th align="left"></th></tr><tr><td align="left" valign="top"><p>Please make sure "otp-installing-directory-name/bin" is added
 to your $PATH environment.</p></td></tr></table></div></div><div class="section" title="10.6. GitHub - Forking Your Own Repositories"><div class="titlepage"><div><div><h3 class="title"><a id="_github_forking_your_own_repositories"></a>10.6. GitHub - Forking Your Own Repositories</h3></div></div></div><p>If you are interested in making your own changes to UBF or to one or
-more of the other UBF-related repositories, it is a straigthforward
+more of the other UBF-related repositories, it is a straightforward
 process to fork and to build your own repositories using <a class="xref" href="#GITHUB">[GITHUB]</a>.
 GitHub provides a friendly and easy to use environment for developers
 and the like.</p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem">
@@ -1069,119 +1134,124 @@ Choose all or a subset of the UBF-related repositories that you are
 Click on the "Fork" button near the top of the page.  This action
    creates a clone of the <span class="emphasis"><em>ubf-bertrpc</em></span> repository in your own account
    on GitHub.
-</li></ol></div><p><span class="emphasis"><em>Under Construction - To Be Updated</em></span></p><p></p></div></div><div class="section" title="11. Reference"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_reference"></a>11. Reference</h2></div></div></div><div class="bibliodiv" title="Optional list title"><h3 class="title"><a id="idp10336080"></a>Optional list title</h3><div class="bibliomixed"><a id="idp10336592"></a><p class="bibliomixed">
+</li></ol></div><p><span class="emphasis"><em>Under Construction - To Be Updated</em></span></p><p></p></div></div><div class="section" title="11. Reference"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_reference"></a>11. Reference</h2></div></div></div><div class="bibliodiv" title="Optional list title"><h3 class="title"><a id="idp31132064"></a>Optional list title</h3><div class="bibliomixed"><a id="idp31132576"></a><p class="bibliomixed">
 <span class="bibliomisc">
 <a id="AVRO"></a>[AVRO] "Avro is a serialization system.",
   <a class="ulink" href="http://avro.apache.org" target="_top">http://avro.apache.org</a>.
 </span>
-</p></div><div class="bibliomixed"><a id="idp10338768"></a><p class="bibliomixed">
+</p></div><div class="bibliomixed"><a id="idp31134816"></a><p class="bibliomixed">
 <span class="bibliomisc">
 <a id="BERTRPC"></a>[BERTRPC] "BERT and BERT-RPC 1.0 Specification",
   <a class="ulink" href="http://bert-rpc.org" target="_top">http://bert-rpc.org</a>.
 </span>
-</p></div><div class="bibliomixed"><a id="idp10340960"></a><p class="bibliomixed">
+</p></div><div class="bibliomixed"><a id="idp31137056"></a><p class="bibliomixed">
 <span class="bibliomisc">
 <a id="ERLANG"></a>[ERLANG] "A general-purpose programming language and runtime
   environment", <a class="ulink" href="http://www.erlang.org" target="_top">http://www.erlang.org</a>.
 </span>
-</p></div><div class="bibliomixed"><a id="idp10343200"></a><p class="bibliomixed">
+</p></div><div class="bibliomixed"><a id="idp31139360"></a><p class="bibliomixed">
+<span class="bibliomisc">
+<a id="EEP8"></a>[EEP8] "EEP 8: Types and function specifications",
+  <a class="ulink" href="http://www.erlang.org/eeps/eep-0008.html" target="_top">http://www.erlang.org/eeps/eep-0008.html</a>.
+</span>
+</p></div><div class="bibliomixed"><a id="idp31141616"></a><p class="bibliomixed">
 <span class="bibliomisc">
 <a id="GIT"></a>[GIT] "Fast Version Control System", <a class="ulink" href="http://git-scm.com" target="_top">http://git-scm.com</a>.
 </span>
-</p></div><div class="bibliomixed"><a id="idp10345280"></a><p class="bibliomixed">
+</p></div><div class="bibliomixed"><a id="idp31143744"></a><p class="bibliomixed">
 <span class="bibliomisc">
 <a id="JSFCHARSET"></a>[JSFCHARSET] "Gemini Mobile Technologies, Inc. charset module",
   <a class="ulink" href="https://github.com/ubf/ubf-jsonrpc/blob/master/src/jsf_charset.erl" target="_top">https://github.com/ubf/ubf-jsonrpc/blob/master/src/jsf_charset.erl</a>
 </span>
-</p></div><div class="bibliomixed"><a id="idp10347664"></a><p class="bibliomixed">
+</p></div><div class="bibliomixed"><a id="idp31146176"></a><p class="bibliomixed">
 <span class="bibliomisc">
 <a id="GITHUB"></a>[GITHUB] "Secure source code hosting and collaborative
   development ", <a class="ulink" href="https://github.com" target="_top">https://github.com</a>.
 </span>
-</p></div><div class="bibliomixed"><a id="idp10349904"></a><p class="bibliomixed">
+</p></div><div class="bibliomixed"><a id="idp31148464"></a><p class="bibliomixed">
 <span class="bibliomisc">
 <a id="JSONRPC"></a>[JSONRPC] "A lightweight remote procedure call protocol similar
   to XML-RPC", <a class="ulink" href="http://json-rpc.org" target="_top">http://json-rpc.org</a>.
 </span>
-</p></div><div class="bibliomixed"><a id="idp10352144"></a><p class="bibliomixed">
+</p></div><div class="bibliomixed"><a id="idp31150768"></a><p class="bibliomixed">
 <span class="bibliomisc">
 <a id="MOCHIJSON2"></a>[MOCHIJSON2] "MochiWeb is an Erlang library for building
   lightweight HTTP servers.",
   <a class="ulink" href="https://github.com/mochi/mochiweb/blob/master/src/mochijson2.erl" target="_top">https://github.com/mochi/mochiweb/blob/master/src/mochijson2.erl</a>.
 </span>
-</p></div><div class="bibliomixed"><a id="idp10354560"></a><p class="bibliomixed">
+</p></div><div class="bibliomixed"><a id="idp31153248"></a><p class="bibliomixed">
 <span class="bibliomisc">
 <a id="PROTOBUF"></a>[PROTOBUF] "Protocol buffers are Google’s language-neutral,
   platform-neutral, extensible mechanism for serializing structured
   data.", <a class="ulink" href="http://code.google.com/apis/protocolbuffers" target="_top">http://code.google.com/apis/protocolbuffers</a>.
 </span>
-</p></div><div class="bibliomixed"><a id="idp10356960"></a><p class="bibliomixed">
+</p></div><div class="bibliomixed"><a id="idp31155696"></a><p class="bibliomixed">
 <span class="bibliomisc">
 <a id="QUVIQ"></a>[QUVIQ] "Quviq … amazing testing tools",
   <a class="ulink" href="http://www.quviq.com/" target="_top">http://www.quviq.com/</a>.
 </span>
-</p></div><div class="bibliomixed"><a id="idp10359168"></a><p class="bibliomixed">
+</p></div><div class="bibliomixed"><a id="idp31157968"></a><p class="bibliomixed">
 <span class="bibliomisc">
 <a id="RFC20"></a>[RFC20] Vint Cerf, "ASCII format for Network Interchange",
   RFC20, October 16, 1969.
 </span>
-</p></div><div class="bibliomixed"><a id="idp10360816"></a><p class="bibliomixed">
+</p></div><div class="bibliomixed"><a id="idp31159664"></a><p class="bibliomixed">
 <span class="bibliomisc">
 <a id="RFC4627"></a>[RFC4627] D. Crockford, "The application/json Media Type for
   JavaScript Object Notation (JSON)", RFC4627, July 2006.
 </span>
-</p></div><div class="bibliomixed"><a id="idp10362528"></a><p class="bibliomixed">
+</p></div><div class="bibliomixed"><a id="idp31161424"></a><p class="bibliomixed">
 <span class="bibliomisc">
 <a id="RFC5234"></a>[RFC5234] D. Crocker, Ed. Brandenburg, "Augmented BNF for Syntax
   Specifications: ABNF", RFC5234, January 2008.
 </span>
-</p></div><div class="bibliomixed"><a id="idp10364320"></a><p class="bibliomixed">
+</p></div><div class="bibliomixed"><a id="idp31163168"></a><p class="bibliomixed">
 <span class="bibliomisc">
 <a id="THRIFT"></a>[THRIFT] "A software framework for scalable cross-language
   services development.", <a class="ulink" href="http://incubator.apache.org/thrift" target="_top">http://incubator.apache.org/thrift</a>.
 </span>
-</p></div><div class="bibliomixed"><a id="idp10366576"></a><p class="bibliomixed">
+</p></div><div class="bibliomixed"><a id="idp31165488"></a><p class="bibliomixed">
 <span class="bibliomisc">
 <a id="UBF"></a>[UBF] "Universal Binary Format", <a class="ulink" href="https://github.com/ubf/ubf" target="_top">https://github.com/ubf/ubf</a>.
 </span>
-</p></div><div class="bibliomixed"><a id="idp10368656"></a><p class="bibliomixed">
+</p></div><div class="bibliomixed"><a id="idp31167616"></a><p class="bibliomixed">
 <span class="bibliomisc">
 <a id="UBF_ABNF"></a>[UBF_ABNF] "Universal Binary Format and Augmented Backus-Naur
   Form", <a class="ulink" href="https://github.com/ubf/ubf-abnf" target="_top">https://github.com/ubf/ubf-abnf</a>.
 </span>
-</p></div><div class="bibliomixed"><a id="idp10370880"></a><p class="bibliomixed">
+</p></div><div class="bibliomixed"><a id="idp31169904"></a><p class="bibliomixed">
 <span class="bibliomisc">
 <a id="UBF_BERTRPC"></a>[UBF_BERTRPC] "Universal Binary Format and Binary ERlang Term
   RPC", <a class="ulink" href="https://github.com/ubf/ubf-bertrpc" target="_top">https://github.com/ubf/ubf-bertrpc</a>.
 </span>
-</p></div><div class="bibliomixed"><a id="idp10373104"></a><p class="bibliomixed">
+</p></div><div class="bibliomixed"><a id="idp31172192"></a><p class="bibliomixed">
 <span class="bibliomisc">
 <a id="UBF_EEP8"></a>[UBF_EEP8] "Universal Binary Format and Erlang Enhancement
   Proposal 8", <a class="ulink" href="https://github.com/ubf/ubf-eep8" target="_top">https://github.com/ubf/ubf-eep8</a>.
 </span>
-</p></div><div class="bibliomixed"><a id="idp10375344"></a><p class="bibliomixed">
+</p></div><div class="bibliomixed"><a id="idp31174480"></a><p class="bibliomixed">
 <span class="bibliomisc">
 <a id="UBF_JSONRPC"></a>[UBF_JSONRPC] "Universal Binary Format and JavaScript Object
   Notation RPC", <a class="ulink" href="https://github.com/ubf/ubf-jsonrpc" target="_top">https://github.com/ubf/ubf-jsonrpc</a>.
 </span>
-</p></div><div class="bibliomixed"><a id="idp10377584"></a><p class="bibliomixed">
+</p></div><div class="bibliomixed"><a id="idp31176784"></a><p class="bibliomixed">
 <span class="bibliomisc">
 <a id="UBF_THRIFT"></a>[UBF_THRIFT] "Universal Binary Format and Thrift",
   <a class="ulink" href="https://github.com/ubf/ubf-thrift" target="_top">https://github.com/ubf/ubf-thrift</a>.
 </span>
-</p></div><div class="bibliomixed"><a id="idp10379776"></a><p class="bibliomixed">
+</p></div><div class="bibliomixed"><a id="idp31179040"></a><p class="bibliomixed">
 <span class="bibliomisc">
 <a id="UBFPAPER"></a>[UBFPAPER] Joe Armstrong, "Getting Erlang to talk to the outside
   world", Proceedings of the 2002 ACM SIGPLAN workshop on Erlang,
   pages 64-72, ACM Press, 2002.
 </span>
-</p></div><div class="bibliomixed"><a id="idp10381520"></a><p class="bibliomixed">
+</p></div><div class="bibliomixed"><a id="idp31180816"></a><p class="bibliomixed">
 <span class="bibliomisc">
 <a id="UBFSITE"></a>[UBFSITE] Joe Armstrong,
   <a class="ulink" href="http://www.sics.se/~joe/ubf/site/home.html" target="_top">http://www.sics.se/~joe/ubf/site/home.html</a>, March 2003.
 </span>
 </p></div></div><p></p></div><div class="section" title="12. Appendix"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_appendix"></a>12. Appendix</h2></div></div></div><div class="section" title="12.1. Acknowledgments"><div class="titlepage"><div><div><h3 class="title"><a id="_acknowledgments"></a>12.1. Acknowledgments</h3></div></div></div><p>Many, many thanks to Joe Armstrong, UBF’s designer and original
-implementor.</p><p>Gemini Mobile Technologies, Inc. has approved the release of its
+implementer.</p><p>Gemini Mobile Technologies, Inc. has approved the release of its
 extensions, improvements, etc. under an MIT license.  Joe Armstrong
 has also given his blessing to Gemini’s license choice.</p><pre class="screen">The MIT License
 
@@ -1289,7 +1359,7 @@ fieldname      = NONEMTPYATOM
 types          = typedef
                / (typedef semi types)
 
-typedef        = typeref *c-wsp "=" *c-wsp type [1*WSP annotation] *c-wsp
+typedef        = typeref *c-wsp "::" *c-wsp type [1*WSP annotation] *c-wsp
 
 transitions    = transition
                / (transition semi transitions)
@@ -1337,11 +1407,24 @@ typeref        = typename "()"
 typeseq        = type
                / (type *WSP "," *WSP typeseq)
 
-typerec        = (fieldname *WSP "=" *WSP type)
-               / (fieldname *WSP "=" *WSP type "," *WSP typerec)
+typerec        = (fieldname *WSP "::" *WSP type)
+               / (fieldname *WSP "::" *WSP type "," *WSP typerec)
+               / (fieldname *WSP "=" *WSP default *WSP "::" *WSP type)
+               / (fieldname *WSP "=" *WSP default *WSP "::" *WSP type "," *WSP typerec)
+
+default        = ("{" [defaultseq] "}")
+               /  ("[" [defaultseq] "]")
+               / ATOM
+               / BINARY
+               / FLOAT
+               / INTEGER
+               / STRING
+defaultseq     = default
+               / (default *WSP "," *WSP defaultseq)
 
 listrange      = (1*DIGIT)
                / (1*DIGIT *WSP ",")
+               / ("," *WSP 1*DIGIT)
                / (1*DIGIT *WSP "," *WSP 1*DIGIT)
 
 ATOM           = (%x61-7A *(ALPHA / DIGIT / "_" / "@")) ;; a-z
@@ -1365,16 +1448,19 @@ STRING         = DQUOTE *(%x20-21 / %x23-7E) DQUOTE
 
 NONEMTPYSTRING = DQUOTE 1*(%x20-21 / %x23-7E) DQUOTE
 
-predefinedtype = ('atom' "(" [atomattrs] ")")
+predefinedtype = ('any' "(" [anyattrs] ")")
+               / ('none' "(" [noneattrs] ")")
+               / ('atom' "(" [atomattrs] ")")
                / ('binary' "(" [binaryattrs] ")")
                / ('float' "(" [floatattrs] ")")
                / ('integer' "(" [integerattrs] ")")
                / ('list' "(" [listattrs] ")")
-               / ('proplist' "(" [proplistattrs] ")")
-               / ('string' "(" [stringattrs] ")")
-               / ('term' "(" [termattrs] ")")
                / ('tuple' "(" [tupleattrs] ")")
-               / ('void' "(" [voidattrs] ")")
+
+anyattrs       = anyattr
+               / (anyattr *WSP "," *WSP anyattrs)
+
+noneattrs      = *WSP
 
 atomattrs      = atomattr
                / (atomattr *WSP "," *WSP atomattrs)
@@ -1389,26 +1475,13 @@ integerattrs   = *WSP
 listattrs      = listattr
                / (listattr *WSP "," *WSP listattrs)
 
-proplistattrs  = proplistattr
-               / (proplistattr *WSP "," *WSP proplistattrs)
-
-stringattrs    = stringattr
-               / (stringattr *WSP "," *WSP stringattrs)
-
-termattrs      = termattr
-               / (termattr *WSP "," *WSP termattrs)
-
 tupleattrs     = tupleattr
                / (tupleattr *WSP "," *WSP tupleattrs)
 
-voidattrs      = *WSP
-
+anyattr        = 'nonempty' / 'nonundefined'
 atomattr       = 'ascii' / 'asciiprintable' / 'nonempty' / 'nonundefined'
 binaryattr     = 'ascii' / 'asciiprintable' / 'nonempty'
 listattr       = 'nonempty'
-proplistattr   = 'nonempty'
-stringattr     = 'ascii' / 'asciiprintable' / 'nonempty'
-termattr       = 'nonempty' / 'nonundefined'
 tupleattr      = 'nonempty' / 'nonundefined'</pre></div><div class="section" title="UBF(c)"><div class="titlepage"><div><div><h4 class="title"><a id="ABNF-UBFc"></a>UBF(c)</h4></div></div></div><pre class="programlisting">ubf-c           = ubf-c-rpc-req
                 / ubf-c-rpc-res
                 / ubf-c-event-in
