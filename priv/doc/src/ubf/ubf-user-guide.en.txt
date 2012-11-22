@@ -1,7 +1,7 @@
 // -*- Doc -*-
 // vim: set syntax=asciidoc:
 
-= UBF User's Guide
+= UBF 2.0 User's Guide
 :Date: 2012/11/22
 :Revision: 1.0.1
 :Copyright: 2012 by Joseph Wayne Norton <norton@alum.mit.edu>

@@ -1,8 +1,8 @@
 // -*- Doc -*-
 // vim: set syntax=asciidoc:
 
-UBF Home Page
-=============
+UBF 2.0 Home Page
+=================
 
 UBF is a framework that permits Erlang and the outside world to talk
 with each other.  The documentation and the corresponding open-source
@@ -33,5 +33,5 @@ The link:http://github.com/ubf/ubf[UBF GitHub README] is a good first
 step to get started quickly.  Check the download, the build, and the
 install instructions.
 
-Reading the link:ubf-user-guide.en.html[UBF User's Guide] is
+Reading the link:ubf-user-guide.en.html[UBF 2.0 User's Guide] is
 _STRONGLY_ recommended.
