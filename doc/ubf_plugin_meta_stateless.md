@@ -10,24 +10,24 @@
 contracts.</p>
 
 
-<pre><tt>The metaprotocol is used at the beginning of a UBF session to
+<pre><code>The metaprotocol is used at the beginning of a UBF session to
 select one of the UBF(b) contracts that the TCP listener is
 capable of offering.  The list of contracts (or more precisely,
 the Erlang modules that implement the contract(s)) is passed via
 the +ubf_server:start_link()+ function, in the +PluginModule+
-list.</tt></pre>
+list.</code></pre>
 
 
 
-<pre><tt>Code in this module is executed by the "Plugin Handler" process in
-the Process Structure Diagram in the Overview.</tt></pre>
+<pre><code>Code in this module is executed by the "Plugin Handler" process in
+the Process Structure Diagram in the Overview.</code></pre>
 
 
 
-<pre><tt>For the purposes of this module, the list of modules that
+<pre><code>For the purposes of this module, the list of modules that
 implement contracts is passed using Erlang parameterized module
 +Module:new(ModuleList)+ syntax.  See the Erlang/OTP documentation
-for more information on parameterized module syntax and usage.</tt></pre>
+for more information on parameterized module syntax and usage.</code></pre>
 .
 
 <a name="index"></a>

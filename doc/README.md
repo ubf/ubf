@@ -5,12 +5,13 @@
 
 Copyright (c) 2011-2012 by Joseph Wayne Norton
 
-__Authors:__ Joseph Wayne Norton ([`norton@alum.mit.edu`](mailto:norton@alum.mit.edu)).<p>This is UBF, a framework for getting Erlang to talk to the outside
-world.  This repository is based on Joe Armstrong's original UBF code
-with an MIT license file added to the distribution.  Since then, a
-large number of enhancements and improvements have been added.</p>
+__Authors:__ Joseph Wayne Norton ([`norton@alum.mit.edu`](mailto:norton@alum.mit.edu)).<p>This is UBF, a framework that permits Erlang and the outside world to
+talk with each other.  This repository is based on Joe Armstrong's
+original UBF code with an MIT license file added to the distribution.
+Since then, a large number of enhancements and improvements have been
+added.</p>
 <p><em>This repository is intended for production deployment and is deployed
-in carrier-grade systems.</em></p>
+in "24x7x365" carrier-grade systems.</em></p>
 
 <h2 id="_quick_start_recipe">Quick Start Recipe</h2>
 
@@ -18,14 +19,11 @@ in carrier-grade systems.</em></p>
 follow this recipe:</p>
 
 
-<pre><tt>$ mkdir working-directory-name
+<pre><code>$ mkdir working-directory-name
 $ cd working-directory-name
 $ git clone https://github.com/ubf/ubf.git ubf
 $ cd ubf
-$ ./rebar get-deps
-$ ./rebar clean
-$ ./rebar compile
-$ ./rebar eunit</tt></pre>
+$ make deps clean compile test</code></pre>
 
 <p>For an alternative recipe with other "features" albeit more complex,
 please read further.</p>
@@ -38,7 +36,7 @@ please read further.</p>
 <h3 id="_where_should_i_start">Where should I start?</h3>
 <p>This README is a good first step.</p>
 <p>The UBF User's Guide is the best next step.  Check out
-<a href="http://ubf.github.com/ubf/ubf-user-guide.en.html">http://ubf.github.com/ubf/ubf-user-guide.en.html</a> for further
+<a href="http://ubf.github.com/ubf/ubf-user-guide.en.md">http://ubf.github.com/ubf/ubf-user-guide.en.html</a> for further
 detailed information.</p>
 <p>One of the better places to start is to look in the "doc" directory.
 See the "Reference Documentation" section for suggestions on where to
@@ -49,13 +47,9 @@ files contain comments at the top with a list of prerequisites and
 small examples, recipe-style, for starting each server and using the
 client.</p>
 <p>The eunit tests in the "test/eunit" directory perform several smoke
-and error handling uses cases.</p>
-<p>The #1 most frequently asked question is: "My term X fails contract Y,
-but I can't figure out why!  This X is perfectly OK.  What is going
-on?"  See the the EDoc documentation for the contracts:checkType/3
-function.</p>
-<p>The documentation is in a state of slow improvement.  Contributions
-from the wider world are welcome.  :-)</p>
+and error handling uses cases.  The stateless_plugin and
+stateful_plugin test applications are concrete examples on how to
+integrate one or more UBF listeners into an Erlang/OTP application.</p>
 
 
 <h3 id="_what_is_ubf">What is UBF?</h3>
@@ -94,20 +88,20 @@ instead:</p>
 <ul>
 <li>
 <p>
-Structured terms are serialized via the Erlang BIFs <tt>term_to_binary()</tt>
-  and <tt>binary_to_term()</tt>.
+Structured terms are serialized via the Erlang BIFs <code>term_to_binary()</code>
+  and <code>binary_to_term()</code>.
 </p>
 </li>
 <li>
 <p>
-Terms are framed using the <tt>gen_tcp</tt> <tt>{packet, 4}</tt> format: a 32-bit
+Terms are framed using the <code>gen_tcp</code> <code>{packet, 4}</code> format: a 32-bit
   unsigned integer (big-endian?) specifies packet length.
 </p>
 
 
-<pre><tt>+-------------------------+-------------------------------+
+<pre><code>+-------------------------+-------------------------------+
 | Packet length (32 bits) | Packet data (variable length) |
-+-------------------------+-------------------------------+</tt></pre>
++-------------------------+-------------------------------+</code></pre>
 
 </li>
 </ul>
@@ -128,14 +122,14 @@ framework for integrating UBF, TBF, and Thrift.</p>
 
 <h3 id="_what_about_abnf">What about ABNF?</h3>
 <p>See the ubf-abnf open source repository
-<a href="https://github.com/ubf/ubf-abnf">https://github.com/ubf/ubf-abnf</a> for details.  ubf-abnf is a
-framework for integrating UBF and ABNF.</p>
+<a href="https://github.com/ubf/ubf-abnf">https://github.com/ubf/ubf-abnf</a> for details.  ubf-abnf is a framework
+for integrating UBF and ABNF.</p>
 
 
 <h3 id="_what_about_eep8">What about EEP8?</h3>
 <p>See the ubf-eep8 open source repository
-<a href="https://github.com/ubf/ubf-eep8">https://github.com/ubf/ubf-eep8</a> for details.  ubf-eep8 is a
-framework for integrating UBF and EEP8.</p>
+<a href="https://github.com/ubf/ubf-eep8">https://github.com/ubf/ubf-eep8</a> for details.  ubf-eep8 is a framework
+for integrating UBF and EEP8.</p>
 
 
 
@@ -149,8 +143,8 @@ Configure your e-mail and name for Git
 </p>
 
 
-<pre><tt>$ git config \--global user.email "you@example.com"
-$ git config \--global user.name "Your Name"</tt></pre>
+<pre><code>$ git config \--global user.email "you@example.com"
+$ git config \--global user.name "Your Name"</code></pre>
 
 </li>
 <li>
@@ -159,9 +153,9 @@ Install Repo
 </p>
 
 
-<pre><tt>$ mkdir -p ~/bin
+<pre><code>$ mkdir -p ~/bin
 $ wget -O - https://dl-ssl.google.com/dl/googlesource/git-repo/repo > ~/bin/repo
-$ chmod a+x ~/bin/repo</tt></pre>
+$ chmod a+x ~/bin/repo</code></pre>
 
 </li>
 <li>
@@ -170,9 +164,9 @@ Create working directory
 </p>
 
 
-<pre><tt>$ mkdir working-directory-name
+<pre><code>$ mkdir working-directory-name
 $ cd working-directory-name
-$ repo init -u https://github.com/ubf/manifests.git -m ubf-default.xml</tt></pre>
+$ repo init -u https://github.com/ubf/manifests.git -m ubf-default.xml</code></pre>
 
 
 <table><tr>
@@ -201,12 +195,12 @@ Download Git repositories
 </p>
 
 
-<pre><tt>$ cd working-directory-name
-$ repo sync</tt></pre>
+<pre><code>$ cd working-directory-name
+$ repo sync</code></pre>
 
 </li>
 </ol>
-<p>For futher information and help for related tools, please refer to the
+<p>For further information and help for related tools, please refer to the
 following links:</p>
 <ul>
 <li>
@@ -216,7 +210,7 @@ Erlang - <a href="http://www.erlang.org/">http://www.erlang.org/</a>
 <ul>
 <li>
 <p>
-<strong>R13B04 or newer, R15B has been tested most recently</strong>
+<strong>R13B04 or newer, R15B02 has been tested most recently</strong>
 </p>
 </li>
 </ul>
@@ -228,7 +222,7 @@ Git - <a href="http://git-scm.com/">http://git-scm.com/</a>
 <ul>
 <li>
 <p>
-<strong>Git 1.5.4 or newer, Git 1.7.9.3 has been tested recently</strong>
+<strong>Git 1.5.4 or newer, Git 1.8.0 has been tested most recently</strong>
 </p>
 </li>
 <li>
@@ -250,7 +244,7 @@ Python - <a href="http://www.python.org">http://www.python.org</a>
 <ul>
 <li>
 <p>
-<strong>Python 2.4 or newer, Python 2.7.1 has been tested most recently
+<strong>Python 2.4 or newer, Python 2.7.2 has been tested most recently
     (CAUTION: Python 3.x might be too new)</strong>
 </p>
 </li>
@@ -263,7 +257,7 @@ Python - <a href="http://www.python.org">http://www.python.org</a>
 </li>
 <li>
 <p>
-Rebar - <a href="https://github.com/basho/rebar/wiki">https://github.com/basho/rebar/wiki</a>
+Rebar - <a href="https://github.com/rebar/rebar/wiki">https://github.com/rebar/rebar/wiki</a>
 </p>
 </li>
 <li>
@@ -289,8 +283,8 @@ Build
 </p>
 
 
-<pre><tt>$ cd working-directory-name
-$ make compile</tt></pre>
+<pre><code>$ cd working-directory-name
+$ make compile</code></pre>
 
 </li>
 <li>
@@ -299,8 +293,8 @@ Run the unit tests
 </p>
 
 
-<pre><tt>$ cd working-directory-name
-$ make eunit</tt></pre>
+<pre><code>$ cd working-directory-name
+$ make eunit</code></pre>
 
 </li>
 </ol>
@@ -321,8 +315,8 @@ Build Dialyzer's PLT <em>(required once)</em>
 </p>
 
 
-<pre><tt>$ cd working-directory-name
-$ make build-plt</tt></pre>
+<pre><code>$ cd working-directory-name
+$ make build-plt</code></pre>
 
 
 <table><tr>
@@ -340,8 +334,8 @@ Dialyze with specs
 </p>
 
 
-<pre><tt>$ cd working-directory-name
-$ make dialyze</tt></pre>
+<pre><code>$ cd working-directory-name
+$ make dialyze</code></pre>
 
 
 <table><tr>
@@ -361,8 +355,8 @@ Dialyze without specs
 </p>
 
 
-<pre><tt>$ cd working-directory-name
-$ make dialyze-nospec</tt></pre>
+<pre><code>$ cd working-directory-name
+$ make dialyze-nospec</code></pre>
 
 </li>
 </ol>
@@ -373,8 +367,8 @@ To build the Java client and run its encoding/decoding unit test:
 </p>
 
 
-<pre><tt>$ cd working-directory-name
-$ make -C lib/ubf/priv/java</tt></pre>
+<pre><code>$ cd working-directory-name
+$ make -C lib/ubf/priv/java</code></pre>
 
 </li>
 <li>
@@ -384,11 +378,11 @@ The Python client depends on the "py-interface" library.  To clone
 </p>
 
 
-<pre><tt>$ cd working-directory-name
+<pre><code>$ cd working-directory-name
 $ git clone git://repo.or.cz/py_interface.git
 $ cd py_interface
 $ autoconf
-$ make</tt></pre>
+$ make</code></pre>
 
 <p>Then install as a normal Python package or run using "env
 PYTHONPATH=working-directory-name/py_interface python your-script.py"</p>
@@ -397,22 +391,78 @@ PYTHONPATH=working-directory-name/py_interface python your-script.py"</p>
 
 
 
+<h2 id="_what_s_new_in_ubf_2_0">What's New in UBF 2.0</h2>
+
+<p>This section highlights new features and key changes in UBF 2.0.  This
+release of UBF is not backwards compatible with older versions of UBF.</p>
+<ul>
+<li>
+<p>
+The syntax for UBF(b) has been modified to align closer (but not
+  identical) with Erlang's native type and spec declarations defined
+  by EEP8 (<a href="http://www.erlang.org/eeps/eep-0008.html">http://www.erlang.org/eeps/eep-0008.html</a>).  A subset of
+  EEP8 types are now available as UBF(b) builtin types.
+</p>
+</li>
+<li>
+<p>
+The UBF(b) builtin types <code>proplist()</code> and <code>string()</code> have been
+  renamed to <code>ubfproplist()</code> and <code>ubfstring()</code>, respectively.
+</p>
+</li>
+<li>
+<p>
+An Erlang "header" file corresponding to each UBF(b) contract is
+  automatically created in an application's ebin directory.  This
+  file contains Erlang type, spec, and record declarations that can be
+  included by a UBF(b) contract's implementation module or by other
+  Erlang modules.
+</p>
+</li>
+<li>
+<p>
+The API and internal implementation of UBF's contract parser,
+  contract manager, contract driver, and contract plugin handler has
+  changed (in some places).
+</p>
+</li>
+<li>
+<p>
+For the above Quick Start Recipe, a Makefile has been added to
+  automate and document common recipes.  This Makefile is also used
+  for Travis CI (<a href="https://travis-ci.org">https://travis-ci.org</a>) integration.
+</p>
+</li>
+</ul>
+
+
+
 <h2 id="_roadmap">Roadmap</h2>
 
 <ul>
 <li>
 <p>
-QuickCheck/Proper tests
+QuickCheck/PropEr/Triq tests
 </p>
 </li>
 <li>
 <p>
-Add WebSockets support
+Transport Protocols
+</p>
+<ul>
+<li>
+<p>
+SUNRPC (<a href="http://tools.ietf.org.md/rfc5531">http://tools.ietf.org/html/rfc5531</a>) support
 </p>
 </li>
 <li>
 <p>
-Add more Thrift (<a href="http://incubator.apache.org/thrift/">http://incubator.apache.org/thrift/</a>) support
+WebSockets support
+</p>
+</li>
+<li>
+<p>
+More Thrift (<a href="http://incubator.apache.org/thrift/">http://incubator.apache.org/thrift/</a>) support
 </p>
 <ul>
 <li>
@@ -424,43 +474,53 @@ Compact Format
 </li>
 <li>
 <p>
-Add Google's Protocol Buffers (<a href="http://code.google.com/apis/protocolbuffers/">http://code.google.com/apis/protocolbuffers/</a>) support
+Protocol Buffers (<a href="http://code.google.com/apis/protocolbuffers/">http://code.google.com/apis/protocolbuffers/</a>) support
 </p>
 </li>
 <li>
 <p>
-Add Bert-RPC (<a href="http://bert-rpc.org/">http://bert-rpc.org/</a>) support
+Bert-RPC (<a href="http://bert-rpc.org/">http://bert-rpc.org/</a>) support
+</p>
+</li>
+</ul>
+</li>
+<li>
+<p>
+Misc
 </p>
 <ul>
 <li>
 <p>
-BERT-RPC is UBF/EBF with a specialized contract and plugin handler
-    implementation for BERT-RPC. UBF/EBF already supports all of the
-    BERT data types.  UBF is the text-based wire protocol.  EBF is the
-    binary-based wire protocol (based on Erlang's binary
-    serialization format).
-</p>
-</li>
-</ul>
-</li>
-<li>
-<p>
-Add multiple listeners for a single UBF server support
+Multiple listeners for a single UBF server support
 </p>
 </li>
 <li>
 <p>
-Add UDP transport support
+UDP support
 </p>
 </li>
 </ul>
+</li>
+</ul>
+
+<table><tr>
+<td class="icon">
+Note
+</td>
+<td class="content">BERT-RPC is UBF/EBF with a specialized contract and plugin
+handler implementation for BERT-RPC. UBF/EBF already supports all of
+the BERT data types.  UBF is the text-based wire protocol.  EBF is the
+binary-based wire protocol (based on Erlang's binary serialization
+format).</td>
+</tr></table>
+
 
 
 
 <h2 id="_credits">Credits</h2>
 
 <p>Many, many thanks to Joe Armstrong, UBF's designer and original
-implementor.</p>
+implementer.</p>
 <p>Gemini Mobile Technologies, Inc. has approved the release of its
 extensions, improvements, etc. under an MIT license.  Joe Armstrong
 has also given his blessing to Gemini's license choice.</p>
@@ -486,6 +546,7 @@ has also given his blessing to Gemini's license choice.</p>
 <tr><td><a href="proc_socket_server.md" class="module">proc_socket_server</a></td></tr>
 <tr><td><a href="proc_utils.md" class="module">proc_utils</a></td></tr>
 <tr><td><a href="qc_ubf.md" class="module">qc_ubf</a></td></tr>
+<tr><td><a href="qc_ubf_impl.md" class="module">qc_ubf_impl</a></td></tr>
 <tr><td><a href="qc_ubf_types.md" class="module">qc_ubf_types</a></td></tr>
 <tr><td><a href="ubf.md" class="module">ubf</a></td></tr>
 <tr><td><a href="ubf_client.md" class="module">ubf_client</a></td></tr>
@@ -496,5 +557,6 @@ has also given his blessing to Gemini's license choice.</p>
 <tr><td><a href="ubf_plugin_stateful.md" class="module">ubf_plugin_stateful</a></td></tr>
 <tr><td><a href="ubf_plugin_stateless.md" class="module">ubf_plugin_stateless</a></td></tr>
 <tr><td><a href="ubf_server.md" class="module">ubf_server</a></td></tr>
+<tr><td><a href="ubf_types_builtin.md" class="module">ubf_types_builtin</a></td></tr>
 <tr><td><a href="ubf_utils.md" class="module">ubf_utils</a></td></tr></table>
 

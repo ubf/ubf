@@ -9,30 +9,30 @@
 <p>Contract manager server</p>
 
 
-<pre><tt>This module implements the contract manager server process, which
+<pre><code>This module implements the contract manager server process, which
 runs on the Erlang server side, between the UBF driver (or the
 driver for whatever protocol is being used "over the wire",
-e.g. JSON-RPC) and the plugin handler server.</tt></pre>
+e.g. JSON-RPC) and the plugin handler server.</code></pre>
 
 
 
-<pre><tt>image:ubf-flow-01.png[UBF Flow]</tt></pre>
+<pre><code>image:ubf-flow-01.png[UBF Flow]</code></pre>
 
 
 
-<pre><tt>== Message Passing</tt></pre>
+<pre><code>== Message Passing</code></pre>
 
 
 
-<pre><tt>In the diagram below, the "Client" is actually the UBF driver
+<pre><code>In the diagram below, the "Client" is actually the UBF driver
 (using UBF, EBF, JSON, JSON-RPC, or other transport protocol) that
 acts on behalf of the remote client.  The "Server" is actually the
 plugin handler server, which acts as an intermediary between the
-actual server application.</tt></pre>
+actual server application.</code></pre>
 
 
 
-<pre><tt>------
+<pre><code>------
  Client                     Contract                    Server
    |                           |                          |
    |                           |                          |
@@ -61,7 +61,7 @@ actual server application.</tt></pre>
    |                           |      {event_in,M}        |
    |                           +------------->------------+
    |                           |                          |
-------</tt></pre>
+------</code></pre>
 .
 
 <a name="index"></a>

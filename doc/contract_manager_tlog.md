@@ -9,11 +9,11 @@
 <p>Contract manager transaction logging.</p>
 
 
-<pre><tt>This module can be used by the server to log individual protocol
+<pre><code>This module can be used by the server to log individual protocol
 transactions, if desired.  This simple default module uses the
 Erlang/OTP +error_logger+ module; we highly recommend that the
 +sasl+ application be running to take full advantage of OTP\'s
-error and event handling capabilities.</tt></pre>
+error and event handling capabilities.</code></pre>
 .
 
 <a name="index"></a>

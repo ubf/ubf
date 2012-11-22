@@ -9,21 +9,21 @@
 <p>Keeps track of a number of TCP sessions.</p>
 
 
-<pre><tt>This module will manage a collection of TCP sessions for the same
+<pre><code>This module will manage a collection of TCP sessions for the same
 server.  If +Port+ is 0, the underlying OS assigns an available
 port number.  If a +Name+ is not specified, the server will be
 named +picoSocketServer_+ plus the TCP port number that the
-service listens to, e.g. +picoSocketServer_9923+.</tt></pre>
+service listens to, e.g. +picoSocketServer_9923+.</code></pre>
 
 
 
-<pre><tt>A managed server can be started, stopped, enumerate child
-sessions, and limit the maximum number of child sessions.</tt></pre>
+<pre><code>A managed server can be started, stopped, enumerate child
+sessions, and limit the maximum number of child sessions.</code></pre>
 
 
 
-<pre><tt>The conventions used by this module look quite different than
-OTP-based services, due to its origin.</tt></pre>
+<pre><code>The conventions used by this module look quite different than
+OTP-based services, due to its origin.</code></pre>
 .
 
 <a name="index"></a>
@@ -49,17 +49,17 @@ Each time a new connection is made, Fun(Socket) is called.
 </p>
 
 
-<pre><tt>------
+<pre><code>------
 Fun = fun(Socket) -> exit(normal) | exit(socket_closed) |
                      exit({socket_error, Reason}) | exit(timeout).
 ------
 Fun will handle all of the protocol communication for a single TCP
-session.</tt></pre>
+session.</code></pre>
 
 
 
-<pre><tt>A raw server uses packet length 0 (see start_raw_server/5 and
-start_raw_server/7).</tt></pre>
+<pre><code>A raw server uses packet length 0 (see start_raw_server/5 and
+start_raw_server/7).</code></pre>
 
 </li>
 </ul>.</td></tr><tr><td valign="top"><a href="#start_server-4">start_server/4</a></td><td></td></tr><tr><td valign="top"><a href="#stop_server-1">stop_server/1</a></td><td></td></tr></table>
@@ -164,17 +164,17 @@ Each time a new connection is made, Fun(Socket) is called.
 </p>
 
 
-<pre><tt>------
+<pre><code>------
 Fun = fun(Socket) -> exit(normal) | exit(socket_closed) |
                      exit({socket_error, Reason}) | exit(timeout).
 ------
 Fun will handle all of the protocol communication for a single TCP
-session.</tt></pre>
+session.</code></pre>
 
 
 
-<pre><tt>A raw server uses packet length 0 (see start_raw_server/5 and
-start_raw_server/7).</tt></pre>
+<pre><code>A raw server uses packet length 0 (see start_raw_server/5 and
+start_raw_server/7).</code></pre>
 
 </li>
 </ul>

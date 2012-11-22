@@ -10,7 +10,7 @@
 
 __This module defines the `ubf_plugin_stateless` behaviour.__
 <br></br>
- Required callback functions: `info/0`, `description/0`, `handlerStart/1`, `handlerStop/3`, `handlerRpc/1`.<a name="index"></a>
+ Required callback functions: `info/0`, `description/0`, `moduleStart/1`, `moduleRestart/1`, `handlerStart/1`, `handlerStop/3`, `handlerRpc/1`.<a name="index"></a>
 
 ##Function Index##
 
