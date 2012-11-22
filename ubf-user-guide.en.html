@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>UBF User’s Guide</title><link rel="stylesheet" type="text/css" href="docbook-xsl.css" /><meta name="generator" content="DocBook XSL Stylesheets V1.76.1" /></head><body><div xml:lang="en" class="article" title="UBF User’s Guide" lang="en"><div class="titlepage"><div><div><h2 class="title"><a id="idp25240400"></a>UBF User’s Guide</h2></div><div><div class="revhistory"><table border="1" width="100%" summary="Revision history"><tr><th align="left" valign="top" colspan="2"><strong>Revision History</strong></th></tr><tr><td align="left">Revision 1.0.1</td><td align="left">2012/11/22</td></tr></table></div></div></div><hr /></div><div class="toc"><p><strong>Table of Contents</strong></p><dl><dt><span class="section"><a href="#_preface">1. Preface</a></span></dt><dt><span class="section"><a href="#_introduction">2. Introduction</a></span></dt><dt><span class="section"><a href="#_specifications">3. Specifications</a></span></dt><dd><dl><dt><span class="section"><a href="#UBFa">3.1. UBF(a)</a></span></dt><dt><span class="section"><a href="#_ubf_b">3.2. UBF(b)</a></span></dt><dt><span class="section"><a href="#_ubf_c">3.3. UBF(c)</a></span></dt></dl></dd><dt><span class="section"><a href="#_contracts_amp_plugins">4. Contracts &amp; Plugins</a></span></dt><dd><dl><dt><span class="section"><a href="#_contract">4.1. Contract</a></span></dt><dt><span class="section"><a href="#_plugin">4.2. Plugin</a></span></dt><dt><span class="section"><a href="#_importing_types">4.3. Importing Types</a></span></dt><dt><span class="section"><a href="#_compilation_errors">4.4. Compilation Errors</a></span></dt><dt><span class="section"><a href="#_miscellaneous">4.5. Miscellaneous</a></span></dt></dl></dd><dt><span class="section"><a href="#_transports">5. Transports</a></span></dt><dd><dl><dt><span class="section"><a href="#_tcp_ip">5.1. TCP/IP</a></span></dt><dt><span class="section"><a href="#_http">5.2. HTTP</a></span></dt><dt><span class="section"><a href="#_miscellaneous_3">5.3. Miscellaneous</a></span></dt></dl></dd><dt><span class="section"><a href="#Servers">6. Servers</a></span></dt><dd><dl><dt><span class="section"><a href="#_stateless">6.1. Stateless</a></span></dt><dt><span class="section"><a href="#_stateful">6.2. Stateful</a></span></dt></dl></dd><dt><span class="section"><a href="#_clients">7. Clients</a></span></dt><dd><dl><dt><span class="section"><a href="#_erlang">7.1. Erlang</a></span></dt><dt><span class="section"><a href="#_python">7.2. Python</a></span></dt><dt><span class="section"><a href="#_java">7.3. Java</a></span></dt></dl></dd><dt><span class="section"><a href="#_miscellaneous_4">8. Miscellaneous</a></span></dt><dd><dl><dt><span class="section"><a href="#_testing">8.1. Testing</a></span></dt><dt><span class="section"><a href="#_utilities">8.2. Utilities</a></span></dt></dl></dd><dt><span class="section"><a href="#_building_ubf_from_source_option_1">9. Building UBF from Source - Option 1</a></span></dt><dt><span class="section"><a href="#_building_ubf_from_source_option_2">10. Building UBF from Source - Option 2</a></span></dt><dd><dl><dt><span class="section"><a href="#DOWNLOAD">10.1. Download</a></span></dt><dt><span class="section"><a href="#BUILD">10.2. Build - Mandatory</a></span></dt><dt><span class="section"><a href="#_build_optional">10.3. Build - Optional</a></span></dt><dt><span class="section"><a href="#UBFAsciiDoc">10.4. UBF Documentation</a></span></dt><dt><span class="section"><a href="#ErlangOTP">10.5. Erlang/OTP System</a></span></dt><dt><span class="section"><a href="#_github_forking_your_own_repositories">10.6. GitHub - Forking Your Own Repositories</a></span></dt></dl></dd><dt><span class="section"><a href="#_reference">11. Reference</a></span></dt><dt><span class="section"><a href="#_appendix">12. Appendix</a></span></dt><dd><dl><dt><span class="section"><a href="#_acknowledgments">12.1. Acknowledgments</a></span></dt><dt><span class="section"><a href="#_abnf_definition">12.2. ABNF Definition</a></span></dt></dl></dd></dl></div><p></p><div class="section" title="1. Preface"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_preface"></a>1. Preface</h2></div></div></div><p>UBF is a framework that permits Erlang and the outside world
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>UBF User’s Guide</title><link rel="stylesheet" type="text/css" href="docbook-xsl.css" /><meta name="generator" content="DocBook XSL Stylesheets V1.76.1" /></head><body><div xml:lang="en" class="article" title="UBF User’s Guide" lang="en"><div class="titlepage"><div><div><h2 class="title"><a id="idp25239616"></a>UBF User’s Guide</h2></div><div><div class="revhistory"><table border="1" width="100%" summary="Revision history"><tr><th align="left" valign="top" colspan="2"><strong>Revision History</strong></th></tr><tr><td align="left">Revision 1.0.1</td><td align="left">2012/11/22</td></tr></table></div></div></div><hr /></div><div class="toc"><p><strong>Table of Contents</strong></p><dl><dt><span class="section"><a href="#_preface">1. Preface</a></span></dt><dt><span class="section"><a href="#_introduction">2. Introduction</a></span></dt><dt><span class="section"><a href="#_specifications">3. Specifications</a></span></dt><dd><dl><dt><span class="section"><a href="#UBFa">3.1. UBF(a)</a></span></dt><dt><span class="section"><a href="#_ubf_b">3.2. UBF(b)</a></span></dt><dt><span class="section"><a href="#_ubf_c">3.3. UBF(c)</a></span></dt></dl></dd><dt><span class="section"><a href="#_contracts_amp_plugins">4. Contracts &amp; Plugins</a></span></dt><dd><dl><dt><span class="section"><a href="#_contract">4.1. Contract</a></span></dt><dt><span class="section"><a href="#_plugin">4.2. Plugin</a></span></dt><dt><span class="section"><a href="#_importing_types">4.3. Importing Types</a></span></dt><dt><span class="section"><a href="#_compilation_errors">4.4. Compilation Errors</a></span></dt><dt><span class="section"><a href="#_miscellaneous">4.5. Miscellaneous</a></span></dt></dl></dd><dt><span class="section"><a href="#_transports">5. Transports</a></span></dt><dd><dl><dt><span class="section"><a href="#_tcp_ip">5.1. TCP/IP</a></span></dt><dt><span class="section"><a href="#_http">5.2. HTTP</a></span></dt><dt><span class="section"><a href="#_miscellaneous_3">5.3. Miscellaneous</a></span></dt></dl></dd><dt><span class="section"><a href="#Servers">6. Servers</a></span></dt><dd><dl><dt><span class="section"><a href="#_stateless">6.1. Stateless</a></span></dt><dt><span class="section"><a href="#_stateful">6.2. Stateful</a></span></dt></dl></dd><dt><span class="section"><a href="#_clients">7. Clients</a></span></dt><dd><dl><dt><span class="section"><a href="#_erlang">7.1. Erlang</a></span></dt><dt><span class="section"><a href="#_python">7.2. Python</a></span></dt><dt><span class="section"><a href="#_java">7.3. Java</a></span></dt></dl></dd><dt><span class="section"><a href="#_miscellaneous_4">8. Miscellaneous</a></span></dt><dd><dl><dt><span class="section"><a href="#_testing">8.1. Testing</a></span></dt><dt><span class="section"><a href="#_utilities">8.2. Utilities</a></span></dt></dl></dd><dt><span class="section"><a href="#_building_ubf_from_source_option_1">9. Building UBF from Source - Option 1</a></span></dt><dt><span class="section"><a href="#_building_ubf_from_source_option_2">10. Building UBF from Source - Option 2</a></span></dt><dd><dl><dt><span class="section"><a href="#DOWNLOAD">10.1. Download</a></span></dt><dt><span class="section"><a href="#BUILD">10.2. Build - Mandatory</a></span></dt><dt><span class="section"><a href="#_build_optional">10.3. Build - Optional</a></span></dt><dt><span class="section"><a href="#UBFAsciiDoc">10.4. UBF Documentation</a></span></dt><dt><span class="section"><a href="#ErlangOTP">10.5. Erlang/OTP System</a></span></dt><dt><span class="section"><a href="#_github_forking_your_own_repositories">10.6. GitHub - Forking Your Own Repositories</a></span></dt></dl></dd><dt><span class="section"><a href="#_reference">11. Reference</a></span></dt><dt><span class="section"><a href="#_appendix">12. Appendix</a></span></dt><dd><dl><dt><span class="section"><a href="#_acknowledgments">12.1. Acknowledgments</a></span></dt><dt><span class="section"><a href="#_abnf_definition">12.2. ABNF Definition</a></span></dt></dl></dd></dl></div><p></p><div class="section" title="1. Preface"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_preface"></a>1. Preface</h2></div></div></div><p>UBF is a framework that permits Erlang and the outside world
 <a class="xref" href="#UBFPAPER">[UBFPAPER]</a> to talk with each other.  The acronym "UBF" stands for
 "Universal Binary Format", designed and implemented by Joe Armstrong.</p><p>This document and the corresponding open-source code repositories
 hosted on GitHub <a class="xref" href="#UBF">[UBF]</a> are based on Joe Armstrong’s original UBF
@@ -20,7 +20,7 @@ UBF(c) is a meta-level protocol used between a UBF client and a UBF
   server.
 </li></ul></div><p>While the XML series of languages had the goal of having a human
 readable format the UBF languages take the opposite view and provide a
-"machine friendly" format.  UBF is designed to be easy to implement.</p><div class="figure"><a id="idp28172512"></a><p class="title"><strong>Figure 1. Programming By Contract</strong></p><div class="figure-contents"><a class="ulink" href="images/ubf-flow-01.svg" target="_top">
+"machine friendly" format.  UBF is designed to be easy to implement.</p><div class="figure"><a id="idp27707024"></a><p class="title"><strong>Figure 1. Programming By Contract</strong></p><div class="figure-contents"><a class="ulink" href="images/ubf-flow-01.svg" target="_top">
   <div class="mediaobject"><img src="images/ubf-flow-01.png" alt="Programming By Contract" /></div>
 </a></div></div><br class="figure-break" /><p>Central to UBF is the idea of a "Contract" which regulates the set of
 legal conversations that can take place between a client and a server.
@@ -501,7 +501,7 @@ Protocol Buffers Format" <a class="xref" href="#PROTOBUF">[PROTOBUF]</a>.  The n
 "Avro Binary Format" <a class="xref" href="#AVRO">[AVRO]</a>.</p></div></div><div class="section" title="5.2. HTTP"><div class="titlepage"><div><div><h3 class="title"><a id="_http"></a>5.2. HTTP</h3></div></div></div><div class="section" title="JSON-RPC"><div class="titlepage"><div><div><h4 class="title"><a id="_json_rpc"></a>JSON-RPC</h4></div></div></div><p>JSON-RPC <a class="xref" href="#JSONRPC">[JSONRPC]</a> is a lightweight remote procedure call protocol
 similar to XML-RPC.  The UBF framework implementation of JSON-RPC
 brings together JSF’s encoder/decoder, UBF(b)'s contract checking, and
-an HTTP transport.</p><div class="figure"><a id="idp30870096"></a><p class="title"><strong>Figure 2. Programming By Contract w/ Multiple Transports</strong></p><div class="figure-contents"><a class="ulink" href="images/ubf-flow-02.svg" target="_top">
+an HTTP transport.</p><div class="figure"><a id="idp30860720"></a><p class="title"><strong>Figure 2. Programming By Contract w/ Multiple Transports</strong></p><div class="figure-contents"><a class="ulink" href="images/ubf-flow-02.svg" target="_top">
   <div class="mediaobject"><img src="images/ubf-flow-02.png" alt="Programming By Contract w/ Multiple Transports" /></div>
 </a></div></div><br class="figure-break" /><p>As previously stated, central to UBF is the idea of a "Contract" which
 regulates the set of legal conversations that can take place between a
@@ -961,7 +961,7 @@ Anonymous read-only access using the GIT protocol is default.
 Team members having read-write access should add his/her ssh
     public key under your GitHub account.
 </li></ul></div></li></ul></div></dd><dt><span class="term">
-Python (Optional)
+Python (Mandatory)
 </span></dt><dd><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem"><p class="simpara">
 Python - <a class="ulink" href="http://www.python.org" target="_top">http://www.python.org</a>
 </p><div class="itemizedlist"><ul class="itemizedlist" type="circle"><li class="listitem">
@@ -1102,20 +1102,20 @@ Get and install Git
 </li><li class="listitem"><p class="simpara">
 Download the source code for your Erlang/OTP system
 </p><pre class="screen">$ cd working-directory-name
-$ wget http://www.erlang.org/download/otp_src_R15B.tar.gz</pre></li><li class="listitem"><p class="simpara">
+$ wget http://www.erlang.org/download/otp_src_R15B02.tar.gz</pre></li><li class="listitem"><p class="simpara">
 Untar the source code for your Erlang/OTP system.
 </p><pre class="screen">$ cd working-directory-name
-$ tar -xzf otp_src_R15B.tar.gz</pre></li></ol></div></li><li class="listitem"><p class="simpara">
+$ tar -xzf otp_src_R15B02.tar.gz</pre></li></ol></div></li><li class="listitem"><p class="simpara">
 Building <span class="emphasis"><em>basic recipe</em></span>
 </p><div class="orderedlist"><ol class="orderedlist" type="a"><li class="listitem"><p class="simpara">
 Change to your working directory and configure Erlang/OTP
-</p><pre class="screen">$ cd working-directory-name/otp_src_R15B
+</p><pre class="screen">$ cd working-directory-name/otp_src_R15B02
 $ ./configure --prefix=otp-installing-directory-name</pre></li><li class="listitem"><p class="simpara">
 Build Erlang/OTP
-</p><pre class="screen">$ cd working-directory-name/otp_src_R15B
+</p><pre class="screen">$ cd working-directory-name/otp_src_R15B02
 $ make</pre></li></ol></div></li><li class="listitem"><p class="simpara">
 Installing <span class="emphasis"><em>basic recipe</em></span>
-</p><pre class="screen">$ cd working-directory-name/otp_src_R15B
+</p><pre class="screen">$ cd working-directory-name/otp_src_R15B02
 $ sudo make install</pre></li></ol></div><div class="caution" title="Caution" style="margin-left: 0; margin-right: 10%;"><table border="0" summary="Caution"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Caution]" src="images/icons/caution.png" /></td><th align="left"></th></tr><tr><td align="left" valign="top"><p>Please make sure "otp-installing-directory-name/bin" is added
 to your $PATH environment.</p></td></tr></table></div></div><div class="section" title="10.6. GitHub - Forking Your Own Repositories"><div class="titlepage"><div><div><h3 class="title"><a id="_github_forking_your_own_repositories"></a>10.6. GitHub - Forking Your Own Repositories</h3></div></div></div><p>If you are interested in making your own changes to UBF or to one or
 more of the other UBF-related repositories, it is a straightforward
@@ -1134,118 +1134,118 @@ Choose all or a subset of the UBF-related repositories that you are
 Click on the "Fork" button near the top of the page.  This action
    creates a clone of the <span class="emphasis"><em>ubf-bertrpc</em></span> repository in your own account
    on GitHub.
-</li></ol></div><p><span class="emphasis"><em>Under Construction - To Be Updated</em></span></p><p></p></div></div><div class="section" title="11. Reference"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_reference"></a>11. Reference</h2></div></div></div><div class="bibliodiv" title="Optional list title"><h3 class="title"><a id="idp31132064"></a>Optional list title</h3><div class="bibliomixed"><a id="idp31132576"></a><p class="bibliomixed">
+</li></ol></div><p><span class="emphasis"><em>Under Construction - To Be Updated</em></span></p><p></p></div></div><div class="section" title="11. Reference"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_reference"></a>11. Reference</h2></div></div></div><div class="bibliodiv" title="Optional list title"><h3 class="title"><a id="idp31122608"></a>Optional list title</h3><div class="bibliomixed"><a id="idp31123120"></a><p class="bibliomixed">
 <span class="bibliomisc">
 <a id="AVRO"></a>[AVRO] "Avro is a serialization system.",
   <a class="ulink" href="http://avro.apache.org" target="_top">http://avro.apache.org</a>.
 </span>
-</p></div><div class="bibliomixed"><a id="idp31134816"></a><p class="bibliomixed">
+</p></div><div class="bibliomixed"><a id="idp31125360"></a><p class="bibliomixed">
 <span class="bibliomisc">
 <a id="BERTRPC"></a>[BERTRPC] "BERT and BERT-RPC 1.0 Specification",
   <a class="ulink" href="http://bert-rpc.org" target="_top">http://bert-rpc.org</a>.
 </span>
-</p></div><div class="bibliomixed"><a id="idp31137056"></a><p class="bibliomixed">
+</p></div><div class="bibliomixed"><a id="idp31127600"></a><p class="bibliomixed">
 <span class="bibliomisc">
 <a id="ERLANG"></a>[ERLANG] "A general-purpose programming language and runtime
   environment", <a class="ulink" href="http://www.erlang.org" target="_top">http://www.erlang.org</a>.
 </span>
-</p></div><div class="bibliomixed"><a id="idp31139360"></a><p class="bibliomixed">
+</p></div><div class="bibliomixed"><a id="idp31129904"></a><p class="bibliomixed">
 <span class="bibliomisc">
 <a id="EEP8"></a>[EEP8] "EEP 8: Types and function specifications",
   <a class="ulink" href="http://www.erlang.org/eeps/eep-0008.html" target="_top">http://www.erlang.org/eeps/eep-0008.html</a>.
 </span>
-</p></div><div class="bibliomixed"><a id="idp31141616"></a><p class="bibliomixed">
+</p></div><div class="bibliomixed"><a id="idp31132160"></a><p class="bibliomixed">
 <span class="bibliomisc">
 <a id="GIT"></a>[GIT] "Fast Version Control System", <a class="ulink" href="http://git-scm.com" target="_top">http://git-scm.com</a>.
 </span>
-</p></div><div class="bibliomixed"><a id="idp31143744"></a><p class="bibliomixed">
+</p></div><div class="bibliomixed"><a id="idp31134288"></a><p class="bibliomixed">
 <span class="bibliomisc">
 <a id="JSFCHARSET"></a>[JSFCHARSET] "Gemini Mobile Technologies, Inc. charset module",
   <a class="ulink" href="https://github.com/ubf/ubf-jsonrpc/blob/master/src/jsf_charset.erl" target="_top">https://github.com/ubf/ubf-jsonrpc/blob/master/src/jsf_charset.erl</a>
 </span>
-</p></div><div class="bibliomixed"><a id="idp31146176"></a><p class="bibliomixed">
+</p></div><div class="bibliomixed"><a id="idp31136720"></a><p class="bibliomixed">
 <span class="bibliomisc">
 <a id="GITHUB"></a>[GITHUB] "Secure source code hosting and collaborative
   development ", <a class="ulink" href="https://github.com" target="_top">https://github.com</a>.
 </span>
-</p></div><div class="bibliomixed"><a id="idp31148464"></a><p class="bibliomixed">
+</p></div><div class="bibliomixed"><a id="idp31139008"></a><p class="bibliomixed">
 <span class="bibliomisc">
 <a id="JSONRPC"></a>[JSONRPC] "A lightweight remote procedure call protocol similar
   to XML-RPC", <a class="ulink" href="http://json-rpc.org" target="_top">http://json-rpc.org</a>.
 </span>
-</p></div><div class="bibliomixed"><a id="idp31150768"></a><p class="bibliomixed">
+</p></div><div class="bibliomixed"><a id="idp31141312"></a><p class="bibliomixed">
 <span class="bibliomisc">
 <a id="MOCHIJSON2"></a>[MOCHIJSON2] "MochiWeb is an Erlang library for building
   lightweight HTTP servers.",
   <a class="ulink" href="https://github.com/mochi/mochiweb/blob/master/src/mochijson2.erl" target="_top">https://github.com/mochi/mochiweb/blob/master/src/mochijson2.erl</a>.
 </span>
-</p></div><div class="bibliomixed"><a id="idp31153248"></a><p class="bibliomixed">
+</p></div><div class="bibliomixed"><a id="idp31143792"></a><p class="bibliomixed">
 <span class="bibliomisc">
 <a id="PROTOBUF"></a>[PROTOBUF] "Protocol buffers are Google’s language-neutral,
   platform-neutral, extensible mechanism for serializing structured
   data.", <a class="ulink" href="http://code.google.com/apis/protocolbuffers" target="_top">http://code.google.com/apis/protocolbuffers</a>.
 </span>
-</p></div><div class="bibliomixed"><a id="idp31155696"></a><p class="bibliomixed">
+</p></div><div class="bibliomixed"><a id="idp31146240"></a><p class="bibliomixed">
 <span class="bibliomisc">
 <a id="QUVIQ"></a>[QUVIQ] "Quviq … amazing testing tools",
   <a class="ulink" href="http://www.quviq.com/" target="_top">http://www.quviq.com/</a>.
 </span>
-</p></div><div class="bibliomixed"><a id="idp31157968"></a><p class="bibliomixed">
+</p></div><div class="bibliomixed"><a id="idp31148512"></a><p class="bibliomixed">
 <span class="bibliomisc">
 <a id="RFC20"></a>[RFC20] Vint Cerf, "ASCII format for Network Interchange",
   RFC20, October 16, 1969.
 </span>
-</p></div><div class="bibliomixed"><a id="idp31159664"></a><p class="bibliomixed">
+</p></div><div class="bibliomixed"><a id="idp31150208"></a><p class="bibliomixed">
 <span class="bibliomisc">
 <a id="RFC4627"></a>[RFC4627] D. Crockford, "The application/json Media Type for
   JavaScript Object Notation (JSON)", RFC4627, July 2006.
 </span>
-</p></div><div class="bibliomixed"><a id="idp31161424"></a><p class="bibliomixed">
+</p></div><div class="bibliomixed"><a id="idp31151968"></a><p class="bibliomixed">
 <span class="bibliomisc">
 <a id="RFC5234"></a>[RFC5234] D. Crocker, Ed. Brandenburg, "Augmented BNF for Syntax
   Specifications: ABNF", RFC5234, January 2008.
 </span>
-</p></div><div class="bibliomixed"><a id="idp31163168"></a><p class="bibliomixed">
+</p></div><div class="bibliomixed"><a id="idp31153712"></a><p class="bibliomixed">
 <span class="bibliomisc">
 <a id="THRIFT"></a>[THRIFT] "A software framework for scalable cross-language
   services development.", <a class="ulink" href="http://incubator.apache.org/thrift" target="_top">http://incubator.apache.org/thrift</a>.
 </span>
-</p></div><div class="bibliomixed"><a id="idp31165488"></a><p class="bibliomixed">
+</p></div><div class="bibliomixed"><a id="idp31156032"></a><p class="bibliomixed">
 <span class="bibliomisc">
 <a id="UBF"></a>[UBF] "Universal Binary Format", <a class="ulink" href="https://github.com/ubf/ubf" target="_top">https://github.com/ubf/ubf</a>.
 </span>
-</p></div><div class="bibliomixed"><a id="idp31167616"></a><p class="bibliomixed">
+</p></div><div class="bibliomixed"><a id="idp31158160"></a><p class="bibliomixed">
 <span class="bibliomisc">
 <a id="UBF_ABNF"></a>[UBF_ABNF] "Universal Binary Format and Augmented Backus-Naur
   Form", <a class="ulink" href="https://github.com/ubf/ubf-abnf" target="_top">https://github.com/ubf/ubf-abnf</a>.
 </span>
-</p></div><div class="bibliomixed"><a id="idp31169904"></a><p class="bibliomixed">
+</p></div><div class="bibliomixed"><a id="idp31160448"></a><p class="bibliomixed">
 <span class="bibliomisc">
 <a id="UBF_BERTRPC"></a>[UBF_BERTRPC] "Universal Binary Format and Binary ERlang Term
   RPC", <a class="ulink" href="https://github.com/ubf/ubf-bertrpc" target="_top">https://github.com/ubf/ubf-bertrpc</a>.
 </span>
-</p></div><div class="bibliomixed"><a id="idp31172192"></a><p class="bibliomixed">
+</p></div><div class="bibliomixed"><a id="idp31162736"></a><p class="bibliomixed">
 <span class="bibliomisc">
 <a id="UBF_EEP8"></a>[UBF_EEP8] "Universal Binary Format and Erlang Enhancement
   Proposal 8", <a class="ulink" href="https://github.com/ubf/ubf-eep8" target="_top">https://github.com/ubf/ubf-eep8</a>.
 </span>
-</p></div><div class="bibliomixed"><a id="idp31174480"></a><p class="bibliomixed">
+</p></div><div class="bibliomixed"><a id="idp31165024"></a><p class="bibliomixed">
 <span class="bibliomisc">
 <a id="UBF_JSONRPC"></a>[UBF_JSONRPC] "Universal Binary Format and JavaScript Object
   Notation RPC", <a class="ulink" href="https://github.com/ubf/ubf-jsonrpc" target="_top">https://github.com/ubf/ubf-jsonrpc</a>.
 </span>
-</p></div><div class="bibliomixed"><a id="idp31176784"></a><p class="bibliomixed">
+</p></div><div class="bibliomixed"><a id="idp31167328"></a><p class="bibliomixed">
 <span class="bibliomisc">
 <a id="UBF_THRIFT"></a>[UBF_THRIFT] "Universal Binary Format and Thrift",
   <a class="ulink" href="https://github.com/ubf/ubf-thrift" target="_top">https://github.com/ubf/ubf-thrift</a>.
 </span>
-</p></div><div class="bibliomixed"><a id="idp31179040"></a><p class="bibliomixed">
+</p></div><div class="bibliomixed"><a id="idp31169584"></a><p class="bibliomixed">
 <span class="bibliomisc">
 <a id="UBFPAPER"></a>[UBFPAPER] Joe Armstrong, "Getting Erlang to talk to the outside
   world", Proceedings of the 2002 ACM SIGPLAN workshop on Erlang,
   pages 64-72, ACM Press, 2002.
 </span>
-</p></div><div class="bibliomixed"><a id="idp31180816"></a><p class="bibliomixed">
+</p></div><div class="bibliomixed"><a id="idp31171360"></a><p class="bibliomixed">
 <span class="bibliomisc">
 <a id="UBFSITE"></a>[UBFSITE] Joe Armstrong,
   <a class="ulink" href="http://www.sics.se/~joe/ubf/site/home.html" target="_top">http://www.sics.se/~joe/ubf/site/home.html</a>, March 2003.
