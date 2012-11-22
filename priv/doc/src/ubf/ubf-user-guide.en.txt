@@ -1455,7 +1455,7 @@ Git (Mandatory)::
   * Anonymous read-only access using the GIT protocol is default.
   * Team members having read-write access should add his/her ssh
     public key under your GitHub account.
-Python (Optional)::
+Python (Mandatory)::
 - Python - http://www.python.org
   * *Python 2.4 or newer, Python 2.7.2 has been tested most recently
      (CAUTION: Python 3.x might be too new)*
@@ -1671,35 +1671,35 @@ your own Erlang/OTP system.
 +
 ------
 $ cd working-directory-name
-$ wget http://www.erlang.org/download/otp_src_R15B.tar.gz
+$ wget http://www.erlang.org/download/otp_src_R15B02.tar.gz
 ------
 +
   .. Untar the source code for your Erlang/OTP system.
 +
 ------
 $ cd working-directory-name
-$ tar -xzf otp_src_R15B.tar.gz
+$ tar -xzf otp_src_R15B02.tar.gz
 ------
 +
 . Building _basic recipe_
   .. Change to your working directory and configure Erlang/OTP
 +
 ------
-$ cd working-directory-name/otp_src_R15B
+$ cd working-directory-name/otp_src_R15B02
 $ ./configure --prefix=otp-installing-directory-name
 ------
 +
   .. Build Erlang/OTP
 +
 ------
-$ cd working-directory-name/otp_src_R15B
+$ cd working-directory-name/otp_src_R15B02
 $ make
 ------
 +
 . Installing _basic recipe_
 +
 ------
-$ cd working-directory-name/otp_src_R15B
+$ cd working-directory-name/otp_src_R15B02
 $ sudo make install
 ------
 
