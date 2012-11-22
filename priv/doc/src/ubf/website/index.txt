@@ -4,11 +4,11 @@
 UBF Home Page
 =============
 
-UBF, a framework for Getting Erlang to talk to the outside world.
-This document and the corresponding open-source code repositories are
-based on Joe Armstrong's original UBF site and code with an MIT
-license file added to the distribution.  Since then, a large number of
-enhancements and improvements have been added.
+UBF is a framework that permits Erlang and the outside world to talk
+with each other.  The documentation and the corresponding open-source
+code repositories are based on Joe Armstrong's original UBF site and
+code with an MIT license file added to the distribution.  Since then,
+a large number of enhancements and improvements have been added.
 
 UBF is a language for transporting and describing complex data
 structures across a network.  It has three components:
@@ -23,6 +23,9 @@ structures across a network.  It has three components:
 
 - UBF(c) is a meta-level protocol used between a UBF client and a UBF
   server.
+
+_UBF is intended for production deployment and is deployed in
+"24x7x365" carrier-grade systems._
 
 *Documentation*
 

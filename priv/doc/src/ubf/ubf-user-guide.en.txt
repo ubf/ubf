@@ -2,8 +2,8 @@
 // vim: set syntax=asciidoc:
 
 = UBF User's Guide
-:Date: 2012/09/02
-:Revision: 1.0.0
+:Date: 2012/11/22
+:Revision: 1.0.1
 :Copyright: 2012 by Joseph Wayne Norton <norton@alum.mit.edu>
 :Copyright: 2010-2011 Gemini Mobile Technologies, Inc.  All rights reserved.
 :Copyright: 2002 Joe Armstrong
@@ -11,12 +11,12 @@
 <<<
 == Preface
 
-UBF is a framework that permits the Erlang to talk to the outside
-world <<UBFPAPER>>.  The acronym "UBF" stands for "Universal Binary
-Format", designed and implemented by Joe Armstrong.
+UBF is a framework that permits Erlang and the outside world
+<<UBFPAPER>> to talk with each other.  The acronym "UBF" stands for
+"Universal Binary Format", designed and implemented by Joe Armstrong.
 
 This document and the corresponding open-source code repositories
-hosted on github <<UBF>> are based on Joe Armstrong's original UBF
+hosted on GitHub <<UBF>> are based on Joe Armstrong's original UBF
 site <<UBFSITE>> and UBF code with an MIT license file added to the
 distribution.  Since then, a large number of enhancements and
 improvements have been added.
@@ -239,7 +239,7 @@ follows:
 
 Where 'C' is not one of the reserved byte codes, > means store the top
 of the recognition stack in the register 'C' and pop the recognition
-stack.  For caching optimizations, subsequent reuse of the single
+stack.  For caching optimization, subsequent reuse of the single
 character 'C' means push register 'C' onto the recognition stack.
 
 ==== Object
@@ -756,7 +756,7 @@ where L is an Erlang list.
 As a by-product of a plugin's compilation and if one or more "record"
 or "extended record" types were declared in a plugin's contract, an
 Erlang "header" file containing the plugin's record definitions is
-automatically created in an application's ebin directoy.  This Erlang
+automatically created in an application's ebin directory.  This Erlang
 "header" file can be included by the plugin module itself or by other
 Erlang modules used by the server's application.  By convention, this
 Erlang "header" file has the same base filename as the plugin but
@@ -894,7 +894,7 @@ can communicate with a UBF "NTBF" server and a UBF "NTBF" client can
 communicate with a standard Thrift server.
 
 NTBF *cannot* encode and decode all UBF(b) objects.  There is no
-straigthforward convention for converting Erlang terms to Thrift
+straightforward convention for converting Erlang terms to Thrift
 messages.  Synchronous calls are implemented as Thrift 'T-CALL' and
 'T-REPLY' message pairs or 'T-CALL' and 'T-EXCEPTION' message pairs.
 Asynchronous casts are implemented as Thrift 'T-ONEWAY' messages.
@@ -1093,12 +1093,12 @@ specifying the following options: [{\'proto', \'tbf'},
 === Stateless
 
 The stateless server provides a simplified callback API and
-implementation in comparision to Joe Armstrong's original UBF server.
+implementation in comparison to Joe Armstrong's original UBF server.
 The stateless server is helpful to applications that do not require
 explicit state management by the UBF server.
 
 The "ubf_plugin_stateless.hrl" Erlang header file defines the callback
-APIs to be implemented by a stateless plugin.  The sevent callbacks
+APIs to be implemented by a stateless plugin.  The seven callbacks
 are mandatory for all stateless plugins.
 
 ------
@@ -1142,7 +1142,7 @@ call.
 
 For example, the following "skeleton" implementation of a <<BERTRPC>>
 server implemented by UBF illustrates a typical stateless server.  The
-source code for this implementation can be found on github
+source code for this implementation can be found on GitHub
 <<UBF_BERTRPC>>.
 
 [source,erlang]
@@ -1303,7 +1303,7 @@ The list of supported options() are as follows:
 
 {\'clientport', ipport() | {ipport(), ipport()}}::
   Specifies the TCP port to be used by the client.  If tuple format, a
-  port is automatically selected within the specifed range.  If
+  port is automatically selected within the specified range.  If
   \'undefined', a random port is automatically selected.  Default:
   \'undefined'.
 {\'proto', {\'ubf' | \'ebf' | \'jsf' | \'tbf' |  \'ftbf' | atom()}}::
@@ -1372,12 +1372,15 @@ client.
 ==== EUnit Tests
 
 The eunit tests in the "test/eunit" directory perform several smoke
-and error handling uses cases.
+and error handling uses cases.  The stateless_plugin and
+stateful_plugin test applications are concrete examples on how to
+integrate one or more UBF listeners into an Erlang/OTP application.
 
 ==== QuickCheck Tests
 
-The quickcheck tests and related helper libaries in the "test/eqc"
-directory have not been open sourced yet.  Please stay tuned!
+The quickcheck tests and related helper libraries in the "test/eqc"
+directory have been open sourced.  Please stay tuned for further
+documentation in the future.
 
 See <<QUVIQ>> for further information about quickcheck.
 
@@ -1420,9 +1423,7 @@ $ mkdir working-directory-name
 $ cd working-directory-name
 $ git clone https://github.com/ubf/ubf.git ubf
 $ cd ubf
-$ ./rebar get-deps
-$ ./rebar compile
-$ ./rebar eunit
+$ make deps clean compile test
 ------
 
 For an alternative recipe with other "features" albeit more complex,
@@ -1441,28 +1442,28 @@ This section describes the basic recipes for the following items:
 Before getting started, review this checklist of tools and software.
 Please install and setup as needed.
 
+Erlang/OTP (Mandatory)::
+- Erlang - http://www.erlang.org/
+  * *R13B04 or newer, R15B02 has been tested most recently*
+  * If needed, see <<ErlangOTP>> for instructions to build Erlang/OTP
+    from source.
 Git (Mandatory)::
 - Git - http://git-scm.com/
-  * *Git 1.5.4 or newer, Git 1.7.9.3 has been tested recently*
+  * *Git 1.5.4 or newer, Git 1.8.0 has been tested most recently*
   * _required for Repo and GitHub_
 - GitHub - https://github.com
   * Anonymous read-only access using the GIT protocol is default.
   * Team members having read-write access should add his/her ssh
     public key under your GitHub account.
-Erlang/OTP (Mandatory)::
-- Erlang - http://www.erlang.org/
-  * *R13B04 or newer, R15B has been tested most recently*
-  * If needed, see <<ErlangOTP>> for instructions to build Erlang/OTP
-    from source.
-Python (Mandatory)::
+Python (Optional)::
 - Python - http://www.python.org
-  * *Python 2.4 or newer, Python 2.7.1 has been tested most recently
+  * *Python 2.4 or newer, Python 2.7.2 has been tested most recently
      (CAUTION: Python 3.x might be too new)*
   * _required for Repo and AsciiDoc_
 AsciiDoc (Optional)::
 - AsciiDoc - http://www.methods.co.nz/asciidoc/index.html
   * Must be version 8.6.1 or newer
-    ** 8.6.6 is the version most recently tested for UBF
+    ** 8.6.8 is the version most recently tested for UBF
   * Plus the following support tools:
     ** ImageMagick - http://www.imagemagick.org/
     ** Graphviz - http://www.graphviz.org/
@@ -1476,8 +1477,8 @@ AsciiDoc (Optional)::
 In addition to the above list, UBF also depends on two tools to
 automate the downloading and the packaging steps.
 
+- Rebar - https://github.com/rebar/rebar/wiki
 - Repo - http://source.android.com/source/git-repo.html
-- Rebar - https://github.com/basho/rebar/wiki
 
 Instructions for downloading the Repo tool are described next.  The
 Rebar tool is included in UBF's git repositories so there is no need
@@ -1624,7 +1625,7 @@ $ make
 +
 NOTE: HTML documentation is written in the "./public_html" directory.
 
-UBF's documentation is authored using AsciiDoc and a few auxillary
+UBF's documentation is authored using AsciiDoc and a few auxiliary
 tools:
 
 - ImageMagick
@@ -1708,7 +1709,7 @@ to your $PATH environment.
 === GitHub - Forking Your Own Repositories
 
 If you are interested in making your own changes to UBF or to one or
-more of the other UBF-related repositories, it is a straigthforward
+more of the other UBF-related repositories, it is a straightforward
 process to fork and to build your own repositories using <<GITHUB>>.
 GitHub provides a friendly and easy to use environment for developers
 and the like.
@@ -1813,7 +1814,7 @@ _Under Construction - To Be Updated_
 === Acknowledgments
 
 Many, many thanks to Joe Armstrong, UBF's designer and original
-implementor.
+implementer.
 
 Gemini Mobile Technologies, Inc. has approved the release of its
 extensions, improvements, etc. under an MIT license.  Joe Armstrong

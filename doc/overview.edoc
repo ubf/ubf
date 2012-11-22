@@ -4,13 +4,15 @@
 @copyright 2011-2012 by Joseph Wayne Norton
 @title Universal Binary Format
 @doc
-This is UBF, a framework for getting Erlang to talk to the outside
-world.  This repository is based on Joe Armstrong\'s original UBF code
-with an MIT license file added to the distribution.  Since then, a
-large number of enhancements and improvements have been added.
+
+This is UBF, a framework that permits Erlang and the outside world to
+talk with each other.  This repository is based on Joe Armstrong\'s
+original UBF code with an MIT license file added to the distribution.
+Since then, a large number of enhancements and improvements have been
+added.
 
 _This repository is intended for production deployment and is deployed
-in carrier-grade systems._
+in "24x7x365" carrier-grade systems._
 
 == Quick Start Recipe
 
@@ -22,10 +24,7 @@ $ mkdir working-directory-name
 $ cd working-directory-name
 $ git clone https://github.com/ubf/ubf.git ubf
 $ cd ubf
-$ ./rebar get-deps
-$ ./rebar clean
-$ ./rebar compile
-$ ./rebar eunit
+$ make deps clean compile test
 ------
 
 For an alternative recipe with other "features" albeit more complex,
@@ -52,15 +51,9 @@ small examples, recipe-style, for starting each server and using the
 client.
 
 The eunit tests in the "test/eunit" directory perform several smoke
-and error handling uses cases.
-
-The #1 most frequently asked question is: "My term X fails contract Y,
-but I can\'t figure out why!  This X is perfectly OK.  What is going
-on?"  See the the EDoc documentation for the contracts:checkType/3
-function.
-
-The documentation is in a state of slow improvement.  Contributions
-from the wider world are welcome.  :-)
+and error handling uses cases.  The stateless_plugin and
+stateful_plugin test applications are concrete examples on how to
+integrate one or more UBF listeners into an Erlang/OTP application.
 
 === What is UBF?
 
@@ -113,14 +106,14 @@ framework for integrating UBF, TBF, and Thrift.
 === What about ABNF?
 
 See the ubf-abnf open source repository
-https://github.com/ubf/ubf-abnf for details.  ubf-abnf is a
-framework for integrating UBF and ABNF.
+https://github.com/ubf/ubf-abnf for details.  ubf-abnf is a framework
+for integrating UBF and ABNF.
 
 === What about EEP8?
 
 See the ubf-eep8 open source repository
-https://github.com/ubf/ubf-eep8 for details.  ubf-eep8 is a
-framework for integrating UBF and EEP8.
+https://github.com/ubf/ubf-eep8 for details.  ubf-eep8 is a framework
+for integrating UBF and EEP8.
 
 == To download
 
@@ -162,20 +155,20 @@ $ cd working-directory-name
 $ repo sync
 ------
 
-For futher information and help for related tools, please refer to the
+For further information and help for related tools, please refer to the
 following links:
 
 - Erlang - http://www.erlang.org/
-  * *R13B04 or newer, R15B has been tested most recently*
+  * *R13B04 or newer, R15B02 has been tested most recently*
 - Git - http://git-scm.com/
-  * *Git 1.5.4 or newer, Git 1.7.9.3 has been tested recently*
+  * *Git 1.5.4 or newer, Git 1.8.0 has been tested most recently*
   * _required for Repo and GitHub_
 - GitHub - https://github.com
 - Python - http://www.python.org
-  * *Python 2.4 or newer, Python 2.7.1 has been tested most recently
+  * *Python 2.4 or newer, Python 2.7.2 has been tested most recently
     (CAUTION: Python 3.x might be too new)*
 * _required for Repo_
-  - Rebar - https://github.com/basho/rebar/wiki
+  - Rebar - https://github.com/rebar/rebar/wiki
   - Repo - http://source.android.com/source/git-repo.html
 
 == To build - basic recipe
@@ -249,25 +242,56 @@ $ make
 Then install as a normal Python package or run using "env
 PYTHONPATH=working-directory-name/py_interface python your-script.py"
 
+== What\'s New in UBF 2.0
+
+This section highlights new features and key changes in UBF 2.0.  This
+release of UBF is not backwards compatible with older versions of UBF.
+
+- The syntax for UBF(b) has been modified to align closer (but not
+  identical) with Erlang\'s native type and spec declarations defined
+  by EEP8 (http://www.erlang.org/eeps/eep-0008.html).  A subset of
+  EEP8 types are now available as UBF(b) builtin types.
+
+- The UBF(b) builtin types +proplist()+ and +string()+ have been
+  renamed to +ubfproplist()+ and +ubfstring()+, respectively.
+
+- An Erlang "header" file corresponding to each UBF(b) contract is
+  automatically created in an application\'s ebin directory.  This
+  file contains Erlang type, spec, and record declarations that can be
+  included by a UBF(b) contract\'s implementation module or by other
+  Erlang modules.
+
+- The API and internal implementation of UBF\'s contract parser,
+  contract manager, contract driver, and contract plugin handler has
+  changed (in some places).
+
+- For the above Quick Start Recipe, a Makefile has been added to
+  automate and document common recipes.  This Makefile is also used
+  for Travis CI (https://travis-ci.org) integration.
+
 == Roadmap
-- QuickCheck/Proper tests
-- Add WebSockets support
-- Add more Thrift (http://incubator.apache.org/thrift/) support
-  * Compact Format
-- Add Google\'s Protocol Buffers (http://code.google.com/apis/protocolbuffers/) support
-- Add Bert-RPC (http://bert-rpc.org/) support
-  * BERT-RPC is UBF/EBF with a specialized contract and plugin handler
-    implementation for BERT-RPC. UBF/EBF already supports all of the
-    BERT data types.  UBF is the text-based wire protocol.  EBF is the
-    binary-based wire protocol (based on Erlang\'s binary
-    serialization format).
-- Add multiple listeners for a single UBF server support
-- Add UDP transport support
+- QuickCheck/PropEr/Triq tests
+- Transport Protocols
+  * SUNRPC (http://tools.ietf.org/html/rfc5531) support
+  * WebSockets support
+  * More Thrift (http://incubator.apache.org/thrift/) support
+    ** Compact Format
+  * Protocol Buffers (http://code.google.com/apis/protocolbuffers/) support
+  * Bert-RPC (http://bert-rpc.org/) support
+- Misc
+  * Multiple listeners for a single UBF server support
+  * UDP support
+
+NOTE: BERT-RPC is UBF/EBF with a specialized contract and plugin
+handler implementation for BERT-RPC. UBF/EBF already supports all of
+the BERT data types.  UBF is the text-based wire protocol.  EBF is the
+binary-based wire protocol (based on Erlang\'s binary serialization
+format).
 
 == Credits
 
 Many, many thanks to Joe Armstrong, UBF\'s designer and original
-implementor.
+implementer.
 
 Gemini Mobile Technologies, Inc. has approved the release of its
 extensions, improvements, etc. under an MIT license.  Joe Armstrong
