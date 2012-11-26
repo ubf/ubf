@@ -11,7 +11,6 @@ deps:
 
 clean:
 	$(REBAR) clean
-	@rm -rf .qc
 
 compile:
 	$(REBAR) compile
