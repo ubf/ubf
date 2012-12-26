@@ -182,6 +182,9 @@ manager_loop(ExitPid, Mod, State) ->
             end;
         {'EXIT', ExitPid, Reason} ->
             exit(Reason);
+        {'EXIT', _Pid, shutdown} ->
+            %% supervisor shutdown request
+            exit(shutdown);
         {'EXIT', Pid, Reason} ->
             case (catch Mod:handlerStop(Pid, Reason, State)) of
                 {'EXIT', OOps} ->
