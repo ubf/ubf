@@ -35,10 +35,11 @@
 %%% the Process Structure Diagram in the Overview.
 %%%
 %%% For the purposes of this module, the list of modules that
-%%% implement contracts is passed using Erlang parameterized module
-%%% +Module:new(ModuleList)+ syntax.  See the Erlang/OTP documentation
-%%% for more information on parameterized module syntax and usage.
+%%% implement contracts is passed using parameterized module
+%%% +Module:new(ModuleList)+ syntax.
 %%%
+
+-include_lib("pmod_transform/include/pmod.hrl").
 
 -module(ubf_plugin_meta_stateless, [MODULES]).
 
@@ -52,7 +53,7 @@
 -export([info/0, description/0]).
 
 -compile({parse_transform,contract_parser}).
--add_contract("src/ubf_plugin_meta_stateless").
+-add_pmod_contract("src/ubf_plugin_meta_stateless").
 
 -include("ubf.hrl").
 

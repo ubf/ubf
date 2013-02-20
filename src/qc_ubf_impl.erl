@@ -40,6 +40,8 @@
 %%% Purpose : QuickCheck wrappers for UBF
 %%%-------------------------------------------------------------------
 
+-include_lib("pmod_transform/include/pmod.hrl").
+
 -module(qc_ubf_impl, [MOD, CONTRACTS]).
 
 -ifdef(QC).

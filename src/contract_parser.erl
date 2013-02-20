@@ -84,13 +84,23 @@ parse_transform(In, Opts) ->
     Imports = [X||{attribute,_,add_types,X} <- In],
     case [X||{attribute,_,add_contract,X} <- In] of
         [File] ->
-            {Out, _Contract} = parse_transform(In, Opts, File ++ infileExtension(), Imports, fun parse_file/1),
+            {Out, _Contract} = parse_transform(In, Opts, File ++ infileExtension(), Imports, fun parse_file/1, false),
             Out;
         [] ->
-            In
+            %% add (hacky) support for parameterized modules
+            case [X||{attribute,_,add_pmod_contract,X} <- In] of
+                [File] ->
+                    {Out, _Contract} = parse_transform(In, Opts, File ++ infileExtension(), Imports, fun parse_file/1, true),
+                    Out;
+                [] ->
+                    In
+            end
     end.
 
 parse_transform(In, Opts, File, Imports, ParseFun) ->
+    parse_transform(In, Opts, File, Imports, ParseFun, false).
+
+parse_transform(In, Opts, File, Imports, ParseFun, IsPmod) ->
     case file(File, Imports, ParseFun) of
         {ok, Contract} ->
             HeaderFile =
@@ -99,14 +109,17 @@ parse_transform(In, Opts, File, Imports, ParseFun) ->
                   , filename:rootname(filename:basename(File)) ++ outfileHRLExtension()
                  ),
             ok = ubf_utils:ubf_contract(Contract, HeaderFile),
-            {parse_transform_contract(In, Contract), Contract};
+            {parse_transform_contract(In, Contract, IsPmod), Contract};
         {error, Reason} ->
             io:format("Error in contract:~p~n", [Reason]),
             erlang:error(Reason)
     end.
 
 parse_transform_contract(In, Contract) ->
-    {Export, Fns} = make_code(Contract),
+    parse_transform_contract(In, Contract, false).
+
+parse_transform_contract(In, Contract, IsPmod) ->
+    {Export, Fns} = make_code(Contract, IsPmod),
     In1 = merge_in_code(In, Export, Fns),
     In1.
 
@@ -153,29 +166,35 @@ tags(P1, Imports) ->
 infileExtension()  -> ".con".
 outfileHRLExtension() -> ".hrl".  %% hrl UBF contract records
 
-make_code(C) ->
+make_code(C, false) ->
+    make_code1(C, []);
+make_code(C, true) ->
+    make_code1(C, [{var,0,'_'}]).
+
+make_code1(C, Args) ->
+    ArgsLen = length(Args),
     %% contract name
-    F1 = {function,0,contract_name,0,
-          [{clause,0,[],[],[{string,0,C#contract.name}]}]},
+    F1 = {function,0,contract_name,ArgsLen,
+          [{clause,0,Args,[],[{string,0,C#contract.name}]}]},
     %% contract vsn
-    F2 = {function,0,contract_vsn,0,
-          [{clause,0,[],[],[{string,0,C#contract.vsn}]}]},
+    F2 = {function,0,contract_vsn,ArgsLen,
+          [{clause,0,Args,[],[{string,0,C#contract.vsn}]}]},
     %% contract types
     TypeNames = lists:map(fun({Type,_, _}) -> Type end, C#contract.types),
-    F3 = {function,0,contract_types,0,
-          [{clause,0,[],[],[erl_parse:abstract(TypeNames, 0)]}]},
+    F3 = {function,0,contract_types,ArgsLen,
+          [{clause,0,Args,[],[erl_parse:abstract(TypeNames, 0)]}]},
     %% contract leaftypes
     LeafTypeNames = C#contract.leaftypenames,
-    F4 = {function,0,contract_leaftypes,0,
-          [{clause,0,[],[],[erl_parse:abstract(LeafTypeNames, 0)]}]},
+    F4 = {function,0,contract_leaftypes,ArgsLen,
+          [{clause,0,Args,[],[erl_parse:abstract(LeafTypeNames, 0)]}]},
     %% contract importtypes
     ImportTypeNames = C#contract.importtypenames,
-    F5 = {function,0,contract_importtypes,0,
-          [{clause,0,[],[],[erl_parse:abstract(ImportTypeNames, 0)]}]},
+    F5 = {function,0,contract_importtypes,ArgsLen,
+          [{clause,0,Args,[],[erl_parse:abstract(ImportTypeNames, 0)]}]},
     %% contract records
     RecordNames = lists:map(fun({Record, _}) -> Record end, C#contract.records),
-    F6 = {function,0,contract_records,0,
-          [{clause,0,[],[],[erl_parse:abstract(RecordNames, 0)]}]},
+    F6 = {function,0,contract_records,ArgsLen,
+          [{clause,0,Args,[],[erl_parse:abstract(RecordNames, 0)]}]},
     %% contract states
     StateNames =
         if C#contract.transitions =:= [] ->
@@ -183,38 +202,38 @@ make_code(C) ->
            true ->
                 lists:map(fun({State,_}) -> State end, C#contract.transitions)
         end,
-    F7 = {function,0,contract_states,0,
-          [{clause,0,[],[],[erl_parse:abstract(StateNames, 0)]}]},
+    F7 = {function,0,contract_states,ArgsLen,
+          [{clause,0,Args,[],[erl_parse:abstract(StateNames, 0)]}]},
     %% contract type
     Type =
         if C#contract.types =:= [] ->
-                [{clause,1,[{var,0,'_'}],[],[erl_parse:abstract([], 0)]}];
+                [{clause,1,[{var,0,'_'}|Args],[],[erl_parse:abstract([], 0)]}];
            true ->
                 lists:map(fun({Type,Val,Str}) ->
-                                  {clause,1,[{atom,0,Type}],[],[erl_parse:abstract({Val,Str})]}
+                                  {clause,1,[{atom,0,Type}|Args],[],[erl_parse:abstract({Val,Str})]}
                           end, C#contract.types)
         end,
-    F8 = {function,0,contract_type,1,Type},
+    F8 = {function,0,contract_type,ArgsLen+1,Type},
     %% contract record
     Record =
         if C#contract.records =:= [] ->
-                [{clause,1,[{var,0,'_'}],[],[erl_parse:abstract([], 0)]}];
+                [{clause,1,[{var,0,'_'}|Args],[],[erl_parse:abstract([], 0)]}];
            true ->
                 lists:map(fun({Record, Val}) ->
-                                  {clause,1,[{atom,0,Record}],[],[erl_parse:abstract(Val)]}
+                                  {clause,1,[{atom,0,Record}|Args],[],[erl_parse:abstract(Val)]}
                           end, C#contract.records)
         end,
-    F9 = {function,0,contract_record,1,Record},
+    F9 = {function,0,contract_record,ArgsLen+1,Record},
     %% contract state
     State =
         if C#contract.transitions =:= [] ->
-                [{clause,1,[{var,0,'_'}],[],[erl_parse:abstract([], 0)]}];
+                [{clause,1,[{var,0,'_'}|Args],[],[erl_parse:abstract([], 0)]}];
            true ->
                 lists:map(fun({State,Val}) ->
-                                  {clause,1,[{atom,0,State}],[],[erl_parse:abstract(Val)]}
+                                  {clause,1,[{atom,0,State}|Args],[],[erl_parse:abstract(Val)]}
                           end, C#contract.transitions)
         end,
-    F10 = {function,0,contract_state,1,State},
+    F10 = {function,0,contract_state,ArgsLen+1,State},
     %% contract anystate
     Any =
         if C#contract.anystate =:= [] ->
@@ -222,21 +241,21 @@ make_code(C) ->
            true ->
                 C#contract.anystate
         end,
-    F11 = {function,0,contract_anystate,0,
-           [{clause,0,[],[],[erl_parse:abstract(Any, 0)]}]},
+    F11 = {function,0,contract_anystate,ArgsLen,
+           [{clause,0,Args,[],[erl_parse:abstract(Any, 0)]}]},
     %% exports
     Exports = {attribute,0,export,
-               [{contract_name,0},
-                {contract_vsn,0},
-                {contract_types,0},
-                {contract_leaftypes,0},
-                {contract_importtypes,0},
-                {contract_records,0},
-                {contract_states,0},
-                {contract_type,1},
-                {contract_record,1},
-                {contract_state,1},
-                {contract_anystate,0}
+               [{contract_name,ArgsLen},
+                {contract_vsn,ArgsLen},
+                {contract_types,ArgsLen},
+                {contract_leaftypes,ArgsLen},
+                {contract_importtypes,ArgsLen},
+                {contract_records,ArgsLen},
+                {contract_states,ArgsLen},
+                {contract_type,ArgsLen+1},
+                {contract_record,ArgsLen+1},
+                {contract_state,ArgsLen+1},
+                {contract_anystate,ArgsLen}
                ]},
     %% funcs
     Funcs = [F1,F2,F3,F4,F5,F6,F7,F8,F9,F10,F11],
