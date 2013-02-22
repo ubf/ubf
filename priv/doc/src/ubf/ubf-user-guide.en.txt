@@ -2,9 +2,9 @@
 // vim: set syntax=asciidoc:
 
 = UBF 2.0 User's Guide
-:Date: 2012/11/22
-:Revision: 1.0.1
-:Copyright: 2012 by Joseph Wayne Norton <norton@alum.mit.edu>
+:Date: 2013/02/23
+:Revision: 1.0.2
+:Copyright: 2012-2013 by Joseph Wayne Norton <norton@alum.mit.edu>
 :Copyright: 2010-2011 Gemini Mobile Technologies, Inc.  All rights reserved.
 :Copyright: 2002 Joe Armstrong
 
