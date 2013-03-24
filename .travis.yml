@@ -1,5 +1,6 @@
 language: erlang
+script: "make clean compile xref test"
 otp_release:
+  - R16B
   - R15B02
   - R14B04
-script: "make clean compile xref test"
