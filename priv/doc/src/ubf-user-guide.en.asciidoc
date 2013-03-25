@@ -2,11 +2,19 @@
 // vim: set syntax=asciidoc:
 
 = UBF 2.1 User's Guide
-:Date: 2013/03/25
-:Revision: 1.1.0
-:Copyright: 2012-2013 by Joseph Wayne Norton <norton@alum.mit.edu>
-:Copyright: 2010-2011 Gemini Mobile Technologies, Inc.  All rights reserved.
-:Copyright: 2002 Joe Armstrong
+Joseph Wayne Norton <norton@alum.mit.edu>
+:Author Initials: JWN
+:title: Universal Binary Format
+:description: UBF 2.1 User's Guide
+:footer: Functional programming for the better good!
+:brand: UBF
+:brandref: https://github.com/ubf
+:doctype: article
+:toc2:
+:data-uri:
+:backend: bootstrap-docs
+:link-assets:
+:glyphicons: http://glyphicons.com[Glyphicons]
 
 <<<
 == Preface
@@ -17,8 +25,8 @@ UBF is a framework that permits Erlang and the outside world
 
 This document and the corresponding open-source code repositories
 hosted on GitHub <<UBF>> are based on Joe Armstrong's original UBF
-site <<UBFSITE>> and UBF code with an MIT license file added to the
-distribution.  Since then, a large number of enhancements and
+site <<ORIGUBFSITE>> and UBF code with an MIT license file added to
+the distribution.  Since then, a large number of enhancements and
 improvements have been added.
 
 == Introduction
@@ -424,33 +432,34 @@ Erlang builtin types are a subset of the types defined by EEP8
 <<EEP8>>.  EEP8 types are used for authoring Erlang +types+ and
 +specs+ definitions.
 
-|============
+|============================================================
+| Type              | Definition
 | nil()             | []
 | term()            | any()
-| boolean()         | 'false' | 'true'
+| boolean()         | 'false' \| 'true'
 | byte()            | 0..255
 | char()            | 0..16#10ffff
 | non_neg_integer() | 0..
 | pos_integer()     | 1..
 | neg_integer()     | ..-1
-| number()          | integer() | float()
+| number()          | integer() \| float()
 | string()          | [char()]
 | nonempty_string() | [char()]+
 | module()          | atom()
 | mfa()             | {atom(), atom(), byte()}
 | node()            | atom()
-| timeout()         | 'infinity' | non_neg_integer()
+| timeout()         | 'infinity' \| non_neg_integer()
 | no_return()       | none()
-|
-|============
+|============================================================
 
 UBF builtin types are types particular to UBF that can be helpful for
 encoding and decoding proplists and strings.
 
-|============
+|============================================================
+| Type              | Definition
 | ubfproplist()     | {'#P', [{term(), term()}]}
 | ubfstring()       | {'#S', [byte()]}
-|============
+|============================================================
 
 ===== Predefined: P() _or_ P(A1, A2, ..., An)
 
@@ -473,8 +482,8 @@ Using the second notation, attributes can be specified to make the
 predefined type less general and thus more specific when matching
 objects.
 
-|============
-|          | ascii | asciiprintable | nonempty | nonundefined
+|============================================================
+| Type     | ascii | asciiprintable | nonempty | nonundefined
 | any      |   X   |       X        |    O     |      O
 | none     |   X   |       X        |    X     |      X
 | integer  |   X   |       X        |    X     |      X
@@ -483,7 +492,7 @@ objects.
 | atom     |   O   |       O        |    O     |      O
 | tuple    |   X   |       X        |    O     |      X
 | list     |   X   |       X        |    O     |      X
-|============
+|============================================================
 
 The above table summarizes the set of supported predefined types and
 their respective optional attributes.
@@ -1342,18 +1351,18 @@ The lpc/{2,3,4} functions make a synchronous local procedure call to a
 plugin's implementation.  Regarding the tlogger(), see <<TLOG>> for
 further information.
 
-=== Python
+// === Python
 
-==== EBF
-_Under Construction - To Be Added_
+// ==== EBF
+// _Under Construction - To Be Added_
 
-==== JSON-RPC
-_Under Construction - To Be Added_
+// ==== JSON-RPC
+// _Under Construction - To Be Added_
 
-=== Java
+// === Java
 
-==== UBF
-_Under Construction - To Be Added_
+// ==== UBF
+// _Under Construction - To Be Added_
 
 
 <<<
@@ -1413,7 +1422,8 @@ jsf_utils:ubf_contract/{1,2} functions are available for this purpose.
 
 
 <<<
-== Building UBF from Source - Option 1
+== Building UBF from Source
+=== Option 1
 
 To download, build, and test the UBF application in one shot, please
 follow this recipe:
@@ -1429,8 +1439,7 @@ $ make deps clean compile test
 For an alternative recipe with other "features" albeit more complex,
 please read further.
 
-== Building UBF from Source - Option 2
-
+=== Option 2
 This section describes the basic recipes for the following items:
 
 - UBF Downloading
@@ -1683,14 +1692,12 @@ and the like.
    creates a clone of the 'ubf-bertrpc' repository in your own account
    on GitHub.
 
-_Under Construction - To Be Updated_
+// _Under Construction - To Be Updated_
 
 
 <<<
-== Reference
-
 [bibliography]
-.Optional list title
+== Reference
 
 - [[[AVRO]]] "Avro is a serialization system.",
   http://avro.apache.org.
@@ -1759,7 +1766,7 @@ _Under Construction - To Be Updated_
   world", Proceedings of the 2002 ACM SIGPLAN workshop on Erlang,
   pages 64-72, ACM Press, 2002.
 
-- [[[UBFSITE]]] Joe Armstrong,
+- [[[ORIGUBFSITE]]] Joe Armstrong,
   http://www.sics.se/~joe/ubf/site/home.html, March 2003.
 
 

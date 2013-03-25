@@ -1,13 +1,20 @@
 // -*- Doc -*-
 // vim: set syntax=asciidoc:
 
-= Erlang Users Conference 2010 Tutorial / UBF Basics and Hands ON
-:Author: Joseph Wayne Norton
-:Email: norton@alum.mit.edu
-:Date: 2013/03/25
-:Revision: 0.2.0
-:Copyright: 2012-2013 by Joseph Wayne Norton <norton@alum.mit.edu>
-:Copyright: 2011 Gemini Mobile Technologies, Inc.  All rights reserved.
+= Erlang Users Conference 2010 Tutorial / UBF Basics and Hands On
+Joseph Wayne Norton <norton@alum.mit.edu>
+:Author Initials: JWN
+:title: Universal Binary Format
+:description: Erlang Users Conference 2010 Tutorial / UBF Basics and Hands On
+:footer: Functional programming for the better good!
+:brand: UBF
+:brandref: https://github.com/ubf
+:doctype: article
+:toc2:
+:data-uri:
+:backend: bootstrap-docs
+:link-assets:
+:glyphicons: http://glyphicons.com[Glyphicons]
 
 == UBF Basics
 
@@ -107,8 +114,8 @@ Predefined:: P() _or_ P(A1, A2, ..., An)
 
 == Specifications: UBF(a) Predefined Types
 
-|============
-|          | ascii | asciiprintable | nonempty | nonundefined
+|============================================================
+| Type     | ascii | asciiprintable | nonempty | nonundefined
 | integer  |   X   |       X        |    X     |      X
 | float    |   X   |       X        |    X     |      X
 | binary   |   O   |       O        |    O     |      X
@@ -119,7 +126,7 @@ Predefined:: P() _or_ P(A1, A2, ..., An)
 | proplist |   X   |       X        |    O     |      X
 | term     |   X   |       X        |    O     |      O
 | none     |   X   |       X        |    X     |      X
-|============
+|============================================================
 
 NOTE: 'nonempty' does not match: \<<"">>, "", \'', {}, and [].
 'nonundefined' does not match: \'undefined'.

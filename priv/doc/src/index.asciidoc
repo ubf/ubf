@@ -1,8 +1,22 @@
 // -*- Doc -*-
 // vim: set syntax=asciidoc:
 
-UBF 2.1 Home Page
-=================
+= UBF 2.1 Home Page
+Joseph Wayne Norton <norton@alum.mit.edu>
+:Author Initials: JWN
+:title: Universal Binary Format
+:description: UBF 2.1 Home Page
+:footer: Functional programming for the better good!
+:brand: UBF
+:brandref: https://github.com/ubf
+:doctype: article
+:toc2:
+:data-uri:
+:backend: bootstrap-docs
+:link-assets:
+:glyphicons: http://glyphicons.com[Glyphicons]
+
+== Introduction
 
 UBF is a framework that permits Erlang and the outside world to talk
 with each other.  The documentation and the corresponding open-source
@@ -27,11 +41,11 @@ structures across a network.  It has three components:
 _UBF is intended for production deployment and is deployed in
 "24x7x365" carrier-grade systems._
 
-*Documentation*
+== Documentation
 
 The link:http://github.com/ubf/ubf[UBF GitHub README] is a good first
-step to get started quickly.  Check the download, the build, and the
-install instructions.
+step to get started quickly.  Check the download, build, and install
+instructions.
 
 Reading the link:ubf-user-guide.en.html[UBF 2.1 User's Guide] is
 _STRONGLY_ recommended.
