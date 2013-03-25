@@ -3,9 +3,9 @@
   <head>
     <meta charset="UTF-8">
     <meta name="generator" content="AsciiDoc 8.6.8, bootstrap-docs backend">
-    <title>UBF 2.1 User&#8217;s Guide</title>
+    <title>Erlang Users Conference 2010 Tutorial / UBF Basics and Hands On</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="UBF 2.1 User's Guide">
+    <meta name="description" content="Erlang Users Conference 2010 Tutorial / UBF Basics and Hands On">
     <meta name="author" content="Joseph Wayne Norton">
     <link href="./bootstrap/docs/assets/css/bootstrap.css" rel="stylesheet">
     <link href="./bootstrap/docs/assets/css/bootstrap-responsive.css" rel="stylesheet">
@@ -39,7 +39,7 @@
     <header class="jumbotron subhead" id="overview">
       <div class="container">
         <h1>Universal Binary Format</h1>
-        <p class="lead">UBF 2.1 User's Guide</p>
+        <p class="lead">Erlang Users Conference 2010 Tutorial / UBF Basics and Hands On</p>
       </div>
     </header>
     <div class="container">
@@ -49,25 +49,9 @@
 </ul>
         </div>
         <div id="content" class="span9">
-<section id="preamble">
-<div style="page-break-after:always"></div>
-</section>
-<section id="preface">
+<section id="ubf_basics">
   <div class="page-header">
-    <h1>Preface</h1>
-  </div>
-<p>UBF is a framework that permits Erlang and the outside world
-<a href="#UBFPAPER">[UBFPAPER]</a> to talk with each other.  The acronym "UBF" stands for
-"Universal Binary Format", designed and implemented by Joe Armstrong.</p>
-<p>This document and the corresponding open-source code repositories
-hosted on GitHub <a href="#UBF">[UBF]</a> are based on Joe Armstrong&#8217;s original UBF
-site <a href="#ORIGUBFSITE">[ORIGUBFSITE]</a> and UBF code with an MIT license file added to
-the distribution.  Since then, a large number of enhancements and
-improvements have been added.</p>
-</section>
-<section id="introduction">
-  <div class="page-header">
-    <h1>Introduction</h1>
+    <h1>UBF Basics</h1>
   </div>
 <p>UBF is a language for transporting and describing complex data
 structures across a network.  It has three components:</p>
@@ -87,10 +71,8 @@ UBF(c) is a meta-level protocol used between a UBF client and a UBF
   server.
 </li>
 </ul>
-<p>While the XML series of languages had the goal of having a human
-readable format the UBF languages take the opposite view and provide a
-"machine friendly" format.  UBF is designed to be easy to implement.</p>
-<p><span class="image">
+<div class="imageblock">
+<div class="content">
 <img alt="Programming By Contract" src="data:image/png;base64,
 iVBORw0KGgoAAAANSUhEUgAAAeEAAADJCAIAAACboB22AAAABmJLR0QA/wD/AP+gvaeTAAAgAElE
 QVR4nOydd1hURxeHfzTpvSkdBAFFFBBRoyiiwYJEYxQFg1ggGnvvJdaonwaNMZpYIyLBgrHEgh3F
@@ -466,179 +448,340 @@ fMyjAYQmpYyNjd2xY4fWA1nQyGgAIbD0rBNkNKABi8VSUFBgtVoj0bnf7//y5ctsCs2Hh4ctFhY8
 dY2MBjTQ2Njo8/ki1LnX662trS0pKZnNzqmpqREaBuYFGQ1oYN26dZHr3G63Nzc3b9q0KXJPgZ+G
 jzkAoF9kNADoFxkNAPpFRgOAfpHRAKBfZDQA6BfH3gEmNDIy8ujRI61HIXp7e7UeguH9C5APLerR
 7ploAAAAAElFTkSuQmCC">
-</span></p>
-<p>Central to UBF is the idea of a "Contract" which regulates the set of
-legal conversations that can take place between a client and a server.
-The client-side is depicted in "red" and the server-side is depicted
-in "blue".  The client and server communicate with each other via a
-TCP/IP connection.  All data sent by both the client and the server is
-verified by the "Contract Manager" (an Erlang process on the "server"
-side of the protocol).  Any data that violates the contract is
-rejected.</p>
-<p>The UBF framework itself is designed to be easy to extend for
-supporting other data transport formats and other network transports.
-For example, JSON, Thrift, and Erlang native binary serialization data
-formats over TCP/IP and JSON-RPC over HTTP are supported alternatives
-to the original UBF(a) implementation.</p>
-<div style="page-break-after:always"></div>
+</div>
+<div class="title">Figure 1. Programming By Contract</div>
+</div>
 </section>
-<section id="specifications">
+<section id="specifications_ubf_a">
   <div class="page-header">
-    <h1>Specifications</h1>
+    <h1>Specifications: UBF(a)</h1>
   </div>
-<h2 id="UBFa">UBF(a)</h2>
-<p>UBF(a) is a transport format.  UBF(a) was designed to be easy to parse
-and to be easy to write with a text editor.  UBF(a) is based on a byte
-encoded virtual machine, 26 byte codes are reserved.  Instead of
-allocating the byte codes from 0, the printable character codes are
-used to make the format easy to read.</p>
-<p>UBF(a) has four primitive types, when a primitive type is recognized
-it is pushed onto the "recognition stack" in our decoder.  The
-primitive types are Integer, String, Binary, and Atom.  UBF(a) has two
-types of "glue" for making compound objects.  The compound types are
-Tuple and List.  Lastly, the operator <em>$</em> (i.e. "end of object")
-signifies when objects are finished.</p>
+<dl class="dl-horizontal">
+<dt>
+Integer
+</dt>
+<dd>
+[-][0-9]+
+</dd>
+<dt>
+String
+</dt>
+<dd>
+"&#8230;"
+</dd>
+<dt>
+Binary
+</dt>
+<dd>
+[0-9]+ ~&#8230;~
+</dd>
+<dt>
+Atom
+</dt>
+<dd>
+'&#8230;'
+</dd>
+<dt>
+Tuple
+</dt>
+<dd>
+{ Obj1 Obj2 &#8230; ObjN-1 ObjN }
+</dd>
+<dt>
+List
+</dt>
+<dd>
+# ObjN &amp; ObjN-1 &amp; &#8230; &amp; Obj2 &amp; Obj1
+</dd>
+<dt>
+Term
+</dt>
+<dd>
+represent primitive types and compound types
+</dd>
+<dt>
+White space
+</dt>
+<dd>
+\s \n \r \t , %&#8230;%
+</dd>
+<dt>
+Register
+</dt>
+<dd>
+&gt;C C
+</dd>
+<dt>
+Object
+</dt>
+<dd>
+Term or Register Push or Register Pop
+</dd>
+</dl>
+<p><span class="label label-note">Note</span> The operator <em>$</em> (i.e. "end of object") signifies when objects
+are finished.</p>
+</section>
+<section id="specifications_ubf_a_example">
+  <div class="page-header">
+    <h1>Specifications: UBF(a) Example</h1>
+  </div>
 <p>For example, the following UBF(a) object:</p>
 <pre class="prettyprint">'person'&gt;p # {p "Joe" 123} &amp; {p 'fred' 3~abc~} &amp; $</pre>
 <p>Represents the following UBF(b) term, a list that contains two
 3-tuples:</p>
 <pre class="prettyprint">[{'person', 'fred', &lt;&lt;"abc"&gt;&gt;}, {'person', "Joe", 123}].</pre>
-<p><span class="label label-tip">Tip</span> In UBF(a), white space as well as commas are treated as a
-delimiter.</p>
-<p>For this example, the recognition stack for parsing this UBF(a) object
-would be as follows:</p>
-<pre class="prettyprint">    'person'&gt;p # {p "Joe" 123} &amp; {p 'fred', 3~abc~} &amp; $
-             ^ ^ ^^     ^   ^^ ^                  ^ ^ ^
-             | | ||     |   || |                  | | |
-
-             1 2 ab     c   d3 4                  5 6 7
-
-Time  Stack
-
-1   'person'
-
-2   []
-
-2a  { ... incomplete
-    []
-
-2b  {'person' ... incomplete
-    []
-
-2c  {'person', "Joe",  ... incomplete
-    []
-
-2d  {'person', "Joe", 123 ... incomplete}
-    []
-
-3   {'person', "Joe", 123}
-    []
-
-4   [{'person', "Joe", 123}]
-
-5   {'person', 'fred', &lt;&lt;"abc"&gt;&gt;}
-    [{'person', "Joe", 123}]
-
-6   [{'person', 'fred', &lt;&lt;"abc"&gt;&gt;}, {'person', "Joe", 123}]
-
-7   [{'person', 'fred', &lt;&lt;"abc"&gt;&gt;}, {'person', "Joe", 123}]</pre>
-<p>See <a href="#ABNF-UBFa">[ABNF-UBFa]</a> for a formal definition of the UBF(a) syntax.</p>
-<p><span class="label label-caution">Caution</span> There is no "Float" primitive type in the original and
-current UBF(a) implementation.  After Joe Armstrong&#8217;s original
-implementation, a "Float" type was added to UBF(b) for use in other
-network transports other than UBF(a).  In future, UBF(a) could be
-enhanced to support a "Float" primitive type.</p>
-<h3>Integer: [-][0-9]+</h3>
-<p>Integers are sequences of bytes which could be described by the
-regular expression [-][0-9]+, that is an optional minus (to denote a
-negative integer) and then a sequence of at least one digit.</p>
-<h3>String: "&#8230;"</h3>
-<p>Strings are written enclosed in double quotes.  Within a string two
-quoting conventions are observed, " must be written \" and \ must be
-written \\ - no other quotings are allowed.</p>
-<h3>Binary: [0-9]+ ~&#8230;~</h3>
-<p>Uninterpreted blocks of binary data are encoded.  First an integer,
-representing the length of the binary data is encoded, this is
-followed by a tilde, the data itself which must be exactly the length
-given in the integer and than a closing tilde.  The closing tilde has
-no significance and is retained for readability.  White space can be
-added between the integer length and the data for readability.</p>
-<h3>Atom: '&#8230;'</h3>
-<p>Atoms are encoded as strings, only using a single quote instead of a
-double quote.  Atoms are commonly found in symbolic languages like
-Lisp, Prolog or Erlang.  In C, they would be represented by hashed
-strings.  The essential property of an atom is that two atoms can be
-compared for equality in constant time.  These are used for
-representing symbolic constants.</p>
-<h3>Tuple: { Obj1 Obj2 &#8230; ObjN-1 ObjN }</h3>
-<p>Tuples represent <small>fixed numbers</small> of objects.  The byte codes for "{"
-and "}" are used to delimit a tuple. Obj1, Obj2, ObjN-1, and ObjN are
-arbitrary UBF(a) objects.</p>
-<h3>List: # ObjN &amp; ObjN-1 &amp; &#8230; &amp; Obj2 &amp; Obj1</h3>
-<p>Lists represent <small>variable numbers</small> of objects.  The first object in
-the list is Obj1, the second object in the list is Obj2, etc.  Objects
-are presented in reverse order.</p>
-<p>Lisp programmers will recognize <em>#</em> as an operator that pushes NIL (or
-the end of list) onto the recognition stack and <em>&amp;</em> as an operator
-that takes the top two items on the recognition stack and replaces
-them by a list cell.</p>
-<h3>Term</h3>
-<p>Terms represent primitive types and compound types.</p>
-<h3>White space: \s \n \r \t , %&#8230;%</h3>
-<p>For convenience, blank, carriage return, line feed, tab, comma, and
-comments are treated as white space.  Comments can be included in
-UBF(a) with the syntax %&#8230;% and the usual quoting convention applies.</p>
-<h3>Tag: `&#8230;`</h3>
-<p>In addition any item can be followed by a semantic tag this is written
-`&#8230;` - with in the tag the close quote is quoted as in the strings
-encoding.  This tag has no meaning in UBF(a) but might have a meaning
-in UBF(b).  For example:</p>
-<pre class="prettyprint">12456 ~...~ `jpg`</pre>
-<p>Represents 12,456 bytes of raw data with the semantic tag "jpg".
-UBF(a) does not know what "jpg" means - this is passed on to UBF(b)
-which might know what it means - finally the end application is
-expected to know what to do with an object of type "jpg", it might for
-example know that this represents an image.  UBF(a) will just encode
-the tag, UBF(b) will type check the tag, and the application should be
-able to understand the tag.</p>
-<p><span class="label label-caution">Caution</span> Currently, this feature of integrating a "tag" in UBF(a) for
-the purpose of a "type" in UBF(b) is not implemented.  Tags can be
-specified in UBF(a) but there is no way for the application to act
-upon this semantic information.</p>
-<h3>Register: &gt;C C</h3>
-<p>So far, exactly 26 control characters have been used, namely:
-%"~'`{}#&amp;\s\n\t\r,-01234567890</p>
-<p>This leaves us with 230 unallocated byte codes.  These are used as
-follows:</p>
-<pre class="prettyprint">&gt;C</pre>
-<p>Where <em>C</em> is not one of the reserved byte codes, &gt; means store the top
-of the recognition stack in the register <em>C</em> and pop the recognition
-stack.  For caching optimization, subsequent reuse of the single
-character <em>C</em> means push register <em>C</em> onto the recognition stack.</p>
-<h3>Object</h3>
-<p>Objects represent either a Term, a Register push, or a Register pop
-with an optional Tag.  The operator <em>$</em> signifies "end of object".
-When <em>$</em> is encountered there should be only one item on the
-recognition stack.</p>
-<h2 id="ubf_b">UBF(b)</h2>
+</section>
+<section id="specifications_ubf_b">
+  <div class="page-header">
+    <h1>Specifications: UBF(b)</h1>
+  </div>
 <p>UBF(b) is a language independent type system and protocol description
-language.  The protocol description language allows one to specify
-client server interaction in terms of a non-deterministic finite state
-machine.  The type system allows one to specify the asynchronous
-events and synchronous request/response pairs that define transitions
-of this finite state machine.</p>
-<p>The type system and protocol description language together define the
-basis of "Contracts" between clients and servers.  All data sent by
-both the client and the server is verified by the "Contract Manager"
-(an Erlang process on the "server" side of the protocol).  Any data
-that violates the contract is rejected.</p>
-<p>A UBF(b) contract is defined by 2 mandatory sections and 3 optional
-sections.  The mandatory sections are the "+NAME" and the "+VERSION"
-of the contract.  The optional sections are the "+TYPES", the
-"+STATE", and the "+ANYSTATE" of the contract.</p>
-<p>For example, the following UBF(b) contract having the filename
-"irc_plugin.con" defines a simple IRC (Internet Relay Chat) protocol
-between clients and a server:</p>
+language to specify a "contract".</p>
+<p>All data sent by both the client and the server is verified by the
+"Contract Manager" (an Erlang process on the "server" side of the
+protocol).  Any data that violates the contract is rejected.</p>
+<p>A contract is defined by 2 mandatory sections and 3 optional sections.</p>
+<dl class="dl-horizontal">
+<dt>
+Name
+</dt>
+<dd>
++NAME("&#8230;"). <small>mandatory</small>
+</dd>
+<dt>
+Version
+</dt>
+<dd>
++VSN("&#8230;"). <small>mandatory</small>
+</dd>
+<dt>
+Types
+</dt>
+<dd>
++TYPES.
+</dd>
+<dt>
+State
+</dt>
+<dd>
++STATE.
+<ul>
+<li>
+Defines a finite state machine (FSM) to model the interaction
+    between the client and server.
+</li>
+<li>
+Symbolic names expressed as "atoms" are the states of the FSM.
+</li>
+<li>
+Transitions expressed as request, response, and next state
+    triplets are the edges of the FSM (a.k.a. synchronous calls).
+</li>
+<li>
+States may also be annotated with events (a.k.a. asynchronous
+    casts).
+</li>
+</ul>
+</dd>
+<dt>
+Anystate
+</dt>
+<dd>
++ANYSTATE.
+<ul>
+<li>
+Defines request and response pairs and define events that are
+    valid in <small>all</small> states of the FSM.
+</li>
+</ul>
+</dd>
+</dl>
+</section>
+<section id="specifications_ubf_a_types">
+  <div class="page-header">
+    <h1>Specifications: UBF(a) Types</h1>
+  </div>
+<dl class="dl-horizontal">
+<dt>
+Definition
+</dt>
+<dd>
+X() = T
+</dd>
+<dt>
+Integer
+</dt>
+<dd>
+[-][0-9]+ <small>or</small> [0-9]+#[0-9a-f]+
+</dd>
+<dt>
+Range
+</dt>
+<dd>
+[-][0-9]+..[-][0-9]+ <small>or</small> [-][0-9]+.. <small>or</small> ..[-][0-9]+
+</dd>
+<dt>
+Float
+</dt>
+<dd>
+[-][0-9]+.[0-9]+
+</dd>
+<dt>
+Binary
+</dt>
+<dd>
+&lt;&lt;"&#8230;"&gt;&gt;
+</dd>
+<dt>
+String
+</dt>
+<dd>
+"&#8230;"
+</dd>
+<dt>
+Atom
+</dt>
+<dd>
+'&#8230;' <small>or</small> [a-z][a-zA-Z0-9_]*
+</dd>
+<dt>
+Reference
+</dt>
+<dd>
+R()
+</dd>
+<dt>
+Alternative
+</dt>
+<dd>
+T1 | T2
+</dd>
+<dt>
+Tuple
+</dt>
+<dd>
+{T1, T2, &#8230;, Tn}
+</dd>
+<dt>
+Record
+</dt>
+<dd>
+name#T1, y=T2, &#8230;, z=Tn
+</dd>
+<dt>
+Extended Record
+</dt>
+<dd>
+name##T1, y=T2, &#8230;, z=Tn
+</dd>
+<dt>
+List
+</dt>
+<dd>
+[T]
+</dd>
+<dt>
+Predefined
+</dt>
+<dd>
+P() <small>or</small> P(A1, A2, &#8230;, An)
+</dd>
+</dl>
+</section>
+<section id="specifications_ubf_a_predefined_types">
+  <div class="page-header">
+    <h1>Specifications: UBF(a) Predefined Types</h1>
+  </div>
+<table>
+<colgroup>
+</colgroup>
+<tbody>
+<tr>
+<td>Type</td>
+<td>ascii</td>
+<td>asciiprintable</td>
+<td>nonempty</td>
+<td>nonundefined</td>
+</tr>
+<tr>
+<td>integer</td>
+<td>X</td>
+<td>X</td>
+<td>X</td>
+<td>X</td>
+</tr>
+<tr>
+<td>float</td>
+<td>X</td>
+<td>X</td>
+<td>X</td>
+<td>X</td>
+</tr>
+<tr>
+<td>binary</td>
+<td>O</td>
+<td>O</td>
+<td>O</td>
+<td>X</td>
+</tr>
+<tr>
+<td>string</td>
+<td>O</td>
+<td>O</td>
+<td>O</td>
+<td>X</td>
+</tr>
+<tr>
+<td>atom</td>
+<td>O</td>
+<td>O</td>
+<td>O</td>
+<td>O</td>
+</tr>
+<tr>
+<td>tuple</td>
+<td>X</td>
+<td>X</td>
+<td>O</td>
+<td>X</td>
+</tr>
+<tr>
+<td>list</td>
+<td>X</td>
+<td>X</td>
+<td>O</td>
+<td>X</td>
+</tr>
+<tr>
+<td>proplist</td>
+<td>X</td>
+<td>X</td>
+<td>O</td>
+<td>X</td>
+</tr>
+<tr>
+<td>term</td>
+<td>X</td>
+<td>X</td>
+<td>O</td>
+<td>O</td>
+</tr>
+<tr>
+<td>none</td>
+<td>X</td>
+<td>X</td>
+<td>X</td>
+<td>X</td>
+</tr>
+</tbody>
+</table>
+<p><span class="label label-note">Note</span> <em>nonempty</em> does not match: &lt;&lt;""&gt;&gt;, "", '', {}, and [].
+<em>nonundefined</em> does not match: 'undefined'.</p>
+</section>
+<section id="specifications_ubf_b_example">
+  <div class="page-header">
+    <h1>Specifications: UBF(b) Example</h1>
+  </div>
 <div class="listingblock">
 <div class="content"><!-- Generator: GNU source-highlight 3.1.7
 by Lorenzo Bettini
@@ -699,371 +842,100 @@ http://www.gnu.org/software/src-highlite -->
 
 
 </tt></pre></div></div>
-<p>See <a href="#ABNF-UBFb">[ABNF-UBFb]</a> for a formal definition of the UBF(b) syntax.</p>
-<p><span class="label label-note">Note</span> The astute reader (and otherwise :) ) may notice that UBF(a) and
-UBF(b) are Erlang-centric.  By design, the two languages are supposed
-to be language neutral and yet <small>by design</small> the two are highly
-influenced by Erlang.  For example, the difference between a string
-type and a binary type is directly due to Erlang&#8217;s implementation of
-binaries and strings.  Similarly, the reason for supporting a record
-type and extended record type is also directly due to Erlang&#8217;s
-implementation of records.</p>
-<h3>Name: +NAME("&#8230;").</h3>
-<p>The name of the contract is specified as a double-quoted string.</p>
-<h3>Version: +VSN("&#8230;").</h3>
-<p>The version of the contract is specified as a double-quoted string.</p>
-<h3>Types: +TYPES.</h3>
-<p>The UBF(b) type system has user-defined types, builtin types, and
-predefined types.  All types are either primitive types or complex
-types.</p>
-<p>The primitive types are Integer, Range, Float, Binary, String, Atom,
-and Reference.  The complex types are Alternative, Tuple, Record,
-Extended Record, and List.  Builtin and User-defined "complex types"
-are defined recursively.</p>
-<h4>Definition: X() :: T</h4>
-<p>New types are defined by the notation:</p>
-<pre class="prettyprint">X() :: T;</pre>
-<p>and the last type of new types must be defined by the notation:</p>
-<pre class="prettyprint">X() :: T.</pre>
-<p>The name of the type is <em>X</em> and the type&#8217;s definition <em>T</em> is either a
-user-defined type or a predefined type.</p>
-<h4>Integer: [-][0-9]+ <small>or</small> [0-9]+#[0-9a-f]+</h4>
-<p>Positive and negative integer constants are expressed as in UBF(a).
-Integer constants may also be expressed in other bases using Erlang
-syntax.</p>
-<h4>Range: [-][0-9]+..[-][0-9]+ <small>or</small> [-][0-9]+.. <small>or</small> ..[-][0-9]+</h4>
-<p>Bounded, left unbounded, and right unbounded integer ranges are
-supported.</p>
-<h4>Float: [-][0-9]+.[0-9]+</h4>
-<p>Positive and negative float constants are supported for network
-transports other than UBF(a).</p>
-<p><span class="label label-note">Note</span> In future, the implementation of UBF(b) could be enhanced to
-specify a float more compactly using scientific notation
-(e.g. "6.02e23").</p>
-<h4>Binary: &lt;&lt;"&#8230;"&gt;&gt;</h4>
-<p>Binary constants are expressed similarly as strings in UBF(a) but
-having two leading "less than brackets" and two following "greater
-than brackets".</p>
-<h4>String: "&#8230;"</h4>
-<p>String constants are expressed as in UBF(a).</p>
-<h4>Atom: '&#8230;' <small>or</small> [a-z][a-zA-Z0-9_]*</h4>
-<p>Atom constants are expressed as UBF(a) atoms.  Atom constants starting
-with lowercase letters do not require single quotes.</p>
-<h4>Reference: R()</h4>
-<p>Defined types are referenced by the notation:</p>
-<pre class="prettyprint">R()</pre>
-<p>The name of the type is <em>R</em>.</p>
-<h4>Alternative: T1 | T2</h4>
-<p>A type X is of type "T1 | T2" if X is of type T1 or if X is of type
-T2.</p>
-<h4>Tuple: {T1, T2, &#8230;, Tn}</h4>
-<p>A type {X1, X2, &#8230;, Xn} is of type "{T1, T2, &#8230;, Tn}" if X1 is of
-type T1, X2 is of type T2, &#8230; and Xn is of type Tn.</p>
-<h4>Record: name#{ x::T1, y::T2, &#8230;, z::Tn} <small>or</small> name\#D1::T1, y=D2::T2, &#8230;, z=Dn::Tn</h4>
-<p>A record type is syntactic sugar for a tuple of type "{name, T1, T2,
-&#8230;, Tn}" where name, x, y, &#8230;, and z are atoms.</p>
-<p>Optionally, the default value of a record field can be specified.</p>
-<p><span class="label label-caution">Caution</span> Caution is required when using another record as the default
-value of a record field.  This feature has not been fully tested.</p>
-<h4>Extended Record: name##{ x::T1, y::T2, &#8230;, z::Tn} <small>or</small> name#\#D1::T1, y=D2::T2, &#8230;, z=Dn::Tn</h4>
-<p>An extended record type is syntactic sugar for a tuple of type "{name,
-T1, T2, &#8230;, Tn, <em>$fields</em>::[x,y,&#8230;,z], <em>$extra</em>::Extra}" where name,
-x, y, &#8230;, and z are atoms and Extra is any valid term.</p>
-<p>Optionally, the default value of a record field can be specified.</p>
-<p><span class="label label-caution">Caution</span> Caution is required when using another record as the default
-value of a record field.  This feature has not been fully tested.</p>
-<h4>List: [T] <small>or</small> [T]{<code class="0-9">} <small>or</small> [T]{[0-9]</code>,} <small>or</small> [T]{,<code class="0-9">} <small>or</small> [T]{[0-9]</code>,[0-9]+}</h4>
-<p>A type [X1, X2, &#8230;, Xn] is of type [T] if all of Xi are of type T.</p>
-<p>Unbounded, bounded, left unbounded, and right unbounded lists are
-supported.</p>
-<h4>Builtin: B()</h4>
-<p>Builtin types are referenced by the notation:</p>
-<pre class="prettyprint">B()</pre>
-<p>The name of the builtin type is <em>B</em> and builtin types are of 2
-categories: <code>Erlang</code> and <code>UBF</code>.  The names used for builtin types are
-reserved and cannot be used for user-defined types.</p>
-<p>Erlang builtin types are a subset of the types defined by EEP8
-<a href="#EEP8">[EEP8]</a>.  EEP8 types are used for authoring Erlang <code>types</code> and
-<code>specs</code> definitions.</p>
-<table>
-<colgroup>
-</colgroup>
-<tbody>
-<tr>
-<td>Type</td>
-<td>Definition</td>
-</tr>
-<tr>
-<td>nil()</td>
-<td>[]</td>
-</tr>
-<tr>
-<td>term()</td>
-<td>any()</td>
-</tr>
-<tr>
-<td>boolean()</td>
-<td><em>false</em> | <em>true</em></td>
-</tr>
-<tr>
-<td>byte()</td>
-<td>0..255</td>
-</tr>
-<tr>
-<td>char()</td>
-<td>0..16#10ffff</td>
-</tr>
-<tr>
-<td>non_neg_integer()</td>
-<td>0..</td>
-</tr>
-<tr>
-<td>pos_integer()</td>
-<td>1..</td>
-</tr>
-<tr>
-<td>neg_integer()</td>
-<td>..-1</td>
-</tr>
-<tr>
-<td>number()</td>
-<td>integer() | float()</td>
-</tr>
-<tr>
-<td>string()</td>
-<td>[char()]</td>
-</tr>
-<tr>
-<td>nonempty_string()</td>
-<td>[char()]+</td>
-</tr>
-<tr>
-<td>module()</td>
-<td>atom()</td>
-</tr>
-<tr>
-<td>mfa()</td>
-<td>{atom(), atom(), byte()}</td>
-</tr>
-<tr>
-<td>node()</td>
-<td>atom()</td>
-</tr>
-<tr>
-<td>timeout()</td>
-<td><em>infinity</em> | non_neg_integer()</td>
-</tr>
-<tr>
-<td>no_return()</td>
-<td>none()</td>
-</tr>
-</tbody>
-</table>
-<p>UBF builtin types are types particular to UBF that can be helpful for
-encoding and decoding proplists and strings.</p>
-<table>
-<colgroup>
-</colgroup>
-<tbody>
-<tr>
-<td>Type</td>
-<td>Definition</td>
-</tr>
-<tr>
-<td>ubfproplist()</td>
-<td>{<em>#P</em>, [{term(), term()}]}</td>
-</tr>
-<tr>
-<td>ubfstring()</td>
-<td>{<em>#S</em>, [byte()]}</td>
-</tr>
-</tbody>
-</table>
-<h4>Predefined: P() <small>or</small> P(A1, A2, &#8230;, An)</h4>
-<p>Predefined types are referenced by the notation:</p>
-<pre class="prettyprint">P()</pre>
-<p>or by the notation:</p>
-<pre class="prettyprint">P(A1, A2, ..., An)</pre>
-<p>The name of the predefined type is <em>P</em>.  The names used for predefined
-types are reserved and cannot be used for user-defined types.</p>
-<p>Using the second notation, attributes can be specified to make the
-predefined type less general and thus more specific when matching
-objects.</p>
-<table>
-<colgroup>
-</colgroup>
-<tbody>
-<tr>
-<td>Type</td>
-<td>ascii</td>
-<td>asciiprintable</td>
-<td>nonempty</td>
-<td>nonundefined</td>
-</tr>
-<tr>
-<td>any</td>
-<td>X</td>
-<td>X</td>
-<td>O</td>
-<td>O</td>
-</tr>
-<tr>
-<td>none</td>
-<td>X</td>
-<td>X</td>
-<td>X</td>
-<td>X</td>
-</tr>
-<tr>
-<td>integer</td>
-<td>X</td>
-<td>X</td>
-<td>X</td>
-<td>X</td>
-</tr>
-<tr>
-<td>float</td>
-<td>X</td>
-<td>X</td>
-<td>X</td>
-<td>X</td>
-</tr>
-<tr>
-<td>binary</td>
-<td>O</td>
-<td>O</td>
-<td>O</td>
-<td>X</td>
-</tr>
-<tr>
-<td>atom</td>
-<td>O</td>
-<td>O</td>
-<td>O</td>
-<td>O</td>
-</tr>
-<tr>
-<td>tuple</td>
-<td>X</td>
-<td>X</td>
-<td>O</td>
-<td>X</td>
-</tr>
-<tr>
-<td>list</td>
-<td>X</td>
-<td>X</td>
-<td>O</td>
-<td>X</td>
-</tr>
-</tbody>
-</table>
-<p>The above table summarizes the set of supported predefined types and
-their respective optional attributes.</p>
-<p>The "any" predefined type matches any object.</p>
-<p>The "none" predefined type is a placeholder to describe the return
-value of a function call that does not return to the caller.</p>
-<p>The "integer", "float", "binary", "atom", "boolean", "tuple", and
-"list" predefined types match directly to the corresponding primitive
-or complex type.</p>
-<p>The "ascii" attribute permits matches with binaries and atoms
-containing only ASCII values <a href="#RFC20">[RFC20]</a>.  Similarly, the
-"asciiprintable" attribute permits matches with only printable ASCII
-values.</p>
-<p>The "nonempty" attribute permits matches with binaries, atoms, tuples,
-lists, and any that are of length greater than zero.  The following
-objects would not be matched with the "nonempty" attribute:</p>
-<pre class="prettyprint">&lt;&lt;""&gt;&gt;
-''
-{}
-[]</pre>
-<p>The "nonundefined" attribute permits matches with atoms and terms that
-are not equal to the <em>undefined</em> atom.</p>
-<p><span class="label label-note">Note</span> By convention, the <em>undefined</em> atom is commonly used to indicate
-a default value or an undefined value in Erlang programs.  The purpose
-of <em>undefined</em> is similar to NULL in C, to None in Python, etc.</p>
-<h3>State: +STATE.</h3>
-<p>The "+STATE" sections of UBF(b) defines a finite state machine (FSM)
-to model the interaction between the client and server.  Symbolic
-names expressed as "atoms" are the states of the FSM.</p>
-<p>Transitions expressed as request, response, and next state triplets
-are the edges of the FSM.  Transitions are "synchronous" calls from
-the client to the server.  Any request sent by the client that cannot
-match at least one valid transition is ignored and a "client broke
-contract" error response is returned to the client.  Likewise, any
-response returned by the server that cannot match at least one valid
-transition is ignored and a "server broke contract" error response is
-returned to the client.</p>
-<p>The states of the FSM may also be annotated with events expressed as
-"asynchronous" casts.  Events are asynchronous casts either from the
-client to the server or from the server to the client.  Please see
-next section for additional details.</p>
-<p><span class="label label-note">Note</span> The terminology of "call" and "cast" to distinguish between
-synchronous and asynchronous interaction is borrowed from Erlang.</p>
-<h3>Anystate: +ANYSTATE.</h3>
-<p>The "+ANYSTATE" section of UBF(b) are used to define request and
-response pairs and to define events that are valid in <small>all</small> states of
-the FSM.</p>
-<p>Events are checked based on direction first, on the current state&#8217;s
-valid events next, and finally on the valid anystate events.  Any cast
-sent by the client or sent by the server that cannot match at least
-one valid event is ignored and dropped.</p>
-<h2 id="ubf_c">UBF(c)</h2>
-<p>UBF(c) is a meta-level protocol used between a UBF client and a UBF
-server.  UBF(c) has two primitives: synchronous "calls" and
-asynchronous "casts".</p>
-<h3>Calls: Request $ &#8658; {Response, NextState} $</h3>
-<p>Synchronous calls have the following form for the request:</p>
-<pre class="prettyprint">Request $</pre>
-<p>and for the response:</p>
-<pre class="prettyprint">{Response, NextState} $</pre>
-<p>where "Request" is an UBF(a) type sent by the client and "Response" is
-an UBF(a) type and "NextState" is an UBF(a) atom sent by the server.</p>
-<p>If the client sends an invalid request, the server will respond with
-the following "client broke contract" error:</p>
-<pre class="prettyprint">{{'clientBrokeContract', Request, ExpectsIn}, State} $</pre>
-<p>where "ExpectsIn" is a UBF(a) type to describe the acceptable list of
-input types and "State" is an UBF(a) atom.</p>
-<p>If the server sends an invalid response, the server will respond with
-the following "server broke contract" error:</p>
-<pre class="prettyprint">{{'serverBrokeContract', Response, ExpectsOut}, State} $</pre>
-<p>where "ExpectsOut" is a UBF(a) type to describe the acceptable list of
-output types and "State" is an UBF(a) atom.</p>
-<p><span class="label label-caution">Caution</span> By convention, the 3-tuples {'clientBrokeContract', _, _}
-and {'serverBrokeContract', _, _} are reserved terms for responses.
-Please be careful when designing your application not to use either of
-these 3-tuples.</p>
-<h3>Casts: {'event_in', Event} $ <small>or</small> {'event_out', Event} $</h3>
-<p>Asynchronous casts from the client to server have the following form:</p>
-<pre class="prettyprint">{'event_in', Event} $</pre>
-<p>and from the server to the client have the following form:</p>
-<pre class="prettyprint">{'event_out', Event} $</pre>
-<p>where "Event" is an UBF(a) type.</p>
-<p>If client or server send an invalid event, the event is ignored and
-dropped by the server.</p>
-<p>See <a href="#ABNF-UBFc">[ABNF-UBFc]</a> for a formal definition of the UBF(c) syntax.</p>
-<p><span class="label label-caution">Caution</span> By convention, the 2-tuples {'event_in', _} and
-{'event_out', _} are reserved terms for requests and responses
-respectively.  Please be careful when designing your application not
-to use either of these two tuples.  This limitation introduced
-unintentionally after the original UBF implementation may be removed
-in the future.</p>
-<div style="page-break-after:always"></div>
 </section>
-<section id="contracts_amp_plugins">
+<section id="specifications_ubf_c">
   <div class="page-header">
-    <h1>Contracts &amp; Plugins</h1>
+    <h1>Specifications: UBF(c)</h1>
+  </div>
+<p>UBF(c) is a meta-level protocol used between a UBF client and a UBF
+server.</p>
+<p>UBF(c) has two primitives: synchronous "calls" and asynchronous
+"casts".</p>
+<dl class="dl-horizontal">
+<dt>
+Calls
+</dt>
+<dd>
+Request $ &#8658; {Response, NextState} $
+<ul>
+<li>
+"Request" is an UBF(a) type sent by the client
+</li>
+<li>
+"Response" is an UBF(a) type and "NextState" is an UBF(a) atom
+     sent by the server
+</li>
+</ul>
+</dd>
+<dt>
+Casts
+</dt>
+<dd>
+{'event_in', Event} $
+<ul>
+<li>
+"Event" is an UBF(a) type sent by the client
+</li>
+</ul>
+</dd>
+<dt>
+Casts
+</dt>
+<dd>
+{'event_out', Event} $
+<ul>
+<li>
+"Event" is an UBF(a) type sent by the server
+</li>
+</ul>
+</dd>
+</dl>
+</section>
+<section id="specifications_ubf_c_errors">
+  <div class="page-header">
+    <h1>Specifications: UBF(c) errors</h1>
+  </div>
+<dl>
+<dt>
+Calls - Request
+</dt>
+<dd>
+If clients sends an invalid request, server responds with "client
+broke contract":
+<pre class="prettyprint">{{'clientBrokeContract', Request, ExpectsIn}, State} $</pre>
+</dd>
+<dt>
+Calls - Responses
+</dt>
+<dd>
+If server sends an invalid response, server responds with "server
+broke contract":
+<pre class="prettyprint">{{'serverBrokeContract', Response, ExpectsOut}, State} $</pre>
+</dd>
+<dt>
+Casts
+</dt>
+<dd>
+If client or server send an invalid event, the event is ignored and
+dropped by the server.
+</dd>
+</dl>
+</section>
+<section id="contracts_and_plugins">
+  <div class="page-header">
+    <h1>Contracts and Plugins</h1>
   </div>
 <p>"Contracts" and "Plugins" are the basic building blocks of an Erlang
-UBF server.  Contracts are a server&#8217;s specifications.  Plugins are a
-server&#8217;s implementations.</p>
-<h2 id="contract">Contract</h2>
+UBF server.
+- Contracts are a server&#8217;s specifications.
+- Plugins are a server&#8217;s implementations.</p>
 <p>A contract is a UBF(b) specification stored to a file.  By convention,
-a contract&#8217;s filename has ".con" as the suffix part.  Since all
-sections of a UBF(b) specification are optional except for the "+NAME"
-and "+VERSION" sections, it is possible to have "+TYPES" only
-contracts, "+STATE" only contracts, "+ANYSTATE" only contracts, or any
-combination of such contracts.</p>
+a contract&#8217;s filename has ".con" as the suffix part.</p>
+</section>
+<section id="contracts_types_only">
+  <div class="page-header">
+    <h1>Contracts: +TYPES only</h1>
+  </div>
 <p>For example, a "+TYPES" only contract having the filename
 "irc_types_plugin.con" is as follows:</p>
 <div class="listingblock">
@@ -1100,6 +972,11 @@ http://www.gnu.org/software/src-highlite -->
 <span style="font-weight: bold"><span style="color: #000000">joinEvent</span></span>()       <span style="color: #990000">::</span> {<span style="color: #FF6600">joins</span>, <span style="font-weight: bold"><span style="color: #000000">nick</span></span>(), <span style="font-weight: bold"><span style="color: #000000">group</span></span>()};
 <span style="font-weight: bold"><span style="color: #000000">leaveEvent</span></span>()      <span style="color: #990000">::</span> {<span style="color: #FF6600">leaves</span>, <span style="font-weight: bold"><span style="color: #000000">nick</span></span>(), <span style="font-weight: bold"><span style="color: #000000">group</span></span>()};
 <span style="font-weight: bold"><span style="color: #000000">changeNameEvent</span></span>() <span style="color: #990000">::</span> {<span style="color: #FF6600">changesName</span>, <span style="font-weight: bold"><span style="color: #000000">oldnick</span></span>(), <span style="font-weight: bold"><span style="color: #000000">newnick</span></span>(), <span style="font-weight: bold"><span style="color: #000000">group</span></span>()}<span style="color: #990000">.</span></tt></pre></div></div>
+</section>
+<section id="contracts_state_and_or_anystate_only">
+  <div class="page-header">
+    <h1>Contracts: +STATE and/or +ANYSTATE only</h1>
+  </div>
 <p>For example, a "+STATE" and "+ANYSTATE" contract having the filename
 "irc_fsm_plugin.con" is as follows:</p>
 <div class="listingblock">
@@ -1136,30 +1013,33 @@ http://www.gnu.org/software/src-highlite -->
 
 
 </tt></pre></div></div>
-<h2 id="plugin">Plugin</h2>
+</section>
+<section id="plugins">
+  <div class="page-header">
+    <h1>Plugins</h1>
+  </div>
 <p>A plugin is just a "normal" Erlang module that follows a few simple
 rules.  For a "+TYPES" only contract, the plugin contains just the
-name of it&#8217;s contract.  Otherwise, the plugin contains the name of
-it&#8217;s contract plus the necessary Erlang "glue code" needed to bind the
-UBF server to the server&#8217;s application.  In either case, a plugin can
-also import all or a subset of "+TYPES" from other plugins.  This
-simple yet powerful import mechanism permits sharing and re-use of
-types between plugins and servers.</p>
-<p><span class="label label-note">Note</span> The necessary Erlang "glue code" is presented later in the
-<a href="#Servers">[Servers]</a> section.</p>
-<p>For the full example IRC contract described in a previous section, the
-plugin having the filename "irc_plugin.erl" is as follows:</p>
-<pre class="prettyprint">-module(irc_plugin).
-
--compile({parse_transform,contract_parser}).
--add_contract("irc_plugin").</pre>
+name of it&#8217;s contract.</p>
 <p>The plugin for the "+TYPES" only contract having the filename
 "irc_types_plugin.erl" is as follows:</p>
 <pre class="prettyprint">-module(irc_types_plugin).
 
 -compile({parse_transform,contract_parser}).
 -add_contract("irc_types_plugin").</pre>
-<h2 id="importing_types">Importing Types</h2>
+<p>Otherwise, the plugin contains the name of it&#8217;s contract plus the
+necessary Erlang "glue code" needed to bind the UBF server to the
+server&#8217;s application.</p>
+<p><span class="label label-tip">Tip</span> Check the UBF User&#8217;s Guide for possible ways that a plugin&#8217;s
+contract may fail to compile.</p>
+</section>
+<section id="plugins_importing_types">
+  <div class="page-header">
+    <h1>Plugins - Importing Types</h1>
+  </div>
+<p>A plugin can also import all or a subset of "+TYPES" from other
+plugins.  This simple yet powerful import mechanism permits sharing
+and re-use of types between plugins and servers.</p>
 <p>The plugin for the "+STATE" and "+ANYSTATE" contract having the
 filename "irc_fsm_plugin.erl" is as follows:</p>
 <pre class="prettyprint">-module(irc_fsm_plugin).
@@ -1168,228 +1048,54 @@ filename "irc_fsm_plugin.erl" is as follows:</p>
 -add_types(irc_types_plugin).
 -add_contract("irc_fsm_plugin").</pre>
 <p>The "-add_types('there')" directive imports all "+TYPES" from the
-plugin named 'there' into the containing plugin.  An alternative
-syntax "-add_types({'elsewhere', ['t1', 't2', &#8230;, 'tn']})."
-for this directive imports a subset of "+TYPEs" from the plugin named
-'elsewhere' into the containing plugin.  Multiple import directives
-of either syntax can be freely declared as long as the "-add_types"
-directives are listed before the "-add_contract" directive.  A plugin
-can have only one "-add_contract" directive.</p>
-<p>By using this Erlang "parse transform", the contract is parsed and the
-imported types (if any) are processed during the compilation of the
-plugin&#8217;s Erlang module.  The normal search path used by Erlang&#8217;s
-compiler to locate modules is used to import types from other plugins.</p>
-<h2 id="compilation_errors">Compilation Errors</h2>
-<p>The plugin will fail to compile if the plugin&#8217;s contract cannot be
-found, cannot be parsed properly, or if one of the following errors
-occurs:</p>
-<dl>
+plugin named 'there' into the containing plugin.</p>
+<p><span class="label label-note">Note</span> An alternative syntax "-add_types({'elsewhere', ['t1',
+'t2', &#8230;, 'tn']})."  for this directive imports a subset of
+"+TYPEs" from the plugin named 'elsewhere' into the containing
+plugin.</p>
+</section>
+<section id="transports_tcp_ip_ubf_ebf_jsf_tbf">
+  <div class="page-header">
+    <h1>Transports: TCP/IP - UBF/EBF/JSF/TBF</h1>
+  </div>
+<p>The following TCP/IP based transports are supported:</p>
+<dl class="dl-horizontal">
 <dt>
-{'duplicated_records', L}
+UBF
 </dt>
 <dd>
-  One or more records having the same name are found.
+Universal Binary Format
 </dd>
 <dt>
-{'duplicated_states', L}
+EBF
 </dt>
 <dd>
-  One or more states having the same name are found.
+Erlang Binary Format
 </dd>
 <dt>
-{'duplicated_types', L}
+JSF
 </dt>
 <dd>
-  One or more types having the same name are found.
+JavaScript Format
 </dd>
 <dt>
-{'duplicated_unmatched_import_types', L}
+TBF
 </dt>
 <dd>
-  One or more imported types having the same name but different
-  definitions are found.  <small>Type duplicates are permitted as long as
-  the type(s) are imported and all duplicates have the same
-  definition.</small>
-</dd>
-<dt>
-{'missing_states', L}
-</dt>
-<dd>
-  One or more states were found to be missing.
-</dd>
-<dt>
-{'missing_types', L}
-</dt>
-<dd>
-  One or more types were found to be missing.
-</dd>
-<dt>
-{'unused_types', L}
-</dt>
-<dd>
-  One or more types were found to be unused in the contract.  <small>Unused
-  types are permitted as long as the unused type(s) are imported.</small>
+Thrift Binary Format
 </dd>
 </dl>
-<p>where L is an Erlang list.</p>
-<h2 id="miscellaneous">Miscellaneous</h2>
-<p>As a by-product of a plugin&#8217;s compilation and if one or more "record"
-or "extended record" types were declared in a plugin&#8217;s contract, an
-Erlang "header" file containing the plugin&#8217;s record definitions is
-automatically created in an application&#8217;s ebin directory.  This Erlang
-"header" file can be included by the plugin module itself or by other
-Erlang modules used by the server&#8217;s application.  By convention, this
-Erlang "header" file has the same base filename as the plugin but
-having a ".hrl" as the suffix part.</p>
-<p><span class="label label-tip">Tip</span> There are 2 experimental prototypes for extending UBF&#8217;s type and
-plugin framework.  <a href="#UBF_ABNF">[UBF_ABNF]</a> is a framework for integrating UBF and
-ABNF specifications.  <a href="#UBF_EEP8">[UBF_EEP8]</a> is a framework for integrating UBF
-and EEP8 types.</p>
-<div style="page-break-after:always"></div>
 </section>
-<section id="transports">
+<section id="transports_http_json_rpc">
   <div class="page-header">
-    <h1>Transports</h1>
+    <h1>Transports: HTTP - JSON-RPC</h1>
   </div>
-<p>The original "UBF" network transport is UBF(a) over TCP/IP.  Since
-then, a number of new transports <strong>not</strong> based on UBF(a) and not based
-on TCP/IP have been added.  Nevertheless, these transports are still
-considered as part of the overall UBF framework.  Most importantly,
-applications can share and re-use the same UBF contracts and plugins
-irregardless of the network transport.</p>
-<h2 id="tcp_ip">TCP/IP</h2>
-<h3>UBF: Universal Binary Format</h3>
-<p>The name "UBF" is short for "Universal Binary Format".  UBF is
-commonly used to refer to the network transport based on UBF(a) and to
-the overall UBF framework.</p>
-<p>See <a href="#UBFa">[UBFa]</a> for further information.</p>
-<h3>EBF: Erlang Binary Format</h3>
-<p>EBF is an implementation of UBF(b) but it does not use UBF(a) for the
-client and server communication.  Instead, Erlang-style conventions
-are used instead:</p>
-<ul>
-<li>
-Structured terms are serialized via the Erlang BIFs term_to_binary()
-  and binary_to_term().
-</li>
-<li>
-Terms are framed using the <em>gen_tcp</em> {packet, 4} format: a 32-bit
-  unsigned integer (big-endian?) specifies packet length.
-<pre class="prettyprint">+-------------------------+-------------------------------+
-| Packet length (32 bits) | Packet data (variable length) |
-+-------------------------+-------------------------------+</pre>
-</li>
-</ul>
-<p>The name "EBF" is short for "Erlang Binary Format".</p>
-<h3>JSF: JavaScript Format</h3>
-<p>JSF is an implementation of UBF(b) but it does not use UBF(a) for the
-client and server communication.  Instead, JSON <a href="#RFC4627">[RFC4627]</a> is used
-instead as the wire format.  The name "JSF" is short for "JavaScript
-Format".</p>
-<p>There is no generally agreed upon convention for converting Erlang
-terms to JSON objects.  JSF uses the convention set forth by
-MochiWeb&#8217;s JSON library <a href="#MOCHIJSON2">[MOCHIJSON2]</a>.  In addition, there are a
-couple of other conventions layered on top of MochiWeb&#8217;s
-implementation.</p>
-<ul>
-<li>
-The UBF(b) contract checker has been modified to make a distinction
-  between an Erlang record and an arbitrary Erlang tuple.  An
-  experienced Erlang developer would view such a distinction either
-  with skepticism or with approval.
-</li>
-<li>
-For the skeptics, the contract author has the option of having the
-  UBF(b) contract compiler automatically generate Erlang -record()
-  definitions for appropriate tuples within the contract.  Such record
-  definitions are very convenient for developers on the Erlang side of
-  the world, but they introduce more complication to the JavaScript
-  side of the world.  For example, JavaScript does not have a concept
-  of an arbitrary atom, as Erlang does.  Also, the JavaScript side
-  must make a distinction between {foo, 42} and {bar, 42} when #foo is
-  a record on the Erlang side but #bar is not.
-</li>
-</ul>
-<p>This extra convention creates something slightly messy-looking, if you
-look at the raw JSON passed back-and-forth.  The examples of the
-Erlang record {foo, 42} and the general tuple {bar, 42} would look
-like this:</p>
-<pre class="prettyprint">   record (defined in the contract as "foo() :: #foo{attribute1 :: term()};")
-
-      {"$R":"foo", "attribute1":42}
-
-   general tuple
-
-      {"$T":[{"$A":"bar"}, 42]}</pre>
-<p>However, it requires very little JavaScript code to convert objects
-with the "$R", "$T", and "$A" notation (for records, tuples, and
-atoms) into whatever object is most convenient.</p>
-<p>See <a href="#UBF_JSONRPC">[UBF_JSONRPC]</a> for further information.</p>
-<p><span class="label label-tip">Tip</span> Gemini Mobile Technologies, Inc. has implemented and open-sourced
-a module for classifying the input character set to detect non-UTF8
-JSON inputs <a href="#JSFCHARSET">[JSFCHARSET]</a>.</p>
-<h3>TBF / FTBF / NTBF / FNTBF:  Binary Format - Thrift / Framed Thrift / Native Thrift / Framed Native Thrift</h3>
-<p>TBF and NTBF is an implementation of UBF(b) but it does not use UBF(a)
-for the client and server communication.  Instead, Thrift <a href="#THRIFT">[THRIFT]</a>
-is used instead as the wire format.  The name "TBF" is short for
-"Thrift Binary Format".  The name "NTBF" is short for "Native Thrift
-Binary Format".  FTBF and FNTBF are framed versions of TBF and NTBF,
-respectively.</p>
-<p>TBF follows the conventions set forth by the Thrift community by
-re-using Thrift&#8217;s binary wire-protocol except for the following
-exceptions:</p>
-<ul>
-<li>
-The name of Thrift messages are hard-coded to the Thrift name
-  "$UBF".
-</li>
-<li>
-The name of Thrift structs are not removed before being written to
-  the network.
-</li>
-<li>
-TBF does not use nor require a Thrift IDL.
-</li>
-<li>
-TBF by convention requires the client to read a "server hello"
-  message at the start of establishing a new TCP/IP connection.
-</li>
-</ul>
-<p>TBF <strong>can</strong> encode and decode all UBF(b) objects.  Synchronous calls are
-implemented as Thrift <em>T-CALL</em> and <em>T-REPLY</em> message pairs.
-Asynchronous casts are implemented as Thrift <em>T-ONEWAY</em> messages.</p>
-<p><span class="label label-caution">Caution</span> TBF is not compatible with standard Thrift clients and
-servers.</p>
-<p>NTBF follows all of the conventions set forth by the Thrift community
-by re-using Thrift&#8217;s binary wire-protocol.  A standard Thrift client
-can communicate with a UBF "NTBF" server and a UBF "NTBF" client can
-communicate with a standard Thrift server.</p>
-<p>NTBF <strong>cannot</strong> encode and decode all UBF(b) objects.  There is no
-straightforward convention for converting Erlang terms to Thrift
-messages.  Synchronous calls are implemented as Thrift <em>T-CALL</em> and
-<em>T-REPLY</em> message pairs or <em>T-CALL</em> and <em>T-EXCEPTION</em> message pairs.
-Asynchronous casts are implemented as Thrift <em>T-ONEWAY</em> messages.</p>
-<p>The NTBF transport is under active development to enhance, to improve,
-to simplify the integration of Thrift to the UBF framework.  The
-impedance mismatch between the two approaches of Thrift and UBF can
-only be addressed by further development.</p>
-<p><span class="label label-caution">Caution</span> Currently, NTBF only implements the encoding and decoding of
-Thrift&#8217;s binary wire-protocol.  Unlike standard Thrift clients and
-servers, a NTBF client and server must "manually" implement the
-features provided by the Thrift IDL.</p>
-<p>See <a href="#UBF_THRIFT">[UBF_THRIFT]</a> for further information.</p>
-<h3>Miscellaneous</h3>
-<p>It is worthwhile to mention two new TCP/IP transports namely PBF and
-ABF under investigation.  The name "PBF" is short for "Google&#8217;s
-Protocol Buffers Format" <a href="#PROTOBUF">[PROTOBUF]</a>.  The name "ABF" is short for
-"Avro Binary Format" <a href="#AVRO">[AVRO]</a>.</p>
-<h2 id="http">HTTP</h2>
-<h3>JSON-RPC</h3>
-<p>JSON-RPC <a href="#JSONRPC">[JSONRPC]</a> is a lightweight remote procedure call protocol
-similar to XML-RPC.  The UBF framework implementation of JSON-RPC
-brings together JSF&#8217;s encoder/decoder, UBF(b)'s contract checking, and
-an HTTP transport.</p>
-<p><span class="image">
+<p>JSON-RPC is a lightweight remote procedure call protocol similar to
+XML-RPC.</p>
+<p>The UBF framework implementation of JSON-RPC brings together JSF&#8217;s
+encoder/decoder, UBF(b)'s contract checking, and an HTTP transport.</p>
+<div class="imageblock">
+<div class="content">
 <img alt="Programming By Contract w/ Multiple Transports" src="data:image/png;base64,
 iVBORw0KGgoAAAANSUhEUgAAAeEAAAExCAIAAADEFo12AAAABmJLR0QA/wD/AP+gvaeTAAAgAElE
 QVR4nOydd1yTVxfHf2HK3ltERGSJC3DvreDEbUWtQrXWVbX6VsTZqrWOum3VuifiwIEDt4CKW8DB
@@ -2061,35 +1767,36 @@ vWv0POV6Fi+UjaagECfff//9nTt3Ll++LKTxIyIizM3N1dXVm22pp6fXp08fIalB0WIoG01BIU7c
 3d2FlyIDQJ8+fXx8fGxsbIQngkKoUGuGFBQUFJILZaMpKCgoJBfKRlNQUFBILpSNpqCgoJBcKBtN
 QUFBIblQNpqCgoJCcqFsNAUFBYXkQsVHU1C0ZuTl5V1dXVVUVMStCBISEhQUFMSthfTxfyNcuVni
 YNjKAAAAAElFTkSuQmCC">
-</span></p>
-<p>As previously stated, central to UBF is the idea of a "Contract" which
-regulates the set of legal conversations that can take place between a
-client and a server.  The client-side is depicted in "red" and the
-server-side is depicted in "blue".  The client and server communicate
-with each other via a TCP/IP and/or HTTP.</p>
-<p>Central to UBF is the idea of contract(s) can be shared and re-used by
-multiple transports.  Any data that violates the <small>same</small> contract(s) is
-rejected regardless of the transport.</p>
-<p>See <a href="#UBF_JSONRPC">[UBF_JSONRPC]</a> for further information.</p>
-<h2 id="miscellaneous_3">Miscellaneous</h2>
-<p>Several transports that do not require an explicit network socket have
-been added to the UBF framework.  These transports permit an
-application to call a plugin directly without the need for TCP/IP or
-HTTP.</p>
-<h3>ETF: Erlang Term Format</h3>
-<p>The concept "ETF" was added to the UBF framework.  This transport
-relies on Erlang&#8217;s Native Distribution for synchronous calls and
-asynchronous casts.</p>
-<p>The name "ETF" is short for "Erlang Term Format".</p>
-<h3>LPC: Local Procedure Call</h3>
-<p>The concept "LPC" was added to the UBF framework.  This transport is a
-"non-transport" that invokes synchronous calls directly to a plugin.
-Support for asynchronous casts has not been added (or designed) yet.</p>
-<p>The name "LPC" is short for "Local Procedure Call".</p>
-<p><span class="label label-note">Note</span> LPC is used to implement the JSON-RPC transport.</p>
-<div style="page-break-after:always"></div>
+</div>
+<div class="title">Figure 2. Programming By Contract w/ Multiple Transports</div>
+</div>
+<p><span class="label label-note">Note</span> Any data that violates the <small>same</small> contract(s) is rejected
+regardless of the transport.</p>
 </section>
-<section id="Servers">
+<section id="transports_etf_and_lpc">
+  <div class="page-header">
+    <h1>Transports: ETF and LPC</h1>
+  </div>
+<p>Several transports that do not require an explicit network socket have
+been added to the UBF framework.</p>
+<dl class="dl-horizontal">
+<dt>
+ETF
+</dt>
+<dd>
+Erlang Term Format <small>(Erlang&#8217;s Native Distribution)</small>
+</dd>
+<dt>
+LPC
+</dt>
+<dd>
+Local Procedure Call <small>(Calls made directly to a Plugin)</small>
+</dd>
+</dl>
+<p>These transports permit an application to call a plugin directly
+without the need for TCP/IP or HTTP.</p>
+</section>
+<section id="servers">
   <div class="page-header">
     <h1>Servers</h1>
   </div>
@@ -2100,7 +1807,7 @@ is Joe Armstrong&#8217;s original UBF server implementation.</p>
 <p>UBF servers are introspective - which means the servers can describe
 themselves.  The following commands (described in UBF(a) format) are
 always available:</p>
-<dl>
+<dl class="dl-horizontal">
 <dt>
 'help' $
 </dt>
@@ -2146,10 +1853,13 @@ always available:</p>
   Name service and is specific to that service.
 </dd>
 </dl>
+</section>
+<section id="servers_start_small_or_small_start_link">
+  <div class="page-header">
+    <h1>Servers: start <small>or</small> start_link</h1>
+  </div>
 <p>The "ubf_server" Erlang module implements most of the commonly-used
-server-side functions and provides several ways to start a server.
-Configuration options for both types of servers are the same.
-However, the plugin callback API is different.</p>
+server-side functions and provides several ways to start a server.</p>
 <pre class="prettyprint">-module(ubf_server).
 
 -type name() :: atom().
@@ -2164,277 +1874,35 @@ However, the plugin callback API is different.</p>
 -spec start_link(plugins(), ipport()) -&gt; true.
 -spec start_link(name(), plugins(), ipport()) -&gt; true.
 -spec start_link(name(), plugins(), ipport(), options()) -&gt; true.</pre>
-<p>The start/{2,3,4} and start_link/{2,3,4} functions start a registered
-server and a TCP listener on ipport() and register all of the protocol
-implementation modules in the plugins() list.  If name() is undefined,
-the server is not registered.  The list of supported options() are as
-follows:</p>
-<dl>
-<dt>
-{'idletimer', non_neg_integer() | 'infinity'}
-</dt>
-<dd>
-  Maximum time (in milliseconds) that a client connection may remain
-  idle before the server will close the connection.  Default:
-  'infinity'
-</dd>
-<dt>
-{'maxconn', non_neg_integer()}
-</dt>
-<dd>
-  Maximum number of simultaneous TCP connections allowed.  Default:
-  10000.
-</dd>
-<dt>
-{'proto', {'ubf' | 'ebf' | 'jsf' | 'tbf' |  'ftbf' | atom()}}
-</dt>
-<dd>
-  Enable the UBF, EBF, JSF, TBF, FTBF, or an alternative protocol wire
-  format. Default: 'ubf'.
-</dd>
-<dt>
-{'proto', {'ubf' | 'ebf' | 'jsf' | 'tbf' |  'ftbf' | atom(), [atom() | tuple()]}}
-</dt>
-<dd>
-  Enable the UBF, EBF, JSF, TBF, FTBF, or an alternative protocol wire
-  format with options. Default: {'ubf', []}. Supported options:
-<dl>
-<dt>
-'safe'
-</dt>
-<dd>
-    Prevents decoding data that may be used to attack the Erlang
-    system.  In the event of receiving unsafe data, decoding fails
-    with a badarg error.
-</dd>
-</dl>
-</dd>
-<dt>
-{'registeredname', name()}
-</dt>
-<dd>
-  Set the name to be registered for the TCP listener.  If
-  'undefined', a default name is automatically registered.  Default:
-  'undefined'.
-</dd>
-<dt>
-{'statelessrpc', boolean()}
-</dt>
-<dd>
-  Run the stateless variety of a UBF(b) contract.  A stateless
-  contract is an extension of Joe Armstrong&#8217;s original UBF server
-  implementation.  Default: 'false'.
-</dd>
-<dt>
-{'startplugin', module()}
-</dt>
-<dd>
-  Set the starting plugin, set after a client first connects to the
-  server.  If not set, client may select the service using the
-  startSession() API.  There is no default setting.
-</dd>
-<dt>
-{'serverhello', ubfstring() | 'undefined'}
-</dt>
-<dd>
-  Meta contract greeting string, sent when a client first connects to
-  the server.  If 'undefined', server hello is not sent to the
-  client.  Default: "meta_server".
-</dd>
-<dt>
-{'simplerpc', boolean()}
-</dt>
-<dd>
-  Set the simple RPC mode.  If 'true', server returns only the rpc
-  reply to client.  If 'false', server returns the rpc reply and next
-  state to client.  Default: 'false'.
-</dd>
-<dt>
-{'verboserpc', boolean()}
-</dt>
-<dd>
-  Set the verbose RPC mode.  If 'true', server calls the plugin
-  handler with the rpc request and matched contract types.  If
-  'false', server calls the plugin handler only with the rpc request.
-  Default: 'false'.
-</dd>
-<dt>
-{'tlog_module', module() | {module(), boolean()}}
-</dt>
-<dd>
-  Set the transaction log callback module and optionally control the
-  built-in calls by 'contract_manager_tlog' to the 'error_logger'
-  module.  If the 2-tuple representation is used and the boolean()
-  member is 'false', then calls to 'error_logger' will not be
-  attempted.  Default: 'undefined'.  See <a href="#TLOG">[TLOG]</a> for further
-  information.
-</dd>
-<dt>
-{'process_options', list()}
-</dt>
-<dd>
-  Specify additional options used for spawning server and/or client
-  related erlang processes.  Typically used to specify non-default,
-  garbage collection options.  Default: [].
-</dd>
-</dl>
-<p>The "ubf_server" Erlang module doesn&#8217;t provide a "stop" function.  To
-stop the server, instead stop the TCP listener that controls it.  See
-the "proc_socket_server" Erlang module for extra details.</p>
-<p><span class="label label-note">Note</span> The NTBF and FNTBF transport protocol is indirectly enabled by
-specifying the following options: [{'proto', 'tbf'},
-{'serverhello', 'undefined'}, {'simplerpc', 'true'}] or
-[{'proto', 'ftbf'}, {'serverhello', 'undefined'}, {'simplerpc',
-'true'}].</p>
-<h2 id="stateless">Stateless</h2>
-<p>The stateless server provides a simplified callback API and
-implementation in comparison to Joe Armstrong&#8217;s original UBF server.
-The stateless server is helpful to applications that do not require
-explicit state management by the UBF server.</p>
-<p>The "ubf_plugin_stateless.hrl" Erlang header file defines the callback
-APIs to be implemented by a stateless plugin.  The seven callbacks
-are mandatory for all stateless plugins.</p>
+<p><span class="label label-tip">Tip</span> Check the UBF User&#8217;s Guide for supported configuration options.</p>
+</section>
+<section id="servers_stateless">
+  <div class="page-header">
+    <h1>Servers: Stateless</h1>
+  </div>
+<p>The plugin callback API for the stateless server.</p>
 <pre class="prettyprint">%% common callback API
--spec info() -&gt; ubfstring().
--spec description() -&gt; ubfstring().
+-spec info() -&gt; string().
+-spec description() -&gt; string().
 -spec handlerStop(Handler::pid(), Reason::term(), StateData::term()) -&gt;
                   NewStateData::term().
 
 %% stateless callback API
--spec moduleStart(args()::term()) -&gt; any().
--spec moduleRestart(args()::term()) -&gt; any().
-
 -spec handlerStart(Args::term()) -&gt;
                   {accept, Reply::term(), StateName::atom(), StateDate::term()} |
                   {reject, Reply::term()}.
 -spec handlerRpc(Call::term()) -&gt; Reply::term().</pre>
-<p>The info/0 and description/0 functions provide short and long
-information about the plugin&#8217;s service, respectively.</p>
-<p>The moduleStart/1 function is called once after the plugin&#8217;s service
-is started.  The return value is ignored.  The moduleRestart/1
-function is called once after each time the plugin&#8217;s service is
-restarted.  The return value is ignored.</p>
-<p>The handlerStart/1 function is called when starting a new session for
-the plugin&#8217;s service.  The plugin may accept or reject the start
-session request.  When accepted, the plugin returns the reply for the
-client, the name of the state to be used for the entire session, and
-optional data for the state.  When rejected, the plugin returns the
-error for the client.</p>
-<p>The handlerStop/3 function is called when stopping a session of the
-plugin&#8217;s service.  The plugin may perform some cleanup inside the
-handlerStop function.</p>
-<p>The handlerRpc/1 function is called when processing a synchronous
-call.</p>
-<p>For example, the following "skeleton" implementation of a <a href="#BERTRPC">[BERTRPC]</a>
-server implemented by UBF illustrates a typical stateless server.  The
-source code for this implementation can be found on GitHub
-<a href="#UBF_BERTRPC">[UBF_BERTRPC]</a>.</p>
-<div class="listingblock">
-<div class="content"><!-- Generator: GNU source-highlight 3.1.7
-by Lorenzo Bettini
-http://www.lorenzobettini.it
-http://www.gnu.org/software/src-highlite -->
-<pre><tt><span style="font-style: italic"><span style="color: #9A1900">%%% -*- mode: erlang -*-</span></span>
-<span style="font-style: italic"><span style="color: #9A1900">%%% </span></span><span style="color: #009900">@doc</span><span style="font-style: italic"><span style="color: #9A1900"> Sample BERT-RPC plugin.</span></span>
-<span style="font-style: italic"><span style="color: #9A1900">%%%</span></span>
-<span style="font-style: italic"><span style="color: #9A1900">%%%</span></span>
-
-<span style="font-weight: bold"><span style="color: #000080">-module</span></span>(<span style="color: #FF6600">ubf_bertrpc_plugin</span>)<span style="color: #990000">.</span>
-<span style="font-weight: bold"><span style="color: #000080">-behaviour</span></span>(<span style="color: #FF6600">ubf_plugin_stateless</span>)<span style="color: #990000">.</span>
-
-<span style="font-style: italic"><span style="color: #9A1900">%% Required (except keepalive/0) callback API for UBF stateless</span></span>
-<span style="font-style: italic"><span style="color: #9A1900">%% implementations.</span></span>
-<span style="font-weight: bold"><span style="color: #000080">-export</span></span>([<span style="font-weight: bold"><span style="color: #000000">info</span></span><span style="color: #990000">/</span><span style="color: #993399">0</span>, <span style="font-weight: bold"><span style="color: #000000">description</span></span><span style="color: #990000">/</span><span style="color: #993399">0</span>, <span style="font-weight: bold"><span style="color: #000000">keepalive</span></span><span style="color: #990000">/</span><span style="color: #993399">0</span>])<span style="color: #990000">.</span>
-<span style="font-weight: bold"><span style="color: #000080">-export</span></span>([<span style="font-weight: bold"><span style="color: #000000">moduleStart</span></span><span style="color: #990000">/</span><span style="color: #993399">1</span>, <span style="font-weight: bold"><span style="color: #000000">moduleRestart</span></span><span style="color: #990000">/</span><span style="color: #993399">1</span>])<span style="color: #990000">.</span>
-<span style="font-weight: bold"><span style="color: #000080">-export</span></span>([<span style="font-weight: bold"><span style="color: #000000">handlerStart</span></span><span style="color: #990000">/</span><span style="color: #993399">1</span>, <span style="font-weight: bold"><span style="color: #000000">handlerStop</span></span><span style="color: #990000">/</span><span style="color: #993399">3</span>, <span style="font-weight: bold"><span style="color: #000000">handlerRpc</span></span><span style="color: #990000">/</span><span style="color: #993399">1</span>, <span style="font-weight: bold"><span style="color: #000000">handlerEvent</span></span><span style="color: #990000">/</span><span style="color: #993399">1</span>])<span style="color: #990000">.</span>
-
-<span style="font-weight: bold"><span style="color: #000080">-import</span></span>(<span style="color: #FF6600">ubf_plugin_handler</span>, [<span style="font-weight: bold"><span style="color: #000000">sendEvent</span></span><span style="color: #990000">/</span><span style="color: #993399">2</span>, <span style="font-weight: bold"><span style="color: #000000">install_handler</span></span><span style="color: #990000">/</span><span style="color: #993399">2</span>])<span style="color: #990000">.</span>
-
-<span style="font-weight: bold"><span style="color: #000080">-compile</span></span>({<span style="font-weight: bold"><span style="color: #000080">parse_transform</span></span>,<span style="color: #FF6600">contract_parser</span>})<span style="color: #990000">.</span>
-<span style="font-weight: bold"><span style="color: #000080">-add_contract</span></span>(<span style="color: #FF0000">"src/ubf_bertrpc_plugin"</span>)<span style="color: #990000">.</span>
-
-<span style="font-weight: bold"><span style="color: #000080">-include_lib</span></span>(<span style="color: #FF0000">"ubf/include/ubf.hrl"</span>)<span style="color: #990000">.</span>
-<span style="font-weight: bold"><span style="color: #000080">-include_lib</span></span>(<span style="color: #FF0000">"ubf/include/ubf_plugin_stateless.hrl"</span>)<span style="color: #990000">.</span>
-
-<span style="font-weight: bold"><span style="color: #000000">info</span></span>() <span style="color: #990000">-&gt;</span>
-    <span style="color: #FF0000">"I am a BERT-RPC server"</span><span style="color: #990000">.</span>
-
-<span style="font-weight: bold"><span style="color: #000000">description</span></span>() <span style="color: #990000">-&gt;</span>
-    <span style="color: #FF0000">"A BERT-RPC server programmed by UBF"</span><span style="color: #990000">.</span>
-
-<span style="font-weight: bold"><span style="color: #000000">keepalive</span></span>() <span style="color: #990000">-&gt;</span>
-    <span style="color: #FF6600">ok</span><span style="color: #990000">.</span>
-
-<span style="font-style: italic"><span style="color: #9A1900">%% </span></span><span style="color: #009900">@doc</span><span style="font-style: italic"><span style="color: #9A1900"> start module</span></span>
-<span style="font-weight: bold"><span style="color: #000000">moduleStart</span></span>(<span style="color: #009900">_Args</span>) <span style="color: #990000">-&gt;</span>
-    <span style="color: #FF6600">unused</span><span style="color: #990000">.</span>
-
-<span style="font-style: italic"><span style="color: #9A1900">%% </span></span><span style="color: #009900">@doc</span><span style="font-style: italic"><span style="color: #9A1900"> restart module</span></span>
-<span style="font-weight: bold"><span style="color: #000000">moduleRestart</span></span>(<span style="color: #009900">Args</span>) <span style="color: #990000">-&gt;</span>
-    <span style="font-weight: bold"><span style="color: #000000">moduleStart</span></span>(<span style="color: #009900">Args</span>)<span style="color: #990000">.</span>
-
-<span style="font-style: italic"><span style="color: #9A1900">%% </span></span><span style="color: #009900">@doc</span><span style="font-style: italic"><span style="color: #9A1900"> start handler</span></span>
-<span style="font-weight: bold"><span style="color: #000000">handlerStart</span></span>(<span style="color: #009900">_Args</span>) <span style="color: #990000">-&gt;</span>
-    <span style="color: #0000FF">ack</span> <span style="color: #990000">=</span> <span style="font-weight: bold"><span style="color: #000000">install_handler</span></span>(<span style="font-weight: bold"><span style="color: #000080">self</span></span>(), <span style="font-weight: bold"><span style="color: #0000FF">fun</span></span> <span style="font-weight: bold"><span style="color: #000000">handlerEvent</span></span><span style="color: #990000">/</span><span style="color: #993399">1</span>),
-    {<span style="color: #FF6600">accept</span>,<span style="color: #FF6600">ok</span>,<span style="color: #FF6600">none</span>,<span style="color: #FF6600">unused</span>}<span style="color: #990000">.</span>
-
-<span style="font-style: italic"><span style="color: #9A1900">%% </span></span><span style="color: #009900">@doc</span><span style="font-style: italic"><span style="color: #9A1900"> stop handler</span></span>
-<span style="font-weight: bold"><span style="color: #000000">handlerStop</span></span>(<span style="color: #009900">_Pid</span>, <span style="color: #009900">_Reason</span>, <span style="color: #009900">_StateData</span>) <span style="color: #990000">-&gt;</span>
-    <span style="color: #FF6600">unused</span><span style="color: #990000">.</span>
-
-<span style="font-style: italic"><span style="color: #9A1900">%% </span></span><span style="color: #009900">@doc</span><span style="font-style: italic"><span style="color: #9A1900"> rpc handler</span></span>
-<span style="font-style: italic"><span style="color: #9A1900">%% </span></span><span style="color: #009900">@TODO</span><span style="font-style: italic"><span style="color: #9A1900"> Implement BERT-RPC 1.0 synchronous events</span></span>
-<span style="font-weight: bold"><span style="color: #000000">handlerRpc</span></span>(<span style="color: #009900">Event</span>) <span style="font-weight: bold"><span style="color: #0000FF">when</span></span> <span style="color: #009900">Event</span><span style="color: #990000">==</span><span style="color: #FF6600">info</span>; <span style="color: #009900">Event</span><span style="color: #990000">==</span><span style="color: #FF6600">description</span> <span style="color: #990000">-&gt;</span>
-    <span style="font-weight: bold"><span style="color: #000080">?S</span></span>(<span style="font-weight: bold"><span style="color: #000080">?MODULE</span></span><span style="color: #990000">:</span><span style="color: #009900">Event</span>());
-<span style="font-weight: bold"><span style="color: #000000">handlerRpc</span></span>(<span style="color: #009900">Event</span>) <span style="font-weight: bold"><span style="color: #0000FF">when</span></span> <span style="color: #009900">Event</span><span style="color: #990000">==</span><span style="color: #FF6600">keepalive</span> <span style="color: #990000">-&gt;</span>
-    <span style="font-weight: bold"><span style="color: #000080">?MODULE</span></span><span style="color: #990000">:</span><span style="color: #009900">Event</span>()<span style="color: #990000">.</span>
-
-<span style="font-style: italic"><span style="color: #9A1900">%% </span></span><span style="color: #009900">@doc</span><span style="font-style: italic"><span style="color: #9A1900"> event handler</span></span>
-<span style="font-style: italic"><span style="color: #9A1900">%% </span></span><span style="color: #009900">@TODO</span><span style="font-style: italic"><span style="color: #9A1900">: Implement BERT-RPC 1.0 asynchronous events</span></span>
-<span style="font-weight: bold"><span style="color: #000000">handlerEvent</span></span>(<span style="color: #009900">Event</span>) <span style="color: #990000">-&gt;</span>
-    <span style="font-style: italic"><span style="color: #9A1900">%% Let's fake it and echo the request</span></span>
-    <span style="font-weight: bold"><span style="color: #000000">sendEvent</span></span>(<span style="font-weight: bold"><span style="color: #000080">self</span></span>(), <span style="color: #009900">Event</span>),
-    <span style="font-weight: bold"><span style="color: #0000FF">fun</span></span> <span style="font-weight: bold"><span style="color: #000000">handlerEvent</span></span><span style="color: #990000">/</span><span style="color: #993399">1</span><span style="color: #990000">.</span></tt></pre></div></div>
-<p>The above example also introduces three new concepts:</p>
-<ul>
-<li>
-The install_handler/2 and handleEvent/1 functions illustrate how to
-  receive asynchronous casts sent from the client to the server.  The
-  handler fun Fun should be a function of arity 1.  When an
-  asynchronous UBF message is received, the callback function is
-  called with the event as its single argument.  The Fun is called by
-  the ubf plugin handler process so the Fun can crash and/or block
-  this process.  The Fun should also return the same or a new Fun for
-  the next asynchronous event.  If the Fun must maintain its own
-  state, then an intermediate anonymous fun must be used to to bind
-  the state.
-</li>
-<li>
-The sendEvent/2 function illustrates how to send asynchronous casts
-  from the server to the client.
-</li>
-<li>
-The "?S(X)" macro definition plus other helpers are located in the
-  "ubf.hrl" Erlang header file.  For Erlang, the implementation of a
-  UBF <code>ubfstring()</code> is a two tuple having '#S' as the first element
-  and a list of bytes as the second element.  A similar technique is
-  also used for the implementation of a UBF <code>ubfproplist()</code>
-  (i.e. '#P' and "?P(X)).
-</li>
-</ul>
-<h2 id="stateful">Stateful</h2>
-<p>The stateful server is Joe Armstrong&#8217;s original UBF server.  The
-stateful server permits a plugin to transition from one state to
-another and also supports a manager framework for managing application
-state between multiple clients.</p>
-<p>The "ubf_plugin_stateless.hrl" Erlang header file defines the callback
-APIs to be implemented by a stateful plugin.  The eight callbacks are
-mandatory for all stateful plugins.</p>
+</section>
+<section id="servers_stateful">
+  <div class="page-header">
+    <h1>Servers: Stateful</h1>
+  </div>
+<p>The plugin callback API for the stateful server.</p>
 <pre class="prettyprint">%% common callback API
--spec info() -&gt; ubfstring().
--spec description() -&gt; ubfstring().
--spec handlerStop(Handler::pid(), Reason::term(), ManagerData::term()) -&gt;
-                  NewManagerData::term().
+-spec info() -&gt; string().
+-spec description() -&gt; string().
+-spec handlerStop(Handler::pid(), Reason::term(), StateData::term()) -&gt;
+                  NewStateData::term().
 
 %% stateful callback API
 -spec handlerStart(Args::term(), Manager::pid()) -&gt;
@@ -2449,46 +1917,16 @@ mandatory for all stateful plugins.</p>
                      ok | {error, Reason::term()}.
 -spec managerRpc(Args::term(), ManagerData::term()) -&gt;
                  {ok, NewManagerData::term()} | {error, Reason::term()}.</pre>
-<p>The info/0 and description/0 functions provide short and long
-information about the plugin&#8217;s service, respectively.</p>
-<p>The handlerStart/2 function is called when starting a new session for
-the plugin&#8217;s service.  The plugin may accept or reject the start
-session request.  When accepted, the plugin returns the reply for the
-client, the name of the initial state to be used for the session, and
-optional data for the state.  When rejected, the plugin returns the
-error for the client.</p>
-<p>The handlerStop/3 function is called when stopping a session of the
-plugin&#8217;s service.  The plugin may perform some cleanup inside the
-handlerStop function.</p>
-<p>The handlerRpc/1 function is called when processing a synchronous
-call.</p>
-<p>The managerStart/1 function is called once at the start of the
-server&#8217;s initialization for each plugin&#8217;s service.</p>
-<p>The managerRestart/2 function is called to restart a plugin&#8217;s service.
-The callback function is expected to forward the request to the
-manager process and relay the manager&#8217;s reply.</p>
-<p>The managerRpc/2 function is called when processing a call from
-handler.  A handler uses the ubf_plugin_handler:ask_manager/2 function
-API to make a synchronous call to the manager.</p>
-<p>For an example stateful server plugin, please see the
-"test/unit/irc_plugin.erl" Erlang module in the <a href="#UBF">[UBF]</a>
-repository.  This plugin is the actual server-side implementation for
-the IRC protocol application described earlier.</p>
-<div style="page-break-after:always"></div>
 </section>
-<section id="clients">
+<section id="clients_erlang_rpc">
   <div class="page-header">
-    <h1>Clients</h1>
+    <h1>Clients: Erlang RPC</h1>
   </div>
-<h2 id="erlang">Erlang</h2>
-<p>The UBF framework provides two types of Erlang clients: "rpc" and
-"lpc".  The rpc client is the default client that supports
-TCP/IP-based and ETF transports.  The lpc client is an alternative
-client for making a synchronous local procedure call to a plugin&#8217;s
-implementation.</p>
+<p>The "default" Erlang client is the "rpc" client and it supports TCP/IP
+and ETF transports.</p>
 <p>The "ubf_client" Erlang module implements most of the commonly-used
-client-side functions and contains the implementation for the two
-types of Erlang clients.</p>
+client-side functions and contains the implementation for all types of
+Erlang clients.</p>
 <pre class="prettyprint">-module(ubf_client).
 
 -type host() :: nonempty_string().
@@ -2509,859 +1947,563 @@ types of Erlang clients.</p>
 -spec connect(host() | plugins(), ipport() | server(), options(), timeout()) -&gt;
               {ok, Client::pid(), service()} | {error, term()}.
 
--spec rpc(Client::pid(), Call::term()) -&gt; timeout | term() | no_return().
--spec rpc(Client::pid(), Call::term(), timeout()) -&gt; timeout | term() | no_return().
-
 -spec stop(Client::pid()) -&gt; ok.
 
--spec sendEvent(Handler::pid(), Cast::term()) -&gt; ok | no_return().
-
--spec install_default_handler(Client::pid()) -&gt; ack.
--spec install_handler(Client::pid(), Fun::fun()) -&gt; ack.
-
--spec lpc(plugin(), Call::term()) -&gt; term().
--spec lpc(plugin(), Call::term(), statename()) -&gt; term().
--spec lpc(plugin(), Call::term(), statename(), tlogger()) -&gt; term().</pre>
-<p>The connect/{2,3,4} functions connect to a UBF server.  Upon success,
-the UBF client&#8217;s pid() and the name of the UBF server&#8217;s service (if
-known) is returned.  For TCP/IP transports, the default method is to
-connect to the specified host() and TCP ipport().  For the ETF
-transport, the alternative method is to connect to server() using the
-specified plugins().  The server() is either the process id or process
-registered name for an already-started UBF server.</p>
-<p>The list of supported options() are as follows:</p>
-<dl>
-<dt>
-{'clientport', ipport() | {ipport(), ipport()}}
-</dt>
-<dd>
-  Specifies the TCP port to be used by the client.  If tuple format, a
-  port is automatically selected within the specified range.  If
-  'undefined', a random port is automatically selected.  Default:
-  'undefined'.
-</dd>
-<dt>
-{'proto', {'ubf' | 'ebf' | 'jsf' | 'tbf' |  'ftbf' | atom()}}
-</dt>
-<dd>
-  Enable the UBF, EBF, JSF, TBF, FTBF, or an alternative protocol wire
-  format. Default: 'ubf'.
-</dd>
-<dt>
-{'proto', {'ubf' | 'ebf' | 'jsf' | 'tbf' |  'ftbf' | atom(), [atom() | tuple()]}}
-</dt>
-<dd>
-  Enable the UBF, EBF, JSF, TBF, FTBF, or an alternative protocol wire
-  format with options. Default: {'ubf', []}. Supported options:
-<dl>
-<dt>
-'safe'
-</dt>
-<dd>
-    Prevents decoding data that may be used to attack the Erlang
-    system.  In the event of receiving unsafe data, decoding fails
-    with a badarg error.
-</dd>
-</dl>
-</dd>
-<dt>
-{'startplugin', module()}
-</dt>
-<dd>
-  Set the starting plugin, set after a client first connects to the
-  server.  If not set, client&#8217;s caller may select the service using
-  the startSession() API. Default: 'undefined'.
-</dd>
-<dt>
-{'serverhello', true | <em>undefined</em>}
-</dt>
-<dd>
-  Meta contract greeting string, sent to a client when it first connects to
-  the server.  If 'undefined', client does not expect server hello to
-  be sent by the server. Default: 'true'.
-</dd>
-<dt>
-{'simplerpc', boolean()}
-</dt>
-<dd>
-  Set the simple RPC mode.  If 'true', client expects only the rpc
-  reply from the server.  If 'false', server returns the rpc reply and next
-  state to client.  Default: 'false'.
-</dd>
-</dl>
-<p>The rpc/{2,3} functions make a synchronous call to the server.</p>
-<p>The stop/1 function closes the connection with the server and stops
-the client.</p>
-<p>The sendEvent/2, install_default_handler/1, and install_handler/2
-functions behave in the same way as the server-side implementation to
-send and receive asynchronous casts.</p>
-<p>The lpc/{2,3,4} functions make a synchronous local procedure call to a
-plugin&#8217;s implementation.  Regarding the tlogger(), see <a href="#TLOG">[TLOG]</a> for
-further information.</p>
-<div style="page-break-after:always"></div>
+-spec rpc(Client::pid(), Call::term()) -&gt; timeout | term() | no_return().
+-spec rpc(Client::pid(), Call::term(), timeout()) -&gt; timeout | term() | no_return().</pre>
+<p><span class="label label-tip">Tip</span> Check the UBF User&#8217;s Guide for the "lpc" client.</p>
 </section>
-<section id="miscellaneous_4">
+<section id="ubf_hands_on">
   <div class="page-header">
-    <h1>Miscellaneous</h1>
+    <h1>UBF Hands On</h1>
   </div>
-<h2 id="testing">Testing</h2>
-<h3>Unit Tests</h3>
-<p>The unit tests in the "test/unit" directory provide small examples of
-how to use all of the public API.  In particular, the *client*.erl
-files contain comments at the top with a list of prerequisites and
-small examples, recipe-style, for starting each server and using the
-client.</p>
-<h3>EUnit Tests</h3>
-<p>The eunit tests in the "test/eunit" directory perform several smoke
-and error handling uses cases.  The stateless_plugin and
-stateful_plugin test applications are concrete examples on how to
-integrate one or more UBF listeners into an Erlang/OTP application.</p>
-<h3>QuickCheck Tests</h3>
-<p>The quickcheck tests and related helper libraries in the "test/eqc"
-directory have been open sourced.  Please stay tuned for further
-documentation in the future.</p>
-<p>See <a href="#QUVIQ">[QUVIQ]</a> for further information about quickcheck.</p>
-<h2 id="utilities">Utilities</h2>
-<h3>Transaction Logging</h3>
-<p>For Erlang, the UBF server and the UBF "LPC" client can be configured
-to generate a transaction log.  The transaction log module must
-implement the following tlog/6 callback API.</p>
-<pre class="prettyprint">-type op() :: rpc | lpc | event_in | event_out.
--type now() :: {pos_integer(), pos_integer(), pos_integer()}.
--type plugin() :: module().
-
--spec tlog(op(), Start::now(), plugin(), Q::term(), Reply::term(), Status::term()) -&gt; ok.</pre>
-<h3>Canonical Contracts</h3>
-<p>For documentation purposes, it is helpful to generate a "canonical"
-version of a UBF contract.  This feature is especially helpful when
-importing UBF(b) types from one or more plugins.</p>
-<p>For UBF, the ubf_utils:ubf_contract/{1,2} functions are available for
-this purpose.  For JSON-RPC (and JSF indirectly), the
-jsf_utils:ubf_contract/{1,2} functions are available for this purpose.</p>
-<div style="page-break-after:always"></div>
+<p>Provide an opportunity for hands-on experience to download, to build,
+to develop, and to test a <strong>real</strong> UBF contract, <strong>real</strong> UBF client, and
+<strong>real</strong> UBF server.</p>
+<p>The goal of this exercise is to learn more about UBF and to implement
+and to test your own Bert-RPC server using the UBF framework.</p>
+<p>First, let&#8217;s briefly review the <a href="http://bert-rpc.org">Bert-RPC</a>
+specification.</p>
 </section>
-<section id="building_ubf_from_source">
+<section id="setup">
   <div class="page-header">
-    <h1>Building UBF from Source</h1>
+    <h1>Setup</h1>
   </div>
-<h2 id="option_1">Option 1</h2>
-<p>To download, build, and test the UBF application in one shot, please
-follow this recipe:</p>
-<pre class="prettyprint">$ mkdir working-directory-name
-$ cd working-directory-name
-$ git clone https://github.com/ubf/ubf.git ubf
-$ cd ubf
-$ make deps clean compile test</pre>
-<p>For an alternative recipe with other "features" albeit more complex,
-please read further.</p>
-<h2 id="option_2">Option 2</h2>
-<p>This section describes the basic recipes for the following items:</p>
-<ul>
+<p><span class="label label-caution">Caution</span> UBF requires Erlang/OTP R13B01 or newer.  UBF has been tested
+most recently with Erlang/OTP R13B04.</p>
+<ol>
 <li>
-UBF Downloading
+Copy the <em>ubf-bertrpc.tgz</em> tarball, <em>ubf-tutorial.tgz</em> tarball, and
+   <em>ubf-user-guide.tgz</em> tarball from the USB stick to your home
+   directory.
 </li>
 <li>
-UBF Building, Testing, and Dialyzing
+Make work directory and untar each of the tarballs:
+<pre class="prettyprint">$ mkdir -p ~/work/
+$ cd ~/work/
+$ tar -xvzf ~/ubf-bertrpc.tgz
+$ tar -xvzf ~/ubf-tutorial.tgz
+$ tar -xvzf ~/ubf-user-guide.tgz</pre>
 </li>
 <li>
-UBF Documentation
+Build
+<pre class="prettyprint">$ cd ~/work/ubf-bertrpc
+$ env BOM_FAKE=1 ./bom.sh co src/erl-tools/ubf-bertrpc
+$ env BOM_FAKE=1 ./bom.sh make
+$ make ERL=/usr/local/hibari/ert/R13B04/bin/erl</pre>
+<p><span class="label label-note">Note</span> Please specify the path to your erlang system&#8217;s erl executable.</p>
+<p><span class="label label-tip">Tip</span> Adding DEBUG="+debug_info" will produce DEBUG enabled beam files.</p>
 </li>
 <li>
-Erlang/OTP System
+Unit Test
+<pre class="prettyprint">$ make ERL=/usr/local/hibari/ert/R13B04/bin/erl test</pre>
 </li>
-<li>
-GitHub - Forking Your Own Repositories
-</li>
-</ul>
-<p>Before getting started, review this checklist of tools and software.
-Please install and setup as needed.</p>
+</ol>
+</section>
+<section id="bertrpc_types">
+  <div class="page-header">
+    <h1>BERTRPC Types</h1>
+  </div>
 <dl>
 <dt>
-Erlang/OTP (Mandatory)
+Simple Data Types
 </dt>
 <dd>
 <ul>
 <li>
-Erlang - <a href="http://www.erlang.org/">http://www.erlang.org/</a>
-<ul>
-<li>
-<strong>R14B04 or newer, R16B has been tested most recently</strong>
+integer
 </li>
 <li>
-If needed, see <a href="#ErlangOTP">[ErlangOTP]</a> for instructions to build Erlang/OTP
-    from source.
+float
 </li>
-</ul>
+<li>
+atom
+</li>
+<li>
+tuple
+</li>
+<li>
+bytelist
+</li>
+<li>
+list
+</li>
+<li>
+binary
 </li>
 </ul>
 </dd>
 <dt>
-Git (Mandatory)
+Complex Data Types
 </dt>
 <dd>
 <ul>
 <li>
-Git - <a href="http://git-scm.com/">http://git-scm.com/</a>
-<ul>
-<li>
-<strong>Git 1.5.4 or newer, Git 1.8.2 has been tested most recently</strong>
+nil
 </li>
 <li>
-<small>required for Repo and GitHub</small>
-</li>
-</ul>
+boolean
 </li>
 <li>
-GitHub - <a href="https://github.com">https://github.com</a>
-<ul>
-<li>
-Anonymous read-only access using the GIT protocol is default.
+dictionary
 </li>
 <li>
-Team members having read-write access should add his/her ssh
-    public key under your GitHub account.
-</li>
-</ul>
-</li>
-</ul>
-</dd>
-<dt>
-Python (Mandatory)
-</dt>
-<dd>
-<ul>
-<li>
-Python - <a href="http://www.python.org">http://www.python.org</a>
-<ul>
-<li>
-<strong>Python 2.4 or newer, Python 2.7.3 has been tested most recently
-     (CAUTION: Python 3.x might be too new)</strong>
+time
 </li>
 <li>
-<small>required for Repo and AsciiDoc</small>
-</li>
-</ul>
-</li>
-</ul>
-</dd>
-<dt>
-AsciiDoc (Optional)
-</dt>
-<dd>
-<ul>
-<li>
-AsciiDoc - <a href="http://www.methods.co.nz/asciidoc/index.html">http://www.methods.co.nz/asciidoc/index.html</a>
-<ul>
-<li>
-Must be version 8.6.1 or newer
-<ul>
-<li>
-8.6.8 is the version most recently tested for UBF
-</li>
-</ul>
-</li>
-<li>
-Plus the following support tools:
-<ul>
-<li>
-Dia - <a href="http://projects.gnome.org/dia/">http://projects.gnome.org/dia/</a>
-</li>
-</ul>
-</li>
-</ul>
+regex
 </li>
 </ul>
 </dd>
 </dl>
-<p>In addition to the above list, UBF also depends on two tools to
-automate the downloading and the packaging steps.</p>
-<ul>
-<li>
-Rebar - <a href="https://github.com/rebar/rebar/wiki">https://github.com/rebar/rebar/wiki</a>
-</li>
-<li>
-Repo - <a href="http://source.android.com/source/git-repo.html">http://source.android.com/source/git-repo.html</a>
-</li>
-</ul>
-<p>Instructions for downloading the Repo tool are described next.  The
-Rebar tool is included in UBF&#8217;s git repositories so there is no need
-to download it separately.  Please refer to the above sites for
-further information regarding the usage of these tools.</p>
-<h2 id="DOWNLOAD">Download</h2>
-<p>The first step is to download the Git repositories from GitHub.</p>
-<ol>
-<li>
-Configure your e-mail and name for Git
-<pre class="prettyprint">$ git config --global user.email "you@example.com"
-$ git config --global user.name "Your Name"</pre>
-</li>
-<li>
-Install Repo
-<pre class="prettyprint">$ mkdir -p ~/bin
-$ wget -O - https://dl-ssl.google.com/dl/googlesource/git-repo/repo &gt; ~/bin/repo
-$ chmod a+x ~/bin/repo</pre>
-</li>
-<li>
-Create working directory
-<pre class="prettyprint">$ mkdir working-directory-name
-$ cd working-directory-name
-$ repo init -u https://github.com/ubf/manifests.git -m ubf-default.xml</pre>
-<p><span class="label label-note">Note</span> Your "Git" identity is needed during the init step.  Please
-enter the name and email of your GitHub account if you have one.  Team
-members having read-write access are recommended to use "repo init -u
-<a href="mailto:git@github.com">git@github.com</a>:ubf/manifests.git -m ubf-default-rw.xml".</p>
-<p><span class="label label-tip">Tip</span> If you want to checkout the latest development version of UBF,
-please append " -b dev" to the repo init command.</p>
-</li>
-<li>
-Download Git repositories
-<pre class="prettyprint">$ cd working-directory-name
-$ repo sync</pre>
-</li>
-</ol>
-<h2 id="BUILD">Build - Mandatory</h2>
-<ol>
-<li>
-Build UBF
-<pre class="prettyprint">$ cd working-directory-name
-$ make compile</pre>
-<p><span class="label label-tip">Tip</span> If the response is "make: erl: Command not found", please make
-sure Erlang/OTP is installed and "otp-installing-directory-name/bin"
-is added to your $PATH environment.</p>
-</li>
-<li>
-Run the unit tests
-<pre class="prettyprint">$ cd working-directory-name
-$ make eunit</pre>
-</li>
-</ol>
-<h2 id="build_optional">Build - Optional</h2>
-<ol>
-<li>
-Dialyzer Testing <small>basic recipe</small>
-<ol>
-<li>
-Build Dialyzer&#8217;s PLT <small>(required once)</small>
-<pre class="prettyprint">$ cd working-directory-name
-$ make build-plt</pre>
-<p><span class="label label-tip">Tip</span> Check Makefile and dialyzer&#8217;s documentation for further
-information.</p>
-</li>
-<li>
-Dialyze with specs
-<pre class="prettyprint">$ cd working-directory-name
-$ make dialyze</pre>
-<p><span class="label label-caution">Caution</span> If you manually run dialyzer with the "-r" option, execute
-"make clean compile" first to avoid finding duplicate beam files
-underneath rebar&#8217;s .eunit directory.  Check Makefile for further
-information.</p>
-</li>
-<li>
-Dialyze without specs
-<pre class="prettyprint">$ cd working-directory-name
-$ make dialyze-nospec</pre>
-</li>
-</ol>
-</li>
-<li>
-To build the Java client and run its encoding/decoding unit test:
-<pre class="prettyprint">$ cd working-directory-name
-$ make -C lib/ubf/priv/java</pre>
-</li>
-<li>
-The Python client depends on the "Py-Interface" library.  To clone
-  and build it, use:
-<pre class="prettyprint">$ cd working-directory-name
-$ git clone git://repo.or.cz/py_interface.git
-$ cd py_interface
-$ autoconf
-$ make</pre>
-<p><span class="label label-tip">Tip</span> Then install as a normal Python package or run using "env
-PYTHONPATH=working-directory-name/py_interface python your-script.py"</p>
-</li>
-</ol>
-<h2 id="UBFAsciiDoc">UBF Documentation</h2>
-<p>This section is the first step to download and to build your own
-UBF documentation.</p>
-<ol>
-<li>
-Building UBF&#8217;s "Guide" and "Website" <small>basic recipe</small>
-<pre class="prettyprint">$ cd working-directory-name/deps/ubf/priv/doc/src
-$ make clean
-$ make</pre>
-<p>UBF&#8217;s documentation is authored using AsciiDoc and a few auxiliary
-tools:</p>
-<ul>
-<li>
-Dia
-</li>
-</ul>
-</li>
-</ol>
-<h2 id="ErlangOTP">Erlang/OTP System</h2>
-<p>This section is the first step to download, to build, and to install
-your own Erlang/OTP system.</p>
-<ol>
-<li>
-Downloading <small>basic recipe</small>
-<ol>
-<li>
-Get and install Git
-</li>
-<li>
-Download the source code for your Erlang/OTP system
-<pre class="prettyprint">$ cd working-directory-name
-$ wget http://www.erlang.org/download/otp_src_R16B.tar.gz</pre>
-</li>
-<li>
-Untar the source code for your Erlang/OTP system.
-<pre class="prettyprint">$ cd working-directory-name
-$ tar -xzf otp_src_R16B.tar.gz</pre>
-</li>
-</ol>
-</li>
-<li>
-Building <small>basic recipe</small>
-<ol>
-<li>
-Change to your working directory and configure Erlang/OTP
-<pre class="prettyprint">$ cd working-directory-name/otp_src_R16B
-$ ./configure --prefix=otp-installing-directory-name</pre>
-</li>
-<li>
-Build Erlang/OTP
-<pre class="prettyprint">$ cd working-directory-name/otp_src_R16B
-$ make</pre>
-</li>
-</ol>
-</li>
-<li>
-Installing <small>basic recipe</small>
-<pre class="prettyprint">$ cd working-directory-name/otp_src_R16B
-$ sudo make install</pre>
-</li>
-</ol>
-<p><span class="label label-caution">Caution</span> Please make sure "otp-installing-directory-name/bin" is added
-to your $PATH environment.</p>
-<h2 id="github_forking_your_own_repositories">GitHub - Forking Your Own Repositories</h2>
-<p>If you are interested in making your own changes to UBF or to one or
-more of the other UBF-related repositories, it is a straightforward
-process to fork and to build your own repositories using <a href="#GITHUB">[GITHUB]</a>.
-GitHub provides a friendly and easy to use environment for developers
-and the like.</p>
-<ol>
-<li>
-If you haven&#8217;t already done so, create your own account on GitHub
-   and setup access with your public ssh key.  Next using your web
-   browser, login as yourself to GitHub.
-</li>
-<li>
-Choose all or a subset of the UBF-related repositories that you are
-   interested in forking.  For the sake of an example, let&#8217;s choose
-   the <em>ubf-bertrpc</em> repository and open the front page of this
-   repository <a href="#UBF_BERTRPC">[UBF_BERTRPC]</a> using your web browser.
-</li>
-<li>
-Click on the "Fork" button near the top of the page.  This action
-   creates a clone of the <em>ubf-bertrpc</em> repository in your own account
-   on GitHub.
-</li>
-</ol>
-<div style="page-break-after:always"></div>
 </section>
-<section id="reference">
+<section id="berp">
   <div class="page-header">
-    <h1>Reference</h1>
+    <h1>BERP</h1>
   </div>
+<p>BERP is same as EBF.</p>
+<p>EBF is an implementation of UBF(b) but it does not use UBF(a) for the
+client and server communication.  Instead, Erlang-style conventions
+are used instead:</p>
 <ul>
 <li>
-<a id="AVRO"></a>[AVRO] "Avro is a serialization system.",
-  <a href="http://avro.apache.org">http://avro.apache.org</a>.
+Structured terms are serialized via the Erlang BIFs term_to_binary()
+  and binary_to_term().
 </li>
 <li>
-<a id="BERTRPC"></a>[BERTRPC] "BERT and BERT-RPC 1.0 Specification",
-  <a href="http://bert-rpc.org">http://bert-rpc.org</a>.
-</li>
-<li>
-<a id="ERLANG"></a>[ERLANG] "A general-purpose programming language and runtime
-  environment", <a href="http://www.erlang.org">http://www.erlang.org</a>.
-</li>
-<li>
-<a id="EEP8"></a>[EEP8] "EEP 8: Types and function specifications",
-  <a href="http://www.erlang.org/eeps/eep-0008.html">http://www.erlang.org/eeps/eep-0008.html</a>.
-</li>
-<li>
-<a id="GIT"></a>[GIT] "Fast Version Control System", <a href="http://git-scm.com">http://git-scm.com</a>.
-</li>
-<li>
-<a id="JSFCHARSET"></a>[JSFCHARSET] "Gemini Mobile Technologies, Inc. charset module",
-  <a href="https://github.com/ubf/ubf-jsonrpc/blob/master/src/jsf_charset.erl">https://github.com/ubf/ubf-jsonrpc/blob/master/src/jsf_charset.erl</a>
-</li>
-<li>
-<a id="GITHUB"></a>[GITHUB] "Secure source code hosting and collaborative
-  development ", <a href="https://github.com">https://github.com</a>.
-</li>
-<li>
-<a id="JSONRPC"></a>[JSONRPC] "A lightweight remote procedure call protocol similar
-  to XML-RPC", <a href="http://json-rpc.org">http://json-rpc.org</a>.
-</li>
-<li>
-<a id="MOCHIJSON2"></a>[MOCHIJSON2] "MochiWeb is an Erlang library for building
-  lightweight HTTP servers.",
-  <a href="https://github.com/mochi/mochiweb/blob/master/src/mochijson2.erl">https://github.com/mochi/mochiweb/blob/master/src/mochijson2.erl</a>.
-</li>
-<li>
-<a id="PROTOBUF"></a>[PROTOBUF] "Protocol buffers are Google&#8217;s language-neutral,
-  platform-neutral, extensible mechanism for serializing structured
-  data.", <a href="http://code.google.com/apis/protocolbuffers">http://code.google.com/apis/protocolbuffers</a>.
-</li>
-<li>
-<a id="QUVIQ"></a>[QUVIQ] "Quviq &#8230; amazing testing tools",
-  <a href="http://www.quviq.com/">http://www.quviq.com/</a>.
-</li>
-<li>
-<a id="RFC20"></a>[RFC20] Vint Cerf, "ASCII format for Network Interchange",
-  RFC20, October 16, 1969.
-</li>
-<li>
-<a id="RFC4627"></a>[RFC4627] D. Crockford, "The application/json Media Type for
-  JavaScript Object Notation (JSON)", RFC4627, July 2006.
-</li>
-<li>
-<a id="RFC5234"></a>[RFC5234] D. Crocker, Ed. Brandenburg, "Augmented BNF for Syntax
-  Specifications: ABNF", RFC5234, January 2008.
-</li>
-<li>
-<a id="THRIFT"></a>[THRIFT] "A software framework for scalable cross-language
-  services development.", <a href="http://incubator.apache.org/thrift">http://incubator.apache.org/thrift</a>.
-</li>
-<li>
-<a id="UBF"></a>[UBF] "Universal Binary Format", <a href="https://github.com/ubf/ubf">https://github.com/ubf/ubf</a>.
-</li>
-<li>
-<a id="UBF_ABNF"></a>[UBF_ABNF] "Universal Binary Format and Augmented Backus-Naur
-  Form", <a href="https://github.com/ubf/ubf-abnf">https://github.com/ubf/ubf-abnf</a>.
-</li>
-<li>
-<a id="UBF_BERTRPC"></a>[UBF_BERTRPC] "Universal Binary Format and Binary ERlang Term
-  RPC", <a href="https://github.com/ubf/ubf-bertrpc">https://github.com/ubf/ubf-bertrpc</a>.
-</li>
-<li>
-<a id="UBF_EEP8"></a>[UBF_EEP8] "Universal Binary Format and Erlang Enhancement
-  Proposal 8", <a href="https://github.com/ubf/ubf-eep8">https://github.com/ubf/ubf-eep8</a>.
-</li>
-<li>
-<a id="UBF_JSONRPC"></a>[UBF_JSONRPC] "Universal Binary Format and JavaScript Object
-  Notation RPC", <a href="https://github.com/ubf/ubf-jsonrpc">https://github.com/ubf/ubf-jsonrpc</a>.
-</li>
-<li>
-<a id="UBF_THRIFT"></a>[UBF_THRIFT] "Universal Binary Format and Thrift",
-  <a href="https://github.com/ubf/ubf-thrift">https://github.com/ubf/ubf-thrift</a>.
-</li>
-<li>
-<a id="UBFPAPER"></a>[UBFPAPER] Joe Armstrong, "Getting Erlang to talk to the outside
-  world", Proceedings of the 2002 ACM SIGPLAN workshop on Erlang,
-  pages 64-72, ACM Press, 2002.
-</li>
-<li>
-<a id="ORIGUBFSITE"></a>[ORIGUBFSITE] Joe Armstrong,
-  <a href="http://www.sics.se/~joe/ubf/site/home.html">http://www.sics.se/~joe/ubf/site/home.html</a>, March 2003.
+Terms are framed using the <em>gen_tcp</em> {packet, 4} format: a 32-bit
+  unsigned integer (big-endian?) specifies packet length.
+<pre class="prettyprint">+-------------------------+-------------------------------+
+| Packet length (32 bits) | Packet data (variable length) |
++-------------------------+-------------------------------+</pre>
 </li>
 </ul>
-<div style="page-break-after:always"></div>
+<p>The name "EBF" is short for "Erlang Binary Format".</p>
 </section>
-<section id="appendix">
+<section id="bert_rpc">
   <div class="page-header">
-    <h1>Appendix</h1>
+    <h1>BERT-RPC</h1>
   </div>
-<h2 id="acknowledgments">Acknowledgments</h2>
-<p>Many, many thanks to Joe Armstrong, UBF&#8217;s designer and original
-implementer.</p>
-<p>Gemini Mobile Technologies, Inc. has approved the release of its
-extensions, improvements, etc. under an MIT license.  Joe Armstrong
-has also given his blessing to Gemini&#8217;s license choice.</p>
-<pre class="prettyprint">The MIT License
-
-Copyright (C) 2011-2013 by Joseph Wayne Norton &lt;norton@alum.mit.edu&gt;
-Copyright (c) 2009-2011 Gemini Mobile Technologies, Inc.
-Copyright (C) 2002 by Joe Armstrong
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.</pre>
-<div style="page-break-after:always"></div>
-<h2 id="abnf_definition">ABNF Definition</h2>
-<p>The formal syntax for UBF(a), UBF(b), and UBF(c) is defined in ABNF
-format per <a href="#RFC5234">[RFC5234]</a> except for one extension - single quoted
-strings are case-sensitive.</p>
-<h3>UBF(a)</h3>
-<div class="listingblock">
-<div class="content"><!-- Generator: GNU source-highlight 3.1.7
-by Lorenzo Bettini
-http://www.lorenzobettini.it
-http://www.gnu.org/software/src-highlite -->
-<pre><tt>ubf-a          = *ubf-a-wsp ubf-a-object *ubf-a-wsp "$"
-
-ubf-a-object   = (ubf-a-term / ubf-a-pop / ubf-a-push) *ubf-a-wsp [ubf-a-tag] *ubf-a-wsp
-
-ubf-a-wsp      = ubf-a-comment / ubf-a-ignore
-
-ubf-a-term     = ubf-a-atom
-               / ubf-a-string
-               / ubf-a-binary
-               / ubf-a-integer
-               / ubf-a-list
-               / ubf-a-tuple
-
-ubf-a-pop      = "&gt;" ubf-a-register
-
-ubf-a-push     = ubf-a-register
-
-ubf-a-atom     = "'" *(%x20-26 / %x28-5B / %x5D-7E / "\\" / "\'") "'"
-
-ubf-a-string   = '"' *(%x20-21 / %x23-5B / %x5D-7E / '\\' / '\"') '"'
-
-ubf-a-binary   = ubf-a-integer *ubf-a-wsp "~" *OCTET "~"
-
-ubf-a-integer  = ["-"] 1*DIGIT
-
-ubf-a-list     = "#" *ubf-a-wsp [ubf-a-object *ubf-a-wsp "&amp;"]
-
-ubf-a-tuple    = "{" *ubf-a-wsp [ubf-a-object *ubf-a-wsp] "}"
-
-ubf-a-tag      = "`" 1*(%x20-5B / %x5D-5F / %x61-7E / "\\" / "\`") "`"
-
-ubf-a-comment  = "%" *(%x20-24 / %x26-5B / %x5D-7E / "\\" / "\%") "%"
-
-ubf-a-ignore   = SP    ;; %x20
-               / LF    ;; %x0A
-               / CR    ;; %x0D
-               / HTAB  ;; %x09
-               / ","   ;; %x2C
-
-ubf-a-control  = "%"   ;; %x25
-               / '"'   ;; %x22
-               / "~"   ;; %x7E
-               / "'"   ;; %x27
-               / "`"   ;; %x60
-               / "{"   ;; %x7B
-               / "}"   ;; %x7D
-               / "#"   ;; %x23
-               / "&amp;"   ;; %x26
-               / "-"   ;; %x2D
-               / DIGIT ;; %x30-39
-               / ubf-a-ignore
-
-ubf-a-register = %x21  ;; any octet except ubf-a-control
-               / %x00-08
-               / %x0B-0C
-               / %x0E-1F
-               / %x23-24
-               / %x28-2B
-               / %x2F
-               / %x3A-5F
-               / %x61-7A
-               / %x7C
-               / %x7F</tt></pre></div></div>
-<h3>UBF(b)</h3>
-<div class="listingblock">
-<div class="content"><!-- Generator: GNU source-highlight 3.1.7
-by Lorenzo Bettini
-http://www.lorenzobettini.it
-http://www.gnu.org/software/src-highlite -->
-<pre><tt>ubf-b          = ubf-b-name ubf-b-vsn [ubf-b-type] *ubf-b-state [ubf-b-anystate]
-
-ubf-b-name     = "+" 'NAME' "(" NONEMTPYSTRING ")" dot
-ubf-b-vsn      = "+" 'VSN' "(" NONEMTPYSTRING ")" dot
-ubf-b-type     = "+" 'TYPES' 1*WSP types dot
-ubf-b-state    = "+" 'STATE' 1*WSP statename 1*WSP transitions dot
-ubf-b-anystate = "+" 'ANYSTATE' 1*WSP anyrules dot
-
-dot            = "." *c-wsp c-nl
-semi           = ";" *c-wsp c-nl
-comment        = "%" *(WSP / VCHAR) CRLF
-c-nl           = comment / CRLF
-c-wsp          = WSP / (c-nl WSP)
-
-statename      = NONEMTPYATOM
-typename       = NONEMTPYATOM
-recordname     = NONEMTPYATOM
-fieldname      = NONEMTPYATOM
-
-types          = typedef
-               / (typedef semi types)
-
-typedef        = typeref *c-wsp "::" *c-wsp type [1*WSP annotation] *c-wsp
-
-transitions    = transition
-               / (transition semi transitions)
-
-transition     = typeref *c-wsp "=&gt;" *c-wsp outputs *c-wsp
-               / event
-
-anyrules       = anyrule
-               / (anyrule semi anyrules)
-
-anyrule        = typeref *c-wsp "=&gt;" *c-wsp typeref *c-wsp
-               / event
-
-event          = 'EVENT' *c-wsp ("=&gt;" / "&lt;=") *c-wsp typeref *c-wsp
-
-type           = primtype
-               / (primtype *c-wsp "|" *c-wsp type)
-
-annotation     = TAG / STRING / BINARY
-
-outputs        = output
-               / (output *c-wsp "|" *c-wsp outputs)
-
-output         = typeref *c-wsp "&amp;" *c-wsp statename
-
-primtype       = (typeref [ "?" ])
-               / ("{" [typeseq] "}")
-               / ("#" recordname "{" [typerec] "}")
-               / ("##" recordname "{" [typerec] "}")
-               / typelist
-               / (INTEGER *WSP ".." *WSP INTEGER)
-               / (".." *WSP INTEGER)
-               / (INTEGER *WSP "..")
-               / ATOM
-               / BINARY
-               / FLOAT
-               / INTEGER
-               / STRING
-               / (predefinedtype [ "?" ])
-
-typelist       = ("[" [type] "]" [ "?" / "+" / ("{" listrange "}") ])
-
-typeref        = typename "()"
-
-typeseq        = type
-               / (type *WSP "," *WSP typeseq)
-
-typerec        = (fieldname *WSP "::" *WSP type)
-               / (fieldname *WSP "::" *WSP type "," *WSP typerec)
-               / (fieldname *WSP "=" *WSP default *WSP "::" *WSP type)
-               / (fieldname *WSP "=" *WSP default *WSP "::" *WSP type "," *WSP typerec)
-
-default        = ("{" [defaultseq] "}")
-               /  ("[" [defaultseq] "]")
-               / ATOM
-               / BINARY
-               / FLOAT
-               / INTEGER
-               / STRING
-defaultseq     = default
-               / (default *WSP "," *WSP defaultseq)
-
-listrange      = (1*DIGIT)
-               / (1*DIGIT *WSP ",")
-               / ("," *WSP 1*DIGIT)
-               / (1*DIGIT *WSP "," *WSP 1*DIGIT)
-
-ATOM           = (%x61-7A *(ALPHA / DIGIT / "_" / "@")) ;; a-z
-               / ("'" *(%x20-26 / %x28-7E) "'")
-
-NONEMTPYATOM   = (%x61-7A 1*(ALPHA / DIGIT / "_" / "@")) ;; a-z
-               / ("'" 1*(%x20-26 / %x28-7E) "'")
-
-BINARY         = "&lt;&lt;" STRING "&gt;&gt;"
-
-FLOAT          = ["-"] 1*DIGIT "." 1*DIGIT
-
-INTEGER        = (["-"] 1*DIGIT)
-               / (1*DIGIT "#" 1*(DIGIT / 'a' / 'b' / 'c' / 'd' / 'e' / 'f'))
-
-BTICK          = %x60
-
-TAG            = BTICK *(%x20-5F / %x61-7E) BTICK
-
-STRING         = DQUOTE *(%x20-21 / %x23-7E) DQUOTE
-
-NONEMTPYSTRING = DQUOTE 1*(%x20-21 / %x23-7E) DQUOTE
-
-predefinedtype = ('any' "(" [anyattrs] ")")
-               / ('none' "(" [noneattrs] ")")
-               / ('atom' "(" [atomattrs] ")")
-               / ('binary' "(" [binaryattrs] ")")
-               / ('float' "(" [floatattrs] ")")
-               / ('integer' "(" [integerattrs] ")")
-               / ('list' "(" [listattrs] ")")
-               / ('tuple' "(" [tupleattrs] ")")
-
-anyattrs       = anyattr
-               / (anyattr *WSP "," *WSP anyattrs)
-
-noneattrs      = *WSP
-
-atomattrs      = atomattr
-               / (atomattr *WSP "," *WSP atomattrs)
-
-binaryattrs    = binaryattr
-               / (binaryattr *WSP "," *WSP binaryattrs)
-
-floatattrs     = *WSP
-
-integerattrs   = *WSP
-
-listattrs      = listattr
-               / (listattr *WSP "," *WSP listattrs)
-
-tupleattrs     = tupleattr
-               / (tupleattr *WSP "," *WSP tupleattrs)
-
-anyattr        = 'nonempty' / 'nonundefined'
-atomattr       = 'ascii' / 'asciiprintable' / 'nonempty' / 'nonundefined'
-binaryattr     = 'ascii' / 'asciiprintable' / 'nonempty'
-listattr       = 'nonempty'
-tupleattr      = 'nonempty' / 'nonundefined'</tt></pre></div></div>
-<h3>UBF(c)</h3>
-<div class="listingblock">
-<div class="content"><!-- Generator: GNU source-highlight 3.1.7
-by Lorenzo Bettini
-http://www.lorenzobettini.it
-http://www.gnu.org/software/src-highlite -->
-<pre><tt>ubf-c           = ubf-c-rpc-req
-                / ubf-c-rpc-res
-                / ubf-c-event-in
-                / ubf-c-event-out
-
-ubf-c-rpc-req   = ubf-msg "$"
-
-ubf-c-rpc-res   = "{" (ubf-msg / ubf-error) "," ubf-nextstate "}" "$"
-
-ubf-c-event-in  = "{" 'event_in' "," ubf-msg "}" "$"
-
-ubf-c-event-out = "{" 'event_out' "," ubf-msg "}" "$"
-
-ubf-msg         = ubf-a-term
-
-ubf-nextstate   = ubf-a-atom
-
-ubf-error       = ubf-client-error
-                / ubf-server-error
-
-ubf-client-error = "{" 'clientBrokeContract' "," ubf-msg "," ubf-expects-in "}" "$"
-
-ubf-server-error = "{" 'serverBrokeContract' "," ubf-msg "," ubf-expects-out "}" "$"
-
-ubf-expects-in   = ubf-a-term  ;; list of acceptable input types (for debugging purposes)
-
-ubf-expects-out  = ubf-a-term  ;; list of acceptable output types (for debugging purposes)</tt></pre></div></div>
+<dl>
+<dt>
+Synchronous RPC
+</dt>
+<dd>
+<ul>
+<li>
+{call, Module, Function, Arguments}
+</li>
+<li>
+{reply, Result}
+</li>
+</ul>
+</dd>
+<dt>
+"Asynchronous" RPC
+</dt>
+<dd>
+<ul>
+<li>
+{cast, Module, Function, Arguments}
+</li>
+<li>
+{noreply}
+</li>
+</ul>
+</dd>
+<dt>
+Errors
+</dt>
+<dd>
+<ul>
+<li>
+{error, {Type, Code, Class, Detail, Backtrace}}
+</li>
+<li>
+Protocol Error Codes
+</li>
+<li>
+Server Error Codes
+</li>
+</ul>
+</dd>
+<dt>
+Info Directives
+</dt>
+<dd>
+<ul>
+<li>
+{info, Command, Options}
+</li>
+<li>
+{info, callback, [{service, Service}, {mfa, Mod, Fun, Args}]}
+</li>
+</ul>
+</dd>
+<dt>
+Caching Features
+</dt>
+<dd>
+<ul>
+<li>
+Expiration Caching
+</li>
+<li>
+Validation Caching
+</li>
+</ul>
+</dd>
+<dt>
+Streaming Features
+</dt>
+<dd>
+<ul>
+<li>
+Streaming Binary Request
+</li>
+<li>
+Streaming Binary Response
+</li>
+</ul>
+</dd>
+</dl>
+</section>
+<section id="ubf_bertrpc_application_1_of_2">
+  <div class="page-header">
+    <h1>UBF-BERTRPC: Application (1 of 2)</h1>
+  </div>
+<dl>
+<dt>
+1.
+</dt>
+<dd>
+Change directory to the ubf-bertrpc application.
+<pre class="prettyprint">$ cd ~/work/ubf-bertrpc/src/erl-tools/ubf-bertrpc__HEAD</pre>
+</dd>
+<dt>
+2.
+</dt>
+<dd>
+List directory of the ubf-bertrpc application.
+<pre class="prettyprint">$ ls -R
+.:
+ BOM.mk
+ ChangeLog
+ ebin
+ GMBOM
+ include
+ LICENSE
+ priv
+ README
+ src
+
+./ebin:
+
+./include:
+ bertrpc.hrl
+ bertrpc_impl.hrl
+
+./priv:
+ sys.config
+
+./src:
+ Makefile
+ bert.erl
+ bert_driver.erl
+ ubf_bertrpc_plugin.con
+ ubf_bertrpc_plugin.erl
+ Unit-EUnit-Files
+
+./src/Unit-EUnit-Files:
+ bertrpc_plugin.app
+ bertrpc_plugin_app.erl
+ bertrpc_plugin_sup.erl
+ bertrpc_plugin_test.erl</pre>
+</dd>
+</dl>
+</section>
+<section id="ubf_bertrpc_application_2_of_2">
+  <div class="page-header">
+    <h1>UBF-BERTRPC: Application (2 of 2)</h1>
+  </div>
+<dl>
+<dt>
+3.
+</dt>
+<dd>
+Review key files of the ubf-bertrpc application.
+<ul>
+<li>
+src/ubf_bertrpc_plugin.con
+</li>
+<li>
+src/ubf_bertrpc_plugin.erl
+</li>
+</ul>
+</dd>
+<dt>
+4.
+</dt>
+<dd>
+Review key files of the ubf-bertrpc application&#8217;s eunit tests.
+<ul>
+<li>
+./src/Unit-EUnit-Files/bertrpc_plugin.app
+</li>
+<li>
+./src/Unit-EUnit-Files/bertrpc_plugin_app.erl
+</li>
+<li>
+./src/Unit-EUnit-Files/bertrpc_plugin_sup.erl
+</li>
+<li>
+./src/Unit-EUnit-Files/bertrpc_plugin_test.erl
+</li>
+</ul>
+</dd>
+<dt>
+5.
+</dt>
+<dd>
+Review ubf-bertrpc application&#8217;s Makefile.
+<ul>
+<li>
+src/Makefile
+</li>
+</ul>
+</dd>
+</dl>
+<p><span class="label label-tip">Tip</span> The command make target "run-erl1" starts an erlang shell that
+can be used for interactive development, debugging, and testing.</p>
+</section>
+<section id="basic_exercises_1_of_3">
+  <div class="page-header">
+    <h1>Basic Exercises (1 of 3)</h1>
+  </div>
+<dl>
+<dt>
+1.
+</dt>
+<dd>
+Implement and test BERT-RPC&#8217;s call/3 and reply/1 primitives:
+<ol>
+<li>
+Modify ubf_bertrpc_plugin.con
+</li>
+<li>
+Modify ubf_bertrpc_plugin.erl
+</li>
+<li>
+Add new unit test to bertrpc_plugin_test.erl that uses
+      erlang:now()
+</li>
+</ol>
+</dd>
+</dl>
+</section>
+<section id="basic_exercises_2_of_3">
+  <div class="page-header">
+    <h1>Basic Exercises (2 of 3)</h1>
+  </div>
+<dl>
+<dt>
+2.
+</dt>
+<dd>
+Implement and test BERT-RPC&#8217;s error/1 primitive for Server Error
+   Codes:
+<ol>
+<li>
+Modify ubf_bertrpc_plugin.con
+</li>
+<li>
+Modify ubf_bertrpc_plugin.erl
+</li>
+<li>
+Add new unit test to bertrpc_plugin_test.erl that tests calling
+      an unknown module "foobar".
+</li>
+<li>
+Add new unit test bertrpc_plugin_test.erl that tests calling an
+      unknown function "erlang:foobar".
+</li>
+</ol>
+</dd>
+</dl>
+</section>
+<section id="basic_exercises_3_of_3">
+  <div class="page-header">
+    <h1>Basic Exercises (3 of 3)</h1>
+  </div>
+<dl>
+<dt>
+3.
+</dt>
+<dd>
+Implement and test BERT-RPC&#8217;s cast/1 primitive:
+<ol>
+<li>
+Modify ubf_bertrpc_plugin.con
+</li>
+<li>
+Modify ubf_bertrpc_plugin.erl
+</li>
+<li>
+Add new unit test to bertrpc_plugin_test.erl that uses
+      error_logger:error_report/1.  Manually check if your test
+      triggers a message to stderr.
+</li>
+</ol>
+</dd>
+</dl>
+</section>
+<section id="advanced_exercises_1_of_4">
+  <div class="page-header">
+    <h1>Advanced Exercises (1 of 4)</h1>
+  </div>
+<dl>
+<dt>
+1.
+</dt>
+<dd>
+Implement and test BERT-RPC&#8217;s info callback/2 primitive:
+<ol>
+<li>
+modify ubf_bertrpc_plugin.con
+</li>
+<li>
+modify ubf_bertrpc_plugin.erl
+</li>
+<li>
+add new unit test to bertrpc_plugin_test.erl that tests using
+      erlang:now().
+</li>
+</ol>
+</dd>
+</dl>
+<p><span class="label label-tip">Tip</span> Re-use the ubf_client.erl client inside the
+ubf_bertrpc_plugin.erl implementation.  Re-use the same test server as
+target service.</p>
+<p><span class="label label-caution">Caution</span> To implement the "{info,&#8230;}" construct, changes are required
+for the bert.erl and bert_driver.erl modules.  The module must
+maintain state and should convert the "{info,&#8230;}" BERP and it&#8217;s
+corresponding "{call,&#8230;.}" BERP into a 2-tuple that forms a single
+UBF request.  To avoid such headaches, send such a 2-tuple directly
+from the UBF client to your server as a work-around.</p>
+</section>
+<section id="advanced_exercises_2_of_4">
+  <div class="page-header">
+    <h1>Advanced Exercises (2 of 4)</h1>
+  </div>
+<dl>
+<dt>
+2.
+</dt>
+<dd>
+Implement and test BERT-RPC&#8217;s error/1 primitive for Protocol Error
+   Codes:
+<ol>
+<li>
+modify bert_driver.erl
+</li>
+<li>
+add new unit test to bertrpc_plugin_test.erl
+</li>
+</ol>
+</dd>
+</dl>
+</section>
+<section id="advanced_exercises_3_of_4">
+  <div class="page-header">
+    <h1>Advanced Exercises (3 of 4)</h1>
+  </div>
+<dl>
+<dt>
+3.
+</dt>
+<dd>
+Implement Caching Directives
+<ol>
+<li>
+modify ubf_bertrpc_plugin.erl
+</li>
+<li>
+add new unit test to bertrpc_plugin_test.erl
+</li>
+</ol>
+</dd>
+</dl>
+</section>
+<section id="advanced_exercises_4_of_4">
+  <div class="page-header">
+    <h1>Advanced Exercises (4 of 4)</h1>
+  </div>
+<dl>
+<dt>
+4.
+</dt>
+<dd>
+Implement Streaming Binary Request and Response
+<ol>
+<li>
+modify bert_driver.erl
+</li>
+<li>
+add new unit test to bertrpc_plugin_test.erl
+</li>
+</ol>
+</dd>
+</dl>
+<p><span class="label label-tip">Tip</span> Create a new ubf_bertrpc_client.erl implementation by
+   implementing a wrapper over the standard ubf_client.erl module.</p>
+</section>
+<section id="thank_you">
+  <div class="page-header">
+    <h1>Thank You</h1>
+  </div>
+<p>For UBF, please check UBF&#8217;s GitHub repository and webpage for updates.</p>
+<dl class="dl-horizontal">
+<dt>
+UBF
+</dt>
+<dd>
+<a href="https://github.com/ubf/ubf">https://github.com/ubf/ubf</a>
+</dd>
+</dl>
+<p>For Hibari - an open-source key-value implemented in Erlang, please
+check one or more of the following links for updates.</p>
+<dl class="dl-horizontal">
+<dt>
+Hibari Open Source project
+</dt>
+<dd>
+<a href="http://sourceforge.net/projects/hibari/">http://sourceforge.net/projects/hibari/</a>
+</dd>
+<dt>
+Hibari Twitter
+</dt>
+<dd>
+@hibaridb Hashtag: #hibaridb
+</dd>
+<dt>
+Gemini Twitter
+</dt>
+<dd>
+@geminimobile
+</dd>
+<dt>
+Big Data blog
+</dt>
+<dd>
+<a href="http://hibari-gemini.blogspot.com/">http://hibari-gemini.blogspot.com/</a>
+</dd>
+<dt>
+Slideshare
+</dt>
+<dd>
+<a href="http://www.slideshare.net/geminimobile">http://www.slideshare.net/geminimobile</a>
+</dd>
+</dl>
 </section>
         </div>
       </div>
