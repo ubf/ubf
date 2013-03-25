@@ -3,9 +3,10 @@
 
 = Erlang Users Conference 2010 Tutorial / UBF Basics and Hands ON
 :Author: Joseph Wayne Norton
-:Email: norton@geminimobile.com
-:Date: 2010/11/15
-:Revision: 0.1
+:Email: norton@alum.mit.edu
+:Date: 2013/03/25
+:Revision: 0.2.0
+:Copyright: 2012-2013 by Joseph Wayne Norton <norton@alum.mit.edu>
 :Copyright: 2011 Gemini Mobile Technologies, Inc.  All rights reserved.
 
 == UBF Basics
@@ -428,8 +429,8 @@ to develop, and to test a *real* UBF contract, *real* UBF client, and
 The goal of this exercise is to learn more about UBF and to implement
 and to test your own Bert-RPC server using the UBF framework.
 
-First, let's briefly review the
-link:./BERTandBERT-RPC1.0Specification.mht[Bert-RPC] specification.
+First, let's briefly review the link:http://bert-rpc.org[Bert-RPC]
+specification.
 
 == Setup
 

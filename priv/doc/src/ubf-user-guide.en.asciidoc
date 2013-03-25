@@ -1,9 +1,9 @@
 // -*- Doc -*-
 // vim: set syntax=asciidoc:
 
-= UBF 2.0 User's Guide
-:Date: 2013/02/23
-:Revision: 1.0.2
+= UBF 2.1 User's Guide
+:Date: 2013/03/25
+:Revision: 1.1.0
 :Copyright: 2012-2013 by Joseph Wayne Norton <norton@alum.mit.edu>
 :Copyright: 2010-2011 Gemini Mobile Technologies, Inc.  All rights reserved.
 :Copyright: 2002 Joe Armstrong
@@ -42,7 +42,7 @@ readable format the UBF languages take the opposite view and provide a
 "machine friendly" format.  UBF is designed to be easy to implement.
 
 .Programming By Contract
-svgimage::images/ubf-flow-01["Programming By Contract"]
+image:images/ubf-flow-01.png["Programming By Contract"]
 
 Central to UBF is the idea of a "Contract" which regulates the set of
 legal conversations that can take place between a client and a server.
@@ -380,7 +380,7 @@ T2.
 A type {X1, X2, ..., Xn} is of type "{T1, T2, ..., Tn}" if X1 is of
 type T1, X2 is of type T2, ... and Xn is of type Tn.
 
-===== Record: name#{x::T1, y::T2, ..., z::Tn} _or_ name#{x=D1::T1, y=D2::T2, ..., z=Dn::Tn}
+===== Record: name\#{ x::T1, y::T2, ..., z::Tn} _or_ name\#{x=D1::T1, y=D2::T2, ..., z=Dn::Tn}
 
 A record type is syntactic sugar for a tuple of type "{name, T1, T2,
 ..., Tn}" where name, x, y, ..., and z are atoms.
@@ -390,7 +390,7 @@ Optionally, the default value of a record field can be specified.
 CAUTION: Caution is required when using another record as the default
 value of a record field.  This feature has not been fully tested.
 
-===== Extended Record: name##{x::T1, y::T2, ..., z::Tn} _or_ name##{x=D1::T1, y=D2::T2, ..., z=Dn::Tn}
+===== Extended Record: name\#\#{ x::T1, y::T2, ..., z::Tn} _or_ name\#\#{x=D1::T1, y=D2::T2, ..., z=Dn::Tn}
 
 An extended record type is syntactic sugar for a tuple of type "{name,
 T1, T2, ..., Tn, '$fields'::[x,y,...,z], '$extra'::Extra}" where name,
@@ -928,7 +928,7 @@ brings together JSF's encoder/decoder, UBF(b)'s contract checking, and
 an HTTP transport.
 
 .Programming By Contract w/ Multiple Transports
-svgimage::images/ubf-flow-02["Programming By Contract w/ Multiple Transports"]
+image:images/ubf-flow-02.png["Programming By Contract w/ Multiple Transports"]
 
 As previously stated, central to UBF is the idea of a "Contract" which
 regulates the set of legal conversations that can take place between a
@@ -1444,12 +1444,12 @@ Please install and setup as needed.
 
 Erlang/OTP (Mandatory)::
 - Erlang - http://www.erlang.org/
-  * *R13B04 or newer, R15B02 has been tested most recently*
+  * *R14B04 or newer, R16B has been tested most recently*
   * If needed, see <<ErlangOTP>> for instructions to build Erlang/OTP
     from source.
 Git (Mandatory)::
 - Git - http://git-scm.com/
-  * *Git 1.5.4 or newer, Git 1.8.0 has been tested most recently*
+  * *Git 1.5.4 or newer, Git 1.8.2 has been tested most recently*
   * _required for Repo and GitHub_
 - GitHub - https://github.com
   * Anonymous read-only access using the GIT protocol is default.
@@ -1457,7 +1457,7 @@ Git (Mandatory)::
     public key under your GitHub account.
 Python (Mandatory)::
 - Python - http://www.python.org
-  * *Python 2.4 or newer, Python 2.7.2 has been tested most recently
+  * *Python 2.4 or newer, Python 2.7.3 has been tested most recently
      (CAUTION: Python 3.x might be too new)*
   * _required for Repo and AsciiDoc_
 AsciiDoc (Optional)::
@@ -1465,14 +1465,7 @@ AsciiDoc (Optional)::
   * Must be version 8.6.1 or newer
     ** 8.6.8 is the version most recently tested for UBF
   * Plus the following support tools:
-    ** ImageMagick - http://www.imagemagick.org/
-    ** Graphviz - http://www.graphviz.org/
-    ** Mscgen - http://www.mcternan.me.uk/mscgen/
     ** Dia - http://projects.gnome.org/dia/
-- dblatex - http://dblatex.sourceforge.net/
-  * Optional for building a PDF version of UBF's documentation.
-- w3m - http://w3m.sourceforge.net/
-  * Optional for building a text version of UBF's documentation.
 
 In addition to the above list, UBF also depends on two tools to
 automate the downloading and the packaging steps.
@@ -1607,56 +1600,19 @@ PYTHONPATH=working-directory-name/py_interface python your-script.py"
 This section is the first step to download and to build your own
 UBF documentation.
 
-. Building UBF's "Guides" _basic recipe_
+. Building UBF's "Guide" and "Website" _basic recipe_
 +
 ------
-$ cd working-directory-name/deps/ubf/priv/doc/src/ubf
-$ make clean -OR- make realclean
+$ cd working-directory-name/deps/ubf/priv/doc/src
+$ make clean
 $ make
 ------
 +
-. Building UBF's "Website" _basic recipe_
-+
-------
-$ cd working-directory-name/deps/ubf/priv/doc/src/ubf/website
-$ make clean -OR- make realclean
-$ make
-------
-+
-NOTE: HTML documentation is written in the "./public_html" directory.
 
 UBF's documentation is authored using AsciiDoc and a few auxiliary
 tools:
 
-- ImageMagick
-- dblatex
 - Dia
-- Graphviz
-- Mscgen
-- w3m
-
-UBF's documentation is generated with AsciiDoc and a manually modified
-version of the a2x tool.  A fake lang-ja.conf file can be easily
-created by making a symlink to the lang-en.conf file.
-
-------
-diff -r -u 8.6.4-orig/bin/a2x.py 8.6.4/bin/a2x.py
---- 8.6.4-orig/bin/a2x.py   2011-04-24 00:50:26.000000000 +0900
-+++ 8.6.4/bin/a2x.py    2011-04-24 00:35:55.000000000 +0900
-@@ -156,7 +156,10 @@
- def shell_copy(src, dst):
-     verbose('copying "%s" to "%s"' % (src,dst))
-     if not OPTIONS.dry_run:
--        shutil.copy(src, dst)
-+        try:
-+            shutil.copy(src, dst)
-+        except shutil.Error:
-+            return
-
- def shell_rm(path):
-     if not os.path.exists(path):
-Only in 8.6.4/etc/asciidoc: lang-ja.conf
-------
 
 [[ErlangOTP]]
 === Erlang/OTP System
@@ -1671,35 +1627,35 @@ your own Erlang/OTP system.
 +
 ------
 $ cd working-directory-name
-$ wget http://www.erlang.org/download/otp_src_R15B02.tar.gz
+$ wget http://www.erlang.org/download/otp_src_R16B.tar.gz
 ------
 +
   .. Untar the source code for your Erlang/OTP system.
 +
 ------
 $ cd working-directory-name
-$ tar -xzf otp_src_R15B02.tar.gz
+$ tar -xzf otp_src_R16B.tar.gz
 ------
 +
 . Building _basic recipe_
   .. Change to your working directory and configure Erlang/OTP
 +
 ------
-$ cd working-directory-name/otp_src_R15B02
+$ cd working-directory-name/otp_src_R16B
 $ ./configure --prefix=otp-installing-directory-name
 ------
 +
   .. Build Erlang/OTP
 +
 ------
-$ cd working-directory-name/otp_src_R15B02
+$ cd working-directory-name/otp_src_R16B
 $ make
 ------
 +
 . Installing _basic recipe_
 +
 ------
-$ cd working-directory-name/otp_src_R15B02
+$ cd working-directory-name/otp_src_R16B
 $ sudo make install
 ------
 
@@ -1823,7 +1779,9 @@ has also given his blessing to Gemini's license choice.
 ------------
 The MIT License
 
+Copyright (C) 2011-2013 by Joseph Wayne Norton <norton@alum.mit.edu>
 Copyright (c) 2009-2011 Gemini Mobile Technologies, Inc.
+Copyright (C) 2002 by Joe Armstrong
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -1854,7 +1812,7 @@ strings are case-sensitive.
 [[ABNF-UBFa]]
 ==== UBF(a)
 
-[source,abnf]
+[source,txt]
 ------
 include::misc-codes/ubf_a.abnf[]
 ------
@@ -1862,7 +1820,7 @@ include::misc-codes/ubf_a.abnf[]
 [[ABNF-UBFb]]
 ==== UBF(b)
 
-[source,abnf]
+[source,txt]
 ------
 include::misc-codes/ubf_b.abnf[]
 ------
@@ -1870,7 +1828,7 @@ include::misc-codes/ubf_b.abnf[]
 [[ABNF-UBFc]]
 ==== UBF(c)
 
-[source,abnf]
+[source,txt]
 ------
 include::misc-codes/ubf_c.abnf[]
 ------
