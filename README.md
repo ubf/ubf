@@ -210,7 +210,7 @@ Erlang - <a href="http://www.erlang.org/">http://www.erlang.org/</a>
 <ul>
 <li>
 <p>
-<strong>R13B04 or newer, R15B02 has been tested most recently</strong>
+<strong>R14B04 or newer, R16B has been tested most recently</strong>
 </p>
 </li>
 </ul>
@@ -222,7 +222,7 @@ Git - <a href="http://git-scm.com/">http://git-scm.com/</a>
 <ul>
 <li>
 <p>
-<strong>Git 1.5.4 or newer, Git 1.8.0 has been tested most recently</strong>
+<strong>Git 1.5.4 or newer, Git 1.8.2 has been tested most recently</strong>
 </p>
 </li>
 <li>
@@ -244,7 +244,7 @@ Python - <a href="http://www.python.org">http://www.python.org</a>
 <ul>
 <li>
 <p>
-<strong>Python 2.4 or newer, Python 2.7.2 has been tested most recently
+<strong>Python 2.4 or newer, Python 2.7.3 has been tested most recently
     (CAUTION: Python 3.x might be too new)</strong>
 </p>
 </li>
@@ -388,6 +388,31 @@ $ make</code></pre>
 PYTHONPATH=working-directory-name/py_interface python your-script.py"</p>
 </li>
 </ol>
+
+
+
+<h2 id="_what_s_new_in_ubf_2_1">What's New in UBF 2.1</h2>
+
+<p>This section highlights new features and key changes in UBF 2.1.  This
+release of UBF is backwards compatible with UBF 2.0.  However, you
+must recompile UBF and all applications that depend directly on UBF.</p>
+<ul>
+<li>
+<p>
+Added support for R16B. Removed support for R13B04.
+</p>
+</li>
+<li>
+<p>
+Fixed issue with UBF listener's shutdown sequence.
+</p>
+</li>
+<li>
+<p>
+Improved layout and presentation of the UBF User's Guide.
+</p>
+</li>
+</ul>
 
 
 

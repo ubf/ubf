@@ -25,9 +25,8 @@ the Process Structure Diagram in the Overview.</code></pre>
 
 
 <pre><code>For the purposes of this module, the list of modules that
-implement contracts is passed using Erlang parameterized module
-+Module:new(ModuleList)+ syntax.  See the Erlang/OTP documentation
-for more information on parameterized module syntax and usage.</code></pre>
+implement contracts is passed using parameterized module
++Module:new(ModuleList)+ syntax.</code></pre>
 .
 
 <a name="index"></a>

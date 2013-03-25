@@ -159,13 +159,13 @@ For further information and help for related tools, please refer to the
 following links:
 
 - Erlang - http://www.erlang.org/
-  * *R13B04 or newer, R15B02 has been tested most recently*
+  * *R14B04 or newer, R16B has been tested most recently*
 - Git - http://git-scm.com/
-  * *Git 1.5.4 or newer, Git 1.8.0 has been tested most recently*
+  * *Git 1.5.4 or newer, Git 1.8.2 has been tested most recently*
   * _required for Repo and GitHub_
 - GitHub - https://github.com
 - Python - http://www.python.org
-  * *Python 2.4 or newer, Python 2.7.2 has been tested most recently
+  * *Python 2.4 or newer, Python 2.7.3 has been tested most recently
     (CAUTION: Python 3.x might be too new)*
 * _required for Repo_
   - Rebar - https://github.com/rebar/rebar/wiki
@@ -241,6 +241,18 @@ $ make
 +
 Then install as a normal Python package or run using "env
 PYTHONPATH=working-directory-name/py_interface python your-script.py"
+
+== What\'s New in UBF 2.1
+
+This section highlights new features and key changes in UBF 2.1.  This
+release of UBF is backwards compatible with UBF 2.0.  However, you
+must recompile UBF and all applications that depend directly on UBF.
+
+- Added support for R16B. Removed support for R13B04.
+
+- Fixed issue with UBF listener\'s shutdown sequence.
+
+- Improved layout and presentation of the UBF User\'s Guide.
 
 == What\'s New in UBF 2.0
 
