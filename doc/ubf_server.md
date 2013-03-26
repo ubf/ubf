@@ -1,6 +1,6 @@
 
 
-#Module ubf_server#
+# Module ubf_server #
 * [Description](#description)
 * [Data Types](#types)
 * [Function Index](#index)
@@ -66,43 +66,59 @@ commentary on writing an UBF server implementation module.</code></pre>
 
 <a name="types"></a>
 
-##Data Types##
+## Data Types ##
 
 
 
 
-###<a name="type-ipport">ipport()</a>##
+### <a name="type-ipport">ipport()</a> ###
 
 
 
-<pre>ipport() = pos_integer()</pre>
+<pre><code>
+ipport() = pos_integer()
+</code></pre>
 
 
 
-###<a name="type-name">name()</a>##
+
+
+### <a name="type-name">name()</a> ###
 
 
 
-<pre>name() = atom()</pre>
+<pre><code>
+name() = atom()
+</code></pre>
 
 
 
-###<a name="type-options">options()</a>##
+
+
+### <a name="type-options">options()</a> ###
 
 
 
-<pre>options() = [{atom(), term()}]</pre>
+<pre><code>
+options() = [{atom(), term()}]
+</code></pre>
 
 
 
-###<a name="type-plugins">plugins()</a>##
+
+
+### <a name="type-plugins">plugins()</a> ###
 
 
 
-<pre>plugins() = [module()]</pre>
+<pre><code>
+plugins() = [module()]
+</code></pre>
+
+
 <a name="index"></a>
 
-##Function Index##
+## Function Index ##
 
 
 <table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#init-5">init/5</a></td><td></td></tr><tr><td valign="top"><a href="#start-2">start/2</a></td><td><p>Start a server and a TCP listener on port Port and register
@@ -233,23 +249,30 @@ Default: [].
 
 <a name="functions"></a>
 
-##Function Details##
+## Function Details ##
 
 <a name="init-5"></a>
 
-###init/5##
+### init/5 ###
 
 
-<pre>init(Name::<a href="#type-name">name()</a>, Parent::pid(), Plugins::<a href="#type-plugins">plugins()</a>, Port::<a href="#type-ipport">ipport()</a>, Options::<a href="#type-options">options()</a>) -> pid()</pre>
+<pre><code>
+init(Name::<a href="#type-name">name()</a>, Parent::pid(), Plugins::<a href="#type-plugins">plugins()</a>, Port::<a href="#type-ipport">ipport()</a>, Options::<a href="#type-options">options()</a>) -&gt; pid()
+</code></pre>
+
 <br></br>
+
 
 
 <a name="start-2"></a>
 
-###start/2##
+### start/2 ###
 
 
-<pre>start(Plugins::<a href="#type-plugins">plugins()</a>, Port::<a href="#type-ipport">ipport()</a>) -> true</pre>
+<pre><code>
+start(Plugins::<a href="#type-plugins">plugins()</a>, Port::<a href="#type-ipport">ipport()</a>) -&gt; true
+</code></pre>
+
 <br></br>
 
 
@@ -259,12 +282,16 @@ all of the protocol implementation modules in the Plugins list.</p>
 
 <pre><code>Here we start the server.</code></pre>
 
+
 <a name="start-3"></a>
 
-###start/3##
+### start/3 ###
 
 
-<pre>start(Name::<a href="#type-name">name()</a>, Plugins::<a href="#type-plugins">plugins()</a>, Port::<a href="#type-ipport">ipport()</a>) -> true</pre>
+<pre><code>
+start(Name::<a href="#type-name">name()</a>, Plugins::<a href="#type-plugins">plugins()</a>, Port::<a href="#type-ipport">ipport()</a>) -&gt; true
+</code></pre>
+
 <br></br>
 
 
@@ -275,12 +302,16 @@ list. If Name is undefined, the server is not registered.</p>
 
 <pre><code>Here we start the server.</code></pre>
 
+
 <a name="start-4"></a>
 
-###start/4##
+### start/4 ###
 
 
-<pre>start(Name::<a href="#type-name">name()</a>, Plugins::<a href="#type-plugins">plugins()</a>, Port::<a href="#type-ipport">ipport()</a>, Options::<a href="#type-options">options()</a>) -> true</pre>
+<pre><code>
+start(Name::<a href="#type-name">name()</a>, Plugins::<a href="#type-plugins">plugins()</a>, Port::<a href="#type-ipport">ipport()</a>, Options::<a href="#type-options">options()</a>) -&gt; true
+</code></pre>
+
 <br></br>
 
 
@@ -397,42 +428,59 @@ Default: [].
 </p>
 </li>
 </ul>
+
 <a name="start_link-2"></a>
 
-###start_link/2##
+### start_link/2 ###
 
 
-<pre>start_link(Plugins::<a href="#type-plugins">plugins()</a>, Port::<a href="#type-ipport">ipport()</a>) -> true</pre>
+<pre><code>
+start_link(Plugins::<a href="#type-plugins">plugins()</a>, Port::<a href="#type-ipport">ipport()</a>) -&gt; true
+</code></pre>
+
 <br></br>
 
 
 <p>See start/2, but also link the server processs to the caller.</p>
+
 <a name="start_link-3"></a>
 
-###start_link/3##
+### start_link/3 ###
 
 
-<pre>start_link(Name::<a href="#type-name">name()</a>, Plugins::<a href="#type-plugins">plugins()</a>, Port::<a href="#type-ipport">ipport()</a>) -> true</pre>
+<pre><code>
+start_link(Name::<a href="#type-name">name()</a>, Plugins::<a href="#type-plugins">plugins()</a>, Port::<a href="#type-ipport">ipport()</a>) -&gt; true
+</code></pre>
+
 <br></br>
 
 
 <p>See start/3, but also link the server processs to the caller.</p>
+
 <a name="start_link-4"></a>
 
-###start_link/4##
+### start_link/4 ###
 
 
-<pre>start_link(Name::<a href="#type-name">name()</a>, Plugins::<a href="#type-plugins">plugins()</a>, Port::<a href="#type-ipport">ipport()</a>, Options::<a href="#type-options">options()</a>) -> true</pre>
+<pre><code>
+start_link(Name::<a href="#type-name">name()</a>, Plugins::<a href="#type-plugins">plugins()</a>, Port::<a href="#type-ipport">ipport()</a>, Options::<a href="#type-options">options()</a>) -&gt; true
+</code></pre>
+
 <br></br>
 
 
 <p>See start/4, but also link the server processs to the caller.</p>
+
 <a name="start_term_listener-3"></a>
 
-###start_term_listener/3##
+### start_term_listener/3 ###
 
 
-<pre>start_term_listener(Server0::pid(), Plugins::<a href="#type-plugins">plugins()</a>, Options::<a href="#type-options">options()</a>) -> pid()</pre>
+<pre><code>
+start_term_listener(Server0::pid(), Plugins::<a href="#type-plugins">plugins()</a>, Options::<a href="#type-options">options()</a>) -&gt; pid()
+</code></pre>
+
 <br></br>
+
 
 

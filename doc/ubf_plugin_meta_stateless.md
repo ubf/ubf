@@ -1,6 +1,6 @@
 
 
-#Abstract module ubf_plugin_meta_stateless [MODULES]#
+# Abstract module ubf_plugin_meta_stateless [MODULES] #
 * [Description](#description)
 * [Function Index](#index)
 * [Function Details](#functions)
@@ -31,7 +31,7 @@ implement contracts is passed using parameterized module
 
 <a name="index"></a>
 
-##Function Index##
+## Function Index ##
 
 
 <table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#description-0">description/0</a></td><td><p>Emit a description string.</p>.</td></tr><tr><td valign="top"><a href="#handlerRpc-1">handlerRpc/1</a></td><td><p>Required UBF contract implementation callback: call an RPC function.</p>.</td></tr><tr><td valign="top"><a href="#handlerStart-1">handlerStart/1</a></td><td><p>Required UBF contract implementation callback: start a new session
@@ -44,74 +44,74 @@ process(es).</p>.</td></tr></table>
 
 <a name="functions"></a>
 
-##Function Details##
+## Function Details ##
 
 <a name="description-0"></a>
 
-###description/0##
-
+### description/0 ###
 
 `description() -> any()`
 
 <p>Emit a description string.</p>
+
 <a name="handlerRpc-1"></a>
 
-###handlerRpc/1##
-
+### handlerRpc/1 ###
 
 `handlerRpc(X1) -> any()`
 
 <p>Required UBF contract implementation callback: call an RPC function.</p>
+
 <a name="handlerStart-1"></a>
 
-###handlerStart/1##
-
+### handlerStart/1 ###
 
 `handlerStart(X1) -> any()`
 
 <p>Required UBF contract implementation callback: start a new session
 handler process.</p>
+
 <a name="handlerStop-3"></a>
 
-###handlerStop/3##
-
+### handlerStop/3 ###
 
 `handlerStop(Pid, Reason, State) -> any()`
 
 <p>Required UBF contract implementation callback: stop a session
 handler process.</p>
+
 <a name="info-0"></a>
 
-###info/0##
-
+### info/0 ###
 
 `info() -> any()`
 
 <p>Emit an info string.</p>
+
 <a name="managerRestart-2"></a>
 
-###managerRestart/2##
-
+### managerRestart/2 ###
 
 `managerRestart(Args, Manager) -> any()`
 
 <p>Required UBF contract implementation callback: restart a manager
 process.</p>
+
 <a name="managerRpc-2"></a>
 
-###managerRpc/2##
-
+### managerRpc/2 ###
 
 `managerRpc(X1, S) -> any()`
 
 <p>Required UBF contract implementation callback: call a manager's RPC
 function.</p>
+
 <a name="managerStart-1"></a>
 
-###managerStart/1##
-
+### managerStart/1 ###
 
 `managerStart(Args) -> any()`
 
 <p>Required UBF contract implementation callback: start manager
 process(es).</p>
+

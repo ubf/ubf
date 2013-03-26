@@ -1,6 +1,6 @@
 
 
-#Module ubf_client#
+# Module ubf_client #
 * [Description](#description)
 * [Data Types](#types)
 * [Function Index](#index)
@@ -54,91 +54,131 @@ synchronous local procedure call to a contract\'s implementation.</code></pre>
 
 <a name="types"></a>
 
-##Data Types##
+## Data Types ##
 
 
 
 
-###<a name="type-host">host()</a>##
+### <a name="type-host">host()</a> ###
 
 
 
-<pre>host() = nonempty_string()</pre>
+<pre><code>
+host() = nonempty_string()
+</code></pre>
 
 
 
-###<a name="type-ipport">ipport()</a>##
+
+
+### <a name="type-ipport">ipport()</a> ###
 
 
 
-<pre>ipport() = pos_integer()</pre>
+<pre><code>
+ipport() = pos_integer()
+</code></pre>
 
 
 
-###<a name="type-name">name()</a>##
+
+
+### <a name="type-name">name()</a> ###
 
 
 
-<pre>name() = atom()</pre>
+<pre><code>
+name() = atom()
+</code></pre>
 
 
 
-###<a name="type-options">options()</a>##
+
+
+### <a name="type-options">options()</a> ###
 
 
 
-<pre>options() = [{atom(), term()}]</pre>
+<pre><code>
+options() = [{atom(), term()}]
+</code></pre>
 
 
 
-###<a name="type-plugin">plugin()</a>##
+
+
+### <a name="type-plugin">plugin()</a> ###
 
 
 
-<pre>plugin() = module()</pre>
+<pre><code>
+plugin() = module()
+</code></pre>
 
 
 
-###<a name="type-plugins">plugins()</a>##
+
+
+### <a name="type-plugins">plugins()</a> ###
 
 
 
-<pre>plugins() = [<a href="#type-plugin">plugin()</a>]</pre>
+<pre><code>
+plugins() = [<a href="#type-plugin">plugin()</a>]
+</code></pre>
 
 
 
-###<a name="type-server">server()</a>##
+
+
+### <a name="type-server">server()</a> ###
 
 
 
-<pre>server() = <a href="#type-name">name()</a> | pid()</pre>
+<pre><code>
+server() = <a href="#type-name">name()</a> | pid()
+</code></pre>
 
 
 
-###<a name="type-service">service()</a>##
+
+
+### <a name="type-service">service()</a> ###
 
 
 
-<pre>service() = {'#S', nonempty_string()} | undefined</pre>
+<pre><code>
+service() = {'#S', nonempty_string()} | undefined
+</code></pre>
 
 
 
-###<a name="type-statename">statename()</a>##
+
+
+### <a name="type-statename">statename()</a> ###
 
 
 
-<pre>statename() = atom()</pre>
+<pre><code>
+statename() = atom()
+</code></pre>
 
 
 
-###<a name="type-tlogger">tlogger()</a>##
+
+
+### <a name="type-tlogger">tlogger()</a> ###
 
 
 
-<pre>tlogger() = module()</pre>
+<pre><code>
+tlogger() = module()
+</code></pre>
+
+
 <a name="index"></a>
 
-##Function Index##
+## Function Index ##
 
 
 <table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#connect-2">connect/2</a></td><td><p>Connect to a UBF server at address Host + TCP port Port.</p>.</td></tr><tr><td valign="top"><a href="#connect-3">connect/3</a></td><td><p>Connect to a UBF server at address Host + TCP port Port.</p>.</td></tr><tr><td valign="top"><a href="#connect-4">connect/4</a></td><td><p>Connect to a UBF server at address Host + TCP port Port, or at
@@ -200,34 +240,45 @@ specified state.</p>.</td></tr><tr><td valign="top"><a href="#lpc-4">lpc/4</a></
 
 <a name="functions"></a>
 
-##Function Details##
+## Function Details ##
 
 <a name="connect-2"></a>
 
-###connect/2##
+### connect/2 ###
 
 
-<pre>connect(Host::<a href="#type-host">host()</a> | <a href="#type-plugins">plugins()</a>, Port::<a href="#type-ipport">ipport()</a> | <a href="#type-server">server()</a>) -> {ok, Client::pid(), <a href="#type-service">service()</a>} | {error, term()}</pre>
+<pre><code>
+connect(Host::<a href="#type-host">host()</a> | <a href="#type-plugins">plugins()</a>, Port::<a href="#type-ipport">ipport()</a> | <a href="#type-server">server()</a>) -&gt; {ok, Client::pid(), <a href="#type-service">service()</a>} | {error, term()}
+</code></pre>
+
 <br></br>
 
 
 <p>Connect to a UBF server at address Host + TCP port Port.</p>
+
 <a name="connect-3"></a>
 
-###connect/3##
+### connect/3 ###
 
 
-<pre>connect(Host::<a href="#type-host">host()</a> | <a href="#type-plugins">plugins()</a>, Port::<a href="#type-ipport">ipport()</a> | <a href="#type-server">server()</a>, Timeout::timeout()) -> {ok, Client::pid(), <a href="#type-service">service()</a>} | {error, term()}</pre>
+<pre><code>
+connect(Host::<a href="#type-host">host()</a> | <a href="#type-plugins">plugins()</a>, Port::<a href="#type-ipport">ipport()</a> | <a href="#type-server">server()</a>, Timeout::timeout()) -&gt; {ok, Client::pid(), <a href="#type-service">service()</a>} | {error, term()}
+</code></pre>
+
 <br></br>
 
 
 <p>Connect to a UBF server at address Host + TCP port Port.</p>
+
 <a name="connect-4"></a>
 
-###connect/4##
+### connect/4 ###
 
 
-<pre>connect(X::<a href="#type-host">host()</a> | <a href="#type-plugins">plugins()</a>, Y::<a href="#type-ipport">ipport()</a> | <a href="#type-server">server()</a>, Options::<a href="#type-options">options()</a>, Timeout::timeout()) -> {ok, Client::pid(), <a href="#type-service">service()</a>} | {error, term()}</pre>
+<pre><code>
+connect(X::<a href="#type-host">host()</a> | <a href="#type-plugins">plugins()</a>, Y::<a href="#type-ipport">ipport()</a> | <a href="#type-server">server()</a>, Options::<a href="#type-options">options()</a>, Timeout::timeout()) -&gt; {ok, Client::pid(), <a href="#type-service">service()</a>} | {error, term()}
+</code></pre>
+
 <br></br>
 
 
@@ -255,12 +306,16 @@ name <code>(atom())</code> for an already-started UBF server.
 
 </li>
 </ul>
+
 <a name="install_default_handler-1"></a>
 
-###install_default_handler/1##
+### install_default_handler/1 ###
 
 
-<pre>install_default_handler(Client::pid()) -&gt; ack</pre>
+<pre><code>
+install_default_handler(Client::pid()) -&gt; ack
+</code></pre>
+
 <br></br>
 
 
@@ -270,12 +325,16 @@ asynchronous UBF messages.</p>
 
 <pre><code>The default handler function, drop_fun/1, does nothing.</code></pre>
 
+
 <a name="install_handler-2"></a>
 
-###install_handler/2##
+### install_handler/2 ###
 
 
-<pre>install_handler(Client::pid(), Fun::function()) -&gt; ack</pre>
+<pre><code>
+install_handler(Client::pid(), Fun::function()) -&gt; ack
+</code></pre>
+
 <br></br>
 
 
@@ -299,43 +358,59 @@ how the author, Joe Armstrong, maintains the extra state required
 to deliver the async UBF message to the process that is executing
 the event loop processing function, +irc_client_gs:loop/6+.</code></pre>
 
+
 <a name="lpc-2"></a>
 
-###lpc/2##
+### lpc/2 ###
 
 
-<pre>lpc(Mod::<a href="#type-plugin">plugin()</a>, Call::term()) -> term()</pre>
+<pre><code>
+lpc(Mod::<a href="#type-plugin">plugin()</a>, Call::term()) -&gt; term()
+</code></pre>
+
 <br></br>
 
 
 <p>Perform a synchronous LPC (local procedure) call with the
 state <code>none</code>.</p>
+
 <a name="lpc-3"></a>
 
-###lpc/3##
+### lpc/3 ###
 
 
-<pre>lpc(Mod::<a href="#type-plugin">plugin()</a>, Call::term(), State::<a href="#type-statename">statename()</a>) -> term()</pre>
+<pre><code>
+lpc(Mod::<a href="#type-plugin">plugin()</a>, Call::term(), State::<a href="#type-statename">statename()</a>) -&gt; term()
+</code></pre>
+
 <br></br>
 
 
 <p>Perform a synchronous LPC (local procedure) call with the
 specified state.</p>
+
 <a name="lpc-4"></a>
 
-###lpc/4##
+### lpc/4 ###
 
 
-<pre>lpc(Mod::<a href="#type-plugin">plugin()</a>, Call::term(), State::<a href="#type-statename">statename()</a>, TLogMod::<a href="#type-tlogger">tlogger()</a>) -> term()</pre>
+<pre><code>
+lpc(Mod::<a href="#type-plugin">plugin()</a>, Call::term(), State::<a href="#type-statename">statename()</a>, TLogMod::<a href="#type-tlogger">tlogger()</a>) -&gt; term()
+</code></pre>
+
 <br></br>
+
 
 
 <a name="rpc-2"></a>
 
-###rpc/2##
+### rpc/2 ###
 
 
-<pre>rpc(Client::pid(), Call::term()) -&gt; timeout | term() | no_return()</pre>
+<pre><code>
+rpc(Client::pid(), Call::term()) -&gt; timeout | term() | no_return()
+</code></pre>
+
 <br></br>
 
 
@@ -345,33 +420,46 @@ specified state.</p>
 <pre><code>NOTE: It is not recommended that a UBF client return the bare atom
 +timeout+ in response to any RPC call.</code></pre>
 
+
 <a name="rpc-3"></a>
 
-###rpc/3##
+### rpc/3 ###
 
 
-<pre>rpc(Client::pid(), Call::term(), Timeout::timeout()) -&gt; timeout | term() | no_return()</pre>
+<pre><code>
+rpc(Client::pid(), Call::term(), Timeout::timeout()) -&gt; timeout | term() | no_return()
+</code></pre>
+
 <br></br>
 
 
 <p>Perform a synchronous RPC call.</p>
+
 <a name="sendEvent-2"></a>
 
-###sendEvent/2##
+### sendEvent/2 ###
 
 
-<pre>sendEvent(Handler::pid(), Cast::term()) -&gt; ok | no_return()</pre>
+<pre><code>
+sendEvent(Handler::pid(), Cast::term()) -&gt; ok | no_return()
+</code></pre>
+
 <br></br>
 
 
 <p>Send an asynchronous UBF message.</p>
+
 <a name="stop-1"></a>
 
-###stop/1##
+### stop/1 ###
 
 
-<pre>stop(Client::pid()) -&gt; ok</pre>
+<pre><code>
+stop(Client::pid()) -&gt; ok
+</code></pre>
+
 <br></br>
 
 
 <p>Stop a UBF client process.</p>
+

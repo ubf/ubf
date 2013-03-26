@@ -1,6 +1,6 @@
 
 
-#Module ubf_plugin_handler#
+# Module ubf_plugin_handler #
 * [Description](#description)
 * [Function Index](#index)
 * [Function Details](#functions)
@@ -22,7 +22,7 @@ executing this module\'s +loop()+ function.</code></pre>
 
 <a name="index"></a>
 
-##Function Index##
+## Function Index ##
 
 
 <table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#ask_manager-2">ask_manager/2</a></td><td></td></tr><tr><td valign="top"><a href="#install_default_handler-1">install_default_handler/1</a></td><td><p>Install a default handler function (callback-style) for
@@ -54,23 +54,30 @@ the event loop processing function, +irc_client_gs:loop/6+.</code></pre>
 
 <a name="functions"></a>
 
-##Function Details##
+## Function Details ##
 
 <a name="ask_manager-2"></a>
 
-###ask_manager/2##
+### ask_manager/2 ###
 
 
-<pre>ask_manager(Manager::pid(), Call::term()) -&gt; Reply::term()</pre>
+<pre><code>
+ask_manager(Manager::pid(), Call::term()) -&gt; Reply::term()
+</code></pre>
+
 <br></br>
+
 
 
 <a name="install_default_handler-1"></a>
 
-###install_default_handler/1##
+### install_default_handler/1 ###
 
 
-<pre>install_default_handler(Handler::pid()) -&gt; ack</pre>
+<pre><code>
+install_default_handler(Handler::pid()) -&gt; ack
+</code></pre>
+
 <br></br>
 
 
@@ -80,12 +87,16 @@ asynchronous UBF messages.</p>
 
 <pre><code>The default handler function, drop_fun/1, does nothing.</code></pre>
 
+
 <a name="install_handler-2"></a>
 
-###install_handler/2##
+### install_handler/2 ###
 
 
-<pre>install_handler(Handler::pid(), Fun::function()) -&gt; ack</pre>
+<pre><code>
+install_handler(Handler::pid(), Fun::function()) -&gt; ack
+</code></pre>
+
 <br></br>
 
 
@@ -109,34 +120,39 @@ how the author, Joe Armstrong, maintains the extra state required
 to deliver the async UBF message to the process that is executing
 the event loop processing function, +irc_client_gs:loop/6+.</code></pre>
 
+
 <a name="manager-3"></a>
 
-###manager/3##
-
+### manager/3 ###
 
 `manager(ExitPid, Mod, Args) -> any()`
 
+
 <a name="sendEvent-2"></a>
 
-###sendEvent/2##
+### sendEvent/2 ###
 
 
-<pre>sendEvent(Handler::pid(), Cast::term()) -&gt; ok | no_return()</pre>
+<pre><code>
+sendEvent(Handler::pid(), Cast::term()) -&gt; ok | no_return()
+</code></pre>
+
 <br></br>
 
 
 <p>Send an asynchronous UBF message.</p>
+
 <a name="start_handler-5"></a>
 
-###start_handler/5##
-
+### start_handler/5 ###
 
 `start_handler(MetaMod, Mod, Server, StatelessRPC, SpawnOpts) -> any()`
 
+
 <a name="start_manager-2"></a>
 
-###start_manager/2##
-
+### start_manager/2 ###
 
 `start_manager(Mod, Args) -> any()`
+
 

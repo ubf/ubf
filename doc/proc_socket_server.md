@@ -1,6 +1,6 @@
 
 
-#Module proc_socket_server#
+# Module proc_socket_server #
 * [Description](#description)
 * [Function Index](#index)
 * [Function Details](#functions)
@@ -28,7 +28,7 @@ OTP-based services, due to its origin.</code></pre>
 
 <a name="index"></a>
 
-##Function Index##
+## Function Index ##
 
 
 <table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#cold_start-7">cold_start/7</a></td><td></td></tr><tr><td valign="top"><a href="#server_children-1">server_children/1</a></td><td></td></tr><tr><td valign="top"><a href="#server_children-2">server_children/2</a></td><td></td></tr><tr><td valign="top"><a href="#server_port-1">server_port/1</a></td><td></td></tr><tr><td valign="top"><a href="#server_port-2">server_port/2</a></td><td></td></tr><tr><td valign="top"><a href="#server_status-1">server_status/1</a></td><td></td></tr><tr><td valign="top"><a href="#server_status-2">server_status/2</a></td><td></td></tr><tr><td valign="top"><a href="#start_child-3">start_child/3</a></td><td></td></tr><tr><td valign="top"><a href="#start_raw_server-5">start_raw_server/5</a></td><td></td></tr><tr><td valign="top"><a href="#start_raw_server-7">start_raw_server/7</a></td><td></td></tr><tr><td valign="top"><a href="#start_server-3">start_server/3</a></td><td><p>Start a new UBF contract-using server.</p>
@@ -67,82 +67,81 @@ start_raw_server/7).</code></pre>
 
 <a name="functions"></a>
 
-##Function Details##
+## Function Details ##
 
 <a name="cold_start-7"></a>
 
-###cold_start/7##
-
+### cold_start/7 ###
 
 `cold_start(Parent, Name, Port, Max, Fun, PacketType, PacketSize) -> any()`
 
+
 <a name="server_children-1"></a>
 
-###server_children/1##
-
+### server_children/1 ###
 
 `server_children(Name) -> any()`
 
+
 <a name="server_children-2"></a>
 
-###server_children/2##
-
+### server_children/2 ###
 
 `server_children(Pid, Timeout) -> any()`
 
+
 <a name="server_port-1"></a>
 
-###server_port/1##
-
+### server_port/1 ###
 
 `server_port(Name) -> any()`
 
+
 <a name="server_port-2"></a>
 
-###server_port/2##
-
+### server_port/2 ###
 
 `server_port(Pid, Timeout) -> any()`
 
+
 <a name="server_status-1"></a>
 
-###server_status/1##
-
+### server_status/1 ###
 
 `server_status(Name) -> any()`
 
+
 <a name="server_status-2"></a>
 
-###server_status/2##
-
+### server_status/2 ###
 
 `server_status(Pid, Timeout) -> any()`
 
+
 <a name="start_child-3"></a>
 
-###start_child/3##
-
+### start_child/3 ###
 
 `start_child(Parent, Listen, Fun) -> any()`
 
+
 <a name="start_raw_server-5"></a>
 
-###start_raw_server/5##
-
+### start_raw_server/5 ###
 
 `start_raw_server(Port, Max, Fun, PacketType, PacketSize) -> any()`
 
+
 <a name="start_raw_server-7"></a>
 
-###start_raw_server/7##
-
+### start_raw_server/7 ###
 
 `start_raw_server(Name, Port, Max, SpawnOpts, Fun, PacketType, PacketSize) -> any()`
 
+
 <a name="start_server-3"></a>
 
-###start_server/3##
-
+### start_server/3 ###
 
 `start_server(Port, Max, Fun) -> any()`
 
@@ -178,17 +177,18 @@ start_raw_server/7).</code></pre>
 
 </li>
 </ul>
+
 <a name="start_server-4"></a>
 
-###start_server/4##
-
+### start_server/4 ###
 
 `start_server(Name, Port, Max, Fun) -> any()`
 
+
 <a name="stop_server-1"></a>
 
-###stop_server/1##
-
+### stop_server/1 ###
 
 `stop_server(Pid) -> any()`
+
 

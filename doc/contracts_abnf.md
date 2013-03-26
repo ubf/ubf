@@ -1,6 +1,6 @@
 
 
-#Module contracts_abnf#
+# Module contracts_abnf #
 * [Description](#description)
 * [Function Index](#index)
 * [Function Details](#functions)
@@ -10,7 +10,7 @@
 
 <a name="index"></a>
 
-##Function Index##
+## Function Index ##
 
 
 <table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#check_binary-4">check_binary/4</a></td><td><p>Parse (and validate) the given binary against abnf contract
@@ -23,12 +23,11 @@ feature is beyond the current scope and goals of this package.</p>.</td></tr></t
 
 <a name="functions"></a>
 
-##Function Details##
+## Function Details ##
 
 <a name="check_binary-4"></a>
 
-###check_binary/4##
-
+### check_binary/4 ###
 
 `check_binary(Check, X, Level, Mod) -> any()`
 
@@ -38,3 +37,4 @@ return the parsed abnf types stack for parsed (and invalid)
 binaries.  The abnf types with sub-binary annotations could then be
 used by other applications that need the abnf bits.  However, this
 feature is beyond the current scope and goals of this package.</p>
+
