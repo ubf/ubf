@@ -1,6 +1,53 @@
 // -*- Doc -*-
 // vim: set syntax=asciidoc:
 
+// Joseph Wayne Norton
+// norton@alum.mit.edu
+// josephwnorton
+// http://www.gravatar.com/avatar/21dcd8061464aae455000cba61143c96?s=200
+// https://github.com/norton
+// Tokyo, Japan
+//
+// Joe Norton is a technical manager, system architect, developer, and
+// Erlang/Scheme enthusiast.  Based out of Tokyo, Japan, he has designed,
+// developed, tested, deployed, and supported carrier grade
+// Erlang/OTP-based messaging and storage systems.
+//
+//
+// UBF - Hands-On
+//
+// UBF is the "Universal Binary Format", originally designed and
+// implemented by Joe Armstrong.
+//
+// UBF is a framework that permits Erlang and the outside world to talk
+// with each other. The documentation and the corresponding open-source
+// code repositories are based on Joe Armstrong's original UBF site and
+// code with an MIT license file added to the distribution. Since then, a
+// large number of enhancements and improvements have been added.  See
+// http://ubf.github.com/ubf/ for more details.
+//
+// During the tutorial's first half, I would like to present about the
+// basics of UBF - UBF(a), UBF(b), and UBF(c), the supported network wire
+// formats (UBF, EBF, JSF and JSON-RPC, TBF, and most recently RUF), and
+// the various existing client implementations (Erlang, Python, Java,
+// ...).
+//
+// During the tutorial's second half, I would like to provide an
+// opportunity for some hands-on experience to download, to build, to
+// develop, and to test a real UBF contract, real UBF client, and real
+// UBF server.  The goal of the exercise is to implement your own
+// Bert-RPC (https://github.com/ubf/ubf-bertrpc) server using UBF.
+//
+//
+// About myself, I have 20+ years of professional software experience and
+// 10 years of system and software architecture experience.  I have 5+
+// years of hands-on Erlang/OTP experience. I have designed, developed,
+// tested, deployed, and supported carrier grade Erlang/OTP (starting
+// from R11B-5) messaging and storage systems.  I often attend and
+// sometimes present at Erlang/Functional programming conferences.  My
+// open-source projects and applications can be viewed on GitHub
+// (https://github.com/norton).
+
 = Erlang Users Conference 2010 Tutorial / UBF Basics and Hands On
 Joseph Wayne Norton <norton@alum.mit.edu>
 :Author Initials: JWN
@@ -680,13 +727,3 @@ For UBF, please check UBF's GitHub repository and webpage for updates.
 
 [horizontal]
 UBF:: https://github.com/ubf/ubf
-
-For Hibari - an open-source key-value implemented in Erlang, please
-check one or more of the following links for updates.
-
-[horizontal]
-Hibari Open Source project:: http://sourceforge.net/projects/hibari/
-Hibari Twitter:: @hibaridb Hashtag: #hibaridb
-Gemini Twitter:: @geminimobile
-Big Data blog:: http://hibari-gemini.blogspot.com/
-Slideshare:: http://www.slideshare.net/geminimobile
