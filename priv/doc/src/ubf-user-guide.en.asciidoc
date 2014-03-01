@@ -1453,7 +1453,7 @@ Please install and setup as needed.
 
 Erlang/OTP (Mandatory)::
 - Erlang - http://www.erlang.org/
-  * *R14B04 or newer, R16B has been tested most recently*
+  * *R15B01 or newer, R16B03-1 has been tested most recently*
   * If needed, see <<ErlangOTP>> for instructions to build Erlang/OTP
     from source.
 Git (Mandatory)::
