@@ -48,7 +48,7 @@
 
 -record(state, {
           safe=false :: boolean(),
-          dict :: dict()
+          dict :: term() % FYI - dict:dict() vs. dict() Erlang/OTP 17 incompatibility
          }).
 
 
