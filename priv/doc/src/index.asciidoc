@@ -1,11 +1,11 @@
 // -*- Doc -*-
 // vim: set syntax=asciidoc:
 
-= UBF 2.1 Home Page
+= UBF 2.2 Home Page
 Joseph Wayne Norton <norton@alum.mit.edu>
 :Author Initials: JWN
 :title: Universal Binary Format
-:description: UBF 2.1 Home Page
+:description: UBF 2.2 Home Page
 :footer: Functional programming for the better good!
 :brand: UBF
 :brandref: https://github.com/ubf
@@ -47,5 +47,5 @@ The link:http://github.com/ubf/ubf[UBF GitHub README] is a good first
 step to get started quickly.  Check the download, build, and install
 instructions.
 
-Reading the link:ubf-user-guide.en.html[UBF 2.1 User's Guide] is
+Reading the link:ubf-user-guide.en.html[UBF 2.2 User's Guide] is
 _STRONGLY_ recommended.

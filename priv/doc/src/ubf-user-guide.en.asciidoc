@@ -1,11 +1,11 @@
 // -*- Doc -*-
 // vim: set syntax=asciidoc:
 
-= UBF 2.1 User's Guide
+= UBF 2.2 User's Guide
 Joseph Wayne Norton <norton@alum.mit.edu>
 :Author Initials: JWN
 :title: Universal Binary Format
-:description: UBF 2.1 User's Guide
+:description: UBF 2.2 User's Guide
 :footer: Functional programming for the better good!
 :brand: UBF
 :brandref: https://github.com/ubf
@@ -1388,8 +1388,7 @@ integrate one or more UBF listeners into an Erlang/OTP application.
 ==== QuickCheck Tests
 
 The quickcheck tests and related helper libraries in the "test/eqc"
-directory have been open sourced.  Please stay tuned for further
-documentation in the future.
+directory are deprecated until further notice.
 
 See <<QUVIQ>> for further information about quickcheck.
 
@@ -1453,155 +1452,25 @@ Please install and setup as needed.
 
 Erlang/OTP (Mandatory)::
 - Erlang - http://www.erlang.org/
-  * *R15B01 or newer, R16B03-1 has been tested most recently*
+  * *R15B01 or newer, 17.0 has been tested most recently*
   * If needed, see <<ErlangOTP>> for instructions to build Erlang/OTP
     from source.
 Git (Mandatory)::
 - Git - http://git-scm.com/
-  * *Git 1.5.4 or newer, Git 1.8.2 has been tested most recently*
+  * *Git 1.5.4 or newer, Git 1.9.3 has been tested most recently*
   * _required for Repo and GitHub_
 - GitHub - https://github.com
-  * Anonymous read-only access using the GIT protocol is default.
-  * Team members having read-write access should add his/her ssh
-    public key under your GitHub account.
-Python (Mandatory)::
-- Python - http://www.python.org
-  * *Python 2.4 or newer, Python 2.7.3 has been tested most recently
-     (CAUTION: Python 3.x might be too new)*
-  * _required for Repo and AsciiDoc_
+
 AsciiDoc (Optional)::
+- Python - http://www.python.org
+  * *Python 2.4 or newer, Python 2.7.6 has been tested most recently
+     (CAUTION: Python 3.x might be too new)*
+  * _required for AsciiDoc_
 - AsciiDoc - http://www.methods.co.nz/asciidoc/index.html
   * Must be version 8.6.1 or newer
     ** 8.6.8 is the version most recently tested for UBF
   * Plus the following support tools:
     ** Dia - http://projects.gnome.org/dia/
-
-In addition to the above list, UBF also depends on two tools to
-automate the downloading and the packaging steps.
-
-- Rebar - https://github.com/rebar/rebar/wiki
-- Repo - http://source.android.com/source/git-repo.html
-
-Instructions for downloading the Repo tool are described next.  The
-Rebar tool is included in UBF's git repositories so there is no need
-to download it separately.  Please refer to the above sites for
-further information regarding the usage of these tools.
-
-[[DOWNLOAD]]
-=== Download
-
-The first step is to download the Git repositories from GitHub.
-
-. Configure your e-mail and name for Git
-+
-------
-$ git config --global user.email "you@example.com"
-$ git config --global user.name "Your Name"
-------
-. Install Repo
-+
-------
-$ mkdir -p ~/bin
-$ wget -O - https://dl-ssl.google.com/dl/googlesource/git-repo/repo > ~/bin/repo
-$ chmod a+x ~/bin/repo
-------
-+
-. Create working directory
-+
-------
-$ mkdir working-directory-name
-$ cd working-directory-name
-$ repo init -u https://github.com/ubf/manifests.git -m ubf-default.xml
-------
-+
-NOTE: Your "Git" identity is needed during the init step.  Please
-enter the name and email of your GitHub account if you have one.  Team
-members having read-write access are recommended to use "repo init -u
-git@github.com:ubf/manifests.git -m ubf-default-rw.xml".
-+
-TIP: If you want to checkout the latest development version of UBF,
-please append " -b dev" to the repo init command.
-+
-. Download Git repositories
-+
-------
-$ cd working-directory-name
-$ repo sync
-------
-
-[[BUILD]]
-=== Build - Mandatory
-
-. Build UBF
-+
-------
-$ cd working-directory-name
-$ make compile
-------
-+
-TIP: If the response is "make: erl: Command not found", please make
-sure Erlang/OTP is installed and "otp-installing-directory-name/bin"
-is added to your $PATH environment.
-+
-. Run the unit tests
-+
-------
-$ cd working-directory-name
-$ make eunit
-------
-
-=== Build - Optional
-
-. Dialyzer Testing _basic recipe_
-  .. Build Dialyzer's PLT _(required once)_
-+
-------
-$ cd working-directory-name
-$ make build-plt
-------
-+
-TIP: Check Makefile and dialyzer's documentation for further
-information.
-+
-  .. Dialyze with specs
-+
-------
-$ cd working-directory-name
-$ make dialyze
-------
-+
-CAUTION: If you manually run dialyzer with the "-r" option, execute
-"make clean compile" first to avoid finding duplicate beam files
-underneath rebar's .eunit directory.  Check Makefile for further
-information.
-+
-  .. Dialyze without specs
-+
-------
-$ cd working-directory-name
-$ make dialyze-nospec
-------
-+
-. To build the Java client and run its encoding/decoding unit test:
-+
-------
-$ cd working-directory-name
-$ make -C lib/ubf/priv/java
-------
-+
-. The Python client depends on the "Py-Interface" library.  To clone
-  and build it, use:
-+
-------
-$ cd working-directory-name
-$ git clone git://repo.or.cz/py_interface.git
-$ cd py_interface
-$ autoconf
-$ make
-------
-+
-TIP: Then install as a normal Python package or run using "env
-PYTHONPATH=working-directory-name/py_interface python your-script.py"
 
 [[UBFAsciiDoc]]
 === UBF Documentation
