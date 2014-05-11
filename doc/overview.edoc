@@ -27,9 +27,6 @@ $ cd ubf
 $ make deps clean compile test
 ------
 
-For an alternative recipe with other "features" albeit more complex,
-please read further.
-
 == Documentation
 
 === Where should I start?
@@ -115,132 +112,25 @@ See the ubf-eep8 open source repository
 https://github.com/ubf/ubf-eep8 for details.  ubf-eep8 is a framework
 for integrating UBF and EEP8.
 
-== To download
+=== Tools
 
-1. Configure your e-mail and name for Git
-+
-------
-$ git config \--global user.email "you@example.com"
-$ git config \--global user.name "Your Name"
-------
-
-2. Install Repo
-+
-------
-$ mkdir -p ~/bin
-$ wget -O - https://dl-ssl.google.com/dl/googlesource/git-repo/repo > ~/bin/repo
-$ chmod a+x ~/bin/repo
-------
-
-3. Create working directory
-+
-------
-$ mkdir working-directory-name
-$ cd working-directory-name
-$ repo init -u https://github.com/ubf/manifests.git -m ubf-default.xml
-------
-+
-NOTE: Your "Git" identity is needed during the init step.  Please
-enter the name and email of your GitHub account if you have one.  Team
-members having read-write access are recommended to use "repo init -u
-git@github.com:ubf/manifests.git -m ubf-default-rw.xml".
-+
-TIP: If you want to checkout the latest development version, please
-append " -b dev" to the repo init command.
-
-4. Download Git repositories
-+
-------
-$ cd working-directory-name
-$ repo sync
-------
-
-For further information and help for related tools, please refer to the
-following links:
+For further information and help for related tools, please refer to
+the following links:
 
 - Erlang - http://www.erlang.org/
-  * *R15B01 or newer, R16B03-1 has been tested most recently*
+  * *R15B01 or newer, 17.0 has been tested most recently*
 - Git - http://git-scm.com/
-  * *Git 1.5.4 or newer, Git 1.8.2 has been tested most recently*
-  * _required for Repo and GitHub_
+  * *Git 1.5.4 or newer, Git 1.9.3 has been tested most recently*
 - GitHub - https://github.com
-- Python - http://www.python.org
-  * *Python 2.4 or newer, Python 2.7.3 has been tested most recently
-    (CAUTION: Python 3.x might be too new)*
-* _required for Repo_
-  - Rebar - https://github.com/rebar/rebar/wiki
-  - Repo - http://source.android.com/source/git-repo.html
 
-== To build - basic recipe
+== What\'s New in UBF 2.2
 
-1. Get and install an erlang system http://www.erlang.org
+- Added support for 17.0. Removed support for R14.
 
-2. Build
-+
-------
-$ cd working-directory-name
-$ make compile
-------
+- QuickCheck and PropEr related features and tests are unsupported
+  until further notice.
 
-3. Run the unit tests
-+
-------
-$ cd working-directory-name
-$ make eunit
-------
-
-== To build - optional features
-
-A. Dialyzer Testing _basic recipe_
-   1. Build Dialyzer\'s PLT _(required once)_
-+
-------
-$ cd working-directory-name
-$ make build-plt
-------
-+
-TIP: Check Makefile and dialyzer\'s documentation for further
-information.
-
-   2. Dialyze with specs
-+
-------
-$ cd working-directory-name
-$ make dialyze
-------
-+
-CAUTION: If you manually run dialyzer with the "-r" option, execute
-"make clean compile" first to avoid finding duplicate beam files
-underneath rebar\'s .eunit directory.  Check Makefile for further
-information.
-
-   3. Dialyze without specs
-+
-------
-$ cd working-directory-name
-$ make dialyze-nospec
-------
-
-B. To build the Java client and run its encoding/decoding unit test:
-+
-------
-$ cd working-directory-name
-$ make -C lib/ubf/priv/java
-------
-
-C. The Python client depends on the "py-interface" library.  To clone
-   and build it, use:
-+
-------
-$ cd working-directory-name
-$ git clone git://repo.or.cz/py_interface.git
-$ cd py_interface
-$ autoconf
-$ make
-------
-+
-Then install as a normal Python package or run using "env
-PYTHONPATH=working-directory-name/py_interface python your-script.py"
+- Deprecate repo tool.
 
 == What\'s New in UBF 2.1
 
@@ -282,7 +172,6 @@ release of UBF is not backwards compatible with older versions of UBF.
   for Travis CI (https://travis-ci.org) integration.
 
 == Roadmap
-- QuickCheck/PropEr/Triq tests
 - Transport Protocols
   * SUNRPC (http://tools.ietf.org/html/rfc5531) support
   * WebSockets support
