@@ -2,10 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8">
-    <meta name="generator" content="AsciiDoc 8.6.8, bootstrap-docs backend">
-    <title>UBF 2.1 User&#8217;s Guide</title>
+    <meta name="generator" content="AsciiDoc 8.6.9, bootstrap-docs backend">
+    <title>UBF 2.2 User&#8217;s Guide</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="UBF 2.1 User's Guide">
+    <meta name="description" content="UBF 2.2 User's Guide">
     <meta name="author" content="Joseph Wayne Norton">
     <link href="./bootstrap/docs/assets/css/bootstrap.css" rel="stylesheet">
     <link href="./bootstrap/docs/assets/css/bootstrap-responsive.css" rel="stylesheet">
@@ -39,7 +39,7 @@
     <header class="jumbotron subhead" id="overview">
       <div class="container">
         <h1>Universal Binary Format</h1>
-        <p class="lead">UBF 2.1 User's Guide</p>
+        <p class="lead">UBF 2.2 User's Guide</p>
       </div>
     </header>
     <div class="container">
@@ -91,7 +91,8 @@ UBF(c) is a meta-level protocol used between a UBF client and a UBF
 readable format the UBF languages take the opposite view and provide a
 "machine friendly" format.  UBF is designed to be easy to implement.</p>
 <p><span class="image">
-<img alt="Programming By Contract" src="data:image/png;base64,
+<img alt="Programming By Contract"
+src="data:image/png;base64,
 iVBORw0KGgoAAAANSUhEUgAAAeEAAADJCAIAAACboB22AAAABmJLR0QA/wD/AP+gvaeTAAAgAElE
 QVR4nOydd1hURxeHfzTpvSkdBAFFFBBRoyiiwYJEYxQFg1ggGnvvJdaonwaNMZpYIyLBgrHEgh3F
 ghWUIghKE5TeYdk93x9LEBC2sUvRfR8fH7h35syZy71n2pk5EkQEMZ8xubmoqkJwML79FlOn4tgx
@@ -147,7 +148,7 @@ aT2anaoq/Pgjtm9v7oP2X72CpmZ1J7OVERwMCQl4evKUOC8PysoNOGA01nJxbdEYDFha4uFDvrc7
 ihERAwZgxQoMHtzSegiDtjzXISHRqhwMmg9pafz2G+bPr4741Dzk5WHChFbrtTBuHCQleQ0ipq7e
 sIecunrDhrix6zU8e4YXL8QGuhXxOdkGsY1um8jIYPhwsFjN9ASys3H0KB4+bIWzHDVoa7dMF7+q
 CitXoqioBYoW0xiSkrwemtD6EdvoNsvIkZg0iY/4swLDYKCsjO9QVM3OgAG4fx/r1jVroWVlWLUK
-//zDaTlRTPPzOdmGtux79zn9HQQjMBBpaQgJwdixIixl40YoK2PBAhEWISQ8PVFVhefP0a1bM5VY
+
 UYH27Vt/+/XF8TnZhjbej/5sxjOCoaICCQkUFiIzUyTyKyuxbRvmzMH06SKRL2w0NJCWhm3bmqm4
 y5fh7485c/h2kBEjasQ2unUgKfn5/B0Extoakydj+HCegpHwRXo6srMhIQE5OSgoCFm4yLC3x9Gj
 GDuW18gpAnPqFKyt8dtvoi1FjGCIbXTr4HP6OzQFSUlERCAnB2PGCE1mQQEOHMDFi1i4EPLyQhPb
@@ -166,7 +167,7 @@ E7uPfUJeXt6ePXtaWgsxYhqgLfejIyJgaAhDw5bWQ0ybp7i4+NatW8OHD29pRcSIqU9b7kdv24Z7
 91paiTaGuB/dICUlJefPn29pLcQIjXHjcPRoSyshJNqyjRafqcQ/lpaWSUI/xbTto6io6O7u3tJa
 iBEan5NtENvoL4vExEQ7O7uW1qLVUVZWFh4e3tJaiBEan5NtENvoLwtTU9ObN2+2tBatDllZWVtb
 25bWQozQ+Jxsg9hGf1mI/aMbpKKiIioqqqW1ECM0PifbILbRXxbGxsb//PNPS2vR6pCRkfnCzzD5
-zPicbIPYRn8p/PnnnytXrkxNTf3++++JyMXFJSYmpqWVai0wmcyCgoKW1kKM0PicbIPYRn8puLm5
+zPicbIPYRn8p/PnnnytXrkxNTf3+JyMXFJSYmpqWVai0wmcyCgoKW1kKM0PicbIPYRn8puLm5
 7dmzR1ZW9ujRo6dPny4uLra2tm5ppVoLUlJS4jNMPic+J9vQluMZfk4xy0SPkZGRp6fnhg0b0tLS
 kpOTN27cKCEh0dJKtTxHjhxJS0ubNm0aux89atSoDRs2dOnSpaX1EtMkPicb3Zb70bq64nPX+WL5
 8uV///23vb29goLCN99809LqtAoGDhy4Y8eO7OxsABcvXkxKSurcuXNLKyWmqXxONrot7wXnh7i4
@@ -175,7 +176,7 @@ O3YsvxJKSkoePnwYFRWVmJiYlJRUVFSUl5eXnp4OQFlZuX379lpaWvr6+gYGBk5OTg4ODlpaWo2J
 ysnJUVdXl5Rsy52nVsCbN1BUhLZ2S+shDAS30W/evLl69Wp8fHxycnJMTExFRQURsYfP6urq1tbW
 ZmZm3bp1GzhwoFpTIn1+QnFxcWJiYsF/lJaWysnJaWpqamhoaGpqdujQQaWh+E9hYWGbNm26fv06
 3wP8wkJUVaFdu2brs9c8Rg7cvn179uzZjx49kpbmb7bqbXT0mIkTH9y+LSEegvxHamqqra2tq6vr
-q1evnj17xqN9JKIHDx78+++/ly5dio6O7tq1a48ePczNzc3NzdXU1JSVldkT3IWFhYWFhQUFBa9f
+q1evnj17xqN9JKIHDx78/ly5dio6O7tq1a48ePczNzc3NzdXU1JSVldkT3IWFhYWFhQUFBa9f
 v05ISIiKinr27JmOjs7XX389bNiwwYMHy8nJ1Rb7999/S0tLjx49WiRVFSNsSkpKbt68+fjx4+Tk
 5NjY2A8fPuC/T1haWpptBi0sLAYOHGhpaSlYEXzb6Li4uCNHjpw6dSonJ8fV1bV79+5mZmbGxsbK
 ysoKCgoA2KYzKSkpKSkpIiLiwYMHdnZ248aNGz9+vKampgAqslisBw8e3L9///Hjx0+ePElOTraw
@@ -183,7 +184,7 @@ sFBQUFBWVlZWVpaWlq6qqmIXmpeX9+7duw4dOtja2vbr169fv34ODg7sT+7YsWMTJkz4888/p06d
 yqmwzEzcvIk7dxAbi5cvkZVV566REaysYGOD/v3h7NykKNPVpWVGRkZGRkbGxsZmZmZmZWVlZGSU
 lJRISUmpqKgoKyvLy8t36dKl+38Y/neA1JkzZ0aNGrVq1ap169ZxKiA9Hdev4+7d6urk5ADIAnQB
 SEjAxATW1ujaFc7OcHb+kieOpkyZcvTo0YMHD06YMIFr4oyMjIMHDx4+fLiqqsrDw2PYsGHOzs7s
-l58XmEzms2fPLl68eOXKlejo6G+++Wb27Nn29vbsu3PmzAkLCxO73LRyCgsLT548eezYsfv373fr
+l58XmEzms2fPLl68eOXKlejo6GWb27Nn29vbsu3PmzAkLCxO73LRyCgsLT548eezYsfv373fr
 1s3Z2bljx45mZmZqamrq6uoAysvLi4qKUlJSkpOTo6Kirl69KisrO2rUqIkTJ/K90Zd4g8ViXbhw
 oW/fvvr6+osXL46MjKyqquIlY1FR0b///uvt7a2qqvr999/HxMTwWCKTyWT3FvX19e3s7KZNm/bH
 H388fvyY3WFvDAaDERMTc+TIkSlTppiamuro6EyZMuX69es7duyQlpZWUVHJzs5uIFt+Pu3bR05O
@@ -215,7 +216,7 @@ uL1AbYjwcBo+nNTVadIkOneOS81SU+nwYRo6lJSULmtr9/j332eiU+z58+ezZs3q0qWLjIyMkpKS
 oqKihITEkCFD2HcfP6bRo0lVlby86PRpysnhJCozk4KCaORIUlGhiRMpNpZL0U+ePBk+fLimpqav
 r+/58+fLyso4p09JSfnzzz/79eunqam5Zs2arKysqqoqZWVlGRmZ/Pz8eomZTDp1inr1og4daP58
 unmTOIuPiaGdO6lXL2rfntas4a+ZER0VFRXz5883Nja+du2acCXn5eX5+/ubm5s/fvyYQ7JGbfTN
-mzc1NDR+++034apVQ3Fx8fjx4+3s7DIzM+Pj4+3t7Xv27NmUPibvVB4/XqWtTQEBjXV7BZVbSYsX
+mzc1NDR034apVQ3Fx8fjx4+3s7DIzM+Pj4+3t7Xv27NmUPibvVB4/XqWtTQEBjXV7BZVbSYsX
 k6EhsfvpRFevXjU0NPTx8RFK29so+/eTlhYdOiRksaWl9MMPZG5OHF+gNkFcHLm6koEB7dxJtfp/
 PJGWRnPmMFVVacYM+sQKCRkGg/Hs2bP9+/dPnDjR3t4+PDzJw4NMTGjHDr7byg8faN066tCBfHzo
 /fsGErx9+/a7774zMDD47bffSvh9KETR0dE+Pj4qKiqDBw9WVlZWUlKqNzK+dYtsbMjWloKD+e4X
@@ -257,7 +258,7 @@ KDk5OSMjA0B6evr79+/Z/wtLOU9PzxMnTnBPx9VGnzyJESPA8+HrAFBaWm1Jq6pQWIjycqSlISur
 uiD2r2lpyMvjQyaAjh1hYYErV/jLVY+//8aYMeAripKIquPoCBkZNHJ4Zj3YnYLaP8ybN6+srOzZ
 s2cJCQnsgFLsu6dPn966dSuAy5cvDxkypJ6QmruNsX8/pk3jSX3hPhVZWfj64tAhnhK7urrOnz9/
 zJgxAJSVlbdt2xYba/HDD+3qJSNCcjIyMniSKRgSEvDz41XtBikqwpkz8PPjlIb9MHNzASA9HRyM
-BOe79TA1Re/e4GAkBIhneOLEie+++47HOE3Z2dkvX76sqKjgrwx++O677y5fvlxSUiIdHR0tJydn
+BOe79TA1Re/e4GAkBIhneOLEie47HOE3Z2dkvX76sqKjgrwx++O677y5fvlxSUiIdHR0tJydn
 ZWXFY87i4mJfX99evXqVlpZaWFhISEioqakZGRnJycnp6Og0mCU0NFRVVXXgwIE8FjFkyJDt27dz
 TzdtGtrVf7nrEBaGSZN4LLSaoCC0bw93d8TFITgYPXrg2DHY2uLhQ/zzDy5dwtGjsLNDt24YMYI/
 yR4euHwZHh785apNWBi2bOEvi4iqIyGBESNw+TL69OFPHwDA2bNnY2Ji2Ecw15hd9ou0YMECAJcu
@@ -333,7 +334,7 @@ mZ+fP3v27PT0dLYPHNu7W0ZGhslk1v65JktJSYnyfw6Z27dvV1BQ+Pbbb0tKSuo5R5eVlSkpKUlI
 SLDnLmt8qOsp8OrVK+5e23fvou57UwcLC7x6xUVCDfVcUmtTUgJFRUhLY8UKoBH3VF4oLUVWFvhx
 c6wDX9WpIT+/2vW0tvUaOhSXLuH4cXh7168d786baWmQl4cw1oeFgrU1r6caQTRPJSpKEP91DmpL
 SkJTE0pK1arW9n1Grdew9vXa7sY8ViE6WhC12UV36sTpmbN9zNeu5aR8WRkUFSEl9XGnJV9PnsMz
-//138LavuxpLS8tXn3xfLW4GExISOnXqJG1nZ/fpIXNnzpwJCQlp165dTEzMoUOHbG1tT548+fLl
+
 S319fRkZmdo/12SZMmXK0qVLbWxs+vbta2RkFBoaeufOHSkpqRrnaHayiRMnLl68WFdXl8O2QyaT
 +fjx4+7du3N5rpzPTTEzA4uF5GTw4vZYzyW1Nv7+WL8eXbpAVha13Rs5OJ02yL17cHBoeOMqL3Tv
 jqQk5OXxahaDghAVhexsbNlSfzOWtDQMDPDuHbS1G60dVyIihLAxXXi4uODUKcycySWZiJ5KVRVu
@@ -397,7 +398,7 @@ yJE0Zgy5u9OgQdSpE8nKkr09rVhBDx5wkfbixYvevXvXvsJgMC5cuODl5aWoqNizZ8+FCxeePXs2
 h+eeZGZm5pkzZ5YsWdK3b18FBYXRo0eHhoaWl5dXVdGFCzR5MpmZkZwcdetWrTP7n4cHde5MsrJk
 bU3Tp9PNm5x2lhsaGtacoVZcXLxs2TI1NbWRI0ceP36ca4c6PT1969atFhYW3bt3P8XzhGFhIQUG
 kpcXaWuTujr16kWDBtHo0TRmDA0dSgMGkIkJycrSgAG0ZUszbeThl6dPnzo5OTk5OQllnFRaWrpm
-zRoNDY2NGzdyXRKQIB6O8MvKylq4cOG///47c+bMWbNmafF1GPx/REdH//zzz//+++/y5cvnzp0r
+zRoNDY2NGzdyXRKQIB6O8MvKylq4cOG///47c+bMWbNmafF1GPx/REdH//zzz///y5cvnzp0r
 U/dAlN69e0dGRu7evbtHjx7z58/Pzs5esWLF2LFjZQQ6FP/GjRsBAQHPnz/fsGGDl5cXp3jVDAYC
 A7FxIxQVMWECPD3BYzi+mBgEB+PYMaipYfVqeHh8emSSk5PTkydPsrKy3r175+Pjo6SktG/fPisr
 KwFqxCsVFS/Xr1+zY8f+zp3VfHwwZgw6dOAp47NnOH4cQUEwNsaaNWiWqFctTn4+4uORloaCAlRV
@@ -1390,7 +1391,8 @@ similar to XML-RPC.  The UBF framework implementation of JSON-RPC
 brings together JSF&#8217;s encoder/decoder, UBF(b)'s contract checking, and
 an HTTP transport.</p>
 <p><span class="image">
-<img alt="Programming By Contract w/ Multiple Transports" src="data:image/png;base64,
+<img alt="Programming By Contract w/ Multiple Transports"
+src="data:image/png;base64,
 iVBORw0KGgoAAAANSUhEUgAAAeEAAAExCAIAAADEFo12AAAABmJLR0QA/wD/AP+gvaeTAAAgAElE
 QVR4nOydd1yTVxfHf2HK3ltERGSJC3DvreDEbUWtQrXWVbX6VsTZqrWOum3VuifiwIEDt4CKW8DB
 EgFZyoaQkJz3j1BEBDJICODz/YNP8nDuuec+Sc5zx7n3sIgIDPUYIuTn4+lT5OXh40ckJMDSErdu
@@ -2618,8 +2620,7 @@ stateful_plugin test applications are concrete examples on how to
 integrate one or more UBF listeners into an Erlang/OTP application.</p>
 <h3>QuickCheck Tests</h3>
 <p>The quickcheck tests and related helper libraries in the "test/eqc"
-directory have been open sourced.  Please stay tuned for further
-documentation in the future.</p>
+directory are deprecated until further notice.</p>
 <p>See <a href="#QUVIQ">[QUVIQ]</a> for further information about quickcheck.</p>
 <h2 id="utilities">Utilities</h2>
 <h3>Transaction Logging</h3>
@@ -2685,7 +2686,7 @@ Erlang/OTP (Mandatory)
 Erlang - <a href="http://www.erlang.org/">http://www.erlang.org/</a>
 <ul>
 <li>
-<strong>R14B04 or newer, R16B has been tested most recently</strong>
+<strong>R15B01 or newer, 17.0 has been tested most recently</strong>
 </li>
 <li>
 If needed, see <a href="#ErlangOTP">[ErlangOTP]</a> for instructions to build Erlang/OTP
@@ -2704,7 +2705,7 @@ Git (Mandatory)
 Git - <a href="http://git-scm.com/">http://git-scm.com/</a>
 <ul>
 <li>
-<strong>Git 1.5.4 or newer, Git 1.8.2 has been tested most recently</strong>
+<strong>Git 1.5.4 or newer, Git 1.9.3 has been tested most recently</strong>
 </li>
 <li>
 <small>required for Repo and GitHub</small>
@@ -2713,34 +2714,6 @@ Git - <a href="http://git-scm.com/">http://git-scm.com/</a>
 </li>
 <li>
 GitHub - <a href="https://github.com">https://github.com</a>
-<ul>
-<li>
-Anonymous read-only access using the GIT protocol is default.
-</li>
-<li>
-Team members having read-write access should add his/her ssh
-    public key under your GitHub account.
-</li>
-</ul>
-</li>
-</ul>
-</dd>
-<dt>
-Python (Mandatory)
-</dt>
-<dd>
-<ul>
-<li>
-Python - <a href="http://www.python.org">http://www.python.org</a>
-<ul>
-<li>
-<strong>Python 2.4 or newer, Python 2.7.3 has been tested most recently
-     (CAUTION: Python 3.x might be too new)</strong>
-</li>
-<li>
-<small>required for Repo and AsciiDoc</small>
-</li>
-</ul>
 </li>
 </ul>
 </dd>
@@ -2749,6 +2722,18 @@ AsciiDoc (Optional)
 </dt>
 <dd>
 <ul>
+<li>
+Python - <a href="http://www.python.org">http://www.python.org</a>
+<ul>
+<li>
+<strong>Python 2.4 or newer, Python 2.7.6 has been tested most recently
+     (CAUTION: Python 3.x might be too new)</strong>
+</li>
+<li>
+<small>required for AsciiDoc</small>
+</li>
+</ul>
+</li>
 <li>
 AsciiDoc - <a href="http://www.methods.co.nz/asciidoc/index.html">http://www.methods.co.nz/asciidoc/index.html</a>
 <ul>
@@ -2773,113 +2758,6 @@ Dia - <a href="http://projects.gnome.org/dia/">http://projects.gnome.org/dia/</a
 </ul>
 </dd>
 </dl>
-<p>In addition to the above list, UBF also depends on two tools to
-automate the downloading and the packaging steps.</p>
-<ul>
-<li>
-Rebar - <a href="https://github.com/rebar/rebar/wiki">https://github.com/rebar/rebar/wiki</a>
-</li>
-<li>
-Repo - <a href="http://source.android.com/source/git-repo.html">http://source.android.com/source/git-repo.html</a>
-</li>
-</ul>
-<p>Instructions for downloading the Repo tool are described next.  The
-Rebar tool is included in UBF&#8217;s git repositories so there is no need
-to download it separately.  Please refer to the above sites for
-further information regarding the usage of these tools.</p>
-<h2 id="DOWNLOAD">Download</h2>
-<p>The first step is to download the Git repositories from GitHub.</p>
-<ol>
-<li>
-Configure your e-mail and name for Git
-<pre class="prettyprint">$ git config --global user.email "you@example.com"
-$ git config --global user.name "Your Name"</pre>
-</li>
-<li>
-Install Repo
-<pre class="prettyprint">$ mkdir -p ~/bin
-$ wget -O - https://dl-ssl.google.com/dl/googlesource/git-repo/repo &gt; ~/bin/repo
-$ chmod a+x ~/bin/repo</pre>
-</li>
-<li>
-Create working directory
-<pre class="prettyprint">$ mkdir working-directory-name
-$ cd working-directory-name
-$ repo init -u https://github.com/ubf/manifests.git -m ubf-default.xml</pre>
-<p><span class="label label-note">Note</span> Your "Git" identity is needed during the init step.  Please
-enter the name and email of your GitHub account if you have one.  Team
-members having read-write access are recommended to use "repo init -u
-<a href="mailto:git@github.com">git@github.com</a>:ubf/manifests.git -m ubf-default-rw.xml".</p>
-<p><span class="label label-tip">Tip</span> If you want to checkout the latest development version of UBF,
-please append " -b dev" to the repo init command.</p>
-</li>
-<li>
-Download Git repositories
-<pre class="prettyprint">$ cd working-directory-name
-$ repo sync</pre>
-</li>
-</ol>
-<h2 id="BUILD">Build - Mandatory</h2>
-<ol>
-<li>
-Build UBF
-<pre class="prettyprint">$ cd working-directory-name
-$ make compile</pre>
-<p><span class="label label-tip">Tip</span> If the response is "make: erl: Command not found", please make
-sure Erlang/OTP is installed and "otp-installing-directory-name/bin"
-is added to your $PATH environment.</p>
-</li>
-<li>
-Run the unit tests
-<pre class="prettyprint">$ cd working-directory-name
-$ make eunit</pre>
-</li>
-</ol>
-<h2 id="build_optional">Build - Optional</h2>
-<ol>
-<li>
-Dialyzer Testing <small>basic recipe</small>
-<ol>
-<li>
-Build Dialyzer&#8217;s PLT <small>(required once)</small>
-<pre class="prettyprint">$ cd working-directory-name
-$ make build-plt</pre>
-<p><span class="label label-tip">Tip</span> Check Makefile and dialyzer&#8217;s documentation for further
-information.</p>
-</li>
-<li>
-Dialyze with specs
-<pre class="prettyprint">$ cd working-directory-name
-$ make dialyze</pre>
-<p><span class="label label-caution">Caution</span> If you manually run dialyzer with the "-r" option, execute
-"make clean compile" first to avoid finding duplicate beam files
-underneath rebar&#8217;s .eunit directory.  Check Makefile for further
-information.</p>
-</li>
-<li>
-Dialyze without specs
-<pre class="prettyprint">$ cd working-directory-name
-$ make dialyze-nospec</pre>
-</li>
-</ol>
-</li>
-<li>
-To build the Java client and run its encoding/decoding unit test:
-<pre class="prettyprint">$ cd working-directory-name
-$ make -C lib/ubf/priv/java</pre>
-</li>
-<li>
-The Python client depends on the "Py-Interface" library.  To clone
-  and build it, use:
-<pre class="prettyprint">$ cd working-directory-name
-$ git clone git://repo.or.cz/py_interface.git
-$ cd py_interface
-$ autoconf
-$ make</pre>
-<p><span class="label label-tip">Tip</span> Then install as a normal Python package or run using "env
-PYTHONPATH=working-directory-name/py_interface python your-script.py"</p>
-</li>
-</ol>
 <h2 id="UBFAsciiDoc">UBF Documentation</h2>
 <p>This section is the first step to download and to build your own
 UBF documentation.</p>
@@ -3082,7 +2960,7 @@ extensions, improvements, etc. under an MIT license.  Joe Armstrong
 has also given his blessing to Gemini&#8217;s license choice.</p>
 <pre class="prettyprint">The MIT License
 
-Copyright (C) 2011-2013 by Joseph Wayne Norton &lt;norton@alum.mit.edu&gt;
+Copyright (C) 2011-2014 by Joseph Wayne Norton &lt;norton@alum.mit.edu&gt;
 Copyright (c) 2009-2011 Gemini Mobile Technologies, Inc.
 Copyright (C) 2002 by Joe Armstrong
 
