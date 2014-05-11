@@ -1,6 +1,7 @@
 .eqc-info
 .eunit/
 .qc/
+.rebar/
 deps/
 ebin/
 erl_crash.dump
