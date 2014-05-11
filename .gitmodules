@@ -1,3 +1,3 @@
 [submodule "priv/doc/src/bootstrap-docs"]
 	path = priv/doc/src/bootstrap-docs
-	url = git://github.com/mojavelinux/asciidoc-bootstrap-docs-backend.git
+	url = git://github.com/norton/asciidoc-bootstrap-docs-backend.git

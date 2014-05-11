@@ -8,6 +8,7 @@ html: $(HTML)
 pdf: $(PDF)
 
 gh-pages: clean html
+	git submodule update --init --recursive
 	git co gh-pages
 	rsync -avz ./*.html ../../../
 	rsync -avz --exclude=.git --delete ./bootstrap-docs/bootstrap/ ../../../bootstrap/
