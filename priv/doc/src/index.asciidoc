@@ -11,7 +11,6 @@ Joseph Wayne Norton <norton@alum.mit.edu>
 :brandref: https://github.com/ubf
 :doctype: article
 :toc2:
-:data-uri:
 :backend: bootstrap-docs
 :link-assets:
 :glyphicons: http://glyphicons.com[Glyphicons]
