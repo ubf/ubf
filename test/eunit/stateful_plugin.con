@@ -40,7 +40,9 @@
   server_timeout_req03() => server_timeout_res03() & start;
   server_timeout_req04() => server_timeout_res04() & finish;
   server_crash_req05()   => server_crash_res05() & start;
-  server_crash_req06()   => server_crash_res06() & finish.
+  server_crash_req06()   => server_crash_res06() & finish;
+  manager_rpc_req01()    => manager_rpc_res01() & start;
+  manager_rpc_req02()    => manager_rpc_res02() & finish.
 
 +STATE finish
   restart_req()          => restart_res() & start.

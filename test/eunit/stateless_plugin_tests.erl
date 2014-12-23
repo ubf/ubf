@@ -86,6 +86,7 @@ all_actual_tests_(Host,Port,Proto,Stateless,State) ->
              %%, ?_test(test_015(#args{host=Host,port=Port(),proto=Proto,stateless=Stateless,state=State}))
              %%, ?_test(test_016(#args{host=Host,port=Port(),proto=Proto,stateless=Stateless,state=State}))
              %%, ?_test(test_017(#args{host=Host,port=Port(),proto=Proto,stateless=Stateless,state=State}))
+             , ?_test(test_019(#args{host=Host,port=Port(),proto=Proto,stateless=Stateless,state=State}))
             ]
     end.
 
@@ -347,6 +348,24 @@ test_018(#args{proto=Proto})
     ok;
 test_018(Args) ->
     test_shutdown_socket(Args,driver,close).
+
+test_019(#args{stateless=Stateless,
+               proto=Proto})
+    when Stateless==true;
+         Proto==lpc ->
+    ok;
+test_019(Args) ->
+    assert_process(Args, 0, 0, 0, 0, 0),
+    {ok,Pid} = client_connect(Args),
+    assert_process(Args, 1, 1, 1, 1, 1),
+    {reply,ok,State} = client_rpc(Pid,keepalive),
+    assert_process(Args, 1, 1, 1, 1, 1),
+    {reply,manager_rpc_res01,State} = client_rpc(Pid,manager_rpc_req01),
+    assert_process(Args, 1, 1, 1, 1, 1),
+    {reply,ok,State} = client_rpc(Pid,keepalive),
+    assert_process(Args, 1, 1, 1, 1, 1),
+    ok = client_stop(Pid),
+    assert_process(Args, 0, 0, 0, 0, 0).
 
 %%%----------------------------------------------------------------------
 %%% Helpers
