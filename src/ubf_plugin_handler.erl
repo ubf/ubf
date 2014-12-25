@@ -168,17 +168,17 @@ manager_loop(ExitPid, Mod, State) ->
                 {accept, Mod1, ModManagerPid, State1} ->
                     From ! {self(), {accept, Mod1, ModManagerPid}},
                     manager_loop(ExitPid, Mod, State1);
-                {reject, Reason, _State} ->
+                {reject, Reason, State1} ->
                     From ! {self(), {reject, Reason}},
-                    manager_loop(ExitPid, Mod, State)
+                    manager_loop(ExitPid, Mod, State1)
             end;
         {client_has_stopped, Pid} ->
             case (catch Mod:handlerStop(Pid, normal, State)) of
                 {'EXIT', OOps} ->
                     io:format("plug in error:~p~n",[OOps]),
                     manager_loop(ExitPid, Mod, State);
-                State ->
-                    manager_loop(ExitPid, Mod, State)
+                State1 ->
+                    manager_loop(ExitPid, Mod, State1)
             end;
         {'EXIT', ExitPid, Reason} ->
             exit(Reason);
@@ -190,8 +190,8 @@ manager_loop(ExitPid, Mod, State) ->
                 {'EXIT', OOps} ->
                     io:format("plug in error:~p~n",[OOps]),
                     manager_loop(ExitPid, Mod, State);
-                State ->
-                    manager_loop(ExitPid, Mod, State)
+                State1 ->
+                    manager_loop(ExitPid, Mod, State1)
             end;
         {From, {handler_rpc, Q}} ->
             case (catch Mod:managerRpc(Q, State)) of
@@ -199,9 +199,9 @@ manager_loop(ExitPid, Mod, State) ->
                     io:format("plug in error:~p~n",[OOps]),
                     exit(From, bad_ask_manager),
                     manager_loop(ExitPid, Mod, State);
-                {Reply, State} ->
+                {Reply, State1} ->
                     From ! {handler_rpc_reply, Reply},
-                    manager_loop(ExitPid, Mod, State)
+                    manager_loop(ExitPid, Mod, State1)
             end;
         X ->
             io:format("******Dropping (service manager ~p) self=~p ~p~n",

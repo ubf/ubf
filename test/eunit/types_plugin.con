@@ -66,6 +66,11 @@ server_crash_res05()    :: server_crash_res05;
 server_crash_req06()    :: server_crash_req06;
 server_crash_res06()    :: server_crash_res06;
 
+manager_rpc_req01()     :: manager_rpc_req01;
+manager_rpc_res01()     :: manager_rpc_res01;
+manager_rpc_req02()     :: manager_rpc_req02;
+manager_rpc_res02()     :: manager_rpc_res02;
+
 not_implemented_req99() :: not_implemented_req99;
 not_implemented_res99() :: not_implemented_res99;
 

@@ -46,13 +46,15 @@
                            server_timeout_res03,server_timeout_req03,
                            server_breaks_res01,server_breaks_req01,
                            client_timeout_res03,client_timeout_req03,
-                           client_breaks_res01,client_breaks_req01]}).
+                           client_breaks_res01,client_breaks_req01,
+                           manager_rpc_req01,manager_rpc_req02]}).
 -add_types({types_plugin, [restart_res,restart_req,server_crash_res06,
                            server_crash_req06,server_timeout_res04,
                            server_timeout_req04,server_breaks_res02,
                            server_breaks_req02,client_timeout_res04,
                            client_timeout_req04,client_breaks_res02,
-                           client_breaks_req02]}).
+                           client_breaks_req02,manager_rpc_res01,
+                           manager_rpc_res02]}).
 
 
 %% records
@@ -63,6 +65,7 @@
 
 %% managerState
 -record(managerState, {
+          inc=0
          }).
 
 
@@ -95,7 +98,10 @@ managerRestart(Args,ManagerPid) ->
 %% @doc rpc manager
 managerRpc({restartManager,Args},ManagerStateData)
   when is_record(ManagerStateData,managerState) ->
-    managerStart(Args).
+    managerStart(Args);
+managerRpc(change_state, _ManagerStateData) ->
+    {ok, #managerState{inc=1}}.
+
 
 
 %% @spec handlerStart(Args::list(any()), ManagerPid::pid()) ->
@@ -114,6 +120,9 @@ handlerStop(_Pid,_Reason,ManagerStateData)
 %% @spec handlerRpc(StateName::atom(), Event::any(), StateData::term(), ManagerPid::pid()) ->
 %%          {Reply::any(), NextStateName::atom(), NewStateData::term()}
 %% @doc rpc handler
+handlerRpc(StateName,manager_rpc_req01,StateData,ManagerPid) ->
+    ok = ask_manager(ManagerPid, change_state),
+    {manager_rpc_res01,StateName,StateData};
 handlerRpc(StateName,Event,StateData,_ManagerPid) ->
     {handlerRpc(Event),StateName,StateData}.
 
