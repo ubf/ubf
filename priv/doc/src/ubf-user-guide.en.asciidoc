@@ -1654,7 +1654,7 @@ has also given his blessing to Gemini's license choice.
 ------------
 The MIT License
 
-Copyright (C) 2011-2014 by Joseph Wayne Norton <norton@alum.mit.edu>
+Copyright (C) 2011-2015 by Joseph Wayne Norton <norton@alum.mit.edu>
 Copyright (c) 2009-2011 Gemini Mobile Technologies, Inc.
 Copyright (C) 2002 by Joe Armstrong
 
