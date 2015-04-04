@@ -322,6 +322,8 @@ typeref(Style,{Tag,Name,Fields,_Defaults,Elements0},C)
                         || {Field,Element} <- lists:zip(Fields,Elements) ], ", "),
     io_lib:format("#~s{ ~s }", [Name, Definition]);
 %% list
+typeref(_Style,{list,0,0,undefined},_C) ->
+    "[]";
 typeref(ubf=Style,{list,0,infinity,Element},C) ->
     io_lib:format("[~s]", [typeref(Style,Element,C)]);
 typeref(ubf=Style,{list,0,1,Element},C) ->
@@ -376,16 +378,26 @@ typeref(_Style,{predef,list},_C) ->
 typeref(_Style,{predef,tuple},_C) ->
     "tuple()";
 %% predef with attributes
-typeref(_Style,{predef,{any,Attrs}},_C) ->
+typeref(ubf,{predef,{any,Attrs}},_C) ->
     io_lib:format("any(~s)", [join([ atom_to_list(Attr) || Attr <- Attrs ], ",")]);
-typeref(_Style,{predef,{atom,Attrs}},_C) ->
+typeref(ubf,{predef,{atom,Attrs}},_C) ->
     io_lib:format("atom(~s)", [join([ atom_to_list(Attr) || Attr <- Attrs ], ",")]);
-typeref(_Style,{predef,{binary,Attrs}},_C) ->
+typeref(ubf,{predef,{binary,Attrs}},_C) ->
     io_lib:format("binary(~s)", [join([ atom_to_list(Attr) || Attr <- Attrs ], ",")]);
-typeref(_Style,{predef,{list,Attrs}},_C) ->
+typeref(ubf,{predef,{list,Attrs}},_C) ->
     io_lib:format("list(~s)", [join([ atom_to_list(Attr) || Attr <- Attrs ], ",")]);
-typeref(_Style,{predef,{tuple,Attrs}},_C) ->
+typeref(ubf,{predef,{tuple,Attrs}},_C) ->
     io_lib:format("tuple(~s)", [join([ atom_to_list(Attr) || Attr <- Attrs ], ",")]);
+typeref(_Style,{predef,{any,_Attrs}},_C) ->
+    "any()";
+typeref(_Style,{predef,{atom,_Attrs}},_C) ->
+    "atom()";
+typeref(_Style,{predef,{binary,_Attrs}},_C) ->
+    "binary()";
+typeref(_Style,{predef,{list,_Attrs}},_C) ->
+    "list()";
+typeref(_Style,{predef,{tuple,_Attrs}},_C) ->
+    "tuple()";
 %% abnf
 typeref(ubf,{abnf_alt,_}=X,_C) ->
     io_lib:format("~p", [X]);
