@@ -203,7 +203,7 @@ random_nick(N) ->
     [$a + random:uniform(26) - 1|random_nick(N-1)].
 
 new_seed() ->
-    {_,_,X} = erlang:now(),
+    {_,_,X} = os:timestamp(),
     {H,M,S} = time(),
     H1 = H * X rem 32767,
     M1 = M * X rem 32767,
