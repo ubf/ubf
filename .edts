@@ -1,4 +1,0 @@
-:name "ubf_dev"
-:node-sname "ubfdev"
-:app-include-dirs '("include")
-:lib-dirs '("deps")
